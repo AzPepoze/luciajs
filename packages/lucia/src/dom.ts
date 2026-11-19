@@ -3,7 +3,7 @@ import { watch } from "./signal.ts";
 
 export interface Instance {
   root: Element;
-  destroy(): void;
+  detach(): void;
 }
 
 export type Component = (target: Element) => Instance;
@@ -48,7 +48,7 @@ export function insert(parent: Node, node: Node, anchor: Node | null = null): vo
   parent.insertBefore(node, anchor);
 }
 
-export function mount(component: Component, target: Element): Instance {
+export function attach(component: Component, target: Element): Instance {
   return component(target);
 }
 

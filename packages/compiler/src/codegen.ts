@@ -61,7 +61,7 @@ function componentFunction(scope: string): string {
   if (typeof setupCleanup === "function") cleanups.push(setupCleanup);
   return {
     root: target,
-    destroy() {
+    detach() {
       for (const cleanup of cleanups) cleanup();
       for (const node of nodes) node.remove();
     },
