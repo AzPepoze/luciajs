@@ -25,13 +25,16 @@ describe("parse", () => {
   });
 
   test("reports the line where section content starts", () => {
-    const source = ["<h1>Title</h1>", "", "<script>", "export const x = 1;", "</script>"].join("\n");
+    const source = ["<h1>Title</h1>", "", "<script>", "export const x = 1;", "</script>"].join(
+      "\n",
+    );
     const parsed = parse(source, FILE);
     expect(parsed.script?.line).toBe(3);
   });
 
   test("ignores <script> and <style> inside {} expressions and comments", () => {
-    const source = '<script>const a = 1;</script>\n<p>{"<script>x</script>"}</p>\n<!-- <style>p{}</style> -->';
+    const source =
+      '<script>const a = 1;</script>\n<p>{"<script>x</script>"}</p>\n<!-- <style>p{}</style> -->';
     const parsed = parse(source, FILE);
     expect(parsed.script?.content).toBe("const a = 1;");
     expect(parsed.styles).toEqual([]);
@@ -39,7 +42,8 @@ describe("parse", () => {
   });
 
   test("keeps every <style> in source order", () => {
-    const source = '<style>a {}</style>\n<p>x</p>\n<style scoped>b {}</style>\n<style global>c {}</style>';
+    const source =
+      "<style>a {}</style>\n<p>x</p>\n<style scoped>b {}</style>\n<style global>c {}</style>";
     const parsed = parse(source, FILE);
     expect(parsed.styles.map((style) => style.content)).toEqual(["a {}", "b {}", "c {}"]);
     expect(parsed.styles.map((style) => style.attrs)).toEqual([{}, { scoped: "" }, { global: "" }]);

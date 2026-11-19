@@ -156,9 +156,23 @@ describe("bind runtime rules", () => {
   test("a read store is not writable", () => {
     const cleanups: Array<() => void> = [];
     const input = document.createElement("input");
-    expect(() => bindInput(input, store.from(() => "x"), cleanups)).toThrow("bind needs a writable store");
-    expect(() => bindProp(input, "value", 5, cleanups)).toThrow("bind-value needs a writable store");
-    expect(() => bindElement(input, store.from(() => null), cleanups)).toThrow("bind-element needs a writable store");
+    expect(() =>
+      bindInput(
+        input,
+        store.from(() => "x"),
+        cleanups,
+      ),
+    ).toThrow("bind needs a writable store");
+    expect(() => bindProp(input, "value", 5, cleanups)).toThrow(
+      "bind-value needs a writable store",
+    );
+    expect(() =>
+      bindElement(
+        input,
+        store.from(() => null),
+        cleanups,
+      ),
+    ).toThrow("bind-element needs a writable store");
   });
 
   test("an equal value is not written back to the DOM", () => {

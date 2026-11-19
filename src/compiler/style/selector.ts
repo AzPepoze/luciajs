@@ -29,7 +29,8 @@ function subjectInsertPoint(selector: string): number {
     else if (depth > 0) continue;
     else if (COMBINATORS.has(ch)) point = selector.length;
     else if (ch === ":" && point === selector.length) {
-      const isPseudoElement = selector[i + 1] === ":" || LEGACY_PSEUDO_ELEMENT.test(selector.slice(i));
+      const isPseudoElement =
+        selector[i + 1] === ":" || LEGACY_PSEUDO_ELEMENT.test(selector.slice(i));
       if (isPseudoElement) point = i;
     }
   }

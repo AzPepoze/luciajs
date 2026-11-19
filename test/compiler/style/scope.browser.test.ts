@@ -26,26 +26,36 @@ async function matchedIds(selector: string): Promise<string[]> {
   const page = await browser!.newPage();
   try {
     await page.setContent(PAGE);
-    return await page.evaluate((sel) => [...document.querySelectorAll(sel)].map((el) => el.id), selector);
+    return await page.evaluate(
+      (sel) => [...document.querySelectorAll(sel)].map((el) => el.id),
+      selector,
+    );
   } finally {
     await page.close();
   }
 }
 
-suite(browser ? "scoped selectors in Chromium" : `scoped selectors in Chromium (skipped: ${SKIP_HINT})`, () => {
-  test("tree .t matches the component's own tree", async () => {
-    expect(await matchedIds(selectorOf(".t", "tree"))).toEqual(["top", "own", "child"]);
-  });
+suite(
+  browser ? "scoped selectors in Chromium" : `scoped selectors in Chromium (skipped: ${SKIP_HINT})`,
+  () => {
+    test("tree .t matches the component's own tree", async () => {
+      expect(await matchedIds(selectorOf(".t", "tree"))).toEqual(["top", "own", "child"]);
+    });
 
-  test("scoped .t stops at child components", async () => {
-    expect(await matchedIds(selectorOf(".t", "scoped"))).toEqual(["top", "own"]);
-  });
+    test("scoped .t stops at child components", async () => {
+      expect(await matchedIds(selectorOf(".t", "scoped"))).toEqual(["top", "own"]);
+    });
 
-  test(":global(.dark) .t keeps the ancestor global", async () => {
-    expect(await matchedIds(selectorOf(":global(.dark) .t", "tree"))).toEqual(["top", "own", "child"]);
-  });
+    test(":global(.dark) .t keeps the ancestor global", async () => {
+      expect(await matchedIds(selectorOf(":global(.dark) .t", "tree"))).toEqual([
+        "top",
+        "own",
+        "child",
+      ]);
+    });
 
-  test(".card :global(a) scopes .card and leaves a global", async () => {
-    expect(await matchedIds(selectorOf(".card :global(a)", "tree"))).toEqual(["link"]);
-  });
-});
+    test(".card :global(a) scopes .card and leaves a global", async () => {
+      expect(await matchedIds(selectorOf(".card :global(a)", "tree"))).toEqual(["link"]);
+    });
+  },
+);

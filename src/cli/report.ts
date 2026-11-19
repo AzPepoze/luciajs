@@ -21,7 +21,10 @@ async function fileRow(root: string, path: string): Promise<FileRow> {
 }
 
 export function formatReport(rows: FileRow[]): string {
-  const total = rows.reduce((sum, row) => ({ size: sum.size + row.size, gzip: sum.gzip + row.gzip }), { size: 0, gzip: 0 });
+  const total = rows.reduce(
+    (sum, row) => ({ size: sum.size + row.size, gzip: sum.gzip + row.gzip }),
+    { size: 0, gzip: 0 },
+  );
   const table = [
     ["File", "Size", "Gzip"],
     ...rows.map((row) => [row.path, formatSize(row.size), formatSize(row.gzip)]),
@@ -38,8 +41,12 @@ export function formatSize(bytes: number): string {
 
 /** Left-aligns the first column and right-aligns the rest. The first row is the header. */
 export function formatTable(rows: string[][]): string {
-  const widths = rows[0]!.map((_, column) => Math.max(...rows.map((row) => row[column]?.length ?? 0)));
-  const lines = rows.map((row) => row.map((cell, column) => alignCell(cell, widths[column]!, column)).join("  "));
+  const widths = rows[0]!.map((_, column) =>
+    Math.max(...rows.map((row) => row[column]?.length ?? 0)),
+  );
+  const lines = rows.map((row) =>
+    row.map((cell, column) => alignCell(cell, widths[column]!, column)).join("  "),
+  );
   const rule = "-".repeat(lines[0]!.length);
   return [lines[0], rule, ...lines.slice(1, -1), rule, lines.at(-1)].join("\n");
 }

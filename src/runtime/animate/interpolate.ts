@@ -9,8 +9,10 @@ export function interpolate(from: unknown, to: unknown, probe?: HTMLElement): In
   if (Object.is(from, to)) return () => from;
   if (typeof from === "number" && typeof to === "number") return lerp(from, to);
   if (typeof from === "string" && typeof to === "string") return interpolateText(from, to, probe);
-  if (Array.isArray(from) && Array.isArray(to) && from.length === to.length) return interpolateArray(from, to, probe);
-  if (isPlainObject(from) && isPlainObject(to) && sameKeys(from, to)) return interpolateObject(from, to, probe);
+  if (Array.isArray(from) && Array.isArray(to) && from.length === to.length)
+    return interpolateArray(from, to, probe);
+  if (isPlainObject(from) && isPlainObject(to) && sameKeys(from, to))
+    return interpolateObject(from, to, probe);
   return discrete(from, to);
 }
 
@@ -19,7 +21,11 @@ function lerp(from: number, to: number): Interpolator {
   return (t) => from + delta * t;
 }
 
-function interpolateArray(from: unknown[], to: unknown[], probe: HTMLElement | undefined): Interpolator {
+function interpolateArray(
+  from: unknown[],
+  to: unknown[],
+  probe: HTMLElement | undefined,
+): Interpolator {
   const parts = from.map((value, i) => interpolate(value, to[i], probe));
   return (t) => parts.map((part) => part(t));
 }
@@ -35,7 +41,9 @@ function interpolateObject(
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && Object.getPrototypeOf(value) === Object.prototype;
+  return (
+    typeof value === "object" && value !== null && Object.getPrototypeOf(value) === Object.prototype
+  );
 }
 
 function sameKeys(a: Record<string, unknown>, b: Record<string, unknown>): boolean {

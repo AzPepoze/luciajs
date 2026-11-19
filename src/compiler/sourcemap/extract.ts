@@ -41,7 +41,11 @@ function stripLine(line: string): { code: string; segments: Segment[] } {
   const segments: Segment[] = [];
   for (const match of line.matchAll(MARKER)) {
     code += line.slice(last, match.index);
-    segments.push({ column: code.length, sourceLine: Number(match[1]) - 1, sourceColumn: Number(match[2]) - 1 });
+    segments.push({
+      column: code.length,
+      sourceLine: Number(match[1]) - 1,
+      sourceColumn: Number(match[2]) - 1,
+    });
     last = match.index! + match[0].length;
   }
   return { code: code + line.slice(last), segments };
@@ -56,7 +60,12 @@ function encodeMappings(lines: Segment[][]): string {
       let column = 0;
       return segments
         .map((segment) => {
-          const fields = [segment.column - column, 0, segment.sourceLine - sourceLine, segment.sourceColumn - sourceColumn];
+          const fields = [
+            segment.column - column,
+            0,
+            segment.sourceLine - sourceLine,
+            segment.sourceColumn - sourceColumn,
+          ];
           column = segment.column;
           sourceLine = segment.sourceLine;
           sourceColumn = segment.sourceColumn;

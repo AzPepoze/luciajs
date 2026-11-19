@@ -30,7 +30,11 @@ function parseRgb(token: string): Rgba | null {
   const parts = inside.split(/[\s,/]+/).filter(Boolean);
   if (parts.length !== 3 && parts.length !== 4) return null;
   const [r, g, b, a] = parts;
-  const channels = [parseChannel(r!, PERCENT_SCALE), parseChannel(g!, PERCENT_SCALE), parseChannel(b!, PERCENT_SCALE)];
+  const channels = [
+    parseChannel(r!, PERCENT_SCALE),
+    parseChannel(g!, PERCENT_SCALE),
+    parseChannel(b!, PERCENT_SCALE),
+  ];
   const alpha = a === undefined ? 1 : parseChannel(a, 1 / PERCENT);
   if (channels.some(Number.isNaN) || Number.isNaN(alpha)) return null;
   return [channels[0]!, channels[1]!, channels[2]!, alpha];

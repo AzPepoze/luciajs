@@ -5,7 +5,11 @@ import { FILE, ID, SCOPED, ROOT, TREE } from "./fixtures.ts";
 
 describe("compileStyle", () => {
   test("compiles SCSS nesting and variables, then scopes", () => {
-    const style = { content: "$c: red;\n.a { color: $c; &:hover { color: blue; } }", attrs: {}, line: 1 };
+    const style = {
+      content: "$c: red;\n.a { color: $c; &:hover { color: blue; } }",
+      attrs: {},
+      line: 1,
+    };
     const out = compileStyle(style, FILE, ID);
     expect(out).toContain(`.a${TREE} {`);
     expect(out).toContain("color: red;");

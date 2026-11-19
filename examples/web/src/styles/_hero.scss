@@ -40,7 +40,11 @@
     content: "";
     position: absolute;
     inset: -20%;
-    background: repeating-conic-gradient(from 0deg at 50% 45%, transparent 0 6deg, var(--accent-soft) 6deg 8deg);
+    background: repeating-conic-gradient(
+      from 0deg at 50% 45%,
+      transparent 0 6deg,
+      var(--accent-soft) 6deg 8deg
+    );
     opacity: 0.5;
     -webkit-mask-image: radial-gradient(ellipse at center, transparent 25%, #000 70%);
     mask-image: radial-gradient(ellipse at center, transparent 25%, #000 70%);
@@ -126,15 +130,45 @@
   pointer-events: none;
   animation: twinkle 2.8s ease-in-out infinite;
 
-  &.s1 { top: 8%; left: 14%; color: var(--lemon); }
-  &.s2 { top: 22%; right: 12%; width: 1.6rem; height: 1.6rem; color: var(--lavender); animation-delay: -1s; }
-  &.s3 { bottom: 16%; left: 22%; width: 0.9rem; height: 0.9rem; color: var(--mint); animation-delay: -2s; }
-  &.s4 { bottom: 22%; right: 20%; color: var(--sky); animation-delay: -0.5s; }
+  &.s1 {
+    top: 8%;
+    left: 14%;
+    color: var(--lemon);
+  }
+  &.s2 {
+    top: 22%;
+    right: 12%;
+    width: 1.6rem;
+    height: 1.6rem;
+    color: var(--lavender);
+    animation-delay: -1s;
+  }
+  &.s3 {
+    bottom: 16%;
+    left: 22%;
+    width: 0.9rem;
+    height: 0.9rem;
+    color: var(--mint);
+    animation-delay: -2s;
+  }
+  &.s4 {
+    bottom: 22%;
+    right: 20%;
+    color: var(--sky);
+    animation-delay: -0.5s;
+  }
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.35; transform: scale(0.8) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(20deg);
+  }
 }
 
 .tagline {
@@ -218,6 +252,4 @@
   .sparkle {
     display: none;
   }
-
 }
-

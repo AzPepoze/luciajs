@@ -75,5 +75,15 @@ const FLIP: Keyframes = {
 };
 
 export const PRESET = Object.freeze({
-  FADE, SLIDE_UP, SLIDE_DOWN, SLIDE_LEFT, SLIDE_RIGHT, POP, ZOOM, SHAKE, PULSE, SPIN, FLIP,
+  FADE,
+  SLIDE_UP,
+  SLIDE_DOWN,
+  SLIDE_LEFT,
+  SLIDE_RIGHT,
+  POP,
+  ZOOM,
+  SHAKE,
+  PULSE,
+  SPIN,
+  FLIP,
 });

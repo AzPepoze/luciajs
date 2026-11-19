@@ -1,6 +1,13 @@
 import { markedCode } from "../sourcemap/marker.ts";
 import { trailingArg, type GenContext } from "./codegen-context.ts";
-import type { AttrBinding, AttrPart, BindBinding, ElementBinding, EventBinding, Expr } from "./types.ts";
+import type {
+  AttrBinding,
+  AttrPart,
+  BindBinding,
+  ElementBinding,
+  EventBinding,
+  Expr,
+} from "./types.ts";
 
 export function readExpression(expr: Expr): string {
   return `__unwrap((${markedCode(expr)}))`;
@@ -10,7 +17,9 @@ export function attrValue(parts: AttrPart[]): string {
   if (parts.length === 0) return "true";
   const single = parts.length === 1 ? parts[0] : undefined;
   if (typeof single === "object") return readExpression(single);
-  const pieces = parts.map((part) => (typeof part === "string" ? JSON.stringify(part) : `__toText(${readExpression(part)})`));
+  const pieces = parts.map((part) =>
+    typeof part === "string" ? JSON.stringify(part) : `__toText(${readExpression(part)})`,
+  );
   return pieces.join(" + ");
 }
 
@@ -25,7 +34,8 @@ function eventCall({ type, expr }: EventBinding): string {
 function bindCall(bind: BindBinding, ctx: GenContext): string {
   const target = `(${markedCode(bind.expr)})`;
   const at = trailingArg(ctx.whereOf(bind.expr));
-  if (bind.kind === "input") return `__bindInput(__node as HTMLElement, ${target}, __cleanups${at});`;
+  if (bind.kind === "input")
+    return `__bindInput(__node as HTMLElement, ${target}, __cleanups${at});`;
   if (bind.kind === "prop") {
     return `__bindProp(__node as HTMLElement, ${JSON.stringify(bind.prop)}, ${target}, __cleanups${at});`;
   }
@@ -39,7 +49,9 @@ function animateCall(expr: Expr, ctx: GenContext): string {
 
 /** An object of getters, one per attribute: `{ "title": () => ... }`. */
 export function getterObject(attrs: AttrBinding[]): string {
-  const entries = attrs.map(({ name, parts }) => `${JSON.stringify(name)}: () => ${attrValue(parts)}`);
+  const entries = attrs.map(
+    ({ name, parts }) => `${JSON.stringify(name)}: () => ${attrValue(parts)}`,
+  );
   return `{ ${entries.join(", ")} }`;
 }
 

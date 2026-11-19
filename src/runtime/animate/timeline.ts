@@ -22,7 +22,11 @@ export interface Timeline {
 }
 
 /** Writes the styles at timeline position `progress` (0..1). Runs every frame. */
-export function writeProgress(style: CSSStyleDeclaration, { props, segments }: Timeline, progress: number): void {
+export function writeProgress(
+  style: CSSStyleDeclaration,
+  { props, segments }: Timeline,
+  progress: number,
+): void {
   const segment = segmentAt(segments, progress);
   const local = (progress - segment.start) / (segment.end - segment.start);
   const eased = segment.ease(segment.easeStyle, local);
@@ -50,7 +54,9 @@ export function startingFrom(timeline: Timeline, current: (prop: string) => stri
 export function ownTimelines(timelines: Timeline[]): Timeline[] {
   const owner = new Map<string, number>();
   timelines.forEach((timeline, index) => timeline.props.forEach((prop) => owner.set(prop, index)));
-  return timelines.map((timeline, index) => keepProps(timeline, (prop) => owner.get(prop) === index));
+  return timelines.map((timeline, index) =>
+    keepProps(timeline, (prop) => owner.get(prop) === index),
+  );
 }
 
 function keepProps(timeline: Timeline, keep: (prop: string) => boolean): Timeline {

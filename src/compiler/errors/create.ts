@@ -14,7 +14,9 @@ const PLACEHOLDER = /\$(\w+)/g;
 
 /** Replaces each $name with its value. A name with no value stays as it is. */
 export function fill(template: string, values: Values = {}): string {
-  return template.replace(PLACEHOLDER, (match, name: string) => (Object.hasOwn(values, name) ? String(values[name]) : match));
+  return template.replace(PLACEHOLDER, (match, name: string) =>
+    Object.hasOwn(values, name) ? String(values[name]) : match,
+  );
 }
 
 /** Builds the error for a code, with its message and hint filled in. */

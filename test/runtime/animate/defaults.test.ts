@@ -10,7 +10,10 @@ import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();
 
-const LIBRARY_DEFAULT: { ease: DefaultEasing; duration: number } = { ease: [EASE.STYLE.QUART, EASE.INOUT], duration: 300 };
+const LIBRARY_DEFAULT: { ease: DefaultEasing; duration: number } = {
+  ease: [EASE.STYLE.QUART, EASE.INOUT],
+  duration: 300,
+};
 
 /** Every test changes the engine default, so each one puts the library default back. */
 afterEach(() => setAnimateDefault(LIBRARY_DEFAULT));
@@ -86,16 +89,24 @@ describe("setAnimateDefault duration", () => {
 
 describe("setAnimateDefault validation", () => {
   test("an unknown key names the allowed keys", () => {
-    expect(() => setAnimateDefault({ speed: 2 } as never)).toThrow('setAnimateDefault has an unknown key "speed", use ease or duration');
+    expect(() => setAnimateDefault({ speed: 2 } as never)).toThrow(
+      'setAnimateDefault has an unknown key "speed", use ease or duration',
+    );
   });
 
   test("duration must be a non-negative number", () => {
-    expect(() => setAnimateDefault({ duration: -1 })).toThrow("setAnimateDefault duration must be a time in ms, got -1");
-    expect(() => setAnimateDefault({ duration: Number.NaN })).toThrow("setAnimateDefault duration must be a time in ms");
+    expect(() => setAnimateDefault({ duration: -1 })).toThrow(
+      "setAnimateDefault duration must be a time in ms, got -1",
+    );
+    expect(() => setAnimateDefault({ duration: Number.NaN })).toThrow(
+      "setAnimateDefault duration must be a time in ms",
+    );
   });
 
   test("ease takes the default forms", () => {
-    expect(() => setAnimateDefault({ ease: [EASE.IN, EASE.OUT] } as never)).toThrow("animate default must be");
+    expect(() => setAnimateDefault({ ease: [EASE.IN, EASE.OUT] } as never)).toThrow(
+      "animate default must be",
+    );
     expect(() => setAnimateDefault({ ease: "quart" } as never)).toThrow("animate default must be");
   });
 

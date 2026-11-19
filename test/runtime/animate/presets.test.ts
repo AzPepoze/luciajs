@@ -6,7 +6,10 @@ import { ownTimelines } from "@runtime/animate/timeline.ts";
 const presets = Object.entries(PRESET) as [string, Keyframes][];
 
 /** The key styles of a preset, without its `default`. */
-const keyStyles = (keyframes: Keyframes) => Object.entries(keyframes).filter(([key]) => key !== "default").map(([, style]) => style);
+const keyStyles = (keyframes: Keyframes) =>
+  Object.entries(keyframes)
+    .filter(([key]) => key !== "default")
+    .map(([, style]) => style);
 
 describe("PRESET", () => {
   test("is frozen", () => {
@@ -17,11 +20,14 @@ describe("PRESET", () => {
     expect(() => prepareTimeline(keyframes)).not.toThrow();
   });
 
-  test.each(presets)("%s uses style keys only, so the keys can take the default", (_name, keyframes) => {
-    for (const style of keyStyles(keyframes)) {
-      expect(Array.isArray(style)).toBe(false);
-    }
-  });
+  test.each(presets)(
+    "%s uses style keys only, so the keys can take the default",
+    (_name, keyframes) => {
+      for (const style of keyStyles(keyframes)) {
+        expect(Array.isArray(style)).toBe(false);
+      }
+    },
+  );
 
   test.each(presets)("%s uses individual properties, not transform", (_name, keyframes) => {
     for (const style of keyStyles(keyframes)) {
@@ -43,6 +49,9 @@ describe("PRESET", () => {
       prepareTimeline(PRESET.SLIDE_UP),
       prepareTimeline(PRESET.ZOOM),
     ]);
-    expect(timelines.map((timeline) => timeline.props)).toEqual([["translate", "opacity"], ["scale"]]);
+    expect(timelines.map((timeline) => timeline.props)).toEqual([
+      ["translate", "opacity"],
+      ["scale"],
+    ]);
   });
 });

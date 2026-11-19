@@ -20,8 +20,18 @@ const NUMBER: Channel = {
   },
 };
 
-const TEXT: Channel = { prop: "value", events: ["input"], toDom: toText, fromDom: (el) => (el as HTMLInputElement).value };
-const SELECT: Channel = { prop: "value", events: ["change"], toDom: toText, fromDom: (el) => (el as HTMLSelectElement).value };
+const TEXT: Channel = {
+  prop: "value",
+  events: ["input"],
+  toDom: toText,
+  fromDom: (el) => (el as HTMLInputElement).value,
+};
+const SELECT: Channel = {
+  prop: "value",
+  events: ["change"],
+  toDom: toText,
+  fromDom: (el) => (el as HTMLSelectElement).value,
+};
 
 const CHECKABLE = new Set(["checkbox", "radio"]);
 const NUMERIC = new Set(["number", "range"]);
@@ -36,6 +46,11 @@ function channelFor(el: HTMLElement): Channel {
 }
 
 /** `bind={sig}` on a form control: the right property and event for its type. */
-export function bindInput(el: HTMLElement, target: unknown, cleanups: Cleanup[], where?: string): void {
+export function bindInput(
+  el: HTMLElement,
+  target: unknown,
+  cleanups: Cleanup[],
+  where?: string,
+): void {
   withWhere(where, () => bindChannel(el, target, channelFor(el), "bind", cleanups));
 }

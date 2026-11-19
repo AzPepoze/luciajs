@@ -78,4 +78,5 @@ export interface ForBinding {
   body: Template;
 }
 
-export type Binding = TextBinding | ElementBinding | ComponentBinding | IfBinding | EachBinding | ForBinding;
+export type Binding =
+  TextBinding | ElementBinding | ComponentBinding | IfBinding | EachBinding | ForBinding;

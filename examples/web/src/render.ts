@@ -1,7 +1,14 @@
 import { api, type ApiEntry } from "../../../reference/api.ts";
 import { catalog, groupTitles, type Demo } from "./catalog.ts";
 
-const groupOrder: ApiEntry["group"][] = ["basics", "reactivity", "flow", "components", "styling", "motion"];
+const groupOrder: ApiEntry["group"][] = [
+  "basics",
+  "reactivity",
+  "flow",
+  "components",
+  "styling",
+  "motion",
+];
 
 // Type-only entries are left out: they are noise for beginners. Their facts are bullets on the other entries.
 // The sidebar and the sections both follow this list, so their order always matches.
@@ -50,7 +57,10 @@ function navEntry(entry: ApiEntry): HTMLElement {
 function entryLink(entry: ApiEntry): HTMLAnchorElement {
   const link = document.createElement("a");
   link.href = `#${entry.id}`;
-  link.append(glyph(catalog[entry.id]?.icon ?? "chevron_right"), codeOrText(entry.name, "nav-label"));
+  link.append(
+    glyph(catalog[entry.id]?.icon ?? "chevron_right"),
+    codeOrText(entry.name, "nav-label"),
+  );
   return link;
 }
 
@@ -83,7 +93,10 @@ function glyph(name: string, className?: string): HTMLElement {
   return node;
 }
 
-function element<K extends keyof HTMLElementTagNameMap>(tag: K, className?: string): HTMLElementTagNameMap[K] {
+function element<K extends keyof HTMLElementTagNameMap>(
+  tag: K,
+  className?: string,
+): HTMLElementTagNameMap[K] {
   const node = document.createElement(tag);
   if (className) node.className = className;
   return node;

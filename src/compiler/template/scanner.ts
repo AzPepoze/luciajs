@@ -87,7 +87,12 @@ class TemplateScanner {
     this.html += `<${name}${statics}${marker}${selfClosing ? " />" : ">"}`;
   }
 
-  private addComponent(name: string, props: AttrBinding[], selfClosing: boolean, start: number): void {
+  private addComponent(
+    name: string,
+    props: AttrBinding[],
+    selfClosing: boolean,
+    start: number,
+  ): void {
     if (!selfClosing) this.skipComponentClose(name, start);
     this.bindings.push({ kind: "component", name, props });
     this.html += `<!--${TEXT_MARKER}-->`;

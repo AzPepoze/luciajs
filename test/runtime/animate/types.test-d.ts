@@ -1,5 +1,12 @@
 // Type-level checks. `tsc` runs this file; each @ts-expect-error line fails the build if it stops being an error.
-import { WHEN, EASE, setAnimateDefault, type AnimateItem, type Keyframes, type Style } from "@runtime/index.ts";
+import {
+  WHEN,
+  EASE,
+  setAnimateDefault,
+  type AnimateItem,
+  type Keyframes,
+  type Style,
+} from "@runtime/index.ts";
 
 const css: Style = { opacity: 1, backgroundColor: "red", translate: "0px 10px", "--gap": "4px" };
 
@@ -20,10 +27,18 @@ const objectCss: Style = { opacity: { value: 1 } };
 const missingOne: Keyframes = { 0: { opacity: 0 } };
 
 // The keyframes default takes the forms [style, ease], [style] or [ease].
-const withDefault: Keyframes = { default: [EASE.STYLE.QUART, EASE.OUT], 0: { opacity: 0 }, 1: { opacity: 1 } };
+const withDefault: Keyframes = {
+  default: [EASE.STYLE.QUART, EASE.OUT],
+  0: { opacity: 0 },
+  1: { opacity: 1 },
+};
 const defaultEase: Keyframes = { default: [EASE.OUT], 0: { opacity: 0 }, 1: { opacity: 1 } };
-// @ts-expect-error: the parts are in the wrong order
-const defaultWrongOrder: Keyframes = { default: [EASE.OUT, EASE.STYLE.QUART], 0: { opacity: 0 }, 1: { opacity: 1 } };
+const defaultWrongOrder: Keyframes = {
+  // @ts-expect-error: the parts are in the wrong order
+  default: [EASE.OUT, EASE.STYLE.QUART],
+  0: { opacity: 0 },
+  1: { opacity: 1 },
+};
 
 // Wrong EASE values are rejected in a key.
 // @ts-expect-error: a string is not an ease
@@ -35,8 +50,16 @@ const directionInStyle: Keyframes = { 0: { opacity: 0 }, 1: [EASE.IN, EASE.OUT, 
 
 // AnimateItem: `more` is typed by the trigger.
 const plain: AnimateItem = { style: keyframes };
-const view: AnimateItem = { style: keyframes, when: WHEN.VIEW, more: { margin: "10%", amount: 0.5, reverse: true } };
-const hover: AnimateItem = { style: keyframes, when: WHEN.HOVER, more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } };
+const view: AnimateItem = {
+  style: keyframes,
+  when: WHEN.VIEW,
+  more: { margin: "10%", amount: 0.5, reverse: true },
+};
+const hover: AnimateItem = {
+  style: keyframes,
+  when: WHEN.HOVER,
+  more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
+};
 const scroll: AnimateItem = { style: keyframes, when: WHEN.SCROLL, more: { start: 0.2, end: 0.8 } };
 
 // @ts-expect-error: HOVER takes no margin
@@ -63,7 +86,21 @@ setAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });
 setAnimateDefault({ speed: 2 });
 
 export { css, defaultEase, hover, keyframes, missingOne, plain, scroll, view, withDefault };
-export { defaultWrongOrder, directionInStyle, hoverMargin, itemEase, plainMore, storeMore, topReverse, unknownCss, kebabCss, objectCss, wrongEase, wrongStyle, viewOutDelay };
+export {
+  defaultWrongOrder,
+  directionInStyle,
+  hoverMargin,
+  itemEase,
+  plainMore,
+  storeMore,
+  topReverse,
+  unknownCss,
+  kebabCss,
+  objectCss,
+  wrongEase,
+  wrongStyle,
+  viewOutDelay,
+};
 
 // @ts-expect-error: cssText is excluded from animatable styles
 const cssTextStyle: Style = { cssText: "opacity: 1" };

@@ -42,9 +42,13 @@ function parseBuild(args: string[]): Command {
 /** `--routes /guide,/reference` becomes a list of paths. Each must start with a slash and hold no `..`. */
 export function parseRoutes(value: string | undefined): string[] {
   if (value === undefined) return [];
-  const routes = value.split(",").map((route) => route.trim()).filter(Boolean);
+  const routes = value
+    .split(",")
+    .map((route) => route.trim())
+    .filter(Boolean);
   for (const route of routes) {
-    if (!route.startsWith("/") || route.includes("..")) throw new UsageError(`invalid route "${route}", use a path such as /guide`);
+    if (!route.startsWith("/") || route.includes(".."))
+      throw new UsageError(`invalid route "${route}", use a path such as /guide`);
   }
   return routes;
 }
@@ -80,6 +84,7 @@ function appDir(positionals: string[]): string {
 
 function parsePort(value: string): number {
   const port = Number(value);
-  if (!Number.isInteger(port) || port < 0 || port > 65535) throw new UsageError(`invalid port "${value}"`);
+  if (!Number.isInteger(port) || port < 0 || port > 65535)
+    throw new UsageError(`invalid port "${value}"`);
   return port;
 }

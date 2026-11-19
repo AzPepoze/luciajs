@@ -34,17 +34,22 @@ describe("interpolate colors", () => {
   });
 
   test("rgb() and rgba() blend", () => {
-    expect(interpolate("rgb(0, 0, 0)", "rgba(100, 200, 50, 0)")(0.5)).toBe("rgba(50, 100, 25, 0.5)");
+    expect(interpolate("rgb(0, 0, 0)", "rgba(100, 200, 50, 0)")(0.5)).toBe(
+      "rgba(50, 100, 25, 0.5)",
+    );
   });
 
   test("rgb() accepts the space syntax with a slash alpha", () => {
-    expect(interpolate("rgb(0 0 0 / 0%)", "rgb(100 100 100 / 100%)")(1)).toBe("rgba(100, 100, 100, 1)");
+    expect(interpolate("rgb(0 0 0 / 0%)", "rgb(100 100 100 / 100%)")(1)).toBe(
+      "rgba(100, 100, 100, 1)",
+    );
   });
 
   test("a color inside a longer value is blended in place", () => {
-    expect(interpolate("1px solid #000", "3px solid #fff")(0.5)).toBe("2px solid rgba(128, 128, 128, 1)");
+    expect(interpolate("1px solid #000", "3px solid #fff")(0.5)).toBe(
+      "2px solid rgba(128, 128, 128, 1)",
+    );
   });
-
 });
 
 describe("interpolate fallbacks", () => {
@@ -68,7 +73,10 @@ describe("interpolate fallbacks", () => {
   });
 
   test("plain objects blend key by key", () => {
-    expect(interpolate({ x: 0, label: "a 1px" }, { x: 4, label: "a 3px" })(0.5)).toEqual({ x: 2, label: "a 2px" });
+    expect(interpolate({ x: 0, label: "a 1px" }, { x: 4, label: "a 3px" })(0.5)).toEqual({
+      x: 2,
+      label: "a 2px",
+    });
   });
 
   test("objects with other keys switch at the middle", () => {

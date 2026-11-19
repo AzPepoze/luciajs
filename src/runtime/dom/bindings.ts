@@ -31,7 +31,12 @@ function batched(handler: EventListener): EventListener {
   return (event) => batch(() => handler(event));
 }
 
-export function listen(el: EventTarget, type: string, handler: EventListener, cleanups: Cleanup[]): void {
+export function listen(
+  el: EventTarget,
+  type: string,
+  handler: EventListener,
+  cleanups: Cleanup[],
+): void {
   const listener = batched(handler);
   el.addEventListener(type, listener);
   cleanups.push(() => el.removeEventListener(type, listener));

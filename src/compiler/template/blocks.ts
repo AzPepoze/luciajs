@@ -1,7 +1,16 @@
 import { attrExpression, readAttributes } from "./attributes.ts";
 import { blockCheck, type AttrKind } from "./checks.ts";
 import type { Cursor } from "./cursor.ts";
-import type { AttrBinding, Binding, Branch, EachBinding, Expr, ForBinding, IfBinding, Template } from "./types.ts";
+import type {
+  AttrBinding,
+  Binding,
+  Branch,
+  EachBinding,
+  Expr,
+  ForBinding,
+  IfBinding,
+  Template,
+} from "./types.ts";
 
 export type BlockName = "IF" | "EACH" | "FOR";
 export type BodyReader = () => Template;
@@ -29,7 +38,12 @@ interface Header {
 }
 
 /** The cursor must be on `<`. Reads the tag's `{expr}` (when allowed) and its attributes. */
-function readHeader(c: Cursor, name: string, kinds: ReadonlyMap<string, AttrKind>, takesExpr: boolean): Header {
+function readHeader(
+  c: Cursor,
+  name: string,
+  kinds: ReadonlyMap<string, AttrKind>,
+  takesExpr: boolean,
+): Header {
   const start = c.pos;
   c.pos += name.length + 1;
   c.skipWhitespace();

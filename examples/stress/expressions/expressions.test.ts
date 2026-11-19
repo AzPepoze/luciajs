@@ -62,7 +62,9 @@ describe("tricky expressions", () => {
   });
 
   test(":global styles are not scoped", () => {
-    const styles = [...document.querySelectorAll("style[data-lucia]")].map((style) => style.textContent);
+    const styles = [...document.querySelectorAll("style[data-lucia]")].map(
+      (style) => style.textContent,
+    );
     expect(styles.some((css) => css!.includes(".edge-global {"))).toBe(true);
   });
 });

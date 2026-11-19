@@ -18,6 +18,10 @@ function compileScss(style: Section, file: string): string {
     const span = sassError.span;
     const line = span ? style.line + span.start.line : style.line;
     const column = span ? span.start.column + 1 : 1;
-    throw luciaError("L1005", { message: sassError.sassMessage ?? String(error) }, { file, line, column });
+    throw luciaError(
+      "L1005",
+      { message: sassError.sassMessage ?? String(error) },
+      { file, line, column },
+    );
   }
 }

@@ -17,7 +17,12 @@ export interface BundleOptions {
   dev: boolean;
 }
 
-export async function bundleApp({ dir, outdir, minify, dev }: BundleOptions): Promise<Bun.BuildOutput> {
+export async function bundleApp({
+  dir,
+  outdir,
+  minify,
+  dev,
+}: BundleOptions): Promise<Bun.BuildOutput> {
   return Bun.build({
     entrypoints: [entryPath(dir)],
     outdir,

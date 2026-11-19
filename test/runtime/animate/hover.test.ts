@@ -11,7 +11,8 @@ import { advance, onReset, useFakeClock } from "./clock.ts";
 useFakeClock();
 
 const readBase = { duration: 300 };
-const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(when, more, readBase);
+const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
+  readWith(when, more, readBase);
 
 const fade: Keyframes = {
   0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
@@ -24,7 +25,12 @@ function mount(item: Omit<AnimateItem, "style"> = {}) {
   const el = document.createElement("div");
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ style: fade, duration: 100, when: WHEN.HOVER, ...item }) as AnimateItem, cleanups, leaves);
+  animate(
+    el,
+    () => ({ style: fade, duration: 100, when: WHEN.HOVER, ...item }) as AnimateItem,
+    cleanups,
+    leaves,
+  );
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, cleanups, opacity: () => Number(el.style.opacity) };
 }
@@ -75,12 +81,18 @@ describe("WHEN.HOVER more outDelay", () => {
   });
 
   test("rejects a negative or non-number outDelay", () => {
-    expect(() => readMore(WHEN.HOVER, { outDelay: -1 })).toThrow("animate more outDelay must be a time in ms, got -1");
-    expect(() => readMore(WHEN.HOVER, { outDelay: Number.NaN })).toThrow("outDelay must be a time in ms");
+    expect(() => readMore(WHEN.HOVER, { outDelay: -1 })).toThrow(
+      "animate more outDelay must be a time in ms, got -1",
+    );
+    expect(() => readMore(WHEN.HOVER, { outDelay: Number.NaN })).toThrow(
+      "outDelay must be a time in ms",
+    );
   });
 
   test("more on HOVER only accepts its own keys", () => {
-    expect(() => readMore(WHEN.HOVER, { margin: 10 } as never)).toThrow('more has an unknown key "margin", use inDelay, outDelay, out or outDuration');
+    expect(() => readMore(WHEN.HOVER, { margin: 10 } as never)).toThrow(
+      'more has an unknown key "margin", use inDelay, outDelay, out or outDuration',
+    );
   });
 });
 
@@ -173,7 +185,10 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("once: leaving after the first enter does nothing", () => {
-    const { el, opacity } = mount({ once: true, more: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
+    const { el, opacity } = mount({
+      once: true,
+      more: { out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
+    });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -182,7 +197,9 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("cleanup cancels a pending out", async () => {
-    const { el, cleanups, opacity } = mount({ more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } } });
+    const { el, cleanups, opacity } = mount({
+      more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
+    });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -193,12 +210,18 @@ describe("WHEN.HOVER more out", () => {
   });
 
   test("out keys are validated when the item is read", () => {
-    expect(() => readMore(WHEN.HOVER, { out: "fade" } as never)).toThrow("animate more out must be keyframes");
-    expect(() => readMore(WHEN.HOVER, { out: [] } as never)).toThrow("animate more out must be keyframes");
+    expect(() => readMore(WHEN.HOVER, { out: "fade" } as never)).toThrow(
+      "animate more out must be keyframes",
+    );
+    expect(() => readMore(WHEN.HOVER, { out: [] } as never)).toThrow(
+      "animate more out must be keyframes",
+    );
   });
 
   test("outDuration needs out", () => {
-    expect(() => readMore(WHEN.HOVER, { outDuration: 200 })).toThrow("animate more outDuration needs out");
+    expect(() => readMore(WHEN.HOVER, { outDuration: 200 })).toThrow(
+      "animate more outDuration needs out",
+    );
   });
 });
 

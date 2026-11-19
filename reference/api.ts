@@ -337,7 +337,7 @@ export const api: ApiEntry[] = [
     signature: "<style> SCSS </style>",
     summary: "Component styles, in tree mode by default.",
     bullets: [
-      "SCSS by default. Use lang=\"css\" for plain CSS.",
+      'SCSS by default. Use lang="css" for plain CSS.',
       "Tree mode also styles child components inside this one.",
       "A component can have several style blocks.",
     ],
@@ -433,7 +433,7 @@ export const api: ApiEntry[] = [
     name: "<Name />",
     kind: "markup",
     group: "components",
-    signature: "<Name prop=\"text\" prop={expr} flag />",
+    signature: '<Name prop="text" prop={expr} flag />',
     summary: "Places an imported .lucia component in markup.",
     bullets: [
       "The tag name must match the import name exactly.",
@@ -465,7 +465,8 @@ export const api: ApiEntry[] = [
     name: "EASE",
     kind: "value",
     group: "motion",
-    signature: "const EASE: { readonly STYLE: { readonly LINEAR: EaseStyle; ...; readonly BOUNCE: EaseStyle }; readonly IN: Ease; readonly OUT: Ease; readonly INOUT: Ease }",
+    signature:
+      "const EASE: { readonly STYLE: { readonly LINEAR: EaseStyle; ...; readonly BOUNCE: EaseStyle }; readonly IN: Ease; readonly OUT: Ease; readonly INOUT: Ease }",
     summary: "Easing styles (curves) and the direction each one plays.",
     bullets: [
       "EASE.STYLE holds the curves. Write EASE.STYLE.QUART in a key: [EASE.STYLE.QUART, EASE.OUT, style].",
@@ -502,7 +503,8 @@ export const api: ApiEntry[] = [
     name: "WHEN",
     kind: "value",
     group: "motion",
-    signature: "const WHEN: { readonly ATTACH: When; readonly DETACH: When; readonly VIEW: When; readonly HOVER: When; readonly SCROLL: When; readonly MANUAL: When }",
+    signature:
+      "const WHEN: { readonly ATTACH: When; readonly DETACH: When; readonly VIEW: When; readonly HOVER: When; readonly SCROLL: When; readonly MANUAL: When }",
     summary: "What plays an animation item.",
     bullets: [
       "ATTACH (the default): plays 0 to 1 once, when attached. Nothing on detach.",
@@ -515,7 +517,10 @@ export const api: ApiEntry[] = [
     members: [
       { name: "ATTACH", summary: "Plays 0 to 1 once when attached. The default." },
       { name: "DETACH", summary: "Plays its own keyframes on detach. Detach waits for it." },
-      { name: "VIEW", summary: "Plays when at least 15% is visible. Once unless more.reverse is set." },
+      {
+        name: "VIEW",
+        summary: "Plays when at least 15% is visible. Once unless more.reverse is set.",
+      },
       { name: "HOVER", summary: "Plays 0 to 1 on pointer enter, 1 to 0 on leave." },
       { name: "SCROLL", summary: "Moves the animation with the element's place on the screen." },
       { name: "MANUAL", summary: "No trigger. Only a controller plays it." },
@@ -526,7 +531,8 @@ export const api: ApiEntry[] = [
     name: "AnimateItem",
     kind: "type",
     group: "motion",
-    signature: "type AnimateItem = { style: Keyframes; when?: When | Store<unknown> | ReadStore<unknown>; control?: Controller; once?: boolean; more?: More; midway?: MidwayMode | MidwayItem; keep?: boolean; duration?: number; delay?: number; loop?: boolean | number; backAndForth?: boolean }",
+    signature:
+      "type AnimateItem = { style: Keyframes; when?: When | Store<unknown> | ReadStore<unknown>; control?: Controller; once?: boolean; more?: More; midway?: MidwayMode | MidwayItem; keep?: boolean; duration?: number; delay?: number; loop?: boolean | number; backAndForth?: boolean }",
     summary: "One animation in an animate value, with its own trigger and timing.",
     bullets: [
       "Defaults: when WHEN.ATTACH, duration from the engine default (300 ms), delay 0, no loop, keep true.",
@@ -571,7 +577,8 @@ export const api: ApiEntry[] = [
     name: "MIDWAY",
     kind: "value",
     group: "motion",
-    signature: "const MIDWAY: { readonly TURN: MidwayMode; readonly FINISH: MidwayMode; readonly RESTART: MidwayMode; readonly SKIP: MidwayMode; readonly IGNORE: MidwayMode }",
+    signature:
+      "const MIDWAY: { readonly TURN: MidwayMode; readonly FINISH: MidwayMode; readonly RESTART: MidwayMode; readonly SKIP: MidwayMode; readonly IGNORE: MidwayMode }",
     summary: "What happens when a new play is asked for while one is still running.",
     bullets: [
       "Set it with midway: MIDWAY.FINISH, or with an object: midway: { play: MIDWAY.FINISH, turn: TURN.SMOOTH }.",
@@ -594,7 +601,8 @@ export const api: ApiEntry[] = [
     name: "TURN",
     kind: "value",
     group: "motion",
-    signature: "const TURN: { readonly SUDDEN: TurnMode; readonly SMOOTH: TurnMode; readonly STOP: TurnMode }",
+    signature:
+      "const TURN: { readonly SUDDEN: TurnMode; readonly SMOOTH: TurnMode; readonly STOP: TurnMode }",
     summary: "How the motion changes direction when a running play is turned around.",
     bullets: [
       "Used by midway TURN, and by the switch of FINISH and SKIP.",
@@ -603,9 +611,15 @@ export const api: ApiEntry[] = [
     ],
     example: `<div animate={{ style: grow, when: WHEN.HOVER, midway: { turn: TURN.SMOOTH, turnDuration: 250 } }}>...</div>`,
     members: [
-      { name: "SUDDEN", summary: "The new play starts from the current progress. Its speed may jump. The default." },
+      {
+        name: "SUDDEN",
+        summary: "The new play starts from the current progress. Its speed may jump. The default.",
+      },
       { name: "SMOOTH", summary: "Keeps the current speed and bends into the new direction." },
-      { name: "STOP", summary: "Slows to rest over half of turnDuration, then starts the new play." },
+      {
+        name: "STOP",
+        summary: "Slows to rest over half of turnDuration, then starts the new play.",
+      },
     ],
   },
   {
@@ -613,10 +627,11 @@ export const api: ApiEntry[] = [
     name: "more",
     kind: "type",
     group: "motion",
-    signature: "more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: number; end?: number; follow?: Store<Element | null>; part?: [number, number] }",
+    signature:
+      "more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: number; end?: number; follow?: Store<Element | null>; part?: [number, number] }",
     summary: "Options for the trigger an item uses. Each trigger accepts its own keys.",
     bullets: [
-      "VIEW: margin (px or a CSS length such as \"10%\"), amount (0 to 1, default 0.15), reverse.",
+      'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
       "HOVER: inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
       "SCROLL: start and end (lines from the bottom of the screen, default 0 and 1), or follow: a store of the tall element that drives it. part: [from, to] plays only that slice.",
       "Any other trigger that sets more is an error.",
@@ -642,7 +657,8 @@ export const api: ApiEntry[] = [
     name: "Keyframes",
     kind: "type",
     group: "motion",
-    signature: "type Keyframes = { default?: DefaultEasing } & Record<number, Style | [EaseStyle, Ease, Style] | [EaseStyle, Style] | [Ease, Style]>",
+    signature:
+      "type Keyframes = { default?: DefaultEasing } & Record<number, Style | [EaseStyle, Ease, Style] | [EaseStyle, Style] | [Ease, Style]>",
     summary: "The keys of one animation. Each key sets its styles, and optionally its easing.",
     bullets: [
       "Keys are numbers from 0 to 1, and must include 0 and 1.",
@@ -669,10 +685,22 @@ export const api: ApiEntry[] = [
     example: `import { WHEN, PRESET } from "lucia";\n\n<section animate={{ style: PRESET.SLIDE_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
     members: [
       { name: "FADE", summary: "Fades in from transparent." },
-      { name: "SLIDE_UP", summary: "Comes up from below, moving up 24px into place while fading in." },
-      { name: "SLIDE_DOWN", summary: "Comes down from above, moving down 24px into place while fading in." },
-      { name: "SLIDE_LEFT", summary: "Comes in from the left, moving right 24px into place while fading in." },
-      { name: "SLIDE_RIGHT", summary: "Comes in from the right, moving left 24px into place while fading in." },
+      {
+        name: "SLIDE_UP",
+        summary: "Comes up from below, moving up 24px into place while fading in.",
+      },
+      {
+        name: "SLIDE_DOWN",
+        summary: "Comes down from above, moving down 24px into place while fading in.",
+      },
+      {
+        name: "SLIDE_LEFT",
+        summary: "Comes in from the left, moving right 24px into place while fading in.",
+      },
+      {
+        name: "SLIDE_RIGHT",
+        summary: "Comes in from the right, moving left 24px into place while fading in.",
+      },
       { name: "POP", summary: "Grows from 80% size while fading in." },
       { name: "ZOOM", summary: "Grows from nothing to full size." },
       { name: "SHAKE", summary: "Shakes sideways 10px, then settles." },

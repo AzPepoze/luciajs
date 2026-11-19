@@ -42,13 +42,20 @@ class FakeIntersectionObserver {
   }
 
   report(el: Element, ratio: number): void {
-    this.onEntries([{ target: el, intersectionRatio: ratio, isIntersecting: ratio > 0 } as IntersectionObserverEntry]);
+    this.onEntries([
+      {
+        target: el,
+        intersectionRatio: ratio,
+        isIntersecting: ratio > 0,
+      } as IntersectionObserverEntry,
+    ]);
   }
 }
 
 const realIntersectionObserver = globalThis.IntersectionObserver;
 beforeAll(() => {
-  globalThis.IntersectionObserver = FakeIntersectionObserver as unknown as typeof IntersectionObserver;
+  globalThis.IntersectionObserver =
+    FakeIntersectionObserver as unknown as typeof IntersectionObserver;
 });
 afterAll(() => {
   globalThis.IntersectionObserver = realIntersectionObserver;

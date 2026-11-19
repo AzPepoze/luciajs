@@ -38,6 +38,7 @@ export function setAnimateDefault(change: AnimateDefaultChange): void {
 }
 
 function readDuration(duration: number): number {
-  if (!Number.isFinite(duration) || duration < 0) throw runtimeError("L2031", { value: String(duration) });
+  if (!Number.isFinite(duration) || duration < 0)
+    throw runtimeError("L2031", { value: String(duration) });
   return duration;
 }

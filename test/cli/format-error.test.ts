@@ -6,7 +6,11 @@ const SOURCE = ["<script>", "const a = 1;", "</script>", "<p>{a + }</p>", "<p>ok
 const FILE = `${process.cwd()}/src/Card.lucia`;
 
 function sample(): LuciaError {
-  return new LuciaError("empty {}", FILE, 4, 3, { code: "L1011", hint: "Put an expression between the braces, such as {count}.", length: 2 });
+  return new LuciaError("empty {}", FILE, 4, 3, {
+    code: "L1011",
+    hint: "Put an expression between the braces, such as {count}.",
+    length: 2,
+  });
 }
 
 describe("formatError", () => {
@@ -34,10 +38,16 @@ describe("formatError", () => {
   });
 
   test("a runtime error with no location prints the code and hint only", () => {
-    const error = new LuciaError("animate duration must be a time in ms, got -1", undefined, undefined, undefined, {
-      code: "L2003",
-      hint: "Use a number of milliseconds, such as 300.",
-    });
+    const error = new LuciaError(
+      "animate duration must be a time in ms, got -1",
+      undefined,
+      undefined,
+      undefined,
+      {
+        code: "L2003",
+        hint: "Use a number of milliseconds, such as 300.",
+      },
+    );
     expect(formatError(error, undefined, false)).toBe(
       "error L2003: animate duration must be a time in ms, got -1\n\nhint: Use a number of milliseconds, such as 300.",
     );

@@ -31,7 +31,9 @@ export function createDevServer({ dir, port }: DevServerOptions): DevServer {
     port,
     fetch(request, instance) {
       if (new URL(request.url).pathname === RELOAD_PATH) {
-        return instance.upgrade(request) ? undefined : new Response("expected a websocket", { status: 400 });
+        return instance.upgrade(request)
+          ? undefined
+          : new Response("expected a websocket", { status: 400 });
       }
       return respond(request);
     },

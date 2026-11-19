@@ -50,7 +50,9 @@ describe("EACH with many rows", () => {
   test("shuffling keeps every row element", () => {
     const root = mount();
     rows.value = makeRows(ROWS);
-    const before = new Map([...root.querySelectorAll<HTMLLIElement>("li")].map((item) => [item.dataset.id, item]));
+    const before = new Map(
+      [...root.querySelectorAll<HTMLLIElement>("li")].map((item) => [item.dataset.id, item]),
+    );
 
     rows.value = shuffled(rows.value);
     const after = root.querySelectorAll("li");
@@ -62,12 +64,17 @@ describe("EACH with many rows", () => {
     const root = mount();
     rows.value = makeRows(ROWS);
     const kept = rows.value.filter((row) => row.id % 2 === 0);
-    const elementById = new Map([...root.querySelectorAll<HTMLElement>("li")].map((item) => [item.dataset.id, item]));
+    const elementById = new Map(
+      [...root.querySelectorAll<HTMLElement>("li")].map((item) => [item.dataset.id, item]),
+    );
 
     rows.value = [...kept, ...makeRows(ROWS / 2, ROWS)];
-    const afterById = new Map([...root.querySelectorAll<HTMLElement>("li")].map((item) => [item.dataset.id, item]));
+    const afterById = new Map(
+      [...root.querySelectorAll<HTMLElement>("li")].map((item) => [item.dataset.id, item]),
+    );
     expect(afterById.size).toBe(ROWS);
-    for (const row of kept) expect(afterById.get(String(row.id))).toBe(elementById.get(String(row.id))!);
+    for (const row of kept)
+      expect(afterById.get(String(row.id))).toBe(elementById.get(String(row.id))!);
     expect(itemOf(root, ROWS).textContent).toBe(`${kept.length}. Row ${ROWS}`);
   });
 

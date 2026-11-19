@@ -32,10 +32,26 @@ describe("reference api table", () => {
   test("covers the public API and markup features", () => {
     const ids = api.map((entry) => entry.id);
     for (const id of [
-      "store", "store-from", "store-on-update", "props", "attach",
-      "store-type", "read-store-type", "component", "instance", "props-type",
-      "expr", "script", "style", "style-scoped", "style-global",
-      "scoped", "global", "inline-global", "setup", "component-tag",
+      "store",
+      "store-from",
+      "store-on-update",
+      "props",
+      "attach",
+      "store-type",
+      "read-store-type",
+      "component",
+      "instance",
+      "props-type",
+      "expr",
+      "script",
+      "style",
+      "style-scoped",
+      "style-global",
+      "scoped",
+      "global",
+      "inline-global",
+      "setup",
+      "component-tag",
     ]) {
       expect(ids).toContain(id);
     }
@@ -44,7 +60,13 @@ describe("reference api table", () => {
   test("covers the motion API: the animate attribute, its enums and types", () => {
     const ids = api.map((entry) => entry.id);
     for (const id of [
-      "animate", "ease", "when", "animate-item", "animate-type", "keyframes-type", "interpolate",
+      "animate",
+      "ease",
+      "when",
+      "animate-item",
+      "animate-type",
+      "keyframes-type",
+      "interpolate",
     ]) {
       expect(ids).toContain(id);
     }
@@ -60,16 +82,41 @@ describe("reference api table", () => {
   });
 
   test("EASE.STYLE lists the eleven built-in curves", () => {
-    const style = api.find((entry) => entry.name === "EASE")?.members?.find((member) => member.name === "STYLE");
+    const style = api
+      .find((entry) => entry.name === "EASE")
+      ?.members?.find((member) => member.name === "STYLE");
     const members = style?.members?.map((member) => member.name);
-    expect(members).toEqual(["LINEAR", "QUAD", "CUBIC", "QUART", "QUINT", "SINE", "EXPO", "CIRC", "BACK", "ELASTIC", "BOUNCE"]);
+    expect(members).toEqual([
+      "LINEAR",
+      "QUAD",
+      "CUBIC",
+      "QUART",
+      "QUINT",
+      "SINE",
+      "EXPO",
+      "CIRC",
+      "BACK",
+      "ELASTIC",
+      "BOUNCE",
+    ]);
   });
 });
 
 describe("reference api: flow, events and bind", () => {
   test("covers the flow tags, events and bind entries", () => {
     const ids = api.map((entry) => entry.id);
-    for (const id of ["event", "bind", "bind-prop", "bind-element", "if", "elseif", "else", "each", "for", "preset"]) {
+    for (const id of [
+      "event",
+      "bind",
+      "bind-prop",
+      "bind-element",
+      "if",
+      "elseif",
+      "else",
+      "each",
+      "for",
+      "preset",
+    ]) {
       expect(ids).toContain(id);
     }
   });
@@ -80,7 +127,8 @@ describe("reference api: flow, events and bind", () => {
   });
 
   test("PRESET lists its members in upper case with underscores", () => {
-    const members = api.find((entry) => entry.name === "PRESET")?.members?.map((member) => member.name) ?? [];
+    const members =
+      api.find((entry) => entry.name === "PRESET")?.members?.map((member) => member.name) ?? [];
     expect(members).toContain("FADE");
     expect(members).toContain("SLIDE_UP");
     for (const name of members) expect(name).toMatch(/^[A-Z_]+$/);

@@ -34,7 +34,11 @@ function keepLineBreaks(text: string): string {
   return text.replace(/[^\n]/g, "");
 }
 
-function spanAt(source: string, index: number, file: string): { file: string; line: number; column: number } {
+function spanAt(
+  source: string,
+  index: number,
+  file: string,
+): { file: string; line: number; column: number } {
   return { file, line: lineAt(source, index), column: columnAt(source, index) };
 }
 
@@ -47,7 +51,14 @@ function readSection(source: string, start: number, file: string): SectionMatch 
   const closeTag = `</${kind}>`;
   const contentEnd = source.indexOf(closeTag, contentStart);
   if (contentEnd === -1) throw luciaError("L1001", { tag: kind }, spanAt(source, start, file));
-  return { kind, rawAttrs: open[2], start, contentStart, contentEnd, end: contentEnd + closeTag.length };
+  return {
+    kind,
+    rawAttrs: open[2],
+    start,
+    contentStart,
+    contentEnd,
+    end: contentEnd + closeTag.length,
+  };
 }
 
 // Sections are found only in markup text: `{...}` expressions and HTML comments are skipped.

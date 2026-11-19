@@ -20,7 +20,15 @@ let scheduled = false;
 
 /** Moves the group with the element's place on screen. One shared listener serves every scroll item. */
 export function watchScroll(el: Element, group: Group, scroll: ScrollRead): () => void {
-  const target: Tracked = { el, group, scroll, followed: null, stopFollow: undefined, last: NaN, next: NaN };
+  const target: Tracked = {
+    el,
+    group,
+    scroll,
+    followed: null,
+    stopFollow: undefined,
+    last: NaN,
+    next: NaN,
+  };
   if (scroll.follow) target.stopFollow = followStore(target, scroll.follow);
   tracked.add(target);
   if (tracked.size === 1) startListening();
@@ -64,7 +72,8 @@ function schedule(): void {
 function update(): void {
   scheduled = false;
   measured.clear();
-  for (const target of tracked) target.next = partProgress(targetProgress(target), target.scroll.part);
+  for (const target of tracked)
+    target.next = partProgress(targetProgress(target), target.scroll.part);
   for (const target of tracked) {
     if (target.next === target.last) continue;
     target.last = target.next;

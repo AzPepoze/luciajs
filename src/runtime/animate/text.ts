@@ -11,7 +11,8 @@ interface TextTemplate {
 }
 
 // A color or a word (checked as a color), or a number with an optional unit. Colors are normalized to rgba() first.
-const TOKEN = /(#[0-9a-f]{3,8}\b)|(\b(?:rgba?|hsla?)\([^)]*\))|(\b[a-z]+\b)|(-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)([a-z]+|%)?/gi;
+const TOKEN =
+  /(#[0-9a-f]{3,8}\b)|(\b(?:rgba?|hsla?)\([^)]*\))|(\b[a-z]+\b)|(-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)([a-z]+|%)?/gi;
 
 class TemplateBuilder {
   readonly template: TextTemplate = { literals: [""], numbers: [], units: [], rounded: [] };
@@ -55,14 +56,21 @@ function tokenize(text: string, probe: HTMLElement | undefined): TextTemplate {
   return builder.template;
 }
 
-function addColorOrText(builder: TemplateBuilder, token: string, probe: HTMLElement | undefined): void {
+function addColorOrText(
+  builder: TemplateBuilder,
+  token: string,
+  probe: HTMLElement | undefined,
+): void {
   const color = resolveColor(token, probe);
   if (color) builder.color(color);
   else builder.text(token);
 }
 
 function sameLiterals(a: TextTemplate, b: TextTemplate): boolean {
-  return a.literals.length === b.literals.length && a.literals.every((literal, i) => literal === b.literals[i]);
+  return (
+    a.literals.length === b.literals.length &&
+    a.literals.every((literal, i) => literal === b.literals[i])
+  );
 }
 
 /** Each number takes one unit. A bare 0 takes the unit of the other side, so `translateY(0)` tweens to `20px`. */
@@ -101,7 +109,10 @@ export function interpolateText(from: string, to: string, probe?: HTMLElement): 
   return (t) => {
     let out = start.literals[0]!;
     for (let i = 0; i < deltas.length; i++) {
-      out += formatNumber(start.numbers[i]! + deltas[i]! * t, start.rounded[i]!) + units[i]! + start.literals[i + 1];
+      out +=
+        formatNumber(start.numbers[i]! + deltas[i]! * t, start.rounded[i]!) +
+        units[i]! +
+        start.literals[i + 1];
     }
     return out;
   };

@@ -45,8 +45,13 @@ describe("runBuild", () => {
     await cp(FIXTURE, broken, { recursive: true });
     await mkdir(join(broken, "node_modules"));
     await symlink(REPO, join(broken, "node_modules", "lucia"), "dir");
-    await writeFile(join(broken, "src/Greeting.lucia"), "<script>export const value = 1;</script>\n<p>x</p>\n");
-    expect(await runBuild({ dir: broken, outdir: join(workRoot, "broken-dist"), minify: true })).toBe(1);
+    await writeFile(
+      join(broken, "src/Greeting.lucia"),
+      "<script>export const value = 1;</script>\n<p>x</p>\n",
+    );
+    expect(
+      await runBuild({ dir: broken, outdir: join(workRoot, "broken-dist"), minify: true }),
+    ).toBe(1);
   });
 
   test("refuses an output folder that holds the app", async () => {

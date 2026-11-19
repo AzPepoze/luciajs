@@ -35,5 +35,11 @@ function mountReference(root: HTMLElement, signal: AbortSignal): void {
 export const pageSpecs: PageSpec[] = [
   { path: "/", route: "home", title: "LuciaJS", component: Home, mount: mountHome },
   { path: "/guide", route: "guide", title: "Guide · LuciaJS", component: Guide, mount: mountGuide },
-  { path: "/reference", route: "reference", title: "Reference · LuciaJS", component: Reference, mount: mountReference },
+  {
+    path: "/reference",
+    route: "reference",
+    title: "Reference · LuciaJS",
+    component: Reference,
+    mount: mountReference,
+  },
 ];

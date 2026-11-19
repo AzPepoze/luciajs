@@ -16,7 +16,10 @@ export const ANSI = {
 } as const;
 
 /** Colors only in a terminal, and never when NO_COLOR is set. */
-export function colorEnabled(env: Record<string, string | undefined> = process.env, isTerminal = Boolean(process.stderr.isTTY)): boolean {
+export function colorEnabled(
+  env: Record<string, string | undefined> = process.env,
+  isTerminal = Boolean(process.stderr.isTTY),
+): boolean {
   return isTerminal && !env.NO_COLOR;
 }
 
@@ -49,7 +52,9 @@ function hslToRgb(hue: number, saturation: number, lightness: number): Rgb {
   const second = chroma * (1 - Math.abs(((hue / 60) % 2) - 1));
   const offset = lightness - chroma / 2;
   const [red, green, blue] = sectorChannels(hue, chroma, second);
-  return [red + offset, green + offset, blue + offset].map((channel) => Math.round(channel * 255)) as Rgb;
+  return [red + offset, green + offset, blue + offset].map((channel) =>
+    Math.round(channel * 255),
+  ) as Rgb;
 }
 
 function sectorChannels(hue: number, chroma: number, second: number): Rgb {

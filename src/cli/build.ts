@@ -36,7 +36,9 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const rows = await fileRows(outdir);
   process.stdout.write(`${formatReport(rows)}\n`);
   const elapsed = Math.round(performance.now() - started);
-  log.info(`built ${rows.length} files into ${relative(process.cwd(), outdir) || "."} in ${elapsed} ms`);
+  log.info(
+    `built ${rows.length} files into ${relative(process.cwd(), outdir) || "."} in ${elapsed} ms`,
+  );
   return 0;
 }
 

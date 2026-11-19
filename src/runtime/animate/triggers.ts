@@ -43,7 +43,9 @@ export function groupSlots(items: ItemOptions[], players: Player[], refresh: () 
 }
 
 function bucketFor(buckets: Bucket[], { when, once, control, more }: ItemOptions): Bucket {
-  const found = buckets.find((b) => b.when === when && b.once === once && b.control === control && sameMore(b.more, more));
+  const found = buckets.find(
+    (b) => b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
+  );
   if (found) return found;
   const bucket: Bucket = { when, once, control, more, players: [] };
   buckets.push(bucket);
@@ -51,7 +53,12 @@ function bucketFor(buckets: Bucket[], { when, once, control, more }: ItemOptions
 }
 
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
-export function bindTrigger(el: HTMLElement, { when, once, more, group }: Slot, cleanups: Cleanup[], leaves: Leave[]): void {
+export function bindTrigger(
+  el: HTMLElement,
+  { when, once, more, group }: Slot,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): void {
   if (isReactive(when)) bindSource(when, group, once, cleanups);
   else if (when === WHEN.ATTACH) void group.forward();
   else if (when === WHEN.DETACH) leaves.push(() => group.forward());
@@ -97,7 +104,13 @@ function bindSource(source: Source, group: Group, once: boolean, cleanups: Clean
   cleanups.push(stop);
 }
 
-function bindView(el: HTMLElement, view: ViewSettings, group: Group, once: boolean, cleanups: Cleanup[]): void {
+function bindView(
+  el: HTMLElement,
+  view: ViewSettings,
+  group: Group,
+  once: boolean,
+  cleanups: Cleanup[],
+): void {
   const stop = watchView(el, view, (inView, unwatch) => {
     if (inView) {
       if (once) unwatch();
@@ -108,4 +121,3 @@ function bindView(el: HTMLElement, view: ViewSettings, group: Group, once: boole
   });
   cleanups.push(stop);
 }
-

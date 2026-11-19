@@ -17,7 +17,13 @@ interface HoverState {
 }
 
 /** Mouse, keyboard and touch on WHEN.HOVER. Touch and keyboard use their own events. */
-export function bindHover(el: HTMLElement, group: Group, once: boolean, hover: HoverRead, cleanups: Cleanup[]): void {
+export function bindHover(
+  el: HTMLElement,
+  group: Group,
+  once: boolean,
+  hover: HoverRead,
+  cleanups: Cleanup[],
+): void {
   const state: HoverState = { inside: false, entered: false, pending: undefined, timer: undefined };
   const outPlayer = hover.out ? outPlayerFor(el, hover.out) : undefined;
   const cancel = (): void => cancelPending(state);
@@ -53,20 +59,40 @@ export function bindHover(el: HTMLElement, group: Group, once: boolean, hover: H
     if (playedIn && !once) after(state, hover.outDelay, "out", playOut);
   };
 
-  listen(el, "pointerenter", (event) => {
-    if (!isTouch(event)) enter();
-  }, cleanups);
-  listen(el, "pointerleave", (event) => {
-    if (!isTouch(event)) leave();
-  }, cleanups);
-  listen(el, "pointerdown", (event) => {
-    if (!isTouch(event)) return;
-    if (state.inside) leave();
-    else enter();
-  }, cleanups);
-  listen(document, "pointerdown", (event) => {
-    if (isTouch(event) && state.inside && !el.contains(event.target as Node)) leave();
-  }, cleanups);
+  listen(
+    el,
+    "pointerenter",
+    (event) => {
+      if (!isTouch(event)) enter();
+    },
+    cleanups,
+  );
+  listen(
+    el,
+    "pointerleave",
+    (event) => {
+      if (!isTouch(event)) leave();
+    },
+    cleanups,
+  );
+  listen(
+    el,
+    "pointerdown",
+    (event) => {
+      if (!isTouch(event)) return;
+      if (state.inside) leave();
+      else enter();
+    },
+    cleanups,
+  );
+  listen(
+    document,
+    "pointerdown",
+    (event) => {
+      if (isTouch(event) && state.inside && !el.contains(event.target as Node)) leave();
+    },
+    cleanups,
+  );
   listen(el, "focusin", enter, cleanups);
   listen(el, "focusout", leave, cleanups);
   cleanups.push(() => {
@@ -96,7 +122,13 @@ function isTouch(event: Event): boolean {
 }
 
 function outPlayerFor(el: HTMLElement, out: NonNullable<HoverRead["out"]>): Player {
-  const timing: Timing = { duration: out.duration, delay: 0, loop: undefined, keep: true, midway: DEFAULT_MIDWAY };
+  const timing: Timing = {
+    duration: out.duration,
+    delay: 0,
+    loop: undefined,
+    keep: true,
+    midway: DEFAULT_MIDWAY,
+  };
   const player = new Player(el.style);
   player.load(prepareTimeline(out.keyframes, el), timing);
   return player;

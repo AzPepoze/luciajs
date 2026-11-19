@@ -19,7 +19,11 @@ export function elementCheck(tag: string): AttrCheck {
   return (attr, previous, fail) => {
     checkAnimateAttribute(attr, previous, fail);
     if (isBindName(attr.name)) checkBind(tag, attr, fail);
-    else if (isEventName(attr.name) && hasExpression(attr.parts) && expressionOf(attr) === undefined) {
+    else if (
+      isEventName(attr.name) &&
+      hasExpression(attr.parts) &&
+      expressionOf(attr) === undefined
+    ) {
       fail("L1016", { attr: attr.name });
     }
   };

@@ -9,12 +9,21 @@ describe("animate attribute", () => {
     const { html, bindings } = compileTemplate("<div animate={frames}>Hi</div>", FILE);
     expect(html).toBe(`<div ${ELEMENT_MARKER}>Hi</div>`);
     expect(bindings).toEqual([
-      { kind: "element", attrs: [], events: [], binds: [], animate: { code: "frames", line: 1, column: 15 } },
+      {
+        kind: "element",
+        attrs: [],
+        events: [],
+        binds: [],
+        animate: { code: "frames", line: 1, column: 15 },
+      },
     ]);
   });
 
   test("other attributes next to animate are plain bindings on the same element", () => {
-    const { html, bindings } = compileTemplate("<div animate={frames} duration={400}>Hi</div>", FILE);
+    const { html, bindings } = compileTemplate(
+      "<div animate={frames} duration={400}>Hi</div>",
+      FILE,
+    );
     expect(html).toBe(`<div ${ELEMENT_MARKER}>Hi</div>`);
     expect(bindings).toEqual([
       {
@@ -67,7 +76,9 @@ describe("animate attribute", () => {
   });
 
   test("a static animate value is an error", () => {
-    expect(() => compileTemplate('<div animate="fade">x</div>', FILE)).toThrow("animate needs {keyframes}");
+    expect(() => compileTemplate('<div animate="fade">x</div>', FILE)).toThrow(
+      "animate needs {keyframes}",
+    );
   });
 
   test("two animate attributes on one element are an error", () => {
@@ -79,7 +90,11 @@ describe("animate attribute", () => {
   test("an animate on a component tag stays a prop", () => {
     const { bindings } = compileTemplate("<badge animate={a} />", FILE, 1, new Set(["badge"]));
     expect(bindings).toEqual([
-      { kind: "component", name: "badge", props: [{ name: "animate", parts: [{ code: "a", line: 1, column: 17 }] }] },
+      {
+        kind: "component",
+        name: "badge",
+        props: [{ name: "animate", parts: [{ code: "a", line: 1, column: 17 }] }],
+      },
     ]);
   });
 });

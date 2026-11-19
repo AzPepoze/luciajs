@@ -102,7 +102,9 @@
   border-radius: 28px;
   background: color-mix(in srgb, var(--tone) 14%, var(--card));
   box-shadow: var(--shadow);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 
   &--wide {
     grid-row: span 2;
@@ -111,7 +113,9 @@
 
   &:hover {
     border-color: var(--tone);
-    box-shadow: 0 0 28px color-mix(in srgb, var(--tone) 55%, transparent), var(--shadow);
+    box-shadow:
+      0 0 28px color-mix(in srgb, var(--tone) 55%, transparent),
+      var(--shadow);
   }
 
   h3 {
@@ -213,18 +217,34 @@
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1.1) rotate(15deg); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(15deg);
+  }
 }
 
 @keyframes morph {
-  0%, 100% { border-radius: 42% 58% 60% 40% / 45% 45% 55% 55%; }
-  50% { border-radius: 58% 42% 40% 60% / 55% 60% 40% 45%; }
+  0%,
+  100% {
+    border-radius: 42% 58% 60% 40% / 45% 45% 55% 55%;
+  }
+  50% {
+    border-radius: 58% 42% 40% 60% / 55% 60% 40% 45%;
+  }
 }
 
 @keyframes drift {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(60px, 40px) scale(1.12); }
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(60px, 40px) scale(1.12);
+  }
 }
 
 @media (max-width: 899px) {
@@ -269,4 +289,3 @@
     transition: none;
   }
 }
-

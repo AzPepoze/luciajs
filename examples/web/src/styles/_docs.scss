@@ -252,10 +252,18 @@
   font-variant-ligatures: none;
   text-decoration: none;
 
-  &[data-kind="function"] { background: color-mix(in srgb, var(--pink) 35%, transparent); }
-  &[data-kind="value"] { background: color-mix(in srgb, var(--mint) 40%, transparent); }
-  &[data-kind="markup"] { background: color-mix(in srgb, var(--sky) 40%, transparent); }
-  &[data-kind="expression"] { background: color-mix(in srgb, var(--lavender) 35%, transparent); }
+  &[data-kind="function"] {
+    background: color-mix(in srgb, var(--pink) 35%, transparent);
+  }
+  &[data-kind="value"] {
+    background: color-mix(in srgb, var(--mint) 40%, transparent);
+  }
+  &[data-kind="markup"] {
+    background: color-mix(in srgb, var(--sky) 40%, transparent);
+  }
+  &[data-kind="expression"] {
+    background: color-mix(in srgb, var(--lavender) 35%, transparent);
+  }
 
   &:is(a) {
     color: inherit;

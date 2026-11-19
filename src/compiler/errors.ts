@@ -15,7 +15,13 @@ export class LuciaError extends Error {
   readonly column: number | undefined;
   readonly length: number | undefined;
 
-  constructor(message: string, file?: string, line?: number, column?: number, details: LuciaErrorDetails = {}) {
+  constructor(
+    message: string,
+    file?: string,
+    line?: number,
+    column?: number,
+    details: LuciaErrorDetails = {},
+  ) {
     super(message);
     this.name = "LuciaError";
     this.code = details.code;

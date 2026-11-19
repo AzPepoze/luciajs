@@ -18,6 +18,8 @@ describe("runtime errors", () => {
   test("the location ends with the scope and keeps colons in the file name", () => {
     withWhere("C:/app/Card.lucia:1:2", () => undefined);
     expect(runtimeError("L2042").file).toBeUndefined();
-    expect(withWhere("C:/app/Card.lucia:1:2", () => runtimeError("L2042")).file).toBe("C:/app/Card.lucia");
+    expect(withWhere("C:/app/Card.lucia:1:2", () => runtimeError("L2042")).file).toBe(
+      "C:/app/Card.lucia",
+    );
   });
 });

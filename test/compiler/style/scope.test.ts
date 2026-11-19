@@ -28,14 +28,20 @@ describe("inline :global()", () => {
   });
 
   test(":global(.dark) .title keeps the subject scoped", () => {
-    expect(scopeCss(":global(.dark) .title { color: red; }", ID, "tree")).toContain(`.dark .title${TREE} {`);
+    expect(scopeCss(":global(.dark) .title { color: red; }", ID, "tree")).toContain(
+      `.dark .title${TREE} {`,
+    );
   });
 
   test("nested parens inside :global() are unwrapped", () => {
-    expect(scopeCss(":global(a:is(.x, .y)) { color: red; }", ID, "tree")).toContain("a:is(.x, .y) {");
+    expect(scopeCss(":global(a:is(.x, .y)) { color: red; }", ID, "tree")).toContain(
+      "a:is(.x, .y) {",
+    );
   });
 
   test("nested parens inside :global() keep the scoped part", () => {
-    expect(scopeCss(":global(a:is(.x, .y)) .t { color: red; }", ID, "tree")).toContain(`a:is(.x, .y) .t${TREE} {`);
+    expect(scopeCss(":global(a:is(.x, .y)) .t { color: red; }", ID, "tree")).toContain(
+      `a:is(.x, .y) .t${TREE} {`,
+    );
   });
 });

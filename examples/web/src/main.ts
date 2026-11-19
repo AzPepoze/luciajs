@@ -38,6 +38,7 @@ function wait(ms: number): Promise<void> {
 // Full screen sections subtract the real topbar height, which changes on narrow screens.
 function trackTopbarHeight(): void {
   const topbar = document.querySelector<HTMLElement>(".topbar")!;
-  const update = () => document.documentElement.style.setProperty("--topbar-h", `${topbar.offsetHeight}px`);
+  const update = () =>
+    document.documentElement.style.setProperty("--topbar-h", `${topbar.offsetHeight}px`);
   new ResizeObserver(update).observe(topbar);
 }

@@ -8,4 +8,13 @@ import * as styles from "./styles/main.ts";
 import * as updates from "./updates/main.ts";
 
 // Each scenario folder exports run(); add a new one here.
-export const scenarios = [attach.run, updates.run, expressions.run, styles.run, components.run, animate.run, each.run, flow.run];
+export const scenarios = [
+  attach.run,
+  updates.run,
+  expressions.run,
+  styles.run,
+  components.run,
+  animate.run,
+  each.run,
+  flow.run,
+];

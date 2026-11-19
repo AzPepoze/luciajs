@@ -2,8 +2,12 @@
 <html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
+    <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="LuciaJS: a Bun-native UI framework with single-file components, stores and scoped SCSS." />
+    <meta
+      name="description"
+      content="LuciaJS: a Bun-native UI framework with single-file components, stores and scoped SCSS."
+    />
     <title>LuciaJS</title>
     <link
       rel="icon"
@@ -22,26 +26,90 @@
     />
     <style>
       /* First paint only: main.ts swaps this for the Loader component. Keep the colors in sync with _theme.scss. */
-      html { scrollbar-gutter: stable; }
-      html.is-loading { overflow: hidden; }
-      .loader-static { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #fdfaff; color: #3a2e4a; font-family: "M PLUS Rounded 1c", system-ui, sans-serif; }
-      html[data-theme="dark"] .loader-static { background: #0b0b0b; color: #f2f2f2; }
-      .loader-static .loader-inner { display: grid; justify-items: center; gap: 0.9rem; }
-      .loader-static .mark { width: 5rem; height: 5rem; animation: loader-mark 700ms ease-in-out infinite alternate; }
-      .loader-static .name { margin: 0; font-size: 1.4rem; font-weight: 800; }
-      .loader-static .dots { display: flex; gap: 0.45rem; }
-      .loader-static .dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; animation: loader-dot 500ms ease-in-out infinite alternate; }
-      .loader-static .dot:nth-child(2) { animation-delay: 120ms; }
-      .loader-static .dot:nth-child(3) { animation-delay: 240ms; }
-      .loader-static .dot:nth-child(1) { background: #ffb7d5; }
-      .loader-static .dot:nth-child(2) { background: #c9b6ff; }
-      .loader-static .dot:nth-child(3) { background: #aef0d8; }
-      html[data-theme="dark"] .loader-static .dot:nth-child(1) { background: #ff8fc7; }
-      html[data-theme="dark"] .loader-static .dot:nth-child(2) { background: #b9a4ff; }
-      html[data-theme="dark"] .loader-static .dot:nth-child(3) { background: #7ef0c8; }
-      @keyframes loader-mark { to { transform: translateY(-10px) rotate(6deg); } }
-      @keyframes loader-dot { to { transform: translateY(-8px); } }
-      @media (prefers-reduced-motion: reduce) { .loader-static * { animation: none !important; } }
+      html {
+        scrollbar-gutter: stable;
+      }
+      html.is-loading {
+        overflow: hidden;
+      }
+      .loader-static {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        place-items: center;
+        background: #fdfaff;
+        color: #3a2e4a;
+        font-family: "M PLUS Rounded 1c", system-ui, sans-serif;
+      }
+      html[data-theme="dark"] .loader-static {
+        background: #0b0b0b;
+        color: #f2f2f2;
+      }
+      .loader-static .loader-inner {
+        display: grid;
+        justify-items: center;
+        gap: 0.9rem;
+      }
+      .loader-static .mark {
+        width: 5rem;
+        height: 5rem;
+        animation: loader-mark 700ms ease-in-out infinite alternate;
+      }
+      .loader-static .name {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 800;
+      }
+      .loader-static .dots {
+        display: flex;
+        gap: 0.45rem;
+      }
+      .loader-static .dot {
+        width: 0.55rem;
+        height: 0.55rem;
+        border-radius: 50%;
+        animation: loader-dot 500ms ease-in-out infinite alternate;
+      }
+      .loader-static .dot:nth-child(2) {
+        animation-delay: 120ms;
+      }
+      .loader-static .dot:nth-child(3) {
+        animation-delay: 240ms;
+      }
+      .loader-static .dot:nth-child(1) {
+        background: #ffb7d5;
+      }
+      .loader-static .dot:nth-child(2) {
+        background: #c9b6ff;
+      }
+      .loader-static .dot:nth-child(3) {
+        background: #aef0d8;
+      }
+      html[data-theme="dark"] .loader-static .dot:nth-child(1) {
+        background: #ff8fc7;
+      }
+      html[data-theme="dark"] .loader-static .dot:nth-child(2) {
+        background: #b9a4ff;
+      }
+      html[data-theme="dark"] .loader-static .dot:nth-child(3) {
+        background: #7ef0c8;
+      }
+      @keyframes loader-mark {
+        to {
+          transform: translateY(-10px) rotate(6deg);
+        }
+      }
+      @keyframes loader-dot {
+        to {
+          transform: translateY(-8px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .loader-static * {
+          animation: none !important;
+        }
+      }
     </style>
     <script>
       // Runs before first paint: sets the theme, marks JS as on and locks the page scroll until the app is ready.
@@ -65,14 +133,29 @@
           <circle cx="30" cy="27" r="2.2" fill="currentColor" />
           <circle cx="13" cy="33" r="2.6" fill="#c9b6ff" />
           <circle cx="35" cy="33" r="2.6" fill="#c9b6ff" />
-          <path d="M21 33 Q24 36 27 33" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+          <path
+            d="M21 33 Q24 36 27 33"
+            stroke="currentColor"
+            stroke-width="1.6"
+            fill="none"
+            stroke-linecap="round"
+          />
         </svg>
         <p class="name">LuciaJS</p>
-        <div class="dots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+        <div class="dots" aria-hidden="true">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
       </div>
     </div>
     <header class="topbar">
-      <button class="icon-button menu-button" id="menu" type="button" aria-label="Open the docs menu" aria-controls="sidebar" aria-expanded="false">
+      <button
+        class="icon-button menu-button"
+        id="menu"
+        type="button"
+        aria-label="Open the docs menu"
+        aria-controls="sidebar"
+        aria-expanded="false"
+      >
         <span class="material-symbols-rounded" aria-hidden="true">menu</span>
       </button>
       <a class="brand" href="/">
@@ -84,7 +167,13 @@
           <circle cx="30" cy="27" r="2.2" fill="var(--fg)" />
           <circle cx="13" cy="33" r="2.6" fill="var(--lavender)" />
           <circle cx="35" cy="33" r="2.6" fill="var(--lavender)" />
-          <path d="M21 33 Q24 36 27 33" stroke="var(--fg)" stroke-width="1.6" fill="none" stroke-linecap="round" />
+          <path
+            d="M21 33 Q24 36 27 33"
+            stroke="var(--fg)"
+            stroke-width="1.6"
+            fill="none"
+            stroke-linecap="round"
+          />
         </svg>
         LuciaJS
       </a>
@@ -95,7 +184,13 @@
       </nav>
       <div class="search">
         <span class="material-symbols-rounded" aria-hidden="true">search</span>
-        <input id="search" type="search" placeholder="Search the docs" aria-label="Search the docs" autocomplete="off" />
+        <input
+          id="search"
+          type="search"
+          placeholder="Search the docs"
+          aria-label="Search the docs"
+          autocomplete="off"
+        />
       </div>
       <div class="topbar-actions">
         <div id="theme-slot"></div>

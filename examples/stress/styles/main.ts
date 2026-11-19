@@ -19,9 +19,18 @@ export async function run(): Promise<Result[]> {
   const childStyle = getComputedStyle(childMark);
 
   const results: Result[] = [
-    { name: "Tree rule reaches child component", value: passFail(childStyle.outlineStyle === "solid") },
-    { name: "Scoped rule stops at child component", value: passFail(childStyle.backgroundColor !== parentBackground) },
-    { name: "Scoped rule styles parent's own element", value: passFail(parentBackground === SCOPED_BACKGROUND) },
+    {
+      name: "Tree rule reaches child component",
+      value: passFail(childStyle.outlineStyle === "solid"),
+    },
+    {
+      name: "Scoped rule stops at child component",
+      value: passFail(childStyle.backgroundColor !== parentBackground),
+    },
+    {
+      name: "Scoped rule styles parent's own element",
+      value: passFail(parentBackground === SCOPED_BACKGROUND),
+    },
   ];
 
   instance.detach();

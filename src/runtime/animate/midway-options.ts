@@ -1,6 +1,13 @@
 import type { EaseStyle } from "./easing.ts";
 import { EASE, isEase, type Ease } from "./modes.ts";
-import { isMidwayMode, isTurnMode, MIDWAY, TURN, type MidwayMode, type TurnMode } from "./midway-modes.ts";
+import {
+  isMidwayMode,
+  isTurnMode,
+  MIDWAY,
+  TURN,
+  type MidwayMode,
+  type TurnMode,
+} from "./midway-modes.ts";
 import type { TurnFn } from "./turn.ts";
 import { runtimeError } from "../errors.ts";
 

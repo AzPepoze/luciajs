@@ -85,7 +85,10 @@ describe("startDev", () => {
     expect((await get(new URL("/missing.js", base))).status).toBe(404);
 
     const component = join(dir, "src/Greeting.lucia");
-    await writeFile(component, (await readFile(component, "utf8")).replace("Hello from the fixture", "Edited in dev"));
+    await writeFile(
+      component,
+      (await readFile(component, "utf8")).replace("Hello from the fixture", "Edited in dev"),
+    );
     await waitForBundle(base, "Edited in dev");
   });
 });

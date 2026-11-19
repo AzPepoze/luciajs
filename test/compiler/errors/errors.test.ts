@@ -25,7 +25,11 @@ describe("fill", () => {
 
 describe("luciaError", () => {
   test("returns a LuciaError with the code, filled message and hint, and the span", () => {
-    const error = luciaError("L1004", { name: "IF" }, { file: "Card.lucia", line: 2, column: 1, length: 3 });
+    const error = luciaError(
+      "L1004",
+      { name: "IF" },
+      { file: "Card.lucia", line: 2, column: 1, length: 3 },
+    );
     expect(error).toBeInstanceOf(LuciaError);
     expect(error.code).toBe("L1004");
     expect(error.message).toBe("IF is a reserved tag name and cannot be a component");

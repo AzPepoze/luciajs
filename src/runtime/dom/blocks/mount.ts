@@ -9,7 +9,12 @@ export interface Mount {
   readonly leaves: Leave[];
 }
 
-export function mountBefore(anchor: Node, fragment: DocumentFragment, cleanups: Cleanup[], leaves: Leave[]): Mount {
+export function mountBefore(
+  anchor: Node,
+  fragment: DocumentFragment,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): Mount {
   const start = document.createComment("");
   const end = document.createComment("");
   fragment.prepend(start);
@@ -20,7 +25,7 @@ export function mountBefore(anchor: Node, fragment: DocumentFragment, cleanups: 
 
 export function moveBefore(mount: Mount, anchor: Node): void {
   const parent = anchor.parentNode!;
-  for (let node: Node | null = mount.start; node; ) {
+  for (let node: Node | null = mount.start; node;) {
     const next: Node | null = node === mount.end ? null : node.nextSibling;
     parent.insertBefore(node, anchor);
     node = next;
@@ -28,7 +33,7 @@ export function moveBefore(mount: Mount, anchor: Node): void {
 }
 
 function removeNodes(mount: Mount): void {
-  for (let node: Node | null = mount.start; node; ) {
+  for (let node: Node | null = mount.start; node;) {
     const next: Node | null = node === mount.end ? null : node.nextSibling;
     (node as ChildNode).remove();
     node = next;

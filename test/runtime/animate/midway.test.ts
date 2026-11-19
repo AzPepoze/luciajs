@@ -25,13 +25,18 @@ const fade: Keyframes = {
 function playerWith(midway: AnimateMidway | undefined, duration = 100) {
   const el = document.createElement("div");
   const player = new Player(el.style);
-  player.load(prepareTimeline(fade, el), { duration, delay: 0, loop: undefined, keep: true, midway: readMidway(midway) });
+  player.load(prepareTimeline(fade, el), {
+    duration,
+    delay: 0,
+    loop: undefined,
+    keep: true,
+    midway: readMidway(midway),
+  });
   onReset(() => player.cancel());
   return { el, player, opacity: () => Number(el.style.opacity) };
 }
 
 describe("MIDWAY on a player", () => {
-
   test("TURN (default) switches at once from the current progress", () => {
     const { player, opacity } = playerWith(undefined);
     void player.forward();
@@ -175,7 +180,7 @@ describe("TURN modes", () => {
   test("SMOOTH keeps the position and the velocity at the switch", () => {
     const { before, after, beforeSpeed } = sampleSwitch({ turn: TURN.SMOOTH, turnDuration: 200 });
     expect(after[0]).toBeCloseTo(before, 6);
-    const velocityAtSwitch = (after[1]! - after[0]!);
+    const velocityAtSwitch = after[1]! - after[0]!;
     expect(Math.abs(velocityAtSwitch - beforeSpeed)).toBeLessThan(0.002);
   });
 
@@ -222,38 +227,56 @@ describe("TURN modes", () => {
 
 describe("renamed names", () => {
   test("an item with curve or transition throws: they moved into the keyframes", () => {
-    expect(() => readItem({ style: fade, transition: EASE.STYLE.QUART } as never)).toThrow("curve/transition moved into the keyframes: default: [EASE.STYLE.X, EASE.Y]");
-    expect(() => readItem({ style: fade, curve: EASE.STYLE.QUART } as never)).toThrow("curve/transition moved into the keyframes");
+    expect(() => readItem({ style: fade, transition: EASE.STYLE.QUART } as never)).toThrow(
+      "curve/transition moved into the keyframes: default: [EASE.STYLE.X, EASE.Y]",
+    );
+    expect(() => readItem({ style: fade, curve: EASE.STYLE.QUART } as never)).toThrow(
+      "curve/transition moved into the keyframes",
+    );
   });
 
   test("an item with ease throws: it moved into the keyframes", () => {
-    expect(() => readItem({ style: fade, ease: EASE.IN } as never)).toThrow("ease moved into the keyframes: default: [...]");
+    expect(() => readItem({ style: fade, ease: EASE.IN } as never)).toThrow(
+      "ease moved into the keyframes: default: [...]",
+    );
   });
 });
 
 describe("midway validation", () => {
   test("an unknown key names the allowed keys", () => {
-    expect(() => readMidway({ speed: 1 } as never)).toThrow("midway has an unknown key \"speed\", use play, turn, turnDuration, turnStyle or turnEase");
+    expect(() => readMidway({ speed: 1 } as never)).toThrow(
+      'midway has an unknown key "speed", use play, turn, turnDuration, turnStyle or turnEase',
+    );
   });
 
   test("play must be a MIDWAY member", () => {
-    expect(() => readMidway({ play: "FINISH" } as never)).toThrow("midway.play must be a MIDWAY member");
+    expect(() => readMidway({ play: "FINISH" } as never)).toThrow(
+      "midway.play must be a MIDWAY member",
+    );
   });
 
   test("turn must be a TURN member or a function", () => {
-    expect(() => readMidway({ turn: "SMOOTH" } as never)).toThrow("midway.turn must be a TURN member");
+    expect(() => readMidway({ turn: "SMOOTH" } as never)).toThrow(
+      "midway.turn must be a TURN member",
+    );
   });
 
   test("turnDuration must be a non-negative number of ms", () => {
-    expect(() => readMidway({ turnDuration: -1 })).toThrow("midway.turnDuration must be a time in ms, got -1");
+    expect(() => readMidway({ turnDuration: -1 })).toThrow(
+      "midway.turnDuration must be a time in ms, got -1",
+    );
   });
 
   test("turnStyle must be an EASE.STYLE member", () => {
-    expect(() => readMidway({ turnStyle: "QUART" } as never)).toThrow("midway.turnStyle must be an EASE.STYLE member");
+    expect(() => readMidway({ turnStyle: "QUART" } as never)).toThrow(
+      "midway.turnStyle must be an EASE.STYLE member",
+    );
   });
 
   test("turnEase must be an EASE member", () => {
-    expect(() => readMidway({ turnEase: EASE.STYLE.QUART } as never)).toThrow("midway.turnEase must be an EASE member");
+    expect(() => readMidway({ turnEase: EASE.STYLE.QUART } as never)).toThrow(
+      "midway.turnEase must be an EASE member",
+    );
   });
 
   test("a bare value that is not a MIDWAY member is rejected", () => {

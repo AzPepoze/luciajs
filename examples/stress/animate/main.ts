@@ -17,7 +17,9 @@ export function wait(ms: number): Promise<void> {
 }
 
 function countAtEnd(target: Element): number {
-  return [...target.querySelectorAll<HTMLElement>("li")].filter((item) => item.style.opacity === "1").length;
+  return [...target.querySelectorAll<HTMLElement>("li")].filter(
+    (item) => item.style.opacity === "1",
+  ).length;
 }
 
 export async function run(): Promise<Result[]> {

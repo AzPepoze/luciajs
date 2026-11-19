@@ -23,7 +23,13 @@ function defaultLuciaImport(statement: string, specifier: string): string | unde
 }
 
 /** An error at `offset` inside the script section, reported with the file position. */
-function scriptError(script: Section, offset: number, file: string, code: ErrorCodeName, values?: Values) {
+function scriptError(
+  script: Section,
+  offset: number,
+  file: string,
+  code: ErrorCodeName,
+  values?: Values,
+) {
   const line = script.line - 1 + lineAt(script.content, offset);
   return luciaError(code, values, { file, line, column: columnAt(script.content, offset) });
 }
@@ -41,12 +47,16 @@ export function splitImports(section: Section | null, file: string): SplitScript
   const script = section.content;
   const imports: string[] = [];
   const components = new Set<string>();
-  const body = script.replace(IMPORT_STATEMENT, (statement, _quote, specifier: string, offset: number) => {
-    imports.push(statement.trim());
-    const name = defaultLuciaImport(statement, specifier);
-    if (name && RESERVED_TAGS.has(name)) throw scriptError(section, offset, file, "L1004", { name });
-    if (name) components.add(name);
-    return "";
-  });
+  const body = script.replace(
+    IMPORT_STATEMENT,
+    (statement, _quote, specifier: string, offset: number) => {
+      imports.push(statement.trim());
+      const name = defaultLuciaImport(statement, specifier);
+      if (name && RESERVED_TAGS.has(name))
+        throw scriptError(section, offset, file, "L1004", { name });
+      if (name) components.add(name);
+      return "";
+    },
+  );
   return { imports: imports.join("\n"), body, components };
 }

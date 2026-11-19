@@ -9,7 +9,6 @@ import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();
 
-
 const fade: Keyframes = {
   0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
   1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
@@ -92,7 +91,12 @@ describe("controller", () => {
     const ctl = controller();
     const el = document.createElement("div");
     const cleanups: Array<() => void> = [];
-    animate(el, () => ({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 }), cleanups, []);
+    animate(
+      el,
+      () => ({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 }),
+      cleanups,
+      [],
+    );
     for (const cleanup of cleanups) cleanup();
     await ctl.play();
     expect(el.style.opacity).toBe("0");

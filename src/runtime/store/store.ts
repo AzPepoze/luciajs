@@ -1,4 +1,12 @@
-import { batch, clearSources, propagate, track, withObserver, type Observer, type Source } from "./graph.ts";
+import {
+  batch,
+  clearSources,
+  propagate,
+  track,
+  withObserver,
+  type Observer,
+  type Source,
+} from "./graph.ts";
 import { onUpdate } from "./update.ts";
 
 const REACTIVE: unique symbol = Symbol("lucia.reactive");

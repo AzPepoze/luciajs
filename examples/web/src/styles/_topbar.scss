@@ -13,7 +13,10 @@
   background: var(--topbar);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    backdrop-filter 200ms ease;
 
   // Over the hero and features, once content can pass under the bar: frosted, with no border.
   &.is-frosted {

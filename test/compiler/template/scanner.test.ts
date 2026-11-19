@@ -32,11 +32,16 @@ describe("compileTemplate", () => {
 
   test("braces and quotes inside expressions are skipped", () => {
     const { bindings } = compileTemplate("<p>{ { a: '}' }.a + `}` }</p>", FILE);
-    expect(bindings).toEqual([{ kind: "text", expr: { code: "{ a: '}' }.a + `}`", line: 1, column: 6 } }]);
+    expect(bindings).toEqual([
+      { kind: "text", expr: { code: "{ a: '}' }.a + `}`", line: 1, column: 6 } },
+    ]);
   });
 
   test("attribute expressions mark the element and keep static attributes", () => {
-    const { html, bindings } = compileTemplate('<a href="/x" class="btn {kind}" title={label} hidden>go</a>', FILE);
+    const { html, bindings } = compileTemplate(
+      '<a href="/x" class="btn {kind}" title={label} hidden>go</a>',
+      FILE,
+    );
     expect(html).toBe(`<a href="/x" hidden ${ELEMENT_MARKER}>go</a>`);
     expect(bindings).toEqual([
       {
@@ -76,7 +81,12 @@ describe("compileTemplate", () => {
 
 describe("compileTemplate component tags", () => {
   test("self-closing tag becomes a component marker with props", () => {
-    const { html, bindings } = compileTemplate('<badge title={name} label="New" flag />', FILE, 1, COMPONENTS);
+    const { html, bindings } = compileTemplate(
+      '<badge title={name} label="New" flag />',
+      FILE,
+      1,
+      COMPONENTS,
+    );
     expect(html).toBe(TEXT);
     expect(bindings).toEqual([
       {
@@ -92,13 +102,22 @@ describe("compileTemplate component tags", () => {
   });
 
   test("tag with an empty close pair is a component", () => {
-    const { html, bindings } = compileTemplate('<p><badge label="x"></badge></p>', FILE, 1, COMPONENTS);
+    const { html, bindings } = compileTemplate(
+      '<p><badge label="x"></badge></p>',
+      FILE,
+      1,
+      COMPONENTS,
+    );
     expect(html).toBe(`<p>${TEXT}</p>`);
-    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [{ name: "label", parts: ["x"] }] }]);
+    expect(bindings).toEqual([
+      { kind: "component", name: "badge", props: [{ name: "label", parts: ["x"] }] },
+    ]);
   });
 
   test("child content between open and close is an error", () => {
-    const error = catchError(() => compileTemplate("<p>\n  <badge>hi</badge></p>", FILE, 1, COMPONENTS));
+    const error = catchError(() =>
+      compileTemplate("<p>\n  <badge>hi</badge></p>", FILE, 1, COMPONENTS),
+    );
     expect(error.code).toBe("L1009");
     expect(error.message).toBe("<badge> cannot have child content yet");
     expect(error.hint).toBe("Write <badge /> with nothing between the tags.");

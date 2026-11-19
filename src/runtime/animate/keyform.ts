@@ -26,7 +26,11 @@ export function readDefault(value: DefaultEasing | undefined): PartialEasing {
 }
 
 /** Resolves one key per part: the key first, then the keyframes `default`, then the engine default. */
-export function readKey(value: KeyframeValue, fromKeyframes: PartialEasing, engine: Required<PartialEasing>): Keyframe {
+export function readKey(
+  value: KeyframeValue,
+  fromKeyframes: PartialEasing,
+  engine: Required<PartialEasing>,
+): Keyframe {
   const own = readParts(value);
   return [
     own.easeStyle ?? fromKeyframes.easeStyle ?? engine.easeStyle,
@@ -41,7 +45,12 @@ interface KeyParts extends PartialEasing {
 
 function readParts(value: KeyframeValue): KeyParts {
   if (!Array.isArray(value)) return { style: checkStyle(value) };
-  if (value.length === 3) return { easeStyle: checkEaseStyle(value[0]), ease: checkEase(value[1]), style: checkStyle(value[2]) };
+  if (value.length === 3)
+    return {
+      easeStyle: checkEaseStyle(value[0]),
+      ease: checkEase(value[1]),
+      style: checkStyle(value[2]),
+    };
   if (value.length === 2) return readPair(value);
   throw runtimeError("L2033");
 }
@@ -53,7 +62,8 @@ function readPair([first, style]: [EaseStyle | Ease, Style]): KeyParts {
 }
 
 function checkStyle(value: unknown): Style {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) throw runtimeError("L2033");
+  if (typeof value !== "object" || value === null || Array.isArray(value))
+    throw runtimeError("L2033");
   return value as Style;
 }
 

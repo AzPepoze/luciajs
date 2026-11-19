@@ -70,9 +70,9 @@ describe("prepareTimeline", () => {
   });
 
   test("keys outside 0..1 are an error", () => {
-    expect(() => prepare({ 0: [LINEAR, IN, {}], 1.5: [LINEAR, IN, {}], 1: [LINEAR, IN, {}] })).toThrow(
-      "animate keyframe 1.5 is outside 0..1",
-    );
+    expect(() =>
+      prepare({ 0: [LINEAR, IN, {}], 1.5: [LINEAR, IN, {}], 1: [LINEAR, IN, {}] }),
+    ).toThrow("animate keyframe 1.5 is outside 0..1");
   });
 
   test("a key listed twice is an error", () => {

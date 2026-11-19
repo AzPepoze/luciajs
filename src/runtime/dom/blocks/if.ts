@@ -31,7 +31,12 @@ function mountBranch(outlet: Outlet, marker: Comment, branch: IfBranch): Mount {
 }
 
 /** Shows one branch at a time. The old branch plays its leave animations while the new one is inserted. */
-export function bindIf(marker: Comment, branches: IfBranch[], cleanups: Cleanup[], leaves: Leave[]): void {
+export function bindIf(
+  marker: Comment,
+  branches: IfBranch[],
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): void {
   const outlet = new Outlet(leaves);
   let active: Mount | undefined;
   let activeIndex = -1;

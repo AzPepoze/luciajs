@@ -23,7 +23,8 @@ export function eachBinder(binding: EachBinding, ctx: GenContext): string {
   const item = binding.item ?? DEFAULT_ITEM;
   const index = binding.index ?? DEFAULT_INDEX;
   const render = ctx.body(binding.body, `${item}, ${index}, __cleanups, __leaves`);
-  const key = binding.key === undefined ? "" : `key: (${item}, ${index}) => (${markedCode(binding.key)}), `;
+  const key =
+    binding.key === undefined ? "" : `key: (${item}, ${index}) => (${markedCode(binding.key)}), `;
   const where = ctx.whereOf(binding.key ?? binding.list);
   const whereField = where === undefined ? "" : `where: ${where}, `;
   const indexed = binding.index !== undefined;

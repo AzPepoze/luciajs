@@ -36,7 +36,9 @@ describe("--routes", () => {
 
   test("build writes a copy of index.html for each route", async () => {
     const outdir = join(workRoot, "dist");
-    expect(await runBuild({ dir: FIXTURE, outdir, minify: true, routes: ["/guide", "/reference/api"] })).toBe(0);
+    expect(
+      await runBuild({ dir: FIXTURE, outdir, minify: true, routes: ["/guide", "/reference/api"] }),
+    ).toBe(0);
     const root = await readFile(join(outdir, "index.html"), "utf8");
     expect(await readFile(join(outdir, "guide", "index.html"), "utf8")).toBe(root);
     expect(await readFile(join(outdir, "reference", "api", "index.html"), "utf8")).toBe(root);

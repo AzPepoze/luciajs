@@ -2,7 +2,13 @@ import { isReactive } from "../store/store.ts";
 import type { ReadStore } from "../store/store.ts";
 import type { Keyframes } from "./keyframes.ts";
 import { WHEN, isWhen, type When, type Source } from "./trigger.ts";
-import { DEFAULT_VIEW, readViewMore, sameView, type ViewMore, type ViewSettings } from "./view-options.ts";
+import {
+  DEFAULT_VIEW,
+  readViewMore,
+  sameView,
+  type ViewMore,
+  type ViewSettings,
+} from "./view-options.ts";
 import { runtimeError } from "../errors.ts";
 
 /** The `more` options of WHEN.HOVER. Times are in ms. `out` replaces the play back for leaving. */
@@ -59,7 +65,12 @@ export interface ReadMore {
 
 const DEFAULT_SCROLL: ScrollRead = { range: { start: 0, end: 1 }, part: [0, 1], follow: undefined };
 const DEFAULT_HOVER: HoverRead = { inDelay: 0, outDelay: 0, out: undefined };
-const DEFAULT_MORE: ReadMore = { view: DEFAULT_VIEW, reverse: false, hover: DEFAULT_HOVER, scroll: DEFAULT_SCROLL };
+const DEFAULT_MORE: ReadMore = {
+  view: DEFAULT_VIEW,
+  reverse: false,
+  hover: DEFAULT_HOVER,
+  scroll: DEFAULT_SCROLL,
+};
 
 const VIEW_KEYS = ["margin", "amount", "reverse"];
 const HOVER_KEYS = ["inDelay", "outDelay", "out", "outDuration"];
@@ -67,19 +78,32 @@ const SCROLL_KEYS = ["start", "end", "follow", "part"];
 
 export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
   if (more === undefined) return DEFAULT_MORE;
-  if (when === WHEN.VIEW) return { ...DEFAULT_MORE, ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
-  if (when === WHEN.HOVER) return { ...DEFAULT_MORE, hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
-  if (when === WHEN.SCROLL) return { ...DEFAULT_MORE, scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
+  if (when === WHEN.VIEW)
+    return { ...DEFAULT_MORE, ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
+  if (when === WHEN.HOVER)
+    return { ...DEFAULT_MORE, hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
+  if (when === WHEN.SCROLL)
+    return { ...DEFAULT_MORE, scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
   throw runtimeError("L2010", { when: whenName(when) });
 }
 
 /** True when two items can share one trigger: the same settings for every field their trigger reads. */
 export function sameMore(a: ReadMore, b: ReadMore): boolean {
-  return sameView(a.view, b.view) && a.reverse === b.reverse && sameHover(a.hover, b.hover) && sameScroll(a.scroll, b.scroll);
+  return (
+    sameView(a.view, b.view) &&
+    a.reverse === b.reverse &&
+    sameHover(a.hover, b.hover) &&
+    sameScroll(a.scroll, b.scroll)
+  );
 }
 
 function sameHover(a: HoverRead, b: HoverRead): boolean {
-  return a.inDelay === b.inDelay && a.outDelay === b.outDelay && a.out?.keyframes === b.out?.keyframes && a.out?.duration === b.out?.duration;
+  return (
+    a.inDelay === b.inDelay &&
+    a.outDelay === b.outDelay &&
+    a.out?.keyframes === b.out?.keyframes &&
+    a.out?.duration === b.out?.duration
+  );
 }
 
 function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
@@ -130,7 +154,8 @@ function readOut({ out, outDuration }: HoverMore, base: MoreBase): NonNullable<H
 
 function readMs(value: number | undefined, name: string, fallback = 0): number {
   if (value === undefined) return fallback;
-  if (!Number.isFinite(value) || value < 0) throw runtimeError("L2003", { name: `more ${name}`, value: String(value) });
+  if (!Number.isFinite(value) || value < 0)
+    throw runtimeError("L2003", { name: `more ${name}`, value: String(value) });
   return value;
 }
 
@@ -145,7 +170,8 @@ function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead {
 }
 
 function readRange(start: number, end: number): ScrollRange {
-  if (!Number.isFinite(start) || !Number.isFinite(end)) throw runtimeError("L2017", { start: String(start), end: String(end) });
+  if (!Number.isFinite(start) || !Number.isFinite(end))
+    throw runtimeError("L2017", { start: String(start), end: String(end) });
   if (start === end) throw runtimeError("L2018");
   return { start, end };
 }

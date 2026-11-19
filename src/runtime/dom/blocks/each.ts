@@ -108,14 +108,24 @@ class EachBlock {
     const leaves: Leave[] = [];
     const indexStore = this.spec.indexed ? store(index) : undefined;
     const fragment = this.spec.render(item, indexStore, cleanups, leaves);
-    const row: Row = { ...mountBefore(anchor, fragment, cleanups, leaves), item, key, index: indexStore };
+    const row: Row = {
+      ...mountBefore(anchor, fragment, cleanups, leaves),
+      item,
+      key,
+      index: indexStore,
+    };
     this.outlet.track(row);
     return row;
   }
 }
 
 /** Renders one row per item. The list is read in a watch, so a new array or store value reconciles the rows. */
-export function bindEach(marker: Comment, spec: EachSpec, cleanups: Cleanup[], leaves: Leave[]): void {
+export function bindEach(
+  marker: Comment,
+  spec: EachSpec,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): void {
   const block = new EachBlock(marker, spec, leaves);
   cleanups.push(
     watch(() => block.update(listOf(spec.read()))),

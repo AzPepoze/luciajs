@@ -3,8 +3,26 @@ import type { ApiEntry } from "../../../reference/api.ts";
 import { buildKeywordIndex, tokenize } from "./keywords.ts";
 
 const entries: ApiEntry[] = [
-  { id: "store", name: "store()", kind: "function", group: "reactivity", signature: "", summary: "A value.", bullets: [], example: "" },
-  { id: "store-from", name: "store.from()", kind: "function", group: "reactivity", signature: "", summary: "Derived.", bullets: [], example: "" },
+  {
+    id: "store",
+    name: "store()",
+    kind: "function",
+    group: "reactivity",
+    signature: "",
+    summary: "A value.",
+    bullets: [],
+    example: "",
+  },
+  {
+    id: "store-from",
+    name: "store.from()",
+    kind: "function",
+    group: "reactivity",
+    signature: "",
+    summary: "Derived.",
+    bullets: [],
+    example: "",
+  },
   {
     id: "active",
     name: "WHEN",
@@ -18,7 +36,9 @@ const entries: ApiEntry[] = [
   },
 ];
 
-const index = buildKeywordIndex(entries, [{ id: "animate-reveal", title: "Reveal on scroll", caption: "Each line plays once." }]);
+const index = buildKeywordIndex(entries, [
+  { id: "animate-reveal", title: "Reveal on scroll", caption: "Each line plays once." },
+]);
 
 function chips(parts: ReturnType<typeof tokenize>) {
   return parts.filter((part) => part.chip).map((part) => [part.text, part.target?.id ?? null]);
@@ -30,11 +50,15 @@ describe("keyword tokenizer", () => {
   });
 
   test("prefers the longest name", () => {
-    expect(chips(tokenize("Use store.from() here.", index, "props"))).toEqual([["store.from()", "store-from"]]);
+    expect(chips(tokenize("Use store.from() here.", index, "props"))).toEqual([
+      ["store.from()", "store-from"],
+    ]);
   });
 
   test("matches whole words only", () => {
-    expect(chips(tokenize("restore() is not store().", index, "props"))).toEqual([["store()", "store"]]);
+    expect(chips(tokenize("restore() is not store().", index, "props"))).toEqual([
+      ["store()", "store"],
+    ]);
   });
 
   test("links an enum member to its parent section", () => {
@@ -54,7 +78,9 @@ describe("keyword tokenizer", () => {
   });
 
   test("a demo title links only inside backticks", () => {
-    expect(chips(tokenize("See `Reveal on scroll`.", index, "props"))).toEqual([["Reveal on scroll", "animate-reveal"]]);
+    expect(chips(tokenize("See `Reveal on scroll`.", index, "props"))).toEqual([
+      ["Reveal on scroll", "animate-reveal"],
+    ]);
     expect(chips(tokenize("Reveal on scroll is a word.", index, "props"))).toEqual([]);
   });
 
@@ -69,6 +95,8 @@ describe("keyword tokenizer", () => {
   });
 
   test("text without keywords is one plain part", () => {
-    expect(tokenize("Nothing here.", index, "props")).toEqual([{ text: "Nothing here.", chip: false, kind: "text" }]);
+    expect(tokenize("Nothing here.", index, "props")).toEqual([
+      { text: "Nothing here.", chip: false, kind: "text" },
+    ]);
   });
 });

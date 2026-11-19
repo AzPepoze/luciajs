@@ -14,7 +14,8 @@ describe("scopeCss tree mode", () => {
   });
 
   test("leaves @keyframes untouched", () => {
-    const css = "@keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }";
+    const css =
+      "@keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }";
     const out = scopeCss(css, ID, "tree");
     expect(out).toContain("@keyframes spin {");
     expect(out).toContain("from { transform: rotate(0); }");

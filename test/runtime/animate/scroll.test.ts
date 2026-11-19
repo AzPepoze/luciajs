@@ -6,7 +6,8 @@ import { EASE } from "@runtime/animate/modes.ts";
 import { readMore as readWith } from "@runtime/animate/more.ts";
 
 const readBase = { duration: 300 };
-const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(when, more, readBase);
+const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
+  readWith(when, more, readBase);
 import { WHEN } from "@runtime/animate/trigger.ts";
 import { store } from "@runtime/store/store.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
@@ -130,19 +131,27 @@ describe("WHEN.SCROLL cleanup and reduced motion", () => {
 describe("WHEN.SCROLL errors", () => {
   test("loop is rejected", () => {
     const el = document.createElement("div");
-    expect(() => animate(el, () => ({ style: fade, when: WHEN.SCROLL, loop: true }), [], [])).toThrow("loop does not work with WHEN.SCROLL");
+    expect(() =>
+      animate(el, () => ({ style: fade, when: WHEN.SCROLL, loop: true }), [], []),
+    ).toThrow("loop does not work with WHEN.SCROLL");
   });
 
   test("start and end must differ", () => {
-    expect(() => readMore(WHEN.SCROLL, { start: 0.5, end: 0.5 })).toThrow("start and end must be different lines");
+    expect(() => readMore(WHEN.SCROLL, { start: 0.5, end: 0.5 })).toThrow(
+      "start and end must be different lines",
+    );
   });
 
   test("start and end must be numbers", () => {
-    expect(() => readMore(WHEN.SCROLL, { start: Number.NaN })).toThrow("start and end must be numbers");
+    expect(() => readMore(WHEN.SCROLL, { start: Number.NaN })).toThrow(
+      "start and end must be numbers",
+    );
   });
 
   test("keys other than start and end are rejected", () => {
-    expect(() => readMore(WHEN.SCROLL, { outDelay: 10 } as never)).toThrow('more has an unknown key "outDelay", use start, end, follow or part');
+    expect(() => readMore(WHEN.SCROLL, { outDelay: 10 } as never)).toThrow(
+      'more has an unknown key "outDelay", use start, end, follow or part',
+    );
   });
 });
 
@@ -160,7 +169,12 @@ function mountFollow(more: { part?: [number, number]; start?: number; end?: numb
   const follow = store<Element | null>(null);
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ style: fade, when: WHEN.SCROLL, more: { follow, ...more } }) as AnimateItem, cleanups, leaves);
+  animate(
+    el,
+    () => ({ style: fade, when: WHEN.SCROLL, more: { follow, ...more } }) as AnimateItem,
+    cleanups,
+    leaves,
+  );
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, follow, cleanups, opacity: () => Number(el.style.opacity) };
 }
@@ -256,22 +270,25 @@ describe("WHEN.SCROLL follow", () => {
   });
 
   test("follow must be a store", () => {
-    expect(() => readMore(WHEN.SCROLL, { follow: { value: null } } as never)).toThrow("follow must be a store");
+    expect(() => readMore(WHEN.SCROLL, { follow: { value: null } } as never)).toThrow(
+      "follow must be a store",
+    );
   });
 });
 
 describe("WHEN.SCROLL part errors", () => {
-  test.each([
-    [[0.5, 0.2]],
-    [[-0.1, 0.5]],
-    [[0.2, 1.5]],
-    [[0.5, 0.5]],
-    [[0.1, 0.2, 0.3]],
-  ])("%j is rejected", (part) => {
-    expect(() => readMore(WHEN.SCROLL, { part } as never)).toThrow("part must be [from, to] with 0 <= from < to <= 1");
-  });
+  test.each([[[0.5, 0.2]], [[-0.1, 0.5]], [[0.2, 1.5]], [[0.5, 0.5]], [[0.1, 0.2, 0.3]]])(
+    "%j is rejected",
+    (part) => {
+      expect(() => readMore(WHEN.SCROLL, { part } as never)).toThrow(
+        "part must be [from, to] with 0 <= from < to <= 1",
+      );
+    },
+  );
 
   test("part must be an array", () => {
-    expect(() => readMore(WHEN.SCROLL, { part: "abc" } as never)).toThrow("part must be [from, to]");
+    expect(() => readMore(WHEN.SCROLL, { part: "abc" } as never)).toThrow(
+      "part must be [from, to]",
+    );
   });
 });

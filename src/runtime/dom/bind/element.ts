@@ -4,7 +4,12 @@ import { withWhere } from "../../errors.ts";
 import type { Store } from "../../store/store.ts";
 
 /** `bind-element={ref}`: the store holds the element while it is attached. */
-export function bindElement(el: Element, target: unknown, cleanups: Cleanup[], where?: string): void {
+export function bindElement(
+  el: Element,
+  target: unknown,
+  cleanups: Cleanup[],
+  where?: string,
+): void {
   withWhere(where, () => assertWritable(target, "bind-element"));
   const store = target as Store<unknown>;
   store.value = el;

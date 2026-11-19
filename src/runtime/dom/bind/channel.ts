@@ -12,7 +12,8 @@ export interface Channel {
 }
 
 export function assertWritable(target: unknown, attr: string): asserts target is Store<unknown> {
-  const writable = isReactive(target) && Object.getOwnPropertyDescriptor(target, "value")?.set !== undefined;
+  const writable =
+    isReactive(target) && Object.getOwnPropertyDescriptor(target, "value")?.set !== undefined;
   if (!writable) throw runtimeError("L2043", { attr });
 }
 
@@ -25,7 +26,13 @@ function writeProp(el: HTMLElement, prop: string, value: unknown): void {
 }
 
 /** Store to DOM in a watch, DOM to store on the channel's events. Equal values are never written twice. */
-export function bindChannel(el: HTMLElement, target: unknown, channel: Channel, attr: string, cleanups: Cleanup[]): void {
+export function bindChannel(
+  el: HTMLElement,
+  target: unknown,
+  channel: Channel,
+  attr: string,
+  cleanups: Cleanup[],
+): void {
   assertWritable(target, attr);
   const store = target;
   cleanups.push(

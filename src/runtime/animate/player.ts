@@ -149,7 +149,11 @@ export class Player implements Playable {
     queued?.waiters.forEach((resolve) => resolve());
   }
 
-  private startPlay(passes: Iterable<Pass>, switching: Switch | undefined, at = performance.now()): Promise<void> {
+  private startPlay(
+    passes: Iterable<Pass>,
+    switching: Switch | undefined,
+    at = performance.now(),
+  ): Promise<void> {
     const iterator = passes[Symbol.iterator]();
     const first = iterator.next();
     if (first.done) return Promise.resolve();
@@ -228,7 +232,11 @@ export class Player implements Playable {
     if (!queued) return;
     this.queued = undefined;
     const from = this.turn ? this.progress : this.playAt;
-    const done = this.startPlay(queued.passes, { from, speed: this.speed, restart: false }, endedAt);
+    const done = this.startPlay(
+      queued.passes,
+      { from, speed: this.speed, restart: false },
+      endedAt,
+    );
     void done.then(() => queued.waiters.forEach((resolve) => resolve()));
   }
 

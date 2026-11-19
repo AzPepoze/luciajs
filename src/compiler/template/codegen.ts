@@ -43,7 +43,16 @@ ${markLines(body, bodyLine)}
 }
 
 /** The generated module, with position markers that `extractSourceMap` removes. */
-export function generate({ imports, body, bodyLine, template, css, id, file, dev }: ComponentParts): string {
+export function generate({
+  imports,
+  body,
+  bodyLine,
+  template,
+  css,
+  id,
+  file,
+  dev,
+}: ComponentParts): string {
   const ctx = new GenContext(id, { file, dev });
   const fragment = ctx.fragment(template);
   return [

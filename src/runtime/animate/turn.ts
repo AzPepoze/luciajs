@@ -26,7 +26,8 @@ export function startTurn(
 ): Turn | undefined {
   if (turn === TURN.SUDDEN || turnDuration <= 0) return undefined;
   const base = { from, speed, age: 0, easeStyle: turnStyle, ease: turnEase, custom: undefined };
-  if (typeof turn === "function") return { ...base, kind: "custom", duration: turnDuration, custom: turn };
+  if (typeof turn === "function")
+    return { ...base, kind: "custom", duration: turnDuration, custom: turn };
   if (turn === TURN.STOP) return { ...base, kind: "stop", duration: turnDuration / 2 };
   return { ...base, kind: "smooth", duration: turnDuration };
 }

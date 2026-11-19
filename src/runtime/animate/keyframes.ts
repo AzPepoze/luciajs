@@ -8,7 +8,11 @@ import { runtimeError } from "../errors.ts";
 
 /** The string style properties of the DOM, in camelCase (opacity, backgroundColor). Methods and non-string properties are left out. */
 type DomStyleKey = {
-  [K in keyof CSSStyleDeclaration]: K extends string ? (CSSStyleDeclaration[K] extends string ? K : never) : never;
+  [K in keyof CSSStyleDeclaration]: K extends string
+    ? CSSStyleDeclaration[K] extends string
+      ? K
+      : never
+    : never;
 }[keyof CSSStyleDeclaration];
 
 /** A CSS object: DOM style properties in camelCase, and custom properties that start with `--`. */
@@ -21,7 +25,10 @@ export type Keyframe = [EaseStyle, Ease, Style];
 /** A key is its styles, or its styles with an ease, an easing style, or both. See keyform.ts. */
 export type KeyframeValue = Style | [EaseStyle, Ease, Style] | [EaseStyle, Style] | [Ease, Style];
 /** The keys 0 and 1 are required. `default` is the easing that keys without their own use. */
-export type Keyframes = { default?: DefaultEasing; 0: KeyframeValue; 1: KeyframeValue } & Record<number, KeyframeValue>;
+export type Keyframes = { default?: DefaultEasing; 0: KeyframeValue; 1: KeyframeValue } & Record<
+  number,
+  KeyframeValue
+>;
 
 interface Stop {
   at: number;
@@ -49,7 +56,9 @@ function readStops(keyframes: Keyframes, fromKeyframes: PartialEasing): Stop[] {
 
 function toStop(at: number, value: KeyframeValue, fromKeyframes: PartialEasing): Stop {
   const [easeStyle, ease, style] = readKey(value, fromKeyframes, animateDefault());
-  const entries = Object.entries(style).map(([name, value]) => [cssName(name), String(value)] as const);
+  const entries = Object.entries(style).map(
+    ([name, value]) => [cssName(name), String(value)] as const,
+  );
   return { at, easeStyle, ease, style: new Map(entries) };
 }
 

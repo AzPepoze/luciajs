@@ -37,7 +37,9 @@ function hasPiece(list: Piece[], type: string, text: string): boolean {
 
 describe("lucia Prism grammar", () => {
   test("flow tags are their own token, separate from HTML tags", () => {
-    const list = tokenize(`<IF {ready.value}>\n  <p>Hi</p>\n</IF>\n<ELSEIF {guest.value}>x</ELSEIF>\n<ELSE>y</ELSE>`);
+    const list = tokenize(
+      `<IF {ready.value}>\n  <p>Hi</p>\n</IF>\n<ELSEIF {guest.value}>x</ELSEIF>\n<ELSE>y</ELSE>`,
+    );
     expect(hasPiece(list, "flow-name", "IF")).toBe(true);
     expect(hasPiece(list, "flow-name", "ELSEIF")).toBe(true);
     expect(hasPiece(list, "flow-name", "ELSE")).toBe(true);
@@ -45,7 +47,9 @@ describe("lucia Prism grammar", () => {
   });
 
   test("EACH and FOR tags with their flow attributes", () => {
-    const list = tokenize(`<EACH {todos} as={todo} index={i} key={todo.id}>\n</EACH>\n<FOR {n} from={0} to={5} step={1}>\n</FOR>`);
+    const list = tokenize(
+      `<EACH {todos} as={todo} index={i} key={todo.id}>\n</EACH>\n<FOR {n} from={0} to={5} step={1}>\n</FOR>`,
+    );
     expect(hasPiece(list, "flow-name", "EACH")).toBe(true);
     expect(hasPiece(list, "flow-name", "FOR")).toBe(true);
     for (const name of ["as", "index", "key", "from", "to", "step"]) {
@@ -61,7 +65,9 @@ describe("lucia Prism grammar", () => {
   });
 
   test("event, bind, and animate attributes get their own tokens", () => {
-    const list = tokenize(`<button onclick={save} class="x">Save</button>\n<input bind={name} bind-element={field} />\n<div animate={{ style: fade }}></div>`);
+    const list = tokenize(
+      `<button onclick={save} class="x">Save</button>\n<input bind={name} bind-element={field} />\n<div animate={{ style: fade }}></div>`,
+    );
     expect(hasPiece(list, "event-attr", "onclick")).toBe(true);
     expect(hasPiece(list, "bind-attr", "bind")).toBe(true);
     expect(hasPiece(list, "bind-attr", "bind-element")).toBe(true);

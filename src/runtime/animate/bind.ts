@@ -9,7 +9,13 @@ import { bindTrigger, groupSlots } from "./triggers.ts";
 import { runtimeError, withWhere } from "../errors.ts";
 
 /** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from stores. */
-export function animate(el: HTMLElement, readValue: () => Animate, cleanups: Cleanup[], leaves: Leave[], where?: string): void {
+export function animate(
+  el: HTMLElement,
+  readValue: () => Animate,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+  where?: string,
+): void {
   const first = withWhere(where, () => itemsOf(readValue()).map(readItem));
   const players = first.map(() => new Player(el.style));
   const reload = (): void => withWhere(where, () => loadTimelines(el, readValue, players));

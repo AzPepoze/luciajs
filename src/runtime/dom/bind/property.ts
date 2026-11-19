@@ -5,7 +5,13 @@ import { withWhere } from "../../errors.ts";
 const identity = (value: unknown): unknown => value;
 
 /** `bind-<prop>={sig}`: any DOM property, read on input and change. */
-export function bindProp(el: HTMLElement, prop: string, target: unknown, cleanups: Cleanup[], where?: string): void {
+export function bindProp(
+  el: HTMLElement,
+  prop: string,
+  target: unknown,
+  cleanups: Cleanup[],
+  where?: string,
+): void {
   const channel: Channel = {
     prop,
     events: ["input", "change"],

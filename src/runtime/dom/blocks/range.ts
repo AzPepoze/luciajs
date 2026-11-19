@@ -26,5 +26,10 @@ export function bindFor(
   leaves: Leave[],
   where?: string,
 ): void {
-  bindEach(marker, { read: () => withWhere(where, () => rangeOf(read())), render, indexed: false }, cleanups, leaves);
+  bindEach(
+    marker,
+    { read: () => withWhere(where, () => rangeOf(read())), render, indexed: false },
+    cleanups,
+    leaves,
+  );
 }

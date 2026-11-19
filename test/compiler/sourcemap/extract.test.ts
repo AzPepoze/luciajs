@@ -30,7 +30,12 @@ function decodeFields(field: string): number[] {
   return values;
 }
 
-type Segment = [generatedColumn: number, sourceIndex: number, sourceLine: number, sourceColumn: number];
+type Segment = [
+  generatedColumn: number,
+  sourceIndex: number,
+  sourceLine: number,
+  sourceColumn: number,
+];
 
 /** Decodes `mappings` into absolute segments, one array per generated line. */
 function decodeMappings(mappings: string): Segment[][] {
@@ -65,10 +70,7 @@ describe("extractSourceMap", () => {
   test("maps each marker on its own line, with columns counted from the line start", () => {
     const { code, map } = extractSourceMap("a = /*@7:1*/b;\n  /*@8:3*/c", "Card.lucia", "");
     expect(code).toBe("a = b;\n  c");
-    expect(decodeMappings(JSON.parse(map).mappings)).toEqual([
-      [[4, 0, 6, 0]],
-      [[2, 0, 7, 2]],
-    ]);
+    expect(decodeMappings(JSON.parse(map).mappings)).toEqual([[[4, 0, 6, 0]], [[2, 0, 7, 2]]]);
   });
 
   test("code without markers has no segments", () => {

@@ -46,7 +46,12 @@ describe("IF, ELSEIF and ELSE", () => {
     parent.append(marker);
     const cond = store(false);
     const cleanups: Array<() => void> = [];
-    bindIf(marker, [{ test: () => cond.value, render: () => document.createDocumentFragment() }], cleanups, []);
+    bindIf(
+      marker,
+      [{ test: () => cond.value, render: () => document.createDocumentFragment() }],
+      cleanups,
+      [],
+    );
     expect(parent.childNodes.length).toBe(1);
     for (const cleanup of cleanups) cleanup();
   });
@@ -75,7 +80,13 @@ describe("IF leave animations", () => {
             return fragment;
           },
         },
-        { render: () => { const f = document.createDocumentFragment(); f.append(document.createElement("b")); return f; } },
+        {
+          render: () => {
+            const f = document.createDocumentFragment();
+            f.append(document.createElement("b"));
+            return f;
+          },
+        },
       ],
       cleanups,
       leaves,

@@ -9,7 +9,9 @@ afterEach(resetMounts);
 
 describe("props()", () => {
   test("throws when called outside a component's script", () => {
-    expect(() => props({ title: "x" })).toThrow("props() can only be called in a component's <script>");
+    expect(() => props({ title: "x" })).toThrow(
+      "props() can only be called in a component's <script>",
+    );
   });
 
   test("defaults apply when nothing is passed", () => {

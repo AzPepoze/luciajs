@@ -8,7 +8,8 @@ import { WHEN } from "@runtime/animate/trigger.ts";
 import { readMore as readWith } from "@runtime/animate/more.ts";
 
 const readBase = { duration: 300 };
-const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(when, more, readBase);
+const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
+  readWith(when, more, readBase);
 import type { Leave } from "@runtime/dom/leave.ts";
 import { store } from "@runtime/store/store.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
@@ -47,17 +48,26 @@ class FakeIntersectionObserver {
   }
 
   report(el: Element, ratio: number): void {
-    this.onEntries([{ target: el, intersectionRatio: ratio, isIntersecting: ratio > 0 } as IntersectionObserverEntry]);
+    this.onEntries([
+      {
+        target: el,
+        intersectionRatio: ratio,
+        isIntersecting: ratio > 0,
+      } as IntersectionObserverEntry,
+    ]);
   }
 
   static watching(el: Element): FakeIntersectionObserver | undefined {
-    return FakeIntersectionObserver.created.find((observer) => !observer.disconnected && observer.targets.has(el));
+    return FakeIntersectionObserver.created.find(
+      (observer) => !observer.disconnected && observer.targets.has(el),
+    );
   }
 }
 
 const realIntersectionObserver = globalThis.IntersectionObserver;
 beforeAll(() => {
-  globalThis.IntersectionObserver = FakeIntersectionObserver as unknown as typeof IntersectionObserver;
+  globalThis.IntersectionObserver =
+    FakeIntersectionObserver as unknown as typeof IntersectionObserver;
 });
 afterAll(() => {
   globalThis.IntersectionObserver = realIntersectionObserver;
@@ -70,7 +80,12 @@ function mount(item: Omit<AnimateItem, "style"> = {}) {
   const el = document.createElement("div");
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ style: fade, duration: 100, when: WHEN.VIEW, ...item }) as AnimateItem, cleanups, leaves);
+  animate(
+    el,
+    () => ({ style: fade, duration: 100, when: WHEN.VIEW, ...item }) as AnimateItem,
+    cleanups,
+    leaves,
+  );
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, cleanups, leaves, opacity: () => Number(el.style.opacity) };
 }
@@ -107,7 +122,9 @@ describe("more margin", () => {
   });
 
   test("rejects a bad margin with a clear error", () => {
-    expect(() => rootMarginOf("10")).toThrow('animate more margin must be a number of px or a CSS length such as "10%"');
+    expect(() => rootMarginOf("10")).toThrow(
+      'animate more margin must be a number of px or a CSS length such as "10%"',
+    );
     expect(() => rootMarginOf("abc")).toThrow("animate more margin");
     expect(() => rootMarginOf(Number.NaN)).toThrow("animate more margin");
     expect(() => rootMarginOf(Number.POSITIVE_INFINITY)).toThrow("animate more margin");
@@ -139,7 +156,9 @@ describe("more amount", () => {
   });
 
   test("rejects values outside 0 to 1", () => {
-    expect(() => readMore(WHEN.VIEW, { amount: 1.5 })).toThrow("animate more amount must be a number from 0 to 1, got 1.5");
+    expect(() => readMore(WHEN.VIEW, { amount: 1.5 })).toThrow(
+      "animate more amount must be a number from 0 to 1, got 1.5",
+    );
     expect(() => readMore(WHEN.VIEW, { amount: -0.1 })).toThrow("from 0 to 1");
     expect(() => readMore(WHEN.VIEW, { amount: Number.NaN })).toThrow("from 0 to 1");
   });
@@ -147,25 +166,37 @@ describe("more amount", () => {
 
 describe("more errors", () => {
   test("more on a non-VIEW item names the when", () => {
-    expect(() => readItem({ style: fade, more: { margin: 10 } } as never)).toThrow("more is not used with WHEN.ATTACH");
-    expect(() => readItem({ style: fade, when: WHEN.HOVER, more: { amount: 0.5 } } as AnimateItem)).toThrow("more has an unknown key \"amount\", use inDelay, outDelay, out or outDuration");
+    expect(() => readItem({ style: fade, more: { margin: 10 } } as never)).toThrow(
+      "more is not used with WHEN.ATTACH",
+    );
+    expect(() =>
+      readItem({ style: fade, when: WHEN.HOVER, more: { amount: 0.5 } } as AnimateItem),
+    ).toThrow('more has an unknown key "amount", use inDelay, outDelay, out or outDuration');
   });
 
   test("more on a store when names it as a store", () => {
     const source = store(true);
-    expect(() => readItem({ style: fade, when: source, more: {} } as never)).toThrow("more is not used with a store");
+    expect(() => readItem({ style: fade, when: source, more: {} } as never)).toThrow(
+      "more is not used with a store",
+    );
   });
 
   test("an unknown key names the allowed keys", () => {
-    expect(() => readMore(WHEN.VIEW, { marginn: 10 } as never)).toThrow('more has an unknown key "marginn", use margin, amount or reverse');
+    expect(() => readMore(WHEN.VIEW, { marginn: 10 } as never)).toThrow(
+      'more has an unknown key "marginn", use margin, amount or reverse',
+    );
   });
 
   test("reverse at the top level points to more", () => {
-    expect(() => readItem({ style: fade, when: WHEN.VIEW, reverse: true } as AnimateItem)).toThrow("reverse moved into more: { reverse: true }");
+    expect(() => readItem({ style: fade, when: WHEN.VIEW, reverse: true } as AnimateItem)).toThrow(
+      "reverse moved into more: { reverse: true }",
+    );
   });
 
   test("reverse inside more must be a boolean", () => {
-    expect(() => readMore(WHEN.VIEW, { reverse: "yes" } as never)).toThrow("more reverse must be true or false");
+    expect(() => readMore(WHEN.VIEW, { reverse: "yes" } as never)).toThrow(
+      "more reverse must be true or false",
+    );
   });
 });
 

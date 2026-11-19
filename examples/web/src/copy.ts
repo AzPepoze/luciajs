@@ -25,5 +25,7 @@ function textToCopy(button: HTMLButtonElement): string {
 
 // The code block that is not inside a hidden tab panel.
 function visibleCode(panel: Element | null): HTMLElement | undefined {
-  return [...(panel?.querySelectorAll<HTMLElement>("code") ?? [])].find((code) => !code.closest("[hidden]"));
+  return [...(panel?.querySelectorAll<HTMLElement>("code") ?? [])].find(
+    (code) => !code.closest("[hidden]"),
+  );
 }

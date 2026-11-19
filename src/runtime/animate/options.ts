@@ -27,7 +27,6 @@ export interface ItemOptions {
   more: ReadMore;
 }
 
-
 export function readItem(item: AnimateItem): ItemOptions {
   rejectOldNames(item);
   rejectMovedReverse(item);
@@ -71,7 +70,8 @@ function isRenamedWhen(value: unknown): boolean {
 
 function readMs(value: number | undefined, fallback: number, name: string): number {
   if (value === undefined) return fallback;
-  if (!Number.isFinite(value) || value < 0) throw runtimeError("L2003", { name, value: String(value) });
+  if (!Number.isFinite(value) || value < 0)
+    throw runtimeError("L2003", { name, value: String(value) });
   return value;
 }
 
@@ -93,7 +93,10 @@ function rejectMovedReverse(item: AnimateItem): void {
 }
 
 /** `loop: true` repeats forever; a number repeats that many times. Zero or missing means no loop. */
-function readLoop(loop: boolean | number | undefined, backAndForth: boolean | undefined): LoopSpec | undefined {
+function readLoop(
+  loop: boolean | number | undefined,
+  backAndForth: boolean | undefined,
+): LoopSpec | undefined {
   if (!loop) return undefined;
   const count = loop === true ? Infinity : loop;
   if (!(count >= 0)) throw runtimeError("L2004", { value: String(loop) });

@@ -77,7 +77,10 @@ describe("components", () => {
     rowValue.value = 7;
     expect(second.querySelector("h3")!.textContent).toBe("Table 1");
     expect(third.querySelector("h3")!.textContent).toBe("Table 2");
-    for (const value of [...second.querySelectorAll(".row b"), ...third.querySelectorAll(".row b")]) {
+    for (const value of [
+      ...second.querySelectorAll(".row b"),
+      ...third.querySelectorAll(".row b"),
+    ]) {
       expect(value.textContent).toBe("7");
     }
     expect(first.outerHTML).toBe(detachedHtml);

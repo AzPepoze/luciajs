@@ -9,7 +9,10 @@ export interface Row {
 export const rows = store<Row[]>([]);
 
 export function makeRows(count: number, from = 0): Row[] {
-  return Array.from({ length: count }, (_, offset) => ({ id: from + offset, label: `Row ${from + offset}` }));
+  return Array.from({ length: count }, (_, offset) => ({
+    id: from + offset,
+    label: `Row ${from + offset}`,
+  }));
 }
 
 // A fixed pseudo-random order, so every run shuffles the same way.

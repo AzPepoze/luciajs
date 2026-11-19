@@ -39,9 +39,13 @@ export function buildKeywordIndex(entries: ApiEntry[], demos: DemoRef[]): Keywor
     for (const member of entry.members ?? []) names.set(`${entry.name}.${member.name}`, target);
   }
   const demoTargets = new Map<string, Target>();
-  for (const demo of demos) demoTargets.set(demo.title, { id: demo.id, summary: demo.caption, kind: "demo" });
+  for (const demo of demos)
+    demoTargets.set(demo.title, { id: demo.id, summary: demo.caption, kind: "demo" });
   const alternatives = [...names.keys()].sort((a, b) => b.length - a.length).map(escapeRegex);
-  const pattern = new RegExp(`\`[^\`]+\`|\\{[^{}]*\\}|(?<![\\w$])(?:${alternatives.join("|")})(?![\\w$])`, "g");
+  const pattern = new RegExp(
+    `\`[^\`]+\`|\\{[^{}]*\\}|(?<![\\w$])(?:${alternatives.join("|")})(?![\\w$])`,
+    "g",
+  );
   return { names, demos: demoTargets, pattern };
 }
 
