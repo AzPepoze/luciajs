@@ -1,7 +1,0 @@
-{
-  "name": "example-basic",
-  "private": true,
-  "type": "module",
-  "scripts": { "dev": "bun serve.ts" },
-  "dependencies": { "lucia": "workspace:*", "@lucia/bun-plugin": "workspace:*" }
-}

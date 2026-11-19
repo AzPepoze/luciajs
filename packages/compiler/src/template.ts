@@ -1,5 +1,6 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
 import { LuciaError } from "./parse.ts";
+import { skipExpression } from "./scan.ts";
 
 export type AttrPart = string | { expr: string };
 
@@ -19,7 +20,6 @@ export interface Template {
 const NAME_END = /[\s=>/]/;
 const TAG_NAME_END = /[\s>/]/;
 const WHITESPACE = /\s/;
-const QUOTES = new Set(["'", '"', "`"]);
 
 function escapeAttr(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
@@ -140,32 +140,14 @@ class TemplateCompiler {
     return parts;
   }
 
-  // Reads `{...}` and returns the inner expression, skipping braces inside nested braces and strings.
   private readExpression(): string {
-    const start = this.pos++;
-    let depth = 1;
-    while (depth > 0) {
-      const ch = this.peek();
-      if (!ch) this.fail("unclosed {", start);
-      if (QUOTES.has(ch)) this.skipString(ch);
-      else {
-        if (ch === "{") depth++;
-        else if (ch === "}") depth--;
-        this.pos++;
-      }
-    }
-    const expr = this.src.slice(start + 1, this.pos - 1).trim();
+    const start = this.pos;
+    const end = skipExpression(this.src, start);
+    if (end === -1) this.fail("unclosed {", start);
+    this.pos = end;
+    const expr = this.src.slice(start + 1, end - 1).trim();
     if (!expr) this.fail("empty {}", start);
     return expr;
-  }
-
-  private skipString(quote: string): void {
-    const start = this.pos++;
-    while (this.peek() !== quote) {
-      if (!this.peek()) this.fail("unclosed string", start);
-      this.pos += this.peek() === "\\" ? 2 : 1;
-    }
-    this.pos++;
   }
 
   private readUntil(end: RegExp): string {
@@ -186,7 +168,7 @@ class TemplateCompiler {
   }
 }
 
-/** Turn markup with `{expr}` into static HTML plus the bindings to wire at mount. */
+/** Turn markup with `{expr}` into static HTML plus the bindings to wire at attach. */
 export function compileTemplate(markup: string, file: string, startLine = 1): Template {
   return new TemplateCompiler(markup, file, startLine).compile();
 }

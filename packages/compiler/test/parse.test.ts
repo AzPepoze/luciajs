@@ -35,6 +35,18 @@ describe("parse", () => {
     expect(parsed.script?.line).toBe(3);
   });
 
+  test("ignores <script> and <style> inside {} expressions and comments", () => {
+    const source = '<script>const a = 1;</script>\n<p>{"<script>x</script>"}</p>\n<!-- <style>p{}</style> -->';
+    const parsed = parse(source, FILE);
+    expect(parsed.script?.content).toBe("const a = 1;");
+    expect(parsed.style).toBeNull();
+    expect(parsed.markup).toBe('<p>{"<script>x</script>"}</p>\n<!-- <style>p{}</style> -->');
+  });
+
+  test("throws LuciaError on an unclosed section", () => {
+    expect(() => parse("<style>p {}", FILE)).toThrow("unclosed <style>");
+  });
+
   test("throws LuciaError on a duplicate <script>", () => {
     const source = "<script>const a = 1;</script>\n<script>const b = 2;</script>";
     expect(() => parse(source, FILE)).toThrow(LuciaError);
