@@ -1,55 +1,10 @@
-import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "./markers.ts";
-import { watch } from "./signal.ts";
-
-export interface Instance {
-  root: Element;
-  detach(): void;
-}
-
-export type Component = (target: Element) => Instance;
-
-export type Cleanup = () => void;
-
-export type Binder = (node: Node, cleanups: Cleanup[]) => void;
+import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "../markers.ts";
+import type { Binder, Cleanup } from "./bindings.ts";
 
 export interface CompiledTemplate {
   template: HTMLTemplateElement;
   /** Child-index path from the fragment root to each binding marker, in document order. */
   paths: number[][];
-}
-
-export function toText(value: unknown): string {
-  return value == null || value === false ? "" : String(value);
-}
-
-export function bindText(marker: Node, read: () => unknown, cleanups: Cleanup[]): void {
-  const node = document.createTextNode("");
-  (marker as ChildNode).replaceWith(node);
-  cleanups.push(watch(() => (node.data = toText(read()))));
-}
-
-/** Keep an attribute in sync with `read()`; null/false removes it. */
-export function attr(el: Element, name: string, read: () => unknown, cleanups: Cleanup[]): void {
-  cleanups.push(
-    watch(() => {
-      const value = read();
-      if (value == null || value === false) el.removeAttribute(name);
-      else el.setAttribute(name, value === true ? "" : String(value));
-    }),
-  );
-}
-
-export function listen(el: EventTarget, type: string, handler: EventListener, cleanups: Cleanup[]): void {
-  el.addEventListener(type, handler);
-  cleanups.push(() => el.removeEventListener(type, handler));
-}
-
-export function insert(parent: Node, node: Node, anchor: Node | null = null): void {
-  parent.insertBefore(node, anchor);
-}
-
-export function attach(component: Component, target: Element): Instance {
-  return component(target);
 }
 
 function isMarker(node: Node): boolean {
@@ -90,15 +45,4 @@ export function instantiate({ template, paths }: CompiledTemplate, binders: Bind
   const nodes = paths.map((path) => resolvePath(fragment, path));
   nodes.forEach((node, index) => binders[index]!(node, cleanups));
   return fragment;
-}
-
-const injectedStyles = new Set<string>();
-
-export function injectStyle(id: string, css: string): void {
-  if (!css || injectedStyles.has(id)) return;
-  injectedStyles.add(id);
-  const style = document.createElement("style");
-  style.dataset.lucia = id;
-  style.textContent = css;
-  document.head.appendChild(style);
 }

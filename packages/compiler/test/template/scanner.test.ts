@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
-import { LuciaError } from "../src/parse.ts";
-import { compileTemplate } from "../src/template.ts";
+import { LuciaError } from "../../src/errors.ts";
+import { compileTemplate } from "../../src/template/scanner.ts";
 
 const FILE = "Card.lucia";
 const TEXT = `<!--${TEXT_MARKER}-->`;

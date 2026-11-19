@@ -1,4 +1,7 @@
-import { skipExpression } from "./scan.ts";
+import { LuciaError } from "../errors.ts";
+import { skipExpression } from "../utils/braces.ts";
+import { lineAt } from "../utils/position.ts";
+import { parseAttrs } from "./attrs.ts";
 
 export interface Section {
   content: string;
@@ -15,12 +18,6 @@ export interface ParsedFile {
   markupLine: number;
 }
 
-export class LuciaError extends Error {
-  constructor(message: string, readonly file: string, readonly line: number, readonly column: number) {
-    super(`${file}:${line}:${column}: ${message}`);
-  }
-}
-
 interface SectionMatch {
   kind: "script" | "style";
   rawAttrs: string | undefined;
@@ -31,21 +28,10 @@ interface SectionMatch {
 }
 
 const SECTION_OPEN = /<(script|style)(\s[^>]*)?>/y;
-const ATTR = /([\w-]+)(?:="([^"]*)")?/g;
-
-function lineAt(source: string, index: number): number {
-  return source.slice(0, index).split("\n").length;
-}
 
 // Removed sections leave their newlines behind so markup line numbers match the source.
 function keepLineBreaks(text: string): string {
   return text.replace(/[^\n]/g, "");
-}
-
-function parseAttrs(raw: string | undefined): Record<string, string> {
-  const attrs: Record<string, string> = {};
-  for (const [, name, value] of (raw ?? "").matchAll(ATTR)) attrs[name!] = value ?? "";
-  return attrs;
 }
 
 function readSection(source: string, start: number, file: string): SectionMatch | null {

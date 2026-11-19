@@ -26,6 +26,10 @@ Update this file and the matching `docs/` page in the same change whenever comma
 
 ## Project rules
 
+- Domain folders own framework logic (`parse/`, `style/`, `template/`, `signal/`, `dom/`).
+- `utils/` only holds helpers used by 2+ domains. Move a helper there when a second domain needs it.
+- One job per file, about 150 lines max.
+- Tests mirror the source folders.
 - Always pick the clean, well-designed approach, never a quick hack that only works. If the clean way needs a refactor, do the refactor.
 - Optimize for performance and readability: no allocations on hot paths where avoidable, small named functions.
 - No comments unless they explain a non-obvious why.

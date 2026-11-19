@@ -1,4 +1,4 @@
-import type { AttrBinding, AttrPart, Binding, Template } from "./template.ts";
+import type { AttrBinding, AttrPart, Binding, Template } from "./scanner.ts";
 
 export interface ComponentParts {
   script: string;

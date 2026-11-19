@@ -1,6 +1,7 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
-import { LuciaError } from "./parse.ts";
-import { skipExpression } from "./scan.ts";
+import { LuciaError } from "../errors.ts";
+import { skipExpression } from "../utils/braces.ts";
+import { columnAt, lineAt } from "../utils/position.ts";
 
 export type AttrPart = string | { expr: string };
 
@@ -161,10 +162,8 @@ class TemplateCompiler {
   }
 
   private fail(message: string, at = this.pos): never {
-    const before = this.src.slice(0, at);
-    const line = this.startLine + before.split("\n").length - 1;
-    const column = at - before.lastIndexOf("\n");
-    throw new LuciaError(message, this.file, line, column);
+    const line = this.startLine - 1 + lineAt(this.src, at);
+    throw new LuciaError(message, this.file, line, columnAt(this.src, at));
   }
 }
 

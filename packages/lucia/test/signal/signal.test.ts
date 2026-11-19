@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { batch, computed, signal, untrack, watch } from "../src/signal.ts";
+import { computed, signal } from "../../src/signal/signal.ts";
+import { watch } from "../../src/signal/graph.ts";
 
 describe("signal", () => {
   test("reads and writes a value", () => {
@@ -109,56 +110,5 @@ describe("computed", () => {
     a.value = "A2";
     expect(seen).toEqual(["a", "B"]);
     expect(calls).toBe(2);
-  });
-});
-
-describe("batch", () => {
-  test("runs watchers once for several writes", () => {
-    const first = signal(0);
-    const second = signal(0);
-    let runs = 0;
-    watch(() => {
-      runs++;
-      first.value;
-      second.value;
-    });
-    expect(runs).toBe(1);
-
-    batch(() => {
-      first.value = 1;
-      second.value = 2;
-      first.value = 3;
-    });
-    expect(runs).toBe(2);
-  });
-});
-
-describe("untrack", () => {
-  test("reads do not subscribe", () => {
-    const source = signal(0);
-    let runs = 0;
-    watch(() => {
-      runs++;
-      untrack(() => source.value);
-    });
-    source.value = 5;
-    expect(runs).toBe(1);
-  });
-});
-
-describe("watch", () => {
-  test("stop function unsubscribes", () => {
-    const source = signal(0);
-    let runs = 0;
-    const stop = watch(() => {
-      runs++;
-      source.value;
-    });
-    source.value = 1;
-    expect(runs).toBe(2);
-
-    stop();
-    source.value = 2;
-    expect(runs).toBe(2);
   });
 });

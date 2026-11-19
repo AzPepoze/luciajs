@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { LuciaError, parse } from "../src/parse.ts";
+import { LuciaError } from "../../src/errors.ts";
+import { parse } from "../../src/parse/sections.ts";
 
 const FILE = "Card.lucia";
 
@@ -21,12 +22,6 @@ describe("parse", () => {
     expect(parsed.script?.content).toBe("\nconst a = 1;\n");
     expect(parsed.styles[0]?.content).toBe("\nh1 { color: red; }\n");
     expect(parsed.markup).toBe("<h1>Hi</h1>");
-  });
-
-  test("parses attributes on sections", () => {
-    const parsed = parse('<style lang="css">a {}</style>', FILE);
-    expect(parsed.styles[0]?.attrs).toEqual({ lang: "css" });
-    expect(parsed.script).toBeNull();
   });
 
   test("reports the line where section content starts", () => {
