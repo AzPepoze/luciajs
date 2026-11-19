@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { compile } from "@lucia/compiler";
+import { clicks } from "../../../examples/basic/src/store.ts";
 
 const APP_PATH = "../../../examples/basic/src/App.lucia";
 const APP_FILE = new URL(APP_PATH, import.meta.url).pathname;
@@ -10,36 +11,74 @@ let mounted: Mounted | null = null;
 afterEach(() => {
   mounted?.destroy();
   mounted = null;
+  clicks.value = 0;
 });
 
-describe("lucia bun plugin", () => {
-  test("loads .lucia files and mounts, styles, updates and destroys them", async () => {
-    const source = await Bun.file(APP_FILE).text();
-    const { scope } = compile(source, APP_FILE);
-    const App = (await import(APP_PATH)).default as (target: Element) => Mounted;
+async function mountApp(): Promise<{ target: HTMLElement; scope: string }> {
+  const source = await Bun.file(APP_FILE).text();
+  const { scope } = compile(source, APP_FILE);
+  const App = (await import(APP_PATH)).default as (target: Element) => Mounted;
+  const target = document.createElement("div");
+  document.body.append(target);
+  mounted = App(target);
+  return { target, scope };
+}
 
-    const target = document.createElement("div");
-    document.body.append(target);
-    mounted = App(target);
+function click(target: HTMLElement, selector: string, times = 1): void {
+  const button = target.querySelector(selector)!;
+  for (let i = 0; i < times; i++) button.dispatchEvent(new Event("click"));
+}
 
-    const heading = target.querySelector("h1")!;
-    expect(heading.hasAttribute(scope)).toBe(true);
+function textOf(target: HTMLElement, selector: string): string {
+  return target.querySelector(selector)!.textContent!.replace(/\s+/g, " ").trim();
+}
 
-    const style = document.querySelector(`style[data-lucia="${scope}"]`);
-    expect(style).not.toBeNull();
-    expect(style!.textContent).toContain(`h1[${scope}]`);
-    expect(style!.textContent).toContain("color: tomato");
+describe("lucia bun plugin with the basic example", () => {
+  test("scopes markup and injects compiled scss", async () => {
+    const { target, scope } = await mountApp();
+    expect(target.querySelector("h1")!.hasAttribute(scope)).toBe(true);
+    expect(textOf(target, "h1")).toBe("LuciaJS");
 
-    const button = target.querySelector("button")!;
-    const count = target.querySelector(".count")!;
-    button.dispatchEvent(new Event("click"));
-    expect(count.textContent).toBe("1");
+    const css = document.querySelector(`style[data-lucia="${scope}"]`)!.textContent!;
+    expect(css).toContain(`h1[${scope}]`);
+    expect(css).toContain("color: tomato");
+    expect(css).toContain("body {");
+  });
 
-    mounted.destroy();
+  test("text, partial and whole attributes follow signals", async () => {
+    const { target } = await mountApp();
+    const progress = target.querySelector("progress")!;
+    const add = target.querySelector(".add")!;
+    const reset = target.querySelector(".reset")!;
+
+    expect(textOf(target, ".status")).toBe("Clicked 0 of 10 times. Double: 0.");
+    expect(textOf(target, ".hint")).toBe("10 left");
+    expect(progress.getAttribute("value")).toBe("0");
+    expect(reset.hasAttribute("title")).toBe(false);
+
+    click(target, ".add", 3);
+    expect(textOf(target, ".status")).toBe("Clicked 3 of 10 times. Double: 6.");
+    expect(reset.getAttribute("title")).toBe("Start again");
+
+    click(target, ".add", 7);
+    expect(target.querySelector(".status")!.getAttribute("class")).toBe("status done");
+    expect(textOf(target, ".hint")).toBe("Limit reached");
+    expect(add.hasAttribute("disabled")).toBe(true);
+
+    click(target, ".reset");
+    expect(add.hasAttribute("disabled")).toBe(false);
+    expect(textOf(target, ".hint")).toBe("10 left");
+  });
+
+  test("destroy removes the nodes and stops updates", async () => {
+    const { target } = await mountApp();
+    const status = target.querySelector(".status")!;
+    mounted!.destroy();
     mounted = null;
-    expect(target.querySelector("h1")).toBeNull();
-    expect(target.querySelector("button")).toBeNull();
+    expect(target.childNodes.length).toBe(0);
 
+    clicks.value = 5;
+    expect(status.textContent).toContain("Clicked 0");
     target.remove();
   });
 });
