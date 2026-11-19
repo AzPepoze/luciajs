@@ -1,5 +1,6 @@
 import { compile } from "@compiler/index.ts";
 import type { BunPlugin } from "bun";
+import { setupRaw } from "./raw.ts";
 
 export function lucia(): BunPlugin {
 	return {
@@ -12,6 +13,7 @@ export function lucia(): BunPlugin {
 					loader: "ts",
 				};
 			});
+			setupRaw(build);
 		},
 	};
 }

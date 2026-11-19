@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { compile } from "lucia/compiler";
 
-const EVENTS_PATH = "../../examples/web/src/demos/Events.lucia";
+const EVENTS_PATH = "../../examples/web/src/demos/basics/Events.lucia";
 const EVENTS_FILE = new URL(EVENTS_PATH, import.meta.url).pathname;
 
 type Attached = { detach(): void };
@@ -45,10 +45,10 @@ describe("lucia bun plugin with the web example's Events demo", () => {
 
     const css = document.querySelector(`style[data-lucia="${id}"]`)!.textContent!;
     expect(css).toContain(`.status.done:where([data-l="${id}"]`);
-    expect(css).toContain("color: tomato");
+    expect(css).toContain("color: var(--accent)");
   });
 
-  test("text, partial and whole attributes follow signals", async () => {
+  test("text, partial and whole attributes follow stores", async () => {
     await attachEvents();
     const root = target!;
     const progress = root.querySelector("progress")!;
