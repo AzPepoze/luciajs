@@ -1,20 +1,26 @@
 {
-  "name": "luciajs",
+  "name": "lucia",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "examples"],
+  "exports": {
+    ".": "./src/runtime/index.ts",
+    "./internal": "./src/runtime/internal.ts",
+    "./markers": "./src/runtime/markers.ts",
+    "./compiler": "./src/compiler/index.ts",
+    "./bun-plugin": "./src/bun-plugin/index.ts"
+  },
   "scripts": {
     "dev": "bun --watch examples/serve.ts web",
     "dev:stress": "bun --watch examples/serve.ts stress",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "sass": "^1.80.0"
+  },
   "devDependencies": {
     "@happy-dom/global-registrator": "^15.11.0",
-    "@lucia/bun-plugin": "workspace:*",
-    "@lucia/compiler": "workspace:*",
     "@types/bun": "latest",
-    "lucia": "workspace:*",
     "playwright": "1.63.0",
     "typescript": "^5.6.0"
   }

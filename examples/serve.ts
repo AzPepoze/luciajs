@@ -1,4 +1,4 @@
-import { lucia } from "@lucia/bun-plugin";
+import { lucia } from "lucia/bun-plugin";
 
 const name = Bun.argv[2];
 if (!name) {

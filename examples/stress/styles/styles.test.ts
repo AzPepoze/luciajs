@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { attach } from "lucia";
-import { compile } from "@lucia/compiler";
+import { compile } from "lucia/compiler";
 import Parent from "./Parent.lucia";
 
 const PARENT_FILE = new URL("./Parent.lucia", import.meta.url).pathname;

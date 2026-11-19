@@ -10,7 +10,12 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "paths": {
+      "@runtime/*": ["./src/runtime/*"],
+      "@compiler/*": ["./src/compiler/*"],
+      "@bun-plugin/*": ["./src/bun-plugin/*"]
+    }
   },
-  "include": ["packages", "examples", "lucia.d.ts"]
+  "include": ["src", "test", "examples", "lucia.d.ts"]
 }

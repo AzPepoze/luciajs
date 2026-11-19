@@ -1,6 +1,0 @@
-{
-  "name": "examples",
-  "private": true,
-  "type": "module",
-  "dependencies": { "lucia": "workspace:*", "@lucia/bun-plugin": "workspace:*" }
-}

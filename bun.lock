@@ -4,49 +4,19 @@
   "workspaces": {
     "": {
       "name": "luciajs",
+      "dependencies": {
+        "sass": "^1.80.0",
+      },
       "devDependencies": {
         "@happy-dom/global-registrator": "^15.11.0",
-        "@lucia/bun-plugin": "workspace:*",
-        "@lucia/compiler": "workspace:*",
         "@types/bun": "latest",
-        "lucia": "workspace:*",
         "playwright": "1.63.0",
         "typescript": "^5.6.0",
       },
     },
-    "examples": {
-      "name": "examples",
-      "dependencies": {
-        "@lucia/bun-plugin": "workspace:*",
-        "lucia": "workspace:*",
-      },
-    },
-    "packages/bun-plugin": {
-      "name": "@lucia/bun-plugin",
-      "version": "0.0.1",
-      "dependencies": {
-        "@lucia/compiler": "workspace:*",
-      },
-    },
-    "packages/compiler": {
-      "name": "@lucia/compiler",
-      "version": "0.0.1",
-      "dependencies": {
-        "lucia": "workspace:*",
-        "sass": "^1.80.0",
-      },
-    },
-    "packages/lucia": {
-      "name": "lucia",
-      "version": "0.0.1",
-    },
   },
   "packages": {
     "@happy-dom/global-registrator": ["@happy-dom/global-registrator@15.11.7", "", { "dependencies": { "happy-dom": "^15.11.7" } }, "sha512-mfOoUlIw8VBiJYPrl5RZfMzkXC/z7gbSpi2ecycrj/gRWLq2CMV+Q+0G+JPjeOmuNFgg0skEIzkVFzVYFP6URw=="],
-
-    "@lucia/bun-plugin": ["@lucia/bun-plugin@workspace:packages/bun-plugin"],
-
-    "@lucia/compiler": ["@lucia/compiler@workspace:packages/compiler"],
 
     "@parcel/watcher": ["@parcel/watcher@2.6.0", "", { "dependencies": { "detect-libc": "^2.0.3", "is-glob": "^4.0.3", "node-addon-api": "^7.0.0", "picomatch": "^4.0.4" }, "optionalDependencies": { "@parcel/watcher-android-arm64": "2.6.0", "@parcel/watcher-darwin-arm64": "2.6.0", "@parcel/watcher-darwin-x64": "2.6.0", "@parcel/watcher-freebsd-x64": "2.6.0", "@parcel/watcher-linux-arm-glibc": "2.6.0", "@parcel/watcher-linux-arm-musl": "2.6.0", "@parcel/watcher-linux-arm64-glibc": "2.6.0", "@parcel/watcher-linux-arm64-musl": "2.6.0", "@parcel/watcher-linux-x64-glibc": "2.6.0", "@parcel/watcher-linux-x64-musl": "2.6.0", "@parcel/watcher-win32-arm64": "2.6.0", "@parcel/watcher-win32-x64": "2.6.0" }, "hasInstallScript": true }, "sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w=="],
 
@@ -86,8 +56,6 @@
 
     "entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
 
-    "examples": ["examples@workspace:examples"],
-
     "happy-dom": ["happy-dom@15.11.7", "", { "dependencies": { "entities": "^4.5.0", "webidl-conversions": "^7.0.0", "whatwg-mimetype": "^3.0.0" } }, "sha512-KyrFvnl+J9US63TEzwoiJOQzZBJY7KgBushJA8X61DMbNsH+2ONkDuLDnCnwUiPTF42tLoEmrPyoqbenVA5zrg=="],
 
     "immutable": ["immutable@5.2.1", "", {}, "sha512-CgXNM1BhKqpMjFHTyqQSk09OWqzHNJ/U4BdeBgXoBdR2DdgBdOSv131cO1/YMgzopqnka3B/i949UaMLEKUxOA=="],
@@ -95,8 +63,6 @@
     "is-extglob": ["is-extglob@2.1.1", "", {}, "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ=="],
 
     "is-glob": ["is-glob@4.0.3", "", { "dependencies": { "is-extglob": "^2.1.1" } }, "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg=="],
-
-    "lucia": ["lucia@workspace:packages/lucia"],
 
     "node-addon-api": ["node-addon-api@7.1.1", "", {}, "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ=="],
 
