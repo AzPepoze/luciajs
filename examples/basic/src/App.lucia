@@ -1,0 +1,30 @@
+<script>
+import { signal } from "lucia";
+
+const count = signal(0);
+
+export function setup(root: Element) {
+  const button = root.querySelector("button")!;
+  const label = root.querySelector(".count")!;
+  const render = () => (label.textContent = String(count.value));
+  button.addEventListener("click", () => {
+    count.value++;
+    render();
+  });
+  render();
+}
+</script>
+
+<h1>LuciaJS</h1>
+<button>Clicked <span class="count">0</span> times</button>
+
+<style>
+@use "sass:color";
+$accent: tomato;
+
+h1 { color: $accent; }
+button {
+  padding: 0.5rem 1rem;
+  &:hover { background: color.adjust($accent, $lightness: 30%); }
+}
+</style>
