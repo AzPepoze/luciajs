@@ -21,6 +21,7 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 
 - The main agent orchestrates only: plan, write exact specs, review and test. Hand all coding, tests and docs edits to Haiku subagents to save tokens.
 - The main agent writes code itself only for the hard core logic (store graph, template scanner, binding order), and says so when it does.
+- `bun run check` (typecheck, tests, site build, extension build) must pass before any change is reported done or committed. Set `LUCIA_CHROMIUM` so the browser tests run too.
 - Every change updates the docs that describe it, in the same change. A task is not done while the docs are stale.
 - Every feature or behavior change also updates the demos in the same change: add or adjust the `examples/web` showcase section, and the `examples/stress` scenarios when it affects them. A task is not done while the demos are stale.
 
