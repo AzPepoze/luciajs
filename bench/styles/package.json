@@ -1,0 +1,11 @@
+{
+  "name": "styles-bench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bench": "bun run run.ts"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
