@@ -3,12 +3,14 @@ import { relative, resolve, sep } from "node:path";
 import { bundleApp, entryPath } from "./bundle.ts";
 import { createLogger } from "./log.ts";
 import { copyPublic } from "./public.ts";
+import { writeRouteIndexes } from "./routes.ts";
 import { fileRows, formatReport } from "./report.ts";
 
 export interface BuildOptions {
   dir: string;
   outdir: string;
   minify: boolean;
+  routes?: string[];
 }
 
 export async function runBuild(options: BuildOptions): Promise<number> {
@@ -30,6 +32,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   }
 
   await copyPublic(dir, outdir);
+  await writeRouteIndexes(outdir, options.routes ?? []);
   const rows = await fileRows(outdir);
   process.stdout.write(`${formatReport(rows)}\n`);
   const elapsed = Math.round(performance.now() - started);

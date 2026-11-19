@@ -5,7 +5,7 @@ const NO_ENV = {};
 
 describe("parseCommand", () => {
   test("build uses the defaults", () => {
-    expect(parseCommand(["build"], NO_ENV)).toEqual({ name: "build", dir: ".", outdir: "dist", minify: true });
+    expect(parseCommand(["build"], NO_ENV)).toEqual({ name: "build", dir: ".", outdir: "dist", minify: true, routes: [] });
   });
 
   test("build reads its options", () => {
@@ -14,6 +14,7 @@ describe("parseCommand", () => {
       dir: "examples/web",
       outdir: "out",
       minify: false,
+      routes: [],
     });
   });
 

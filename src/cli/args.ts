@@ -4,7 +4,7 @@ export class UsageError extends Error {}
 
 export type Command =
   | { name: "help" }
-  | { name: "build"; dir: string; outdir: string; minify: boolean }
+  | { name: "build"; dir: string; outdir: string; minify: boolean; routes: string[] }
   | { name: "dev"; dir: string; port: number };
 
 const DEFAULT_PORT = 3000;
@@ -26,6 +26,7 @@ function parseBuild(args: string[]): Command {
       options: {
         outdir: { type: "string" },
         "no-minify": { type: "boolean" },
+        routes: { type: "string" },
       },
     }),
   );
@@ -34,7 +35,18 @@ function parseBuild(args: string[]): Command {
     dir: appDir(positionals),
     outdir: values.outdir ?? DEFAULT_OUTDIR,
     minify: !values["no-minify"],
+    routes: parseRoutes(values.routes),
   };
+}
+
+/** `--routes /guide,/reference` becomes a list of paths. Each must start with a slash and hold no `..`. */
+export function parseRoutes(value: string | undefined): string[] {
+  if (value === undefined) return [];
+  const routes = value.split(",").map((route) => route.trim()).filter(Boolean);
+  for (const route of routes) {
+    if (!route.startsWith("/") || route.includes("..")) throw new UsageError(`invalid route "${route}", use a path such as /guide`);
+  }
+  return routes;
 }
 
 function parseDev(args: string[], env: Record<string, string | undefined>): Command {

@@ -3,6 +3,11 @@ import { assetKey, type Assets } from "./dev-build.ts";
 import { RELOAD_PATH } from "./reload-client.ts";
 import { publicFile } from "./public.ts";
 
+/** A GET for a path with no file extension is a client route, so it gets index.html (history-API routing). */
+export function isPageRoute(method: string, pathname: string): boolean {
+  return method === "GET" && !/\.[^/]*$/.test(pathname);
+}
+
 export interface DevServerOptions {
   dir: string;
   port: number;
@@ -48,6 +53,8 @@ export function createDevServer({ dir, port }: DevServerOptions): DevServer {
     if (asset) return new Response(asset);
     const file = publicFile(dir, pathname);
     if (file && (await file.exists())) return new Response(file);
+    const index = assets.get(assetKey("index.html"));
+    if (index && isPageRoute(request.method, pathname)) return new Response(index);
     return new Response("not found", { status: 404 });
   }
 
