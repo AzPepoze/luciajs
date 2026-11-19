@@ -75,7 +75,7 @@
       <button class="icon-button menu-button" id="menu" type="button" aria-label="Open the docs menu" aria-controls="sidebar" aria-expanded="false">
         <span class="material-symbols-rounded" aria-hidden="true">menu</span>
       </button>
-      <a class="brand" href="#top">
+      <a class="brand" href="/">
         <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
           <polygon points="8,22 10,5 20,15" fill="var(--pink)" />
           <polygon points="40,22 38,5 28,15" fill="var(--pink)" />
@@ -89,9 +89,9 @@
         LuciaJS
       </a>
       <nav class="main-menu" aria-label="Main">
-        <a href="#top">Home</a>
-        <a href="#features">Features</a>
-        <a href="#text">Guide</a>
+        <a href="/">Home</a>
+        <a href="/guide">Guide</a>
+        <a href="/reference">Reference</a>
       </nav>
       <div class="search">
         <span class="material-symbols-rounded" aria-hidden="true">search</span>
@@ -105,40 +105,26 @@
       </div>
     </header>
 
-    <div class="page" id="top">
-      <div id="hero-slot"></div>
+    <div id="outlet"></div>
 
-      <div id="features-slot"></div>
-
-      <div class="docs" id="docs">
-        <aside class="sidebar" id="sidebar" aria-label="Docs">
-          <span class="nav-indicator" aria-hidden="true"></span>
-          <div id="nav-groups"></div>
-          <p class="nav-empty" hidden>No section matches your search.</p>
-        </aside>
-        <div class="scrim" id="scrim" hidden></div>
-        <main class="content" id="sections"></main>
-      </div>
-
-      <footer class="site-footer">
-        <p class="footer-brand">
-          <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-            <polygon points="8,22 10,5 20,15" fill="var(--pink)" />
-            <polygon points="40,22 38,5 28,15" fill="var(--pink)" />
-            <circle cx="24" cy="28" r="16" fill="var(--pink)" />
-            <circle cx="18" cy="27" r="2.2" fill="var(--fg)" />
-            <circle cx="30" cy="27" r="2.2" fill="var(--fg)" />
-          </svg>
-          LuciaJS
-        </p>
-        <nav aria-label="Footer">
-          <a href="#text">Guide</a>
-          <a href="#features">Features</a>
-          <a href="#">GitHub</a>
-          <a href="#top">Back to top</a>
-        </nav>
-      </footer>
-    </div>
+    <footer class="site-footer">
+      <p class="footer-brand">
+        <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <polygon points="8,22 10,5 20,15" fill="var(--pink)" />
+          <polygon points="40,22 38,5 28,15" fill="var(--pink)" />
+          <circle cx="24" cy="28" r="16" fill="var(--pink)" />
+          <circle cx="18" cy="27" r="2.2" fill="var(--fg)" />
+          <circle cx="30" cy="27" r="2.2" fill="var(--fg)" />
+        </svg>
+        LuciaJS
+      </p>
+      <nav aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/guide">Guide</a>
+        <a href="/reference">Reference</a>
+        <a href="#">GitHub</a>
+      </nav>
+    </footer>
 
     <script type="module" src="./src/main.ts"></script>
   </body>

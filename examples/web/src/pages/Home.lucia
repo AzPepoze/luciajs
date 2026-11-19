@@ -1,0 +1,10 @@
+<script>
+import Hero from "../components/Hero.lucia";
+import Features from "../components/Features.lucia";
+import { pageMotion } from "../motion/page.ts";
+</script>
+
+<div class="page-root" animate={pageMotion}>
+  <Hero />
+  <Features />
+</div>

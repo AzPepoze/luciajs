@@ -7,17 +7,29 @@
   justify-content: center;
   isolation: isolate;
   overflow: hidden;
-  min-height: calc(100vh - var(--topbar-h, #{$topbar-height}));
-  min-height: calc(100svh - var(--topbar-h, #{$topbar-height}));
-  padding: 3rem 1.25rem 6rem;
+  // The topbar floats over the hero, so the hero starts at the very top and clears the bar with its padding.
+  margin-top: calc(-1 * var(--topbar-h, #{$topbar-height}));
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: calc(var(--topbar-h, #{$topbar-height}) + 3rem) 1.25rem 6rem;
   border-bottom: 1px solid var(--line);
   text-align: center;
+}
+
+// The backdrop is its own layer, so it can drift. Its rays overhang the edges by 20%.
+.hero-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: calc(-12vh - 2px);
+  z-index: -2;
+  pointer-events: none;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -2;
     background-image: radial-gradient(var(--lavender-soft) 1.2px, transparent 1.6px);
     background-size: 18px 18px;
     -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
@@ -28,12 +40,21 @@
     content: "";
     position: absolute;
     inset: -20%;
-    z-index: -2;
     background: repeating-conic-gradient(from 0deg at 50% 45%, transparent 0 6deg, var(--accent-soft) 6deg 8deg);
     opacity: 0.5;
     -webkit-mask-image: radial-gradient(ellipse at center, transparent 25%, #000 70%);
     mask-image: radial-gradient(ellipse at center, transparent 25%, #000 70%);
   }
+}
+
+// Holds the sparkles, so the whole layer can move at its own speed.
+.sparkle-layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: calc(-25vh - 2px);
+  pointer-events: none;
 }
 
 .hero-inner {
@@ -154,7 +175,10 @@
 
 .petals {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: calc(-40vh - 2px); // The travel of the lift, so no empty strip shows.
   z-index: -1;
   overflow: hidden;
   pointer-events: none;
@@ -162,7 +186,7 @@
 
 .petal {
   position: absolute;
-  top: -8%;
+  top: -12vh;
   left: var(--left);
   width: var(--size);
   height: calc(var(--size) * 0.7);
@@ -172,13 +196,20 @@
   animation: petal-fall var(--duration) linear var(--delay) infinite;
 }
 
+// A petal falls from above the hero to below its bottom edge. It holds its opacity until the last 10%.
 @keyframes petal-fall {
-  from {
-    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  0% {
+    opacity: 0.8;
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
 
-  to {
-    transform: translate3d(var(--drift), 90vh, 0) rotate(540deg);
+  90% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate3d(var(--drift), calc(100svh + 56vh), 0) rotate(540deg);
+    opacity: 0;
   }
 }
 
@@ -189,3 +220,4 @@
   }
 
 }
+

@@ -1,5 +1,5 @@
 <script>
-import { ACTIVE, PRESET } from "lucia";
+import { WHEN, PRESET } from "lucia";
 import type { ApiEntry } from "../../../../reference/api.ts";
 import { catalog } from "../catalog.ts";
 import { headingFlash } from "../flash.ts";
@@ -15,8 +15,8 @@ const keywordIndex = buildKeywordIndex(orderedEntries, demos);
 
 // Plays in when the section enters the screen, and back out when it leaves.
 const sectionMotion = {
-  animation: PRESET.SLIDE_UP,
-  active: ACTIVE.VIEW,
+  style: PRESET.SLIDE_UP,
+  when: WHEN.VIEW,
   duration: 600,
   more: { margin: 80, amount: 0.1, reverse: true },
 };
@@ -36,8 +36,8 @@ const sections = orderedEntries.map((entry) => {
     subtitle: tokenize(entry.summary, keywordIndex, entry.id),
     bullets: entry.bullets.map((text) => tokenize(text, keywordIndex, entry.id)),
     flashMotion: {
-      animation: flashKeys,
-      active: ACTIVE.MANUAL,
+      style: flashKeys,
+      when: WHEN.MANUAL,
       control: flash,
       duration: 900,
     },

@@ -1,9 +1,9 @@
 const copyIcon = "content_copy";
 const resetDelay = 1500;
 
-export function initCopy(): void {
-  for (const button of document.querySelectorAll<HTMLButtonElement>(".copy-button")) {
-    button.addEventListener("click", () => copy(button));
+export function initCopy(root: ParentNode, signal: AbortSignal): void {
+  for (const button of root.querySelectorAll<HTMLButtonElement>(".copy-button")) {
+    button.addEventListener("click", () => copy(button), { signal });
   }
 }
 

@@ -1,15 +1,20 @@
 import { setGroupCollapsed } from "./nav-group.ts";
 
-export function initSearch(): void {
+// Filters the Guide sidebar. The Reference page has its own filter on the same input.
+export function initSearch(signal: AbortSignal): void {
   const input = document.querySelector<HTMLInputElement>("#search")!;
   const groups = [...document.querySelectorAll<HTMLElement>(".nav-group")];
   const empty = document.querySelector<HTMLElement>(".nav-empty")!;
-  input.addEventListener("input", () => {
-    const query = input.value.trim().toLowerCase();
-    let shown = 0;
-    for (const group of groups) shown += filterGroup(group, query);
-    empty.hidden = shown > 0;
-  });
+  input.addEventListener(
+    "input",
+    () => {
+      const query = input.value.trim().toLowerCase();
+      let shown = 0;
+      for (const group of groups) shown += filterGroup(group, query);
+      empty.hidden = shown > 0;
+    },
+    { signal },
+  );
 }
 
 function filterGroup(group: HTMLElement, query: string): number {

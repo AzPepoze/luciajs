@@ -11,20 +11,27 @@ let demos: HTMLElement[] = [];
 let currentKey = "";
 let frame = 0;
 
-export function initScrollSpy(): void {
+// Runs while the Guide page is attached. The signal removes every listener and pending frame.
+export function initScrollSpy(signal: AbortSignal): void {
   indicator = document.querySelector<HTMLElement>(".nav-indicator")!;
   const sidebar = document.querySelector<HTMLElement>("#sidebar")!;
   linksById = groupLinksById();
   sections = [...document.querySelectorAll<HTMLElement>(".doc-section")];
   demos = [...document.querySelectorAll<HTMLElement>(".demo-block")];
-  window.addEventListener("scroll", scheduleUpdate, { passive: true });
-  window.addEventListener("resize", scheduleUpdate);
-  sidebar.addEventListener("transitionend", () => placeIndicator(activeLinks.at(-1)));
+  window.addEventListener("scroll", () => scheduleUpdate(signal), { passive: true, signal });
+  window.addEventListener("resize", () => scheduleUpdate(signal), { signal });
+  sidebar.addEventListener("transitionend", () => placeIndicator(activeLinks.at(-1)), { signal });
+  signal.addEventListener("abort", () => {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    currentKey = "";
+    activeLinks = [];
+  });
   update();
 }
 
-function scheduleUpdate(): void {
-  if (frame) return;
+function scheduleUpdate(signal: AbortSignal): void {
+  if (frame || signal.aborted) return;
   frame = requestAnimationFrame(() => {
     frame = 0;
     update();

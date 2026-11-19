@@ -1,4 +1,4 @@
-export function initDrawer(): void {
+export function initDrawer(signal: AbortSignal): void {
   const menu = document.querySelector<HTMLButtonElement>("#menu")!;
   const sidebar = document.querySelector<HTMLElement>("#sidebar")!;
   const scrim = document.querySelector<HTMLElement>("#scrim")!;
@@ -9,12 +9,20 @@ export function initDrawer(): void {
     menu.setAttribute("aria-expanded", String(open));
   };
 
-  menu.addEventListener("click", () => setOpen(!sidebar.classList.contains("is-open")));
-  scrim.addEventListener("click", () => setOpen(false));
-  sidebar.addEventListener("click", (event) => {
-    if ((event.target as Element).closest("a")) setOpen(false);
-  });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") setOpen(false);
-  });
+  menu.addEventListener("click", () => setOpen(!sidebar.classList.contains("is-open")), { signal });
+  scrim.addEventListener("click", () => setOpen(false), { signal });
+  sidebar.addEventListener(
+    "click",
+    (event) => {
+      if ((event.target as Element).closest("a")) setOpen(false);
+    },
+    { signal },
+  );
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Escape") setOpen(false);
+    },
+    { signal },
+  );
 }

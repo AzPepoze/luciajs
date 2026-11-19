@@ -10,12 +10,12 @@ let pausedUntil = 0;
 let ownScrollUntil = 0;
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
-export function initSidebarFollow(): void {
+export function initSidebarFollow(signal: AbortSignal): void {
   sidebar = document.querySelector<HTMLElement>("#sidebar")!;
   for (const type of ["pointerenter", "wheel", "touchstart"]) {
-    sidebar.addEventListener(type, pause, { passive: true });
+    sidebar.addEventListener(type, pause, { passive: true, signal });
   }
-  sidebar.addEventListener("scroll", onSidebarScroll, { passive: true });
+  sidebar.addEventListener("scroll", onSidebarScroll, { passive: true, signal });
 }
 
 // Brings a link into view inside the sidebar. The page itself does not move.

@@ -1,0 +1,51 @@
+<script>
+import { api } from "../../../../reference/api.ts";
+import { groupTitles } from "../catalog.ts";
+import CodeBlock from "../components/CodeBlock.lucia";
+import { pageMotion } from "../motion/page.ts";
+
+// Every entry, types included, grouped in the Guide's order. Each name links to its Guide section.
+const groups = Object.entries(groupTitles)
+  .map(([group, title]) => ({
+    group,
+    label: title.label,
+    rows: api
+      .filter((entry) => entry.group === group)
+      .map((entry) => ({ ...entry, members: entry.members ?? [] })),
+  }))
+  .filter((group) => group.rows.length > 0);
+</script>
+
+<div class="page-root reference" animate={pageMotion}>
+  <h1 class="ref-page-title">Reference</h1>
+  <EACH {groups} as={group}>
+    <section class="ref-group" data-ref-group>
+      <h2 class="ref-title">{group.label}</h2>
+      <table class="ref-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Kind</th>
+            <th>Signature</th>
+            <th>Summary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <EACH {group.rows} as={row}>
+            <tr data-ref-row>
+              <td><a class="ref-name" href={"/guide#" + row.id}><code>{row.name}</code></a></td>
+              <td><span class="kind" data-kind={row.kind}>{row.kind}</span></td>
+              <td><CodeBlock text={row.signature} language="typescript" className="sig" /></td>
+              <td>
+                {row.summary}
+                <EACH {row.members} as={member}>
+                  <code class="member">{member.name}</code>
+                </EACH>
+              </td>
+            </tr>
+          </EACH>
+        </tbody>
+      </table>
+    </section>
+  </EACH>
+</div>

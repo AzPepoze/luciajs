@@ -1,0 +1,17 @@
+<script>
+import Docs from "../components/Docs.lucia";
+import { pageMotion } from "../motion/page.ts";
+</script>
+
+<div class="page-root docs" animate={pageMotion}>
+  <aside class="sidebar" id="sidebar" aria-label="Docs">
+    <span class="nav-indicator" aria-hidden="true"></span>
+    <div id="nav-groups"></div>
+    <p class="nav-empty" hidden>No section matches your search.</p>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+  <main class="content" id="sections">
+    <span id="first-demo-group" class="anchor-target"></span>
+    <Docs />
+  </main>
+</div>

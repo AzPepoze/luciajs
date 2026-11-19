@@ -1,46 +1,52 @@
 <script>
-import { ACTIVE, EASE, TRANSITION } from "lucia";
+import { WHEN, EASE } from "lucia";
 import { scrollHint } from "../motion.ts";
 import FeatureCounter from "./FeatureCounter.lucia";
 
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 const rise = {
   0: { opacity: 0, translate: "0px 24px" },
-  1: [TRANSITION.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
+  1: [EASE.STYLE.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
 };
 
 const bobbing = {
   0: { translate: "0px 0px" },
-  1: [TRANSITION.SINE, EASE.INOUT, { translate: "0px -4px" }],
+  1: [EASE.STYLE.SINE, EASE.INOUT, { translate: "0px -4px" }],
 };
 
 const swipeIn = {
   0: { scale: "0 1" },
-  1: [TRANSITION.QUART, EASE.OUT, { scale: "1 1" }],
+  1: [EASE.STYLE.QUART, EASE.OUT, { scale: "1 1" }],
 };
 
-const reveal = { animation: rise, active: ACTIVE.VIEW, duration: 500 };
-const bob = { animation: bobbing, loop: true, backAndForth: true, duration: 3000 };
+const reveal = { style: rise, when: WHEN.VIEW, duration: 500 };
+const bob = { style: bobbing, loop: true, backAndForth: true, duration: 3000 };
 const swipeMotion = {
-  animation: swipeIn,
-  active: ACTIVE.VIEW,
+  style: swipeIn,
+  when: WHEN.VIEW,
   duration: 800,
   delay: 200,
 };
+
+// The glows lift as the section scrolls past. The nearer layer moves faster.
+const scrolled = { when: WHEN.SCROLL, more: { start: 1, end: 2 } };
+const glowLift = { 0: { translate: "0 0" }, 1: { translate: "0 -15vh" } };
+const bgMotion = reduced ? [] : { ...scrolled, style: glowLift };
 
 const badgeSnippet = '<badge label={mail} tone="warn" />';
 const helloSnippet = "<p>Hi {name}</p>";
 
 const hintMotion = {
-  animation: scrollHint,
+  style: scrollHint,
   loop: true,
   backAndForth: true,
-  transition: TRANSITION.SINE,
-  ease: EASE.INOUT,
   duration: 1600,
 };
 </script>
 
 <section class="features" id="features">
+  <div class="features-bg" aria-hidden="true" animate={bgMotion}></div>
   <div class="features-inner">
     <h2 class="section-title">
       <span class="swipe">
@@ -139,7 +145,9 @@ import {"{"} store {"}"} from "lucia";
         <div class="feature-head">
           <span class="feature-icon">
             <span class="blob" animate={bob} aria-hidden="true"></span>
-            <span class="material-symbols-rounded" aria-hidden="true">rocket_launch</span>
+            <span class="material-symbols-rounded" aria-hidden="true">
+              rocket_launch
+            </span>
           </span>
           <h3>Bun native</h3>
         </div>
@@ -167,7 +175,7 @@ bun dev</code></pre>
   </div>
   <a
     class="scroll-hint"
-    href="#docs"
+    href="/guide"
     aria-label="Scroll to the docs"
     animate={hintMotion}
   >

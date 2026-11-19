@@ -1,15 +1,17 @@
 <script>
-import { ACTIVE, EASE, TRANSITION } from "lucia";
+import { WHEN, EASE } from "lucia";
 
 // Reduced motion keeps the loader still. Only the fade-out still plays.
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const markBounce = {
+  default: [EASE.STYLE.SINE, EASE.INOUT],
   0: { translate: "0px 0px", rotate: "-6deg" },
   1: { translate: "0px -10px", rotate: "6deg" },
 };
 
 const dotBounce = {
+  default: [EASE.STYLE.SINE, EASE.INOUT],
   0: { translate: "0px 0px" },
   1: { translate: "0px -8px" },
 };
@@ -22,16 +24,14 @@ const fadeOut = {
 const loopSettings = {
   loop: true,
   backAndForth: true,
-  transition: TRANSITION.SINE,
-  ease: EASE.INOUT,
 };
 
 const markMotion = reduced
   ? []
-  : { ...loopSettings, animation: markBounce, duration: 700 };
+  : { ...loopSettings, style: markBounce, duration: 700 };
 
 function dotMotion(delay: number) {
-  return reduced ? [] : { ...loopSettings, animation: dotBounce, duration: 500, delay };
+  return reduced ? [] : { ...loopSettings, style: dotBounce, duration: 500, delay };
 }
 </script>
 
@@ -39,7 +39,7 @@ function dotMotion(delay: number) {
   class="loader"
   role="status"
   aria-label="Loading LuciaJS"
-  animate={{ animation: fadeOut, active: ACTIVE.OUT, duration: reduced ? 1 : 400 }}
+  animate={{ style: fadeOut, when: WHEN.DETACH, duration: reduced ? 1 : 400 }}
 >
   <div class="loader-inner">
     <svg

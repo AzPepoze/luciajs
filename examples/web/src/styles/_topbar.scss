@@ -13,6 +13,21 @@
   background: var(--topbar);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  transition: background-color 200ms ease, border-color 200ms ease, backdrop-filter 200ms ease;
+
+  // Over the hero and features, once content can pass under the bar: frosted, with no border.
+  &.is-frosted {
+    border-bottom-color: transparent;
+  }
+
+  // At the top of the page the bar is clear. Its text gets a soft halo to stay readable over the hero.
+  &.is-bare {
+    border-bottom-color: transparent;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    text-shadow: 0 0 10px var(--bg);
+  }
 }
 
 .brand,

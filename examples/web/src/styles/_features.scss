@@ -11,12 +11,22 @@
   min-height: calc(100vh - var(--topbar-h, #{$topbar-height}));
   min-height: calc(100svh - var(--topbar-h, #{$topbar-height}));
   padding: 4rem clamp(1.25rem, 3vw, 3rem) 5.5rem;
+}
+
+// The drifting glows are their own layer, so the whole layer can move as the section scrolls.
+.features-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: calc(-15vh - 2px);
+  z-index: -1;
+  pointer-events: none;
 
   &::before,
   &::after {
     content: "";
     position: absolute;
-    z-index: -1;
     width: 40rem;
     height: 40rem;
     border-radius: 50%;
@@ -248,8 +258,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .features::before,
-  .features::after,
+  .features-bg::before,
+  .features-bg::after,
   .blob,
   .card-sparkle {
     animation: none;
@@ -259,3 +269,4 @@
     transition: none;
   }
 }
+
