@@ -48,4 +48,8 @@ const tagline = "Paper Notes is a quiet place for drafts, lists and half-formed 
     &:hover { background: theme.$accent-hover; }
   }
 }
+
+@global {
+  ::selection { background: theme.$accent; color: #fff; }
+}
 </style>

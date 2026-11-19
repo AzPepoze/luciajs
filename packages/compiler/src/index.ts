@@ -10,15 +10,15 @@ export { compileTemplate } from "./template.ts";
 export interface CompileResult {
 	code: string;
 	css: string;
-	scope: string;
+	id: string;
 }
 
 export function compile(source: string, file: string): CompileResult {
 	const parsed = parse(source, file);
-	const scope = `data-l-${hash(file)}`;
-	const css = parsed.style ? compileStyle(parsed.style, file, scope) : "";
+	const id = hash(file);
+	const css = parsed.styles.map((style) => compileStyle(style, file, id)).join("\n");
 	const script = parsed.script?.content ?? "";
 	const template = compileTemplate(parsed.markup, file, parsed.markupLine);
-	const code = generate({ script, template, css, scope });
-	return { code, css, scope };
+	const code = generate({ script, template, css, id });
+	return { code, css, id };
 }

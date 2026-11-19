@@ -26,14 +26,6 @@ export function setup(root: Element) {
 <style>
 @use "../styles/theme" as theme;
 
-:global(body) {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  background: #fafaf7;
-  color: #1d1d1b;
-  line-height: 1.5;
-}
-
 .top {
   @include theme.vars;
   position: sticky;
@@ -76,5 +68,17 @@ export function setup(root: Element) {
     cursor: pointer;
     &:hover { border-color: theme.$accent; }
   }
+}
+</style>
+
+<style global>
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: #fafaf7;
+  color: #1d1d1b;
+  line-height: 1.5;
 }
 </style>

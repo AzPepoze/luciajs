@@ -46,16 +46,22 @@ import { theme } from "../store.ts";
       grid-template-columns: repeat(3, 1fr);
     }
   }
+}
 
+@scoped {
   .card {
     padding: 1.5rem;
     border: 1px solid var(--line);
     border-radius: 14px;
     background: var(--card);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
-
-    h3 { margin: 0 0 0.5rem; color: theme.$accent; font-size: 1.15rem; }
-    p { margin: 0; color: var(--muted); }
   }
 }
+</style>
+
+<style scoped>
+@use "../styles/theme" as theme;
+
+h3 { margin: 0 0 0.5rem; color: theme.$accent; font-size: 1.15rem; }
+p { margin: 0; color: var(--muted); }
 </style>

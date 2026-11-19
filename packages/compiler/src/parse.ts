@@ -9,7 +9,8 @@ export interface Section {
 
 export interface ParsedFile {
   script: Section | null;
-  style: Section | null;
+  /** Every <style> section, in source order. */
+  styles: Section[];
   markup: string;
   markupLine: number;
 }
@@ -80,20 +81,26 @@ function findSections(source: string, file: string): SectionMatch[] {
   return sections;
 }
 
+function toSection(source: string, section: SectionMatch): Section {
+  return {
+    content: source.slice(section.contentStart, section.contentEnd),
+    attrs: parseAttrs(section.rawAttrs),
+    line: lineAt(source, section.contentStart),
+  };
+}
+
 export function parse(source: string, file: string): ParsedFile {
-  const result: ParsedFile = { script: null, style: null, markup: "", markupLine: 1 };
+  const result: ParsedFile = { script: null, styles: [], markup: "", markupLine: 1 };
   let markup = "";
   let last = 0;
   for (const section of findSections(source, file)) {
     const { kind, start, end } = section;
-    if (result[kind]) {
-      throw new LuciaError(`only one <${kind}> is allowed`, file, lineAt(source, start), 1);
+    if (kind === "style") {
+      result.styles.push(toSection(source, section));
+    } else {
+      if (result.script) throw new LuciaError("only one <script> is allowed", file, lineAt(source, start), 1);
+      result.script = toSection(source, section);
     }
-    result[kind] = {
-      content: source.slice(section.contentStart, section.contentEnd),
-      attrs: parseAttrs(section.rawAttrs),
-      line: lineAt(source, section.contentStart),
-    };
     markup += source.slice(last, start) + keepLineBreaks(source.slice(start, end));
     last = end;
   }

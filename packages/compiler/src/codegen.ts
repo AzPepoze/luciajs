@@ -4,7 +4,7 @@ export interface ComponentParts {
   script: string;
   template: Template;
   css: string;
-  scope: string;
+  id: string;
 }
 
 const RUNTIME_IMPORT = `import {
@@ -41,18 +41,18 @@ function binder(binding: Binding): string {
   return `(node, cleanups) => {\n    ${binding.attrs.map(attrCall).join("\n    ")}\n  }`;
 }
 
-function templateFactory(html: string, scope: string): string {
+function templateFactory(html: string, id: string): string {
   return `let __template: ReturnType<typeof __createTemplate> | undefined;
-const __getTemplate = () => (__template ??= __createTemplate(${JSON.stringify(html)}, ${JSON.stringify(scope)}));`;
+const __getTemplate = () => (__template ??= __createTemplate(${JSON.stringify(html)}, ${JSON.stringify(id)}));`;
 }
 
 function bindersList(bindings: Binding[]): string {
   return `const __binders: __Binder[] = [\n  ${bindings.map(binder).join(",\n  ")}\n];`;
 }
 
-function componentFunction(scope: string): string {
+function componentFunction(id: string): string {
   return `export default function component(target: Element) {
-  __injectStyle(${JSON.stringify(scope)}, __css);
+  __injectStyle(${JSON.stringify(id)}, __css);
   const cleanups: __Cleanup[] = [];
   const fragment = __instantiate(__getTemplate(), __binders, cleanups);
   const nodes = [...fragment.childNodes];
@@ -69,13 +69,13 @@ function componentFunction(scope: string): string {
 }`;
 }
 
-export function generate({ script, template, css, scope }: ComponentParts): string {
+export function generate({ script, template, css, id }: ComponentParts): string {
   return [
     script,
     RUNTIME_IMPORT,
     `const __css = ${JSON.stringify(css)};`,
-    templateFactory(template.html, scope),
+    templateFactory(template.html, id),
     bindersList(template.bindings),
-    componentFunction(scope),
+    componentFunction(id),
   ].join("\n");
 }

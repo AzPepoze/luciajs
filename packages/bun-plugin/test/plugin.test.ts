@@ -14,14 +14,14 @@ afterEach(() => {
   clicks.value = 0;
 });
 
-async function attachCounter(): Promise<{ target: HTMLElement; scope: string }> {
+async function attachCounter(): Promise<{ target: HTMLElement; id: string }> {
   const source = await Bun.file(COUNTER_FILE).text();
-  const { scope } = compile(source, COUNTER_FILE);
+  const { id } = compile(source, COUNTER_FILE);
   const Counter = (await import(COUNTER_PATH)).default as (target: Element) => Attached;
   const target = document.createElement("div");
   document.body.append(target);
   attached = Counter(target);
-  return { target, scope };
+  return { target, id };
 }
 
 function click(target: HTMLElement, selector: string, times = 1): void {
@@ -34,13 +34,14 @@ function textOf(target: HTMLElement, selector: string): string {
 }
 
 describe("lucia bun plugin with the web example's Counter", () => {
-  test("scopes markup and injects compiled scss", async () => {
-    const { target, scope } = await attachCounter();
-    expect(target.querySelector("h2")!.hasAttribute(scope)).toBe(true);
+  test("stamps only the top-level element and injects compiled scss", async () => {
+    const { target, id } = await attachCounter();
+    expect(target.querySelector("section")!.getAttribute("data-l")).toBe(id);
+    expect(target.querySelector("h2")!.hasAttribute("data-l")).toBe(false);
     expect(textOf(target, "h2")).toBe("Live demo");
 
-    const css = document.querySelector(`style[data-lucia="${scope}"]`)!.textContent!;
-    expect(css).toContain(`h2[${scope}]`);
+    const css = document.querySelector(`style[data-lucia="${id}"]`)!.textContent!;
+    expect(css).toContain(`h2:where([data-l="${id}"]`);
     expect(css).toContain("color: tomato");
   });
 

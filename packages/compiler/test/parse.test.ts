@@ -19,13 +19,13 @@ describe("parse", () => {
 
     const parsed = parse(source, FILE);
     expect(parsed.script?.content).toBe("\nconst a = 1;\n");
-    expect(parsed.style?.content).toBe("\nh1 { color: red; }\n");
+    expect(parsed.styles[0]?.content).toBe("\nh1 { color: red; }\n");
     expect(parsed.markup).toBe("<h1>Hi</h1>");
   });
 
   test("parses attributes on sections", () => {
     const parsed = parse('<style lang="css">a {}</style>', FILE);
-    expect(parsed.style?.attrs).toEqual({ lang: "css" });
+    expect(parsed.styles[0]?.attrs).toEqual({ lang: "css" });
     expect(parsed.script).toBeNull();
   });
 
@@ -39,8 +39,16 @@ describe("parse", () => {
     const source = '<script>const a = 1;</script>\n<p>{"<script>x</script>"}</p>\n<!-- <style>p{}</style> -->';
     const parsed = parse(source, FILE);
     expect(parsed.script?.content).toBe("const a = 1;");
-    expect(parsed.style).toBeNull();
+    expect(parsed.styles).toEqual([]);
     expect(parsed.markup).toBe('<p>{"<script>x</script>"}</p>\n<!-- <style>p{}</style> -->');
+  });
+
+  test("keeps every <style> in source order", () => {
+    const source = '<style>a {}</style>\n<p>x</p>\n<style scoped>b {}</style>\n<style global>c {}</style>';
+    const parsed = parse(source, FILE);
+    expect(parsed.styles.map((style) => style.content)).toEqual(["a {}", "b {}", "c {}"]);
+    expect(parsed.styles.map((style) => style.attrs)).toEqual([{}, { scoped: "" }, { global: "" }]);
+    expect(parsed.styles[2]?.line).toBe(4);
   });
 
   test("throws LuciaError on an unclosed section", () => {

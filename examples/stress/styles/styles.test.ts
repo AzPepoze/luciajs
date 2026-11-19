@@ -1,0 +1,26 @@
+import { describe, expect, test } from "bun:test";
+import { attach } from "lucia";
+import { compile } from "@lucia/compiler";
+import Parent from "./Parent.lucia";
+
+const PARENT_FILE = new URL("./Parent.lucia", import.meta.url).pathname;
+
+describe("tree and scoped rules on the same class", () => {
+  test("compiles a tree selector and a scoped selector that stops at child roots", async () => {
+    const { css, id } = compile(await Bun.file(PARENT_FILE).text(), PARENT_FILE);
+    const root = `[data-l="${id}"]`;
+    expect(css).toContain(`.mark:where(${root}, ${root} *) {`);
+    expect(css).toContain(`.mark:where(${root}, ${root} *):not(:where(`);
+  });
+
+  test("the child keeps its own markup and detaches cleanly", () => {
+    const target = document.createElement("div");
+    document.body.append(target);
+    const instance = attach(Parent, target);
+    expect(target.querySelector(".slot .child .mark")).not.toBeNull();
+
+    instance.detach();
+    expect(target.childNodes.length).toBe(0);
+    target.remove();
+  });
+});

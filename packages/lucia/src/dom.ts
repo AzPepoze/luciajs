@@ -1,4 +1,4 @@
-import { ELEMENT_MARKER, TEXT_MARKER } from "./markers.ts";
+import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "./markers.ts";
 import { watch } from "./signal.ts";
 
 export interface Instance {
@@ -57,24 +57,24 @@ function isMarker(node: Node): boolean {
   return node.nodeType === Node.ELEMENT_NODE && (node as Element).hasAttribute(ELEMENT_MARKER);
 }
 
-function collectPaths(parent: Node, scope: string, path: number[], paths: number[][]): void {
+function collectPaths(parent: Node, path: number[], paths: number[][]): void {
   parent.childNodes.forEach((child, index) => {
     const childPath = [...path, index];
     if (isMarker(child)) paths.push(childPath);
     if (child.nodeType !== Node.ELEMENT_NODE) return;
     const el = child as Element;
-    el.setAttribute(scope, "");
     el.removeAttribute(ELEMENT_MARKER);
-    collectPaths(el, scope, childPath, paths);
+    collectPaths(el, childPath, paths);
   });
 }
 
-/** Parse markup once, scope its elements and record where the bindings go. */
-export function createTemplate(html: string, scope: string): CompiledTemplate {
+/** Parse markup once, stamp its top-level elements with the component id and record where the bindings go. */
+export function createTemplate(html: string, id: string): CompiledTemplate {
   const template = document.createElement("template");
   template.innerHTML = html;
+  for (const el of template.content.children) el.setAttribute(COMPONENT_ATTR, id);
   const paths: number[][] = [];
-  collectPaths(template.content, scope, [], paths);
+  collectPaths(template.content, [], paths);
   return { template, paths };
 }
 
