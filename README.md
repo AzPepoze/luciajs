@@ -3,10 +3,13 @@
 > [!NOTE]
 > LuciaJS is a UI framework.
 
+> [!IMPORTANT]
+> LuciaJS is under active development and has no release yet. APIs and markup may change without notice.
+
 A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through stores.
 
-> [!WARNING]
-> Early work in progress. Markup has `{expression}`, events, two-way `bind`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
+> [!NOTE]
+> Markup has `{expression}`, events, two-way `bind`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
 
 ```html
 <script>
