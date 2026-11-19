@@ -99,7 +99,7 @@
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  transform: rotate(-2deg);
+  transform: rotate(2deg);
   box-shadow: var(--shadow);
 }
 
@@ -113,13 +113,6 @@
   font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--fg);
-}
-
-.logo {
-  flex: none;
-  width: 0.9em;
-  height: 0.9em;
-  overflow: visible;
 }
 
 .sparkle {
@@ -184,7 +177,7 @@
   width: fit-content;
   max-width: 100%;
   margin: 2rem auto 1.5rem;
-  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  padding: 0.4rem 1rem;
   border: 2px solid var(--lavender);
   border-radius: 20px;
   background: var(--card);
@@ -205,6 +198,13 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
+}
+
+.wip-note {
+  max-width: 34rem;
+  margin: 1.25rem auto 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .petals {

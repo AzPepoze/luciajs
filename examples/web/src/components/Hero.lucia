@@ -1,6 +1,6 @@
 <script>
 import { WHEN, EASE } from "lucia";
-import { logoBob, scrollHint } from "../motion.ts";
+import { scrollHint } from "../motion.ts";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -20,8 +20,11 @@ const fadeIn = {
 };
 
 const titleMotion = { style: titleIn, when: WHEN.ATTACH, duration: 700 };
+const eyebrowMotion = { style: fadeIn, when: WHEN.ATTACH, duration: 600, delay: 50 };
 const taglineMotion = { style: fadeIn, when: WHEN.ATTACH, duration: 600, delay: 150 };
-const ctaMotion = { style: ctaIn, when: WHEN.ATTACH, duration: 600, delay: 250 };
+const installMotion = { style: ctaIn, when: WHEN.ATTACH, duration: 600, delay: 250 };
+const ctaMotion = { style: ctaIn, when: WHEN.ATTACH, duration: 600, delay: 350 };
+const noteMotion = { style: fadeIn, when: WHEN.ATTACH, duration: 600, delay: 450 };
 
 // The layers lift at different speeds as the hero scrolls past.
 const scrolled = { when: WHEN.SCROLL, more: { start: 1, end: 2 } };
@@ -32,13 +35,6 @@ const petalLift = { 0: { translate: "0 0" }, 1: { translate: "0 -40vh" } };
 const backMotion = reduced ? [] : { ...scrolled, style: backLift };
 const sparkleMotion = reduced ? [] : { ...scrolled, style: sparkleLift };
 const petalMotion = reduced ? [] : { ...scrolled, style: petalLift };
-
-const logoMotion = {
-  style: logoBob,
-  loop: true,
-  backAndForth: true,
-  duration: 3600,
-};
 
 const hintMotion = {
   style: scrollHint,
@@ -127,46 +123,14 @@ const hintMotion = {
     </svg>
   </div>
   <div class="hero-inner">
-    <p class="eyebrow">A Bun-native UI framework</p>
-    <h1 class="hero-title" animate={titleMotion}>
-      <svg
-        class="logo-mark logo"
-        viewBox="0 0 48 48"
-        aria-hidden="true"
-        focusable="false"
-        animate={logoMotion}
-      >
-        <polygon points="8,22 10,5 20,15" fill="var(--pink)" />
-        <polygon points="40,22 38,5 28,15" fill="var(--pink)" />
-        <circle cx="24" cy="28" r="16" fill="var(--pink)" />
-        <circle cx="18" cy="27" r="2.2" fill="var(--fg)" />
-        <circle cx="30" cy="27" r="2.2" fill="var(--fg)" />
-        <circle cx="13" cy="33" r="2.6" fill="var(--lavender)" />
-        <circle cx="35" cy="33" r="2.6" fill="var(--lavender)" />
-        <path
-          d="M21 33 Q24 36 27 33"
-          stroke="var(--fg)"
-          stroke-width="1.6"
-          fill="none"
-          stroke-linecap="round"
-        />
-      </svg>
-      LuciaJS
-    </h1>
+    <h1 class="hero-title" animate={titleMotion}>LuciaJS</h1>
+    <p class="eyebrow" animate={eyebrowMotion}>A Bun-native UI framework</p>
     <p class="tagline" animate={taglineMotion}>
       Single-file components, stores and scoped SCSS.
     </p>
-    <div class="install">
-      <span class="prompt" aria-hidden="true">$</span>
-      <code>bun install && bun dev</code>
-      <button
-        class="copy-button"
-        type="button"
-        data-copy="bun install && bun dev"
-        aria-label="Copy the install command"
-      >
-        <span class="material-symbols-rounded" aria-hidden="true">content_copy</span>
-      </button>
+    <div class="install" animate={installMotion}>
+      <span class="prompt" aria-hidden="true">!</span>
+      <code>Coming soon — no release yet</code>
     </div>
     <div class="cta" animate={ctaMotion}>
       <a class="button primary" href="/guide">
@@ -177,7 +141,34 @@ const hintMotion = {
         <span class="material-symbols-rounded" aria-hidden="true">play_circle</span>
         View demos
       </a>
+      <a
+        class="button"
+        href="https://github.com/AzPepoze/luciajs"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg class="github-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91
+              .58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.87-1.36
+              -3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7
+              1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75
+              .4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28
+              1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9
+              10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23
+              2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25
+              5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .3.2.67
+              .8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"
+            fill="currentColor"
+          />
+        </svg>
+        GitHub
+      </a>
     </div>
+    <p class="wip-note" animate={noteMotion}>
+      LuciaJS is under active development and has no release yet.
+      APIs and markup may change without notice.
+    </p>
   </div>
   <a
     class="scroll-hint"

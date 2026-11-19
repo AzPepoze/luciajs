@@ -1,5 +1,23 @@
 @use "theme" as *;
 
+// Preview banner above the bar. Static, so it scrolls away while the sticky bar stays.
+.status-strip {
+  position: relative;
+  z-index: 50;
+  margin: 0;
+  padding: 0.45rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--lemon);
+  color: #3a2e4a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+
+  a {
+    color: inherit;
+  }
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -43,18 +61,6 @@
   font-size: 1.25rem;
   font-weight: 700;
   text-decoration: none;
-}
-
-.logo-mark {
-  flex: none;
-  width: 2rem;
-  height: 2rem;
-  overflow: visible;
-  transition: transform 0.3s ease;
-
-  .brand:hover & {
-    transform: rotate(-10deg) scale(1.1);
-  }
 }
 
 .main-menu {

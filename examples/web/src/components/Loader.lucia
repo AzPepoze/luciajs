@@ -4,12 +4,6 @@ import { WHEN, EASE } from "lucia";
 // Reduced motion keeps the loader still. Only the fade-out still plays.
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const markBounce = {
-  default: [EASE.STYLE.SINE, EASE.INOUT],
-  0: { translate: "0px 0px", rotate: "-6deg" },
-  1: { translate: "0px -10px", rotate: "6deg" },
-};
-
 const dotBounce = {
   default: [EASE.STYLE.SINE, EASE.INOUT],
   0: { translate: "0px 0px" },
@@ -26,10 +20,6 @@ const loopSettings = {
   backAndForth: true,
 };
 
-const markMotion = reduced
-  ? []
-  : { ...loopSettings, style: markBounce, duration: 700 };
-
 function dotMotion(delay: number) {
   return reduced ? [] : { ...loopSettings, style: dotBounce, duration: 500, delay };
 }
@@ -42,28 +32,6 @@ function dotMotion(delay: number) {
   animate={{ style: fadeOut, when: WHEN.DETACH, duration: reduced ? 1 : 400 }}
 >
   <div class="loader-inner">
-    <svg
-      class="mark"
-      viewBox="0 0 48 48"
-      aria-hidden="true"
-      focusable="false"
-      animate={markMotion}
-    >
-      <polygon points="8,22 10,5 20,15" fill="var(--pink)" />
-      <polygon points="40,22 38,5 28,15" fill="var(--pink)" />
-      <circle cx="24" cy="28" r="16" fill="var(--pink)" />
-      <circle cx="18" cy="27" r="2.2" fill="var(--fg)" />
-      <circle cx="30" cy="27" r="2.2" fill="var(--fg)" />
-      <circle cx="13" cy="33" r="2.6" fill="var(--lavender)" />
-      <circle cx="35" cy="33" r="2.6" fill="var(--lavender)" />
-      <path
-        d="M21 33 Q24 36 27 33"
-        stroke="var(--fg)"
-        stroke-width="1.6"
-        fill="none"
-        stroke-linecap="round"
-      />
-    </svg>
     <p class="name">LuciaJS</p>
     <div class="dots" aria-hidden="true">
       <span class="dot pink" animate={dotMotion(0)}></span>
@@ -88,11 +56,6 @@ function dotMotion(delay: number) {
   display: grid;
   justify-items: center;
   gap: 0.9rem;
-}
-
-.mark {
-  width: 5rem;
-  height: 5rem;
 }
 
 .name {
