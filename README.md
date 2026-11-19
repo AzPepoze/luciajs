@@ -3,19 +3,20 @@
 > [!NOTE]
 > LuciaJS is a UI framework.
 
-A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through signals.
+A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through stores.
 
 > [!WARNING]
-> Early work in progress. Markup supports `{expression}` so far; events, conditions and lists are not designed yet.
+> Early work in progress. Markup has `{expression}`, events, two-way `bind`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
 
 ```html
 <script>
-import { signal } from "lucia";
+import { store } from "lucia";
 
-const count = signal(0);
+const count = store(0);
+const hot = store.from(() => (count.value > 4 ? "hot" : ""));
 </script>
 
-<p class="count {count.value > 4 ? 'hot' : ''}">Clicked {count} times</p>
+<p class="count {hot}">Clicked {count} times</p>
 
 <style>
 $accent: tomato;
@@ -28,18 +29,23 @@ $accent: tomato;
 You need Bun 1.4 or newer.
 
 ```sh
-bun install      # install dependencies
-bun dev          # run the web example at http://localhost:3000
-bun dev:stress   # run the stress example at http://localhost:3000
+bun install          # install dependencies
+bun run dev          # run the web example at http://localhost:3000
+bun run dev:stress   # run the stress example at http://localhost:3000
+bun run build        # build the web example into dist/
 ```
 
-If port 3000 is taken, run `PORT=3100 bun dev`.
+If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](docs/development.md#cli) for all options.
 
 ## More
 
 | Topic | What it covers |
 |---|---|
-| [Components](docs/components.md) | The `.lucia` file: script, markup with `{}`, scoped SCSS, attaching |
-| [Signals](docs/signals.md) | State, derived values and shared stores |
+| [Components](docs/components.md) | The `.lucia` file: script, props, markup with `{}`, child components, scoped SCSS, attaching |
+| [Events and bind](docs/events.md) | `onclick={fn}`, two-way `bind` for form fields, `bind-element` |
+| [Flow](docs/flow.md) | `<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>` and `<FOR>` |
+| [Store](docs/store.md) | State, derived values, `store.onUpdate` and shared stores |
+| [Animate](docs/animate.md) | The `animate` attribute: keyframes, triggers, easings, presets and leave |
 | [Development](docs/development.md) | Commands, tests, repo layout |
 | [Architecture](docs/architecture.md) | How the compiler and runtime work |
+| [Editor](docs/editor.md) | The VS Code extension: highlighting and install |
