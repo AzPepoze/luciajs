@@ -1,0 +1,213 @@
+import { describe, expect, test } from "bun:test";
+import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
+import { compile } from "@compiler/index.ts";
+import { compileTemplate } from "@compiler/template/scanner.ts";
+
+const FILE = "Card.lucia";
+const TEXT = `<!--${TEXT_MARKER}-->`;
+
+describe("events", () => {
+  test("onX={expr} becomes a listener on the element", () => {
+    const { html, bindings } = compileTemplate("<button onclick={go}>x</button>", FILE);
+    expect(html).toBe(`<button ${ELEMENT_MARKER}>x</button>`);
+    expect(bindings).toEqual([{ kind: "element", attrs: [], events: [{ type: "click", expr: "go" }], binds: [] }]);
+  });
+
+  test("a static onclick string stays plain HTML", () => {
+    const { html, bindings } = compileTemplate('<button onclick="go()">x</button>', FILE);
+    expect(html).toBe('<button onclick="go()">x</button>');
+    expect(bindings).toEqual([]);
+  });
+
+  test("a dashed event name keeps its dashes", () => {
+    const named = compileTemplate("<div oncustom-thing={f}></div>", FILE);
+    expect(named.bindings).toEqual([
+      { kind: "element", attrs: [], events: [{ type: "custom-thing", expr: "f" }], binds: [] },
+    ]);
+  });
+
+  test("an arrow function with braces is one handler", () => {
+    const { bindings } = compileTemplate("<input oninput={(e) => { set(e.target.value) }} />", FILE);
+    expect(bindings).toEqual([
+      {
+        kind: "element",
+        attrs: [],
+        events: [{ type: "input", expr: "(e) => { set(e.target.value) }" }],
+        binds: [],
+      },
+    ]);
+  });
+
+  test("an event with text around the expression is an error", () => {
+    expect(() => compileTemplate('<b onclick="go({x})"></b>', FILE)).toThrow("onclick needs one {handler}");
+  });
+
+  test("an event on a component tag is a prop", () => {
+    const { bindings } = compileTemplate("<badge onclick={f} />", FILE, 1, new Set(["badge"]));
+    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [{ name: "onclick", parts: [{ expr: "f" }] }] }]);
+  });
+});
+
+describe("bind", () => {
+  test("bind on an input picks its property later, at attach", () => {
+    const { bindings } = compileTemplate("<input bind={name} />", FILE);
+    expect(bindings).toEqual([{ kind: "element", attrs: [], events: [], binds: [{ kind: "input", expr: "name" }] }]);
+  });
+
+  test("bind-<prop> maps kebab-case to camelCase", () => {
+    const { bindings } = compileTemplate("<p bind-text-content={t}>x</p>", FILE);
+    expect(bindings).toEqual([
+      { kind: "element", attrs: [], events: [], binds: [{ kind: "prop", prop: "textContent", expr: "t" }] },
+    ]);
+  });
+
+  test("bind-element takes an element reference", () => {
+    const { bindings } = compileTemplate("<div bind-element={ref}></div>", FILE);
+    expect(bindings).toEqual([{ kind: "element", attrs: [], events: [], binds: [{ kind: "element", expr: "ref" }] }]);
+  });
+
+  test("bind works only on input, textarea and select", () => {
+    expect(() => compileTemplate("<div bind={x}></div>", FILE)).toThrow(
+      "bind works on input, textarea and select; use bind-<property>",
+    );
+  });
+
+  test("bind needs one {store}", () => {
+    expect(() => compileTemplate("<input bind />", FILE)).toThrow("bind needs {store}");
+  });
+
+  test("bind on a component tag is an error", () => {
+    expect(() => compileTemplate("<badge bind={x} />", FILE, 1, new Set(["badge"]))).toThrow(
+      "bind works on elements only",
+    );
+  });
+});
+
+describe("IF, ELSEIF and ELSE", () => {
+  test("one marker for the whole chain, with a branch per tag", () => {
+    const { html, bindings } = compileTemplate(
+      "<IF {a}><p>1</p></IF>\n<ELSEIF {b}>2</ELSEIF>\n<ELSE>3</ELSE>",
+      FILE,
+    );
+    expect(html).toBe(TEXT);
+    expect(bindings).toEqual([
+      {
+        kind: "if",
+        branches: [
+          { test: "a", body: { html: "<p>1</p>", bindings: [] } },
+          { test: "b", body: { html: "2", bindings: [] } },
+          { body: { html: "3", bindings: [] } },
+        ],
+      },
+    ]);
+  });
+
+  test("ELSE without a preceding IF is an error", () => {
+    expect(() => compileTemplate("<ELSE>x</ELSE>", FILE)).toThrow("<ELSE> must directly follow </IF> or </ELSEIF>");
+  });
+
+  test("text between </IF> and ELSE breaks the chain", () => {
+    expect(() => compileTemplate("<IF {a}>x</IF> hi <ELSE>y</ELSE>", FILE)).toThrow(
+      "<ELSE> must directly follow",
+    );
+  });
+
+  test("ELSE after ELSE is an error", () => {
+    expect(() => compileTemplate("<IF {a}>x</IF><ELSE>y</ELSE><ELSE>z</ELSE>", FILE)).toThrow(
+      "<ELSE> must directly follow",
+    );
+  });
+
+  test("IF needs a condition", () => {
+    expect(() => compileTemplate("<IF>x</IF>", FILE)).toThrow("IF needs {condition}");
+  });
+
+  test("ELSE takes no attributes", () => {
+    expect(() => compileTemplate('<IF {a}>x</IF><ELSE class="y">z</ELSE>', FILE)).toThrow("ELSE takes no attributes");
+  });
+
+  test("a missing close tag is reported at the opening tag", () => {
+    expect(() => compileTemplate("<p>\n<IF {a}>x", FILE)).toThrow(`${FILE}:2:1: unclosed <IF>`);
+  });
+
+  test("a mismatched close tag is an error", () => {
+    expect(() => compileTemplate("<IF {a}>x</EACH>", FILE)).toThrow("expected </IF>, found </EACH>");
+  });
+
+  test("a stray close tag is an error", () => {
+    expect(() => compileTemplate("x</IF>", FILE)).toThrow("unexpected </IF>");
+  });
+
+  test("a self-closing block is an error", () => {
+    expect(() => compileTemplate("<IF {a} />", FILE)).toThrow("<IF> needs a closing </IF>");
+  });
+});
+
+describe("EACH", () => {
+  test("list, as, index and key", () => {
+    const { bindings } = compileTemplate("<EACH {todos} as={todo} index={i} key={todo.id}><li>{i}</li></EACH>", FILE);
+    expect(bindings).toEqual([
+      {
+        kind: "each",
+        list: "todos",
+        item: "todo",
+        index: "i",
+        key: "todo.id",
+        body: { html: "<li><!--l--></li>", bindings: [{ kind: "text", expr: "i" }] },
+      },
+    ]);
+  });
+
+  test("everything but the list is optional", () => {
+    const { bindings } = compileTemplate("<EACH {rows}>x</EACH>", FILE);
+    expect(bindings).toEqual([{ kind: "each", list: "rows", body: { html: "x", bindings: [] } }]);
+  });
+
+  test("as must be a name", () => {
+    expect(() => compileTemplate("<EACH {rows} as={a.b}>x</EACH>", FILE)).toThrow("as needs a name in {}");
+  });
+
+  test("EACH needs a list", () => {
+    expect(() => compileTemplate("<EACH>x</EACH>", FILE)).toThrow("EACH needs {list}");
+  });
+
+  test("unknown attributes are an error", () => {
+    expect(() => compileTemplate("<EACH {rows} sort={x}>x</EACH>", FILE)).toThrow("EACH has no sort attribute");
+  });
+
+  test("nested blocks keep their own bindings", () => {
+    const { bindings } = compileTemplate(
+      "<EACH {rows} as={r}><IF {r.open}><b>{r.name}</b></IF></EACH>",
+      FILE,
+    );
+    const each = bindings[0] as unknown as { body: { html: string; bindings: unknown[] } };
+    expect(each.body.html).toBe(TEXT);
+    expect(each.body.bindings).toEqual([
+      {
+        kind: "if",
+        branches: [{ test: "r.open", body: { html: "<b><!--l--></b>", bindings: [{ kind: "text", expr: "r.name" }] } }],
+      },
+    ]);
+  });
+});
+
+describe("FOR", () => {
+  test("loop name, bounds and defaults", () => {
+    const { bindings } = compileTemplate("<FOR {n} to={5}><i>{n}</i></FOR>", FILE);
+    expect(bindings).toEqual([
+      { kind: "for", name: "n", from: "0", to: "5", step: "1", body: { html: "<i><!--l--></i>", bindings: [{ kind: "text", expr: "n" }] } },
+    ]);
+  });
+
+  test("FOR needs a loop name in braces and a to", () => {
+    expect(() => compileTemplate("<FOR to={3}>x</FOR>", FILE)).toThrow("FOR needs a name in {}, like {i}");
+    expect(() => compileTemplate("<FOR {i}>x</FOR>", FILE)).toThrow("FOR needs to={end}");
+  });
+});
+
+describe("reserved tags", () => {
+  test("an import named like a control tag is an error", () => {
+    const source = `<script>\nimport IF from "./if.lucia";\n</script>\n<p>x</p>`;
+    expect(() => compile(source, FILE)).toThrow(`:2:1: IF is a reserved tag name and cannot be a component`);
+  });
+});

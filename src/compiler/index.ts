@@ -1,4 +1,5 @@
 import { hash } from "./id.ts";
+import { splitImports } from "./parse/imports.ts";
 import { parse } from "./parse/sections.ts";
 import { generate } from "./template/codegen.ts";
 import { compileTemplate } from "./template/scanner.ts";
@@ -20,8 +21,8 @@ export function compile(source: string, file: string): CompileResult {
   const parsed = parse(source, file);
   const id = hash(file);
   const css = parsed.styles.map((style) => compileStyle(style, file, id)).join("\n");
-  const script = parsed.script?.content ?? "";
-  const template = compileTemplate(parsed.markup, file, parsed.markupLine);
-  const code = generate({ script, template, css, id });
+  const { imports, body, components } = splitImports(parsed.script, file);
+  const template = compileTemplate(parsed.markup, file, parsed.markupLine, components);
+  const code = generate({ imports, body, template, css, id });
   return { code, css, id };
 }
