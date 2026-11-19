@@ -1,6 +1,6 @@
-export type Variant = "A" | "B" | "C";
+export type Variant = "A" | "B" | "C" | "D" | "E";
 
-export const VARIANTS: Variant[] = ["A", "B", "C"];
+export const VARIANTS: Variant[] = ["A", "B", "C", "D", "E"];
 export const DEFAULT_N = 1000;
 export const DEFAULT_R = 300;
 export const STAMP_ATTR = "data-l-s";
@@ -69,17 +69,40 @@ function randomRules(R: number): Rule[] {
   }));
 }
 
+const COMPONENT_ROOT = '[data-l]:not([data-l="child"])';
+
+// Variant D: the component root is an ancestor, so child roots are styled too.
+function ancestorSelector(selector: string): string {
+  return `${COMPONENT_ROOT} ${selector}`;
+}
+
+// Variant E: the subject compound also rejects matches inside a child root. :where() keeps the stop at zero specificity.
+function stoppedSelector(selector: string): string {
+  const subject = selector.split(" ").pop()!;
+  return `${ancestorSelector(selector)}:where(:not([data-l="child"] ${subject}))`;
+}
+
 // Variant B appends the shared stamp to the last compound selector.
+const SCOPE_SELECTOR: Record<Variant, (selector: string) => string> = {
+  A: (selector) => selector,
+  B: (selector) => `${selector}[${STAMP_ATTR}]`,
+  C: (selector) => selector,
+  D: ancestorSelector,
+  E: stoppedSelector,
+};
+
 function emitRule(variant: Variant, rule: Rule): string {
-  const selector = variant === "B" ? `${rule.selector}[${STAMP_ATTR}]` : rule.selector;
-  return `${selector} { ${rule.body} }`;
+  return `${SCOPE_SELECTOR[variant](rule.selector)} { ${rule.body} }`;
 }
 
 // Inside @scope a selector is implicitly `:scope <selector>`, and body is outside the scope root, so variant C names :scope explicitly.
+function modeSelector(variant: Variant, target: string): string {
+  if (variant === "C") return `.mode-b :scope ${target}`;
+  return `.mode-b ${SCOPE_SELECTOR[variant](target)}`;
+}
+
 function emitModeRule(variant: Variant, rule: ModeRule): string {
-  const ancestor = variant === "C" ? ".mode-b :scope" : ".mode-b";
-  const target = variant === "B" ? `${rule.target}[${STAMP_ATTR}]` : rule.target;
-  return `${ancestor} ${target} { ${rule.body} }`;
+  return `${modeSelector(variant, rule.target)} { ${rule.body} }`;
 }
 
 function buildCss(variant: Variant, R: number): string {

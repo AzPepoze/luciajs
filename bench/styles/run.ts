@@ -3,13 +3,22 @@ import { join } from "node:path";
 import { chromium, firefox, type Browser, type BrowserType, type Page } from "playwright";
 import { DEFAULT_N, DEFAULT_R, VARIANTS, buildPage, type Variant } from "./generate.ts";
 
-const RUNS = 10;
+const DEFAULT_RUNS = 10;
 const TOGGLES = 50;
 const CHROMIUM_PATH = "/usr/bin/chromium";
 const EXPECTED_H1_COLOR = "rgb(10, 20, 30)";
 const SPAN_COLOR = "rgb(1, 2, 3)";
 const MODE_FONT_WEIGHT = "800";
 const MODE_LETTER_SPACING = "1px";
+
+// spanStyled: whether the fixed `span` rule reaches the span inside a child root.
+const VARIANT_INFO: Record<Variant, { description: string; spanStyled: boolean }> = {
+  A: { description: "unscoped", spanStyled: true },
+  B: { description: "attribute stamp on every element", spanStyled: true },
+  C: { description: "native `@scope` with donut stop", spanStyled: false },
+  D: { description: "ancestor prefix `[data-l]:not([data-l=\"child\"])`, no stop", spanStyled: true },
+  E: { description: "ancestor prefix with a stop inside child roots", spanStyled: false },
+};
 
 interface Style {
   fontWeight: string;
@@ -48,6 +57,38 @@ interface BrowserRun {
   version: string;
   rows: Row[];
   checks: Check[];
+}
+
+interface Options {
+  variants: Variant[];
+  runs: number;
+}
+
+function parseVariant(name: string): Variant {
+  const variant = name.trim().toUpperCase();
+  if (!VARIANTS.includes(variant as Variant)) throw new Error(`Unknown variant: ${name}`);
+  return variant as Variant;
+}
+
+function parseRuns(value: string): number {
+  const runs = Number(value);
+  if (!Number.isInteger(runs) || runs < 1) throw new Error(`--runs must be a positive integer: ${value}`);
+  return runs;
+}
+
+// Accepts --variants=A,E and --runs=N.
+function parseOptions(args: string[]): Options {
+  const options: Options = { variants: VARIANTS, runs: DEFAULT_RUNS };
+  for (const arg of args) {
+    if (arg.startsWith("--variants=")) {
+      options.variants = arg.slice("--variants=".length).split(",").map(parseVariant);
+    } else if (arg.startsWith("--runs=")) {
+      options.runs = parseRuns(arg.slice("--runs=".length));
+    } else {
+      throw new Error(`Unknown option: ${arg}`);
+    }
+  }
+  return options;
 }
 
 function median(values: number[]): number {
@@ -115,7 +156,7 @@ function failures(variant: Variant, sample: RunSample): string[] {
   const problems: string[] = [];
   if (sample.h1Color !== EXPECTED_H1_COLOR) problems.push(`h1 color ${sample.h1Color}`);
 
-  const spanShouldBeStyled = variant !== "C";
+  const spanShouldBeStyled = VARIANT_INFO[variant].spanStyled;
   const spanIsStyled = sample.childSpanColor === SPAN_COLOR;
   if (spanIsStyled !== spanShouldBeStyled) problems.push(`child span color ${sample.childSpanColor}`);
 
@@ -126,14 +167,14 @@ function failures(variant: Variant, sample: RunSample): string[] {
   return problems;
 }
 
-async function benchBrowser(name: string, launcher: BrowserType, options: object): Promise<BrowserRun> {
-  const browser: Browser = await launcher.launch(options);
+async function benchBrowser(name: string, launcher: BrowserType, launchOptions: object, { variants, runs }: Options): Promise<BrowserRun> {
+  const browser: Browser = await launcher.launch(launchOptions);
   const version = browser.version();
   const rows: Row[] = [];
   const checks: Check[] = [];
   try {
     const context = await browser.newContext();
-    for (const variant of VARIANTS) {
+    for (const variant of variants) {
       const { head, body, css } = buildPage(variant, DEFAULT_N, DEFAULT_R);
 
       // Warm-up run, not counted, so JIT and first-load costs do not land on variant A.
@@ -142,7 +183,7 @@ async function benchBrowser(name: string, launcher: BrowserType, options: object
       await warm.close();
 
       const samples: RunSample[] = [];
-      for (let i = 0; i < RUNS; i++) {
+      for (let i = 0; i < runs; i++) {
         const page = await context.newPage();
         samples.push(await measureOnce(page, head, body));
         await page.close();
@@ -153,7 +194,7 @@ async function benchBrowser(name: string, launcher: BrowserType, options: object
         checks.push({ browser: name, variant, status: "FAIL", detail: `${problems.length} failed, first: ${problems[0]}` });
         continue;
       }
-      checks.push({ browser: name, variant, status: "pass", detail: `all ${RUNS} runs` });
+      checks.push({ browser: name, variant, status: "pass", detail: `all ${runs} runs` });
 
       const initialTimes = samples.map((s) => s.initial);
       const restyleTimes = samples.map((s) => s.restyle);
@@ -194,19 +235,20 @@ function checkTable(checks: Check[]): string {
 }
 
 async function main() {
-  const runs: BrowserRun[] = [];
+  const options = parseOptions(process.argv.slice(2));
+  const browserRuns: BrowserRun[] = [];
 
-  runs.push(await benchBrowser("Chromium", chromium, { executablePath: CHROMIUM_PATH }));
+  browserRuns.push(await benchBrowser("Chromium", chromium, { executablePath: CHROMIUM_PATH }, options));
 
   try {
-    runs.push(await benchBrowser("Firefox", firefox, {}));
+    browserRuns.push(await benchBrowser("Firefox", firefox, {}, options));
   } catch (error) {
     console.error(`Firefox skipped: ${(error as Error).message.split("\n")[0]}`);
   }
 
-  const rows = runs.flatMap((r) => r.rows);
-  const checks = runs.flatMap((r) => r.checks);
-  const versions = runs.map((r) => `  - ${r.name}: ${r.version}`).join("\n");
+  const rows = browserRuns.flatMap((r) => r.rows);
+  const checks = browserRuns.flatMap((r) => r.checks);
+  const versions = browserRuns.map((r) => `  - ${r.name}: ${r.version}`).join("\n");
   const date = new Date().toISOString().slice(0, 10);
   const report = [
     "# Selector-scoping benchmark results",
@@ -214,7 +256,7 @@ async function main() {
     `- Date: ${date}`,
     `- Elements per page: N = ${DEFAULT_N} components (~${DEFAULT_N * 20} elements)`,
     `- Rules: R = ${DEFAULT_R} random class rules plus fixed rules`,
-    `- Runs: ${RUNS} per browser and variant (plus one unmeasured warm-up)`,
+    `- Runs: ${options.runs} per browser and variant (plus one unmeasured warm-up)`,
     `- Restyle: ${TOGGLES} body class toggles, forced style after each`,
     "- Browser versions:",
     versions,
@@ -224,6 +266,12 @@ async function main() {
     '- Variant C scope start is `([data-l]:not([data-l="child"]))`. A plain `([data-l])` made each child root its own scope root, so the child span was still styled.',
     "- Variant C mode rules are `.mode-b :scope <target>`. Inside `@scope`, a selector with no `:scope` or `&` is implicitly prefixed with `:scope `, so `.mode-b h1` never matched (body is outside the scope root). The first draft's C restyle numbers were invalid and are discarded.",
     "",
+    "## Variants",
+    "",
+    "| variant | scoping | child span styled |",
+    "|---|---|---|",
+    ...VARIANTS.map((v) => `| ${v} | ${VARIANT_INFO[v].description} | ${VARIANT_INFO[v].spanStyled ? "yes" : "no"} |`),
+    "",
     "## Results",
     "",
     "Only variants where every run passes all checks appear here.",
@@ -232,9 +280,13 @@ async function main() {
     "",
     "## Correctness checks",
     "",
-    "Per run: h1 color; child span styled in A and B, not in C; `body.mode-b` sets h1 font-weight 800 and p letter-spacing 1px; both revert when the class is removed.",
+    "Per run: h1 color; child span styled where the Variants table says yes; `body.mode-b` sets h1 font-weight 800 and p letter-spacing 1px; both revert when the class is removed.",
     "",
     checkTable(checks),
+    "",
+    "## Notes",
+    "",
+    "- E wraps its stop in `:where()`, so the stop adds no specificity. A plain `:not()` stop raised class rules to (0,5,0), above the mode rule at (0,4,2), and failed the h1 font-weight check.",
     "",
   ].join("\n");
 
