@@ -1,40 +1,13 @@
 <script>
-import { computed } from "lucia";
-import { theme } from "../store.ts";
+import { store } from "lucia";
+import { theme, toggleTheme } from "../theme.ts";
 
-const label = computed(() => (theme.value === "light" ? "Dark mode" : "Light mode"));
-
-export function setup(root: Element) {
-  const button = root.querySelector(".toggle")!;
-  document.documentElement.dataset.theme = theme.value;
-  const toggle = () => {
-    theme.value = theme.value === "light" ? "dark" : "light";
-    document.documentElement.dataset.theme = theme.value;
-  };
-  button.addEventListener("click", toggle);
-  return () => button.removeEventListener("click", toggle);
-}
+const icon = store.from(() => (theme.value === "light" ? "dark_mode" : "light_mode"));
+const label = store.from(() =>
+  theme.value === "light" ? "Switch to dark theme" : "Switch to light theme",
+);
 </script>
 
-<div class="theme-toggle">
-  <button class="toggle" type="button">{label}</button>
-</div>
-
-<style>
-@use "../styles/demo" as demo;
-
-.theme-toggle {
-  button {
-    @include demo.button;
-    width: 100%;
-  }
-}
-</style>
-
-<style global>
-@use "../styles/theme" as theme;
-
-:root {
-  @include theme.vars;
-}
-</style>
+<button class="icon-button toggle" type="button" aria-label={label} onclick={toggleTheme}>
+  <span class="material-symbols-rounded">{icon}</span>
+</button>

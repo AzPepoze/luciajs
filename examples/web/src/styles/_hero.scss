@@ -1,0 +1,191 @@
+@use "theme" as *;
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(100vh - var(--topbar-h, #{$topbar-height}));
+  min-height: calc(100svh - var(--topbar-h, #{$topbar-height}));
+  padding: 3rem 1.25rem 6rem;
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-image: radial-gradient(var(--lavender-soft) 1.2px, transparent 1.6px);
+    background-size: 18px 18px;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    z-index: -2;
+    background: repeating-conic-gradient(from 0deg at 50% 45%, transparent 0 6deg, var(--accent-soft) 6deg 8deg);
+    opacity: 0.5;
+    -webkit-mask-image: radial-gradient(ellipse at center, transparent 25%, #000 70%);
+    mask-image: radial-gradient(ellipse at center, transparent 25%, #000 70%);
+  }
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--accent);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+
+  &:hover {
+    border-color: var(--accent);
+  }
+}
+
+.eyebrow {
+  display: inline-block;
+  margin: 0 0 0.75rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: var(--lemon);
+  color: #3a2e4a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transform: rotate(-2deg);
+  box-shadow: var(--shadow);
+}
+
+.hero-title {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  margin-bottom: 0.75rem;
+  font-size: clamp(3.25rem, 10vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.logo {
+  flex: none;
+  width: 0.9em;
+  height: 0.9em;
+  overflow: visible;
+}
+
+.sparkle {
+  position: absolute;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--pink);
+  pointer-events: none;
+  animation: twinkle 2.8s ease-in-out infinite;
+
+  &.s1 { top: 8%; left: 14%; color: var(--lemon); }
+  &.s2 { top: 22%; right: 12%; width: 1.6rem; height: 1.6rem; color: var(--lavender); animation-delay: -1s; }
+  &.s3 { bottom: 16%; left: 22%; width: 0.9rem; height: 0.9rem; color: var(--mint); animation-delay: -2s; }
+  &.s4 { bottom: 22%; right: 20%; color: var(--sky); animation-delay: -0.5s; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+}
+
+.tagline {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+}
+
+.install {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: fit-content;
+  max-width: 100%;
+  margin: 2rem auto 1.5rem;
+  padding: 0.4rem 0.4rem 0.4rem 1rem;
+  border: 2px solid var(--lavender);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  font-family: $font-mono;
+  font-size: 0.95rem;
+  text-align: left;
+
+  .prompt {
+    color: var(--ai);
+    font-weight: 700;
+    user-select: none;
+  }
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.petals {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.petal {
+  position: absolute;
+  top: -8%;
+  left: var(--left);
+  width: var(--size);
+  height: calc(var(--size) * 0.7);
+  border-radius: 0 100% 0 100%;
+  background: var(--pink);
+  opacity: 0.8;
+  animation: petal-fall var(--duration) linear var(--delay) infinite;
+}
+
+@keyframes petal-fall {
+  from {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+
+  to {
+    transform: translate3d(var(--drift), 90vh, 0) rotate(540deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petals,
+  .sparkle {
+    display: none;
+  }
+
+}

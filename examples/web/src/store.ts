@@ -1,6 +1,3 @@
-import { signal } from "lucia";
+import { store } from "lucia";
 
-export type Theme = "light" | "dark";
-
-export const theme = signal<Theme>("light");
-export const clicks = signal(0);
+export const clicks = store(0);

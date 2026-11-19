@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, batch, type Instance } from "lucia";
+import { attach, type Instance } from "lucia";
 import { attachCells, createTarget, detachCells } from "../cells.ts";
 import Edge from "../expressions/Edge.lucia";
 import { base, count, probe, resetStore } from "../store.ts";
@@ -29,7 +29,7 @@ function writeCount(writes: number): void {
 }
 
 describe("updates", () => {
-  test(`one signal write updates all ${CELLS} cells`, () => {
+  test(`one store write updates all ${CELLS} cells`, () => {
     const target = newTarget();
     instances = attachCells(target, CELLS);
 
@@ -42,19 +42,7 @@ describe("updates", () => {
     }
   });
 
-  test("a batch of writes updates each binding once", () => {
-    const target = newTarget();
-    instances = attachCells(target, 10);
-    probe.reads = 0;
-    probe.tones = 0;
-
-    batch(() => writeCount(WRITES));
-    expect(probe.reads).toBe(10);
-    expect(probe.tones).toBe(1);
-    expect(target.querySelector("b")!.textContent).toBe(String(WRITES));
-  });
-
-  test("writes outside a batch update each binding on every write", () => {
+  test("each write updates each binding once", () => {
     const target = newTarget();
     instances = attachCells(target, 10);
     probe.reads = 0;
@@ -65,7 +53,7 @@ describe("updates", () => {
     expect(probe.tones).toBe(WRITES);
   });
 
-  test("a diamond of computeds evaluates once per write", () => {
+  test("a diamond of derived stores evaluates once per write", () => {
     const target = newTarget();
     instances = [attach(Edge, target)];
     const before = probe.diamond;

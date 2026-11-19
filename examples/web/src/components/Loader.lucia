@@ -1,0 +1,119 @@
+<script>
+import { ACTIVE, EASE, TRANSITION } from "lucia";
+
+// Reduced motion keeps the loader still. Only the fade-out still plays.
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const markBounce = {
+  0: { translate: "0px 0px", rotate: "-6deg" },
+  1: { translate: "0px -10px", rotate: "6deg" },
+};
+
+const dotBounce = {
+  0: { translate: "0px 0px" },
+  1: { translate: "0px -8px" },
+};
+
+const fadeOut = {
+  0: { opacity: 1 },
+  1: { opacity: 0 },
+};
+
+const loopSettings = {
+  loop: true,
+  backAndForth: true,
+  transition: TRANSITION.SINE,
+  ease: EASE.INOUT,
+};
+
+const markMotion = reduced
+  ? []
+  : { ...loopSettings, animation: markBounce, duration: 700 };
+
+function dotMotion(delay: number) {
+  return reduced ? [] : { ...loopSettings, animation: dotBounce, duration: 500, delay };
+}
+</script>
+
+<div
+  class="loader"
+  role="status"
+  aria-label="Loading LuciaJS"
+  animate={{ animation: fadeOut, active: ACTIVE.OUT, duration: reduced ? 1 : 400 }}
+>
+  <div class="loader-inner">
+    <svg
+      class="mark"
+      viewBox="0 0 48 48"
+      aria-hidden="true"
+      focusable="false"
+      animate={markMotion}
+    >
+      <polygon points="8,22 10,5 20,15" fill="var(--pink)" />
+      <polygon points="40,22 38,5 28,15" fill="var(--pink)" />
+      <circle cx="24" cy="28" r="16" fill="var(--pink)" />
+      <circle cx="18" cy="27" r="2.2" fill="var(--fg)" />
+      <circle cx="30" cy="27" r="2.2" fill="var(--fg)" />
+      <circle cx="13" cy="33" r="2.6" fill="var(--lavender)" />
+      <circle cx="35" cy="33" r="2.6" fill="var(--lavender)" />
+      <path
+        d="M21 33 Q24 36 27 33"
+        stroke="var(--fg)"
+        stroke-width="1.6"
+        fill="none"
+        stroke-linecap="round"
+      />
+    </svg>
+    <p class="name">LuciaJS</p>
+    <div class="dots" aria-hidden="true">
+      <span class="dot pink" animate={dotMotion(0)}></span>
+      <span class="dot lavender" animate={dotMotion(120)}></span>
+      <span class="dot mint" animate={dotMotion(240)}></span>
+    </div>
+  </div>
+</div>
+
+<style>
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.loader-inner {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+}
+
+.mark {
+  width: 5rem;
+  height: 5rem;
+}
+
+.name {
+  margin: 0;
+  font-family: "M PLUS Rounded 1c", system-ui, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.dots {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+
+  &.pink { background: var(--pink); }
+  &.lavender { background: var(--lavender); }
+  &.mint { background: var(--mint); }
+}
+</style>

@@ -1,0 +1,88 @@
+<script>
+import { ACTIVE, EASE, TRANSITION } from "lucia";
+
+// The keys only say where the box goes. The item decides how it gets there.
+const slide = {
+  0: { translate: "0px 0px" },
+  1: { translate: "150px 0px" },
+};
+
+// One key sets its own ease. The other key uses the item's ease.
+const easeOnEnd = {
+  0: { translate: "0px 0px" },
+  1: [EASE.OUT, { translate: "150px 0px" }],
+};
+
+const backItem = {
+  animation: slide,
+  transition: TRANSITION.BACK,
+  ease: EASE.OUT,
+  active: ACTIVE.HOVER,
+  duration: 800,
+};
+
+const bounceItem = {
+  animation: easeOnEnd,
+  transition: TRANSITION.BOUNCE,
+  ease: EASE.IN,
+  active: ACTIVE.HOVER,
+  duration: 1000,
+};
+</script>
+
+<div class="curve-demo">
+  <p>Hover each box. The settings are on the item, not on the keys.</p>
+  <div class="row">
+    <span class="label">Library defaults: CUBIC, OUT</span>
+    <div class="track">
+      <div
+        class="box"
+        animate={{ animation: slide, active: ACTIVE.HOVER, duration: 800 }}
+      ></div>
+    </div>
+  </div>
+  <div class="row">
+    <span class="label">transition: BACK, ease: OUT</span>
+    <div class="track">
+      <div class="box" animate={backItem}></div>
+    </div>
+  </div>
+  <div class="row">
+    <span class="label">transition: BOUNCE, ease: IN, end key uses OUT</span>
+    <div class="track">
+      <div class="box" animate={bounceItem}></div>
+    </div>
+  </div>
+</div>
+
+<style>
+.curve-demo {
+  display: grid;
+  gap: 0.75rem;
+  color: var(--fg);
+
+  p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+
+  .row {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .label {
+    font-family: ui-monospace, monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .track {
+    padding: 0.25rem 0;
+  }
+
+  .box {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 12px;
+    background: var(--pink);
+  }
+}
+</style>

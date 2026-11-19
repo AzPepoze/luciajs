@@ -1,0 +1,127 @@
+@use "theme" as *;
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: $topbar-height;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--line);
+  background: var(--topbar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.brand,
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--fg);
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.logo-mark {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  overflow: visible;
+  transition: transform 0.3s ease;
+
+  .brand:hover & {
+    transform: rotate(-10deg) scale(1.1);
+  }
+}
+
+.main-menu {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: 1rem;
+
+  a {
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--card);
+      color: var(--fg);
+    }
+  }
+}
+
+.search {
+  position: relative;
+  width: min(18rem, 30vw);
+  margin-left: auto;
+
+  > .material-symbols-rounded {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    color: var(--muted);
+    font-size: 1.1rem;
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem 0.8rem 0.5rem 2.3rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--fg);
+    font: inherit;
+    font-size: 0.9rem;
+
+    &::placeholder {
+      color: var(--muted);
+    }
+  }
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.menu-button {
+  display: none;
+}
+
+@media (max-width: 719px) {
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    padding-block: 0.6rem;
+    row-gap: 0.6rem;
+  }
+
+  .menu-button {
+    display: inline-grid;
+  }
+
+  .main-menu {
+    display: none;
+  }
+
+  .search {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .topbar-actions {
+    margin-left: auto;
+  }
+}

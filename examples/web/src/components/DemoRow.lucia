@@ -1,0 +1,35 @@
+<script>
+import { attach, props, store } from "lucia";
+import type { Demo } from "../catalog.ts";
+import CodePanel from "./CodePanel.lucia";
+
+const emptyDemo: Demo = { id: "", title: "", caption: "", components: [], sources: [] };
+const { demo } = props({ demo: emptyDemo });
+const body = store<Element | null>(null);
+
+// Mounts the demo's components into its preview box once the box exists.
+function setup() {
+  for (const component of demo.peek().components) attach(component, body.value!);
+}
+</script>
+
+<div class="demo-block" id={demo.value.id}>
+  <header class="demo-head">
+    <h3 class="demo-title">
+      {demo.value.title}
+      <a class="demo-anchor" href={"#" + demo.value.id} aria-label="Link to this demo">
+        <span class="material-symbols-rounded" aria-hidden="true">link</span>
+      </a>
+    </h3>
+    <p class="demo-caption">{demo.value.caption}</p>
+  </header>
+  <div class="demo-row">
+    <div class="demo">
+      <p class="demo-label">
+        <span class="material-symbols-rounded" aria-hidden="true">science</span>Sandbox
+      </p>
+      <div class="demo-body" bind-element={body}></div>
+    </div>
+    <CodePanel sources={demo.value.sources} />
+  </div>
+</div>

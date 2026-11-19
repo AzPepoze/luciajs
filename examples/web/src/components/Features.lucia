@@ -1,0 +1,176 @@
+<script>
+import { ACTIVE, EASE, TRANSITION } from "lucia";
+import { scrollHint } from "../motion.ts";
+import FeatureCounter from "./FeatureCounter.lucia";
+
+const rise = {
+  0: { opacity: 0, translate: "0px 24px" },
+  1: [TRANSITION.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
+};
+
+const bobbing = {
+  0: { translate: "0px 0px" },
+  1: [TRANSITION.SINE, EASE.INOUT, { translate: "0px -4px" }],
+};
+
+const swipeIn = {
+  0: { scale: "0 1" },
+  1: [TRANSITION.QUART, EASE.OUT, { scale: "1 1" }],
+};
+
+const reveal = { animation: rise, active: ACTIVE.VIEW, duration: 500 };
+const bob = { animation: bobbing, loop: true, backAndForth: true, duration: 3000 };
+const swipeMotion = {
+  animation: swipeIn,
+  active: ACTIVE.VIEW,
+  duration: 800,
+  delay: 200,
+};
+
+const badgeSnippet = '<badge label={mail} tone="warn" />';
+const helloSnippet = "<p>Hi {name}</p>";
+
+const hintMotion = {
+  animation: scrollHint,
+  loop: true,
+  backAndForth: true,
+  transition: TRANSITION.SINE,
+  ease: EASE.INOUT,
+  duration: 1600,
+};
+</script>
+
+<section class="features" id="features">
+  <div class="features-inner">
+    <h2 class="section-title">
+      <span class="swipe">
+        <span class="swipe-bar" animate={swipeMotion}></span>Features
+      </span>
+    </h2>
+    <div class="feature-grid">
+      <article
+        class="feature-card feature-card--wide"
+        style="--tone: var(--pink)"
+        animate={reveal}
+      >
+        <span class="sticker">Core</span>
+        <span class="card-sparkle" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <div class="feature-head">
+          <span class="feature-icon">
+            <span class="blob" animate={bob} aria-hidden="true"></span>
+            <span class="material-symbols-rounded" aria-hidden="true">bolt</span>
+          </span>
+          <h3>Stores</h3>
+        </div>
+        <p>Only the text and attributes that read a changed store are updated.</p>
+        <div class="feature-demo">
+          <FeatureCounter />
+        </div>
+        <pre class="snippet"><code data-lang="typescript">const count = store(0);
+const double = store.from(() =&gt; count.value * 2);
+count.value++;</code></pre>
+      </article>
+      <article
+        class="feature-card"
+        style="--tone: var(--lavender)"
+        animate={{ ...reveal, delay: 80 }}
+      >
+        <span class="sticker">Format</span>
+        <div class="feature-head">
+          <span class="feature-icon">
+            <span class="blob" animate={bob} aria-hidden="true"></span>
+            <span class="material-symbols-rounded" aria-hidden="true">description</span>
+          </span>
+          <h3>Single-file .lucia</h3>
+        </div>
+        <p>Script, markup and styles live in one file.</p>
+        <pre class="snippet"><code data-lang="lucia">&lt;script&gt;
+import {"{"} store {"}"} from "lucia";
+&lt;/script&gt;
+&lt;p&gt;Hi {"{"}name{"}"}&lt;/p&gt;</code></pre>
+      </article>
+      <article
+        class="feature-card"
+        style="--tone: var(--mint)"
+        animate={{ ...reveal, delay: 160 }}
+      >
+        <span class="sticker">Components</span>
+        <div class="feature-head">
+          <span class="feature-icon">
+            <span class="blob" animate={bob} aria-hidden="true"></span>
+            <span class="material-symbols-rounded" aria-hidden="true">input</span>
+          </span>
+          <h3>Props and children</h3>
+        </div>
+        <p>Pass values as attributes. Each prop is a store.</p>
+        <pre class="snippet"><code data-lang="lucia">{badgeSnippet}</code></pre>
+      </article>
+      <article
+        class="feature-card"
+        style="--tone: var(--sky)"
+        animate={{ ...reveal, delay: 240 }}
+      >
+        <span class="sticker">Styling</span>
+        <div class="feature-head">
+          <span class="feature-icon">
+            <span class="blob" animate={bob} aria-hidden="true"></span>
+            <span class="material-symbols-rounded" aria-hidden="true">palette</span>
+          </span>
+          <h3>Scoped SCSS</h3>
+        </div>
+        <p>Styles stay with their component.</p>
+        <pre class="snippet"><code data-lang="lucia">&lt;style scoped&gt;
+.card {"{"} padding: 1rem; {"}"}
+&lt;/style&gt;</code></pre>
+      </article>
+      <article
+        class="feature-card"
+        style="--tone: var(--lemon)"
+        animate={{ ...reveal, delay: 320 }}
+      >
+        <span class="sticker">Tooling</span>
+        <div class="feature-head">
+          <span class="feature-icon">
+            <span class="blob" animate={bob} aria-hidden="true"></span>
+            <span class="material-symbols-rounded" aria-hidden="true">rocket_launch</span>
+          </span>
+          <h3>Bun native</h3>
+        </div>
+        <p>The compiler is a Bun plugin. No extra build tool to set up.</p>
+        <pre class="snippet"><code data-lang="none">bun install
+bun dev</code></pre>
+      </article>
+      <article
+        class="feature-card"
+        style="--tone: var(--pink)"
+        animate={{ ...reveal, delay: 400 }}
+      >
+        <span class="sticker">Editor</span>
+        <div class="feature-head">
+          <span class="feature-icon">
+            <span class="blob" animate={bob} aria-hidden="true"></span>
+            <span class="material-symbols-rounded" aria-hidden="true">code_blocks</span>
+          </span>
+          <h3>VS Code extension</h3>
+        </div>
+        <p>Syntax highlighting for <code>.lucia</code> files.</p>
+        <pre class="snippet"><code data-lang="lucia">{helloSnippet}</code></pre>
+      </article>
+    </div>
+  </div>
+  <a
+    class="scroll-hint"
+    href="#docs"
+    aria-label="Scroll to the docs"
+    animate={hintMotion}
+  >
+    <span class="material-symbols-rounded" aria-hidden="true">keyboard_arrow_down</span>
+  </a>
+</section>

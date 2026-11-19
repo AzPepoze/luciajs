@@ -1,0 +1,16 @@
+<script>
+import { ACTIVE, PRESET } from "lucia";
+import { on } from "./on.ts";
+
+// Each badge leaves with this OUT animation, so removal waits for it.
+const fadeOut = {
+  0: { opacity: 1 },
+  1: { opacity: 0 },
+};
+</script>
+
+<div class="flow-toggle">
+  <IF {on.value}>
+    <span class="badge" animate={[{ animation: PRESET.FADE, active: ACTIVE.IN, duration: 20 }, { animation: fadeOut, active: ACTIVE.OUT, duration: 20 }]}>On</span>
+  </IF>
+</div>

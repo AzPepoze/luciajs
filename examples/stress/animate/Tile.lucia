@@ -1,0 +1,34 @@
+<script>
+import { ACTIVE, EASE, TRANSITION } from "lucia";
+
+const colorAndMove = {
+  0: { color: "#e11d48", translate: "-12px 0px" },
+  1: [TRANSITION.QUART, EASE.INOUT, { color: "#2563eb", translate: "0px 0px" }],
+};
+
+const fade = {
+  0: [TRANSITION.LINEAR, EASE.IN, { opacity: 0 }],
+  1: [TRANSITION.LINEAR, EASE.OUT, { opacity: 1 }],
+};
+
+const fadeOut = {
+  0: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
+  1: [TRANSITION.LINEAR, EASE.OUT, { opacity: 0 }],
+};
+</script>
+
+<li class="tile" animate={[
+  { animation: colorAndMove, active: ACTIVE.IN, duration: 300 },
+  { animation: fade, active: ACTIVE.IN, duration: 300 },
+  { animation: fadeOut, active: ACTIVE.OUT, duration: 300 },
+]}>
+  <span>Tile</span>
+</li>
+
+<style>
+.tile {
+  padding: 0.25rem 0.5rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+</style>

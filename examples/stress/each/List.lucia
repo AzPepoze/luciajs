@@ -1,0 +1,9 @@
+<script>
+import { rows } from "./rows.ts";
+</script>
+
+<ul class="each-list">
+  <EACH {rows} as={row} index={position} key={row.id}>
+    <li data-id={row.id}>{position}. {row.label}</li>
+  </EACH>
+</ul>

@@ -1,0 +1,261 @@
+@use "theme" as *;
+
+// A full screen section, like the hero, with a soft drifting background.
+.features {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: calc(100vh - var(--topbar-h, #{$topbar-height}));
+  min-height: calc(100svh - var(--topbar-h, #{$topbar-height}));
+  padding: 4rem clamp(1.25rem, 3vw, 3rem) 5.5rem;
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 40rem;
+    height: 40rem;
+    border-radius: 50%;
+    opacity: 0.25;
+    filter: blur(40px);
+    animation: drift 24s ease-in-out infinite alternate;
+  }
+
+  &::before {
+    top: -14rem;
+    left: -12rem;
+    background: radial-gradient(circle, var(--pink), transparent 70%);
+  }
+
+  &::after {
+    right: -14rem;
+    bottom: -14rem;
+    background: radial-gradient(circle, var(--lavender), transparent 70%);
+    animation-delay: -12s;
+  }
+}
+
+.features-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-title {
+  margin-bottom: 2.25rem;
+  font-size: clamp(1.8rem, 3.6vw, 2.5rem);
+  text-align: center;
+}
+
+// Highlighter swipe under the heading.
+.swipe {
+  position: relative;
+  display: inline-block;
+  z-index: 0;
+
+  // The bar is an animate element in Features.lucia.
+  .swipe-bar {
+    position: absolute;
+    right: -0.1em;
+    bottom: 0.08em;
+    left: -0.1em;
+    z-index: -1;
+    height: 0.42em;
+    border-radius: 6px;
+    background: var(--swipe);
+    transform-origin: left;
+  }
+}
+
+// Bento grid: one big card on the left, smaller cards around it.
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(15rem, auto);
+  gap: 22px;
+}
+
+.feature-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: hidden;
+  padding: 1.5rem;
+  border: 2px solid var(--line);
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--tone) 14%, var(--card));
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &--wide {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+
+  &:hover {
+    border-color: var(--tone);
+    box-shadow: 0 0 28px color-mix(in srgb, var(--tone) 55%, transparent), var(--shadow);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  > p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+}
+
+.feature-head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.sticker {
+  position: absolute;
+  top: 1rem;
+  right: 1.1rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--tone);
+  color: #2a2033;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: rotate(4deg);
+  box-shadow: 0 2px 0 rgba(42, 32, 51, 0.18);
+}
+
+.card-sparkle {
+  position: absolute;
+  top: 1.1rem;
+  left: 1.2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--tone);
+  animation: twinkle 3s ease-in-out infinite;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Icon on a pastel blob that floats slowly.
+.feature-icon {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+
+  .material-symbols-rounded {
+    position: relative;
+    color: var(--fg);
+    font-size: 1.6rem;
+  }
+}
+
+.blob {
+  position: absolute;
+  inset: 0;
+  background: var(--tone);
+  border-radius: 42% 58% 60% 40% / 45% 45% 55% 55%;
+  animation: morph 9s ease-in-out infinite;
+}
+
+.feature-demo {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  min-height: 7rem;
+}
+
+.snippet {
+  margin: auto 0 0;
+  padding: 0.9rem 1rem;
+  overflow: auto;
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  background: var(--code);
+  font-family: $font-mono;
+  font-size: 0.8rem;
+  line-height: 1.6;
+
+  code {
+    font-family: inherit;
+    white-space: pre;
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.1) rotate(15deg); }
+}
+
+@keyframes morph {
+  0%, 100% { border-radius: 42% 58% 60% 40% / 45% 45% 55% 55%; }
+  50% { border-radius: 58% 42% 40% 60% / 55% 60% 40% 45%; }
+}
+
+@keyframes drift {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(60px, 40px) scale(1.12); }
+}
+
+@media (max-width: 899px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+  }
+
+  .feature-card--wide {
+    grid-row: auto;
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 559px) {
+  .feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .feature-card--wide,
+  .feature-card--row {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 719px) {
+  .features {
+    min-height: calc(100vh - var(--topbar-h, 8rem));
+    min-height: calc(100svh - var(--topbar-h, 8rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .features::before,
+  .features::after,
+  .blob,
+  .card-sparkle {
+    animation: none;
+  }
+
+  .feature-card {
+    transition: none;
+  }
+}

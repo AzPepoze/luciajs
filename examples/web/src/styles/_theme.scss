@@ -1,27 +1,87 @@
-@use "sass:color";
+// Pastel palette for light, neutral black for dark. Demos use the tokens in `vars`.
+$pink: #ffb7d5;
+$lavender: #c9b6ff;
+$mint: #aef0d8;
+$sky: #a8d8ff;
+$lemon: #fff3a8;
+$accent: #ff6fae;
 
-$accent: #d9622b;
-$accent-hover: color.scale($accent, $lightness: -8%);
+$topbar-height: 4rem;
+$font-body: "Noto Sans JP", system-ui, sans-serif;
+$font-display: "M PLUS Rounded 1c", "Noto Sans JP", sans-serif;
+$font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 
-// Put on :root (the page) or on a component root next to `data-theme`.
+// Put on :root next to `data-theme`.
 @mixin vars {
   &[data-theme="light"] {
-    --bg: #fafaf7;
-    --fg: #1d1d1b;
-    --muted: #6b6b66;
+    --bg: #fdfaff;
+    --fg: #3a2e4a;
+    --muted: #6e6283;
     --card: #ffffff;
-    --line: #e7e5df;
-    --code: #f3f1ec;
+    --line: #eadff5;
+    --code: #f6f0ff;
     --accent: #{$accent};
+    --accent-soft: rgba(255, 111, 174, 0.16);
+    --on-accent: #3a2e4a;
+    --link: #b0226a;
+    --ai: #6a4fc4;
+    --pink: #{$pink};
+    --lavender: #{$lavender};
+    --mint: #{$mint};
+    --sky: #{$sky};
+    --lemon: #{$lemon};
+    --lavender-soft: rgba(201, 182, 255, 0.45);
+    --swipe: #{$lemon};
+    --topbar: rgba(253, 250, 255, 0.85);
+    --shadow: 0 2px 4px rgba(58, 46, 74, 0.04), 0 12px 28px rgba(255, 111, 174, 0.14);
+    --tok-keyword: #d6246e;
+    --tok-string: #1f8a62;
+    --tok-function: #5b3fc0;
+    --tok-number: #a86500;
+    --tok-tag: #2a72b5;
+    --tok-attr: #a4500c;
+    --tok-comment: #8a7f9a;
+    --tok-punct: #6e6283;
+    --tok-flow: #e0457b;
+    --tok-component: #0f7a8c;
+    --tok-event: #b0226a;
+    --tok-bind: #2f7d32;
+    --tok-animate: #6a4fc4;
   }
 
   &[data-theme="dark"] {
-    --bg: #161615;
-    --fg: #f1efe9;
-    --muted: #9c9a92;
-    --card: #22221f;
-    --line: #33322f;
-    --code: #1b1b19;
-    --accent: #f08a57;
+    --bg: #0b0b0b;
+    --fg: #f2f2f2;
+    --muted: #a0a0a0;
+    --card: #141414;
+    --line: #2a2a2a;
+    --code: #101010;
+    --accent: #ff8fc7;
+    --accent-soft: rgba(255, 143, 199, 0.16);
+    --on-accent: #0b0b0b;
+    --link: #ff9fcb;
+    --ai: #c9b6ff;
+    --pink: #ff8fc7;
+    --lavender: #b9a4ff;
+    --mint: #7ef0c8;
+    --sky: #7cc8ff;
+    --lemon: #fff08a;
+    --lavender-soft: rgba(185, 164, 255, 0.18);
+    --swipe: rgba(255, 240, 138, 0.28);
+    --topbar: rgba(11, 11, 11, 0.85);
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 12px 28px rgba(255, 143, 199, 0.08);
+    --tok-keyword: #ff9fcb;
+    --tok-string: #aef0d8;
+    --tok-function: #c9b6ff;
+    --tok-number: #fff3a8;
+    --tok-tag: #a8d8ff;
+    --tok-attr: #ffd0a6;
+    --tok-comment: #7d7d7d;
+    --tok-punct: #a0a0a0;
+    --tok-flow: #ff8fc7;
+    --tok-component: #8fd3ff;
+    --tok-event: #ffb3d9;
+    --tok-bind: #aef0d8;
+    --tok-animate: #c9b6ff;
   }
 }
