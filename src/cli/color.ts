@@ -5,6 +5,24 @@ export type Rgb = [red: number, green: number, blue: number];
 const RESET = "\x1b[0m";
 const PASTEL_SATURATION = 0.55;
 const PASTEL_LIGHTNESS = 0.8;
+const ANSI_PATTERN = /\x1b\[[0-9;]*m/g;
+
+export const ANSI = {
+  dim: "\x1b[90m",
+  red: "\x1b[31m",
+  yellow: "\x1b[33m",
+  cyan: "\x1b[36m",
+  bold: "\x1b[1m",
+} as const;
+
+/** Colors only in a terminal, and never when NO_COLOR is set. */
+export function colorEnabled(env: Record<string, string | undefined> = process.env, isTerminal = Boolean(process.stderr.isTTY)): boolean {
+  return isTerminal && !env.NO_COLOR;
+}
+
+export function stripAnsi(text: string): string {
+  return text.replace(ANSI_PATTERN, "");
+}
 
 export function paint(text: string, code: string): string {
   return `${code}${text}${RESET}`;

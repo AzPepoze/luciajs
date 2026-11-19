@@ -1,11 +1,13 @@
-import type { EachBinding, ForBinding, IfBinding } from "./types.ts";
+import { markedCode } from "../sourcemap/marker.ts";
 import type { GenContext } from "./codegen-context.ts";
+import { trailingArg } from "./codegen-context.ts";
 import { readExpression } from "./codegen-element.ts";
+import type { EachBinding, Expr, ForBinding, IfBinding } from "./types.ts";
 
 const DEFAULT_ITEM = "__item";
 const DEFAULT_INDEX = "__index";
 
-function branchLiteral(test: string | undefined, render: string): string {
+function branchLiteral(test: Expr | undefined, render: string): string {
   if (test === undefined) return `{ render: ${render} }`;
   return `{ test: () => ${readExpression(test)}, render: ${render} }`;
 }
@@ -21,17 +23,24 @@ export function eachBinder(binding: EachBinding, ctx: GenContext): string {
   const item = binding.item ?? DEFAULT_ITEM;
   const index = binding.index ?? DEFAULT_INDEX;
   const render = ctx.body(binding.body, `${item}, ${index}, __cleanups, __leaves`);
-  const key = binding.key === undefined ? "" : `key: (${item}, ${index}) => (${binding.key}), `;
+  const key = binding.key === undefined ? "" : `key: (${item}, ${index}) => (${markedCode(binding.key)}), `;
+  const where = ctx.whereOf(binding.key ?? binding.list);
+  const whereField = where === undefined ? "" : `where: ${where}, `;
   const indexed = binding.index !== undefined;
-  return `(__node, __cleanups, __leaves) => __bindEach(__node, {\n  read: () => ${readExpression(binding.list)},\n  render: ${render},\n  ${key}indexed: ${indexed},\n}, __cleanups, __leaves)`;
+  return `(__node, __cleanups, __leaves) => __bindEach(__node, {\n  read: () => ${readExpression(binding.list)},\n  render: ${render},\n  ${key}${whereField}indexed: ${indexed},\n}, __cleanups, __leaves)`;
+}
+
+function boundOf(expr: Expr | undefined, fallback: string): string {
+  return expr === undefined ? fallback : readExpression(expr);
 }
 
 export function forBinder(binding: ForBinding, ctx: GenContext): string {
   const render = ctx.body(binding.body, `${binding.name}, ${DEFAULT_INDEX}, __cleanups, __leaves`);
   const bounds = [
-    `from: ${readExpression(binding.from)}`,
+    `from: ${boundOf(binding.from, "0")}`,
     `to: ${readExpression(binding.to)}`,
-    `step: ${readExpression(binding.step)}`,
+    `step: ${boundOf(binding.step, "1")}`,
   ];
-  return `(__node, __cleanups, __leaves) => __bindFor(__node, () => ({ ${bounds.join(", ")} }), ${render}, __cleanups, __leaves)`;
+  const at = trailingArg(ctx.whereOf(binding.step ?? binding.to));
+  return `(__node, __cleanups, __leaves) => __bindFor(__node, () => ({ ${bounds.join(", ")} }), ${render}, __cleanups, __leaves${at})`;
 }

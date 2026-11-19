@@ -1,3 +1,4 @@
+export { LuciaError } from "../compiler/errors.ts";
 export { store } from "./store/store.ts";
 export type { Store, ReadStore } from "./store/store.ts";
 export { attach } from "./dom/attach.ts";

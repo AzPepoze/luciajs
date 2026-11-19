@@ -1,7 +1,9 @@
+import type { ErrorCodeName } from "../errors/codes.ts";
+import type { Values } from "../errors/create.ts";
 import type { Cursor } from "./cursor.ts";
-import type { AttrBinding, AttrPart } from "./types.ts";
+import type { AttrBinding, AttrPart, Expr } from "./types.ts";
 
-export type Fail = (message: string) => never;
+export type Fail = (code: ErrorCodeName, values?: Values) => never;
 
 /** Checks one attribute as it is read. `previous` holds the attributes read before it. */
 export type AttrCheck = (attr: AttrBinding, previous: AttrBinding[], fail: Fail) => void;
@@ -14,14 +16,14 @@ export function hasExpression(parts: AttrPart[]): boolean {
 }
 
 /** The expression of a value that is exactly `{expr}`, or undefined for anything else. */
-export function expressionOf({ parts }: AttrBinding): string | undefined {
+export function expressionOf({ parts }: AttrBinding): Expr | undefined {
   const only = parts[0];
   if (parts.length !== 1 || only === undefined || typeof only === "string") return undefined;
-  return only.expr;
+  return only;
 }
 
 /** The expression of the attribute called `name`, if it is exactly `{expr}`. */
-export function attrExpression(attrs: AttrBinding[], name: string): string | undefined {
+export function attrExpression(attrs: AttrBinding[], name: string): Expr | undefined {
   const attr = attrs.find((other) => other.name === name);
   return attr && expressionOf(attr);
 }
@@ -45,11 +47,11 @@ export function readAttributes(
   const attrs: AttrBinding[] = [];
   for (;;) {
     cursor.skipWhitespace();
-    if (!cursor.peek()) cursor.fail(`unclosed <${name}>`, start);
+    if (!cursor.peek()) cursor.fail("L1007", { name }, start);
     if (cursor.peek() === ">" || cursor.startsWith("/>")) break;
     const at = cursor.pos;
     const attr = readAttribute(cursor);
-    check(attr, attrs, (message) => cursor.fail(message, at));
+    check(attr, attrs, (code, values) => cursor.fail(code, values, at));
     attrs.push(attr);
   }
   const selfClosing = cursor.peek() === "/";
@@ -59,7 +61,7 @@ export function readAttributes(
 
 function readAttribute(cursor: Cursor): AttrBinding {
   const name = cursor.readUntil(NAME_END);
-  if (!name) cursor.fail("expected an attribute name");
+  if (!name) cursor.fail("L1012");
   cursor.skipWhitespace();
   if (cursor.peek() !== "=") return { name, parts: [] };
   cursor.pos++;
@@ -69,17 +71,17 @@ function readAttribute(cursor: Cursor): AttrBinding {
 
 function readAttributeValue(cursor: Cursor): AttrPart[] {
   const quote = cursor.peek();
-  if (quote === "{") return [{ expr: cursor.readExpression() }];
+  if (quote === "{") return [cursor.readExpression()];
   if (quote !== '"' && quote !== "'") return [cursor.readUntil(UNQUOTED_END)];
   const start = cursor.pos++;
   const parts: AttrPart[] = [];
   let literal = "";
   while (cursor.peek() !== quote) {
-    if (!cursor.peek()) cursor.fail("unclosed attribute value", start);
+    if (!cursor.peek()) cursor.fail("L1013", {}, start);
     if (cursor.peek() === "{") {
       if (literal) parts.push(literal);
       literal = "";
-      parts.push({ expr: cursor.readExpression() });
+      parts.push(cursor.readExpression());
     } else {
       literal += cursor.src[cursor.pos++];
     }

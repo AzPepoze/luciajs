@@ -1,7 +1,7 @@
 import { attrExpression, readAttributes } from "./attributes.ts";
 import { blockCheck, type AttrKind } from "./checks.ts";
 import type { Cursor } from "./cursor.ts";
-import type { AttrBinding, Binding, Branch, EachBinding, ForBinding, IfBinding, Template } from "./types.ts";
+import type { AttrBinding, Binding, Branch, EachBinding, Expr, ForBinding, IfBinding, Template } from "./types.ts";
 
 export type BlockName = "IF" | "EACH" | "FOR";
 export type BodyReader = () => Template;
@@ -24,7 +24,7 @@ const FOR_ATTRS: ReadonlyMap<string, AttrKind> = new Map([
 ]);
 
 interface Header {
-  expr?: string;
+  expr?: Expr;
   attrs: AttrBinding[];
 }
 
@@ -35,17 +35,17 @@ function readHeader(c: Cursor, name: string, kinds: ReadonlyMap<string, AttrKind
   c.skipWhitespace();
   const expr = takesExpr && c.peek() === "{" ? c.readExpression() : undefined;
   const { attrs, selfClosing } = readAttributes(c, name, start, blockCheck(name, kinds));
-  if (selfClosing) c.fail(`<${name}> needs a closing </${name}>`, start);
+  if (selfClosing) c.fail("L1026", { name }, start);
   return { expr, attrs };
 }
 
 function expectClose(c: Cursor, name: string, start: number): void {
   const match = c.match(CLOSE_TAG);
   if (!match) {
-    if (c.pos >= c.src.length) c.fail(`unclosed <${name}>`, start);
-    c.fail(`expected </${name}>`);
+    if (c.pos >= c.src.length) c.fail("L1001", { tag: name }, start);
+    c.fail("L1027", { name });
   }
-  if (match[1] !== name) c.fail(`expected </${name}>, found </${match[1]}>`);
+  if (match[1] !== name) c.fail("L1028", { name, found: match[1]! });
   c.pos += match[0].length;
 }
 
@@ -53,7 +53,7 @@ function readBranch(c: Cursor, name: "IF" | "ELSEIF" | "ELSE", body: BodyReader)
   const start = c.pos;
   const isElse = name === "ELSE";
   const header = readHeader(c, name, NO_ATTRS, !isElse);
-  if (!isElse && header.expr === undefined) c.fail(`${name} needs {condition}`, start);
+  if (!isElse && header.expr === undefined) c.fail("L1029", { name }, start);
   const template = body();
   expectClose(c, name, start);
   return isElse ? { body: template } : { test: header.expr, body: template };
@@ -84,14 +84,14 @@ function readIf(c: Cursor, body: BodyReader): IfBinding {
 function readEach(c: Cursor, body: BodyReader): EachBinding {
   const start = c.pos;
   const { expr, attrs } = readHeader(c, "EACH", EACH_ATTRS, true);
-  if (expr === undefined) c.fail("EACH needs {list}", start);
+  if (expr === undefined) c.fail("L1030", {}, start);
   const template = body();
   expectClose(c, "EACH", start);
   return {
     kind: "each",
     list: expr,
-    item: attrExpression(attrs, "as"),
-    index: attrExpression(attrs, "index"),
+    item: attrExpression(attrs, "as")?.code,
+    index: attrExpression(attrs, "index")?.code,
     key: attrExpression(attrs, "key"),
     body: template,
   };
@@ -100,17 +100,17 @@ function readEach(c: Cursor, body: BodyReader): EachBinding {
 function readFor(c: Cursor, body: BodyReader): ForBinding {
   const start = c.pos;
   const { expr, attrs } = readHeader(c, "FOR", FOR_ATTRS, true);
-  if (expr === undefined || !IDENTIFIER.test(expr)) c.fail("FOR needs a name in {}, like {i}", start);
+  if (expr === undefined || !IDENTIFIER.test(expr.code)) c.fail("L1031", {}, start);
   const to = attrExpression(attrs, "to");
-  if (to === undefined) c.fail("FOR needs to={end}", start);
+  if (to === undefined) c.fail("L1032", {}, start);
   const template = body();
   expectClose(c, "FOR", start);
   return {
     kind: "for",
-    name: expr,
-    from: attrExpression(attrs, "from") ?? "0",
+    name: expr.code,
+    from: attrExpression(attrs, "from"),
     to,
-    step: attrExpression(attrs, "step") ?? "1",
+    step: attrExpression(attrs, "step"),
     body: template,
   };
 }
@@ -135,7 +135,7 @@ export function atBlockBoundary(c: Cursor): boolean {
 /** Reports a closing or chain tag that no block claimed. The cursor must be on it. */
 export function failBoundary(c: Cursor): never {
   const close = c.match(CLOSE_TAG);
-  if (close) c.fail(`unexpected </${close[1]}>`);
+  if (close) c.fail("L1033", { tag: close[1]! });
   const chain = c.match(CHAIN_TAG);
-  c.fail(`<${chain?.[1] ?? "ELSE"}> must directly follow </IF> or </ELSEIF>`);
+  c.fail("L1034", { tag: chain?.[1] ?? "ELSE" });
 }

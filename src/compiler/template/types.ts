@@ -1,4 +1,11 @@
-export type AttrPart = string | { expr: string };
+/** An expression from the markup, with the 1-based position of its first character in the .lucia file. */
+export interface Expr {
+  code: string;
+  line: number;
+  column: number;
+}
+
+export type AttrPart = string | Expr;
 
 export interface AttrBinding {
   name: string;
@@ -7,14 +14,14 @@ export interface AttrBinding {
 
 export interface EventBinding {
   type: string;
-  expr: string;
+  expr: Expr;
 }
 
 /** `bind={sig}` picks the property by element type; the other two name it explicitly. */
 export type BindBinding =
-  | { kind: "input"; expr: string }
-  | { kind: "prop"; prop: string; expr: string }
-  | { kind: "element"; expr: string };
+  | { kind: "input"; expr: Expr }
+  | { kind: "prop"; prop: string; expr: Expr }
+  | { kind: "element"; expr: Expr };
 
 export interface Template {
   html: string;
@@ -24,13 +31,13 @@ export interface Template {
 
 export interface Branch {
   /** Missing for ELSE. */
-  test?: string;
+  test?: Expr;
   body: Template;
 }
 
 export interface TextBinding {
   kind: "text";
-  expr: string;
+  expr: Expr;
 }
 
 export interface ElementBinding {
@@ -38,7 +45,7 @@ export interface ElementBinding {
   attrs: AttrBinding[];
   events: EventBinding[];
   binds: BindBinding[];
-  animate?: string;
+  animate?: Expr;
 }
 
 export interface ComponentBinding {
@@ -54,19 +61,20 @@ export interface IfBinding {
 
 export interface EachBinding {
   kind: "each";
-  list: string;
+  list: Expr;
+  /** Plain names, not expressions: they are declared as parameters. */
   item?: string;
   index?: string;
-  key?: string;
+  key?: Expr;
   body: Template;
 }
 
 export interface ForBinding {
   kind: "for";
   name: string;
-  from: string;
-  to: string;
-  step: string;
+  from?: Expr;
+  to: Expr;
+  step?: Expr;
   body: Template;
 }
 

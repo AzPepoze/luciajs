@@ -1,6 +1,7 @@
 import type { Cleanup } from "./bindings.ts";
 import { leaveThen, type Leave } from "./leave.ts";
 import { injectStyle } from "./styles.ts";
+import { runtimeError } from "../errors.ts";
 
 export type Props = Record<string, () => unknown>;
 
@@ -28,7 +29,7 @@ let currentProps: Props | null = null;
 let currentCleanups: Cleanup[] | null = null;
 
 export function currentComponentProps(): Props {
-  if (!currentProps) throw new Error("props() can only be called in a component's <script>");
+  if (!currentProps) throw runtimeError("L2040");
   return currentProps;
 }
 

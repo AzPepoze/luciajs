@@ -16,7 +16,7 @@ function binderOf(binding: Binding, ctx: GenContext): string {
     case "text":
       return textBinder(binding);
     case "element":
-      return elementBinder(binding);
+      return elementBinder(binding, ctx);
     case "component":
       return componentBinder(binding);
     case "if":

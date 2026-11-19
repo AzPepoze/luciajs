@@ -14,7 +14,7 @@ export function assetKey(path: string): string {
 }
 
 export async function buildDev(dir: string): Promise<DevBuild> {
-  const result = await bundleApp({ dir, minify: false });
+  const result = await bundleApp({ dir, minify: false, dev: true });
   if (!result.success) return { ok: false, messages: result.logs.map((log) => log.message) };
   const entries = await Promise.all(result.outputs.map(toEntry));
   return { ok: true, assets: new Map(entries) };

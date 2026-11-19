@@ -1,5 +1,6 @@
 import { untrack, watch } from "../../store/graph.ts";
 import { store, type Store } from "../../store/store.ts";
+import { runtimeError, withWhere } from "../../errors.ts";
 import type { Cleanup } from "../bindings.ts";
 import type { Leave } from "../leave.ts";
 import { mountBefore, moveBefore, type Mount } from "./mount.ts";
@@ -19,6 +20,7 @@ export interface EachSpec {
   key?: (item: unknown, index: number) => unknown;
   /** Whether the rows need a live index store. */
   indexed: boolean;
+  where?: string;
 }
 
 interface Row extends Mount {
@@ -46,7 +48,7 @@ class EachBlock {
   }
 
   update(items: readonly unknown[]): void {
-    untrack(() => this.reconcile(items));
+    untrack(() => withWhere(this.spec.where, () => this.reconcile(items)));
   }
 
   dispose(): void {
@@ -66,7 +68,7 @@ class EachBlock {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const key = this.keyOf(item, i);
-      if (seen.has(key)) throw new Error(`EACH keys must be unique, but ${String(key)} appears twice`);
+      if (seen.has(key)) throw runtimeError("L2041", { key: String(key) });
       seen.add(key);
       keys[i] = key;
       const row = reusable.get(key);

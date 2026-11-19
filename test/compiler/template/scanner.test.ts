@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
-import { LuciaError } from "@compiler/errors.ts";
 import { type Binding, compileTemplate } from "@compiler/template/scanner.ts";
+import { catchError } from "../catch-error.ts";
 
 const FILE = "Card.lucia";
 const TEXT = `<!--${TEXT_MARKER}-->`;
@@ -25,14 +25,14 @@ describe("compileTemplate", () => {
     const { html, bindings } = compileTemplate("<p>Hi {name}, {a + b}</p>", FILE);
     expect(html).toBe(`<p>Hi ${TEXT}, ${TEXT}</p>`);
     expect(bindings).toEqual([
-      { kind: "text", expr: "name" },
-      { kind: "text", expr: "a + b" },
+      { kind: "text", expr: { code: "name", line: 1, column: 8 } },
+      { kind: "text", expr: { code: "a + b", line: 1, column: 16 } },
     ]);
   });
 
   test("braces and quotes inside expressions are skipped", () => {
     const { bindings } = compileTemplate("<p>{ { a: '}' }.a + `}` }</p>", FILE);
-    expect(bindings).toEqual([{ kind: "text", expr: "{ a: '}' }.a + `}`" }]);
+    expect(bindings).toEqual([{ kind: "text", expr: { code: "{ a: '}' }.a + `}`", line: 1, column: 6 } }]);
   });
 
   test("attribute expressions mark the element and keep static attributes", () => {
@@ -42,8 +42,8 @@ describe("compileTemplate", () => {
       {
         kind: "element",
         attrs: [
-          { name: "class", parts: ["btn ", { expr: "kind" }] },
-          { name: "title", parts: [{ expr: "label" }] },
+          { name: "class", parts: ["btn ", { code: "kind", line: 1, column: 26 }] },
+          { name: "title", parts: [{ code: "label", line: 1, column: 40 }] },
         ],
         events: [],
         binds: [],
@@ -54,16 +54,19 @@ describe("compileTemplate", () => {
   test("bindings follow document order", () => {
     const { bindings } = compileTemplate("<div id={a}>{b}<span id={c} /></div>", FILE);
     expect(bindings.map(firstPart)).toEqual([
-      { expr: "a" },
-      "b",
-      { expr: "c" },
+      { code: "a", line: 1, column: 10 },
+      { code: "b", line: 1, column: 14 },
+      { code: "c", line: 1, column: 26 },
     ]);
   });
 
   test("unclosed expression reports its line and column", () => {
-    const run = () => compileTemplate("<p>\n  {oops</p>", FILE, 10);
-    expect(run).toThrow(LuciaError);
-    expect(run).toThrow(`${FILE}:11:3: unclosed {`);
+    const error = catchError(() => compileTemplate("<p>\n  {oops</p>", FILE, 10));
+    expect(error.code).toBe("L1010");
+    expect(error.message).toBe("unclosed {");
+    expect(error.file).toBe(FILE);
+    expect(error.line).toBe(11);
+    expect(error.column).toBe(3);
   });
 
   test("empty expression is an error", () => {
@@ -80,7 +83,7 @@ describe("compileTemplate component tags", () => {
         kind: "component",
         name: "badge",
         props: [
-          { name: "title", parts: [{ expr: "name" }] },
+          { name: "title", parts: [{ code: "name", line: 1, column: 15 }] },
           { name: "label", parts: ["New"] },
           { name: "flag", parts: [] },
         ],
@@ -95,9 +98,12 @@ describe("compileTemplate component tags", () => {
   });
 
   test("child content between open and close is an error", () => {
-    const run = () => compileTemplate("<p>\n  <badge>hi</badge></p>", FILE, 1, COMPONENTS);
-    expect(run).toThrow(LuciaError);
-    expect(run).toThrow(`${FILE}:2:3: <badge> cannot have child content yet; use <badge />`);
+    const error = catchError(() => compileTemplate("<p>\n  <badge>hi</badge></p>", FILE, 1, COMPONENTS));
+    expect(error.code).toBe("L1009");
+    expect(error.message).toBe("<badge> cannot have child content yet");
+    expect(error.hint).toBe("Write <badge /> with nothing between the tags.");
+    expect(error.line).toBe(2);
+    expect(error.column).toBe(3);
   });
 
   test("lowercase component name matches the import name", () => {
@@ -114,7 +120,11 @@ describe("compileTemplate component tags", () => {
   test("a prop with text and an expression keeps both parts", () => {
     const { bindings } = compileTemplate('<badge label="{count} new" />', FILE, 1, COMPONENTS);
     expect(bindings).toEqual([
-      { kind: "component", name: "badge", props: [{ name: "label", parts: [{ expr: "count" }, " new"] }] },
+      {
+        kind: "component",
+        name: "badge",
+        props: [{ name: "label", parts: [{ code: "count", line: 1, column: 16 }, " new"] }],
+      },
     ]);
   });
 });

@@ -1,18 +1,23 @@
-import { LuciaError } from "../errors.ts";
+import { luciaError, type Values } from "../errors/create.ts";
+import type { ErrorCodeName } from "../errors/codes.ts";
 import { skipExpression } from "../utils/braces.ts";
-import { columnAt, lineAt } from "../utils/position.ts";
+import { lineIndexAt, lineStarts } from "../utils/position.ts";
+import type { Expr } from "./types.ts";
 
 const WHITESPACE = /\s/;
 
 /** Reads markup one character at a time and reports errors with file positions. */
 export class Cursor {
   pos = 0;
+  private readonly starts: number[];
 
   constructor(
     readonly src: string,
     private readonly file: string,
     private readonly startLine: number,
-  ) {}
+  ) {
+    this.starts = lineStarts(src);
+  }
 
   peek(offset = 0): string {
     return this.src[this.pos + offset] ?? "";
@@ -38,19 +43,26 @@ export class Cursor {
     while (WHITESPACE.test(this.peek())) this.pos++;
   }
 
-  /** Reads a `{...}` expression and returns its source without the braces. */
-  readExpression(): string {
+  /** Reads a `{...}` expression. Its code has no braces and no outer spaces. */
+  readExpression(): Expr {
     const start = this.pos;
     const end = skipExpression(this.src, start);
-    if (end === -1) this.fail("unclosed {", start);
+    if (end === -1) this.fail("L1010", {}, start);
     this.pos = end;
-    const expr = this.src.slice(start + 1, end - 1).trim();
-    if (!expr) this.fail("empty {}", start);
-    return expr;
+    const raw = this.src.slice(start + 1, end - 1);
+    const code = raw.trim();
+    if (!code) this.fail("L1011", {}, start);
+    const at = start + 1 + (raw.length - raw.trimStart().length);
+    return { code, ...this.locate(at) };
   }
 
-  fail(message: string, at = this.pos): never {
-    const line = this.startLine - 1 + lineAt(this.src, at);
-    throw new LuciaError(message, this.file, line, columnAt(this.src, at));
+  /** The 1-based line and column of an index in the .lucia file. */
+  locate(at: number): { line: number; column: number } {
+    const row = lineIndexAt(this.starts, at);
+    return { line: this.startLine + row, column: at - this.starts[row]! + 1 };
+  }
+
+  fail(code: ErrorCodeName, values: Values = {}, at = this.pos): never {
+    throw luciaError(code, values, { file: this.file, ...this.locate(at) });
   }
 }

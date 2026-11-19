@@ -1,9 +1,12 @@
-import { GenContext } from "./codegen-context.ts";
+import { markLines } from "../sourcemap/marker.ts";
+import { GenContext, type GenOptions } from "./codegen-context.ts";
 import type { Template } from "./types.ts";
 
-export interface ComponentParts {
+export interface ComponentParts extends GenOptions {
   imports: string;
   body: string;
+  /** The .lucia line where `body` starts. */
+  bodyLine: number;
   template: Template;
   css: string;
   id: string;
@@ -31,23 +34,24 @@ const RUNTIME_IMPORT = `import {
   type Rendered as __Rendered,
 } from "lucia/internal";`;
 
-function renderFunction(body: string, fragment: string): string {
+function renderFunction(body: string, bodyLine: number, fragment: string): string {
   return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[]): __Rendered {
-${body}
+${markLines(body, bodyLine)}
   const __fragment = ${fragment};
   return { fragment: __fragment, setup: typeof setup === "function" ? setup : undefined };
 }`;
 }
 
-export function generate({ imports, body, template, css, id }: ComponentParts): string {
-  const ctx = new GenContext(id);
+/** The generated module, with position markers that `extractSourceMap` removes. */
+export function generate({ imports, body, bodyLine, template, css, id, file, dev }: ComponentParts): string {
+  const ctx = new GenContext(id, { file, dev });
   const fragment = ctx.fragment(template);
   return [
     imports,
     RUNTIME_IMPORT,
     `const __css = ${JSON.stringify(css)};`,
     ...ctx.declarations,
-    renderFunction(body, fragment),
+    renderFunction(body, bodyLine, fragment),
     `export default __defineComponent(${JSON.stringify(id)}, __css, __render);`,
   ].join("\n");
 }

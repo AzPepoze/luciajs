@@ -1,4 +1,4 @@
-import type { BindBinding } from "./types.ts";
+import type { BindBinding, Expr } from "./types.ts";
 
 export const BIND_NAME = /^bind(-[a-z][a-z-]*)?$/;
 
@@ -9,7 +9,7 @@ export function isBindName(name: string): boolean {
   return name === "bind" || name.startsWith("bind-");
 }
 
-export function bindBinding(name: string, expr: string): BindBinding {
+export function bindBinding(name: string, expr: Expr): BindBinding {
   if (name === "bind") return { kind: "input", expr };
   const suffix = name.slice("bind-".length);
   if (suffix === "element") return { kind: "element", expr };

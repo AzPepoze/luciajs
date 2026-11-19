@@ -1,4 +1,5 @@
-import { LuciaError } from "../errors.ts";
+import { luciaError, type Values } from "../errors/create.ts";
+import type { ErrorCodeName } from "../errors/codes.ts";
 import { RESERVED_TAGS } from "../utils/reserved.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import type { Section } from "./sections.ts";
@@ -22,17 +23,16 @@ function defaultLuciaImport(statement: string, specifier: string): string | unde
 }
 
 /** An error at `offset` inside the script section, reported with the file position. */
-function scriptError(script: Section, offset: number, file: string, message: string): LuciaError {
+function scriptError(script: Section, offset: number, file: string, code: ErrorCodeName, values?: Values) {
   const line = script.line - 1 + lineAt(script.content, offset);
-  return new LuciaError(message, file, line, columnAt(script.content, offset));
+  return luciaError(code, values, { file, line, column: columnAt(script.content, offset) });
 }
 
 function rejectExports(script: Section, file: string): void {
   const match = EXPORT_STATEMENT.exec(script.content);
   if (!match) return;
   const at = match.index + match[0].length - "export".length;
-  const message = "a component's <script> runs once per instance and cannot export; move shared values to a .ts file";
-  throw scriptError(script, at, file, message);
+  throw scriptError(script, at, file, "L1003");
 }
 
 export function splitImports(section: Section | null, file: string): SplitScript {
@@ -44,9 +44,7 @@ export function splitImports(section: Section | null, file: string): SplitScript
   const body = script.replace(IMPORT_STATEMENT, (statement, _quote, specifier: string, offset: number) => {
     imports.push(statement.trim());
     const name = defaultLuciaImport(statement, specifier);
-    if (name && RESERVED_TAGS.has(name)) {
-      throw scriptError(section, offset, file, `${name} is a reserved tag name and cannot be a component`);
-    }
+    if (name && RESERVED_TAGS.has(name)) throw scriptError(section, offset, file, "L1004", { name });
     if (name) components.add(name);
     return "";
   });

@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
 import { compile } from "@compiler/index.ts";
 import { compileTemplate } from "@compiler/template/scanner.ts";
+import { catchError } from "../catch-error.ts";
 
 const FILE = "Card.lucia";
 const TEXT = `<!--${TEXT_MARKER}-->`;
@@ -10,7 +11,9 @@ describe("events", () => {
   test("onX={expr} becomes a listener on the element", () => {
     const { html, bindings } = compileTemplate("<button onclick={go}>x</button>", FILE);
     expect(html).toBe(`<button ${ELEMENT_MARKER}>x</button>`);
-    expect(bindings).toEqual([{ kind: "element", attrs: [], events: [{ type: "click", expr: "go" }], binds: [] }]);
+    expect(bindings).toEqual([
+      { kind: "element", attrs: [], events: [{ type: "click", expr: { code: "go", line: 1, column: 18 } }], binds: [] },
+    ]);
   });
 
   test("a static onclick string stays plain HTML", () => {
@@ -22,7 +25,7 @@ describe("events", () => {
   test("a dashed event name keeps its dashes", () => {
     const named = compileTemplate("<div oncustom-thing={f}></div>", FILE);
     expect(named.bindings).toEqual([
-      { kind: "element", attrs: [], events: [{ type: "custom-thing", expr: "f" }], binds: [] },
+      { kind: "element", attrs: [], events: [{ type: "custom-thing", expr: { code: "f", line: 1, column: 22 } }], binds: [] },
     ]);
   });
 
@@ -32,7 +35,7 @@ describe("events", () => {
       {
         kind: "element",
         attrs: [],
-        events: [{ type: "input", expr: "(e) => { set(e.target.value) }" }],
+        events: [{ type: "input", expr: { code: "(e) => { set(e.target.value) }", line: 1, column: 17 } }],
         binds: [],
       },
     ]);
@@ -44,32 +47,45 @@ describe("events", () => {
 
   test("an event on a component tag is a prop", () => {
     const { bindings } = compileTemplate("<badge onclick={f} />", FILE, 1, new Set(["badge"]));
-    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [{ name: "onclick", parts: [{ expr: "f" }] }] }]);
+    expect(bindings).toEqual([
+      { kind: "component", name: "badge", props: [{ name: "onclick", parts: [{ code: "f", line: 1, column: 17 }] }] },
+    ]);
   });
 });
 
 describe("bind", () => {
   test("bind on an input picks its property later, at attach", () => {
     const { bindings } = compileTemplate("<input bind={name} />", FILE);
-    expect(bindings).toEqual([{ kind: "element", attrs: [], events: [], binds: [{ kind: "input", expr: "name" }] }]);
+    expect(bindings).toEqual([
+      { kind: "element", attrs: [], events: [], binds: [{ kind: "input", expr: { code: "name", line: 1, column: 14 } }] },
+    ]);
   });
 
   test("bind-<prop> maps kebab-case to camelCase", () => {
     const { bindings } = compileTemplate("<p bind-text-content={t}>x</p>", FILE);
     expect(bindings).toEqual([
-      { kind: "element", attrs: [], events: [], binds: [{ kind: "prop", prop: "textContent", expr: "t" }] },
+      {
+        kind: "element",
+        attrs: [],
+        events: [],
+        binds: [{ kind: "prop", prop: "textContent", expr: { code: "t", line: 1, column: 23 } }],
+      },
     ]);
   });
 
   test("bind-element takes an element reference", () => {
     const { bindings } = compileTemplate("<div bind-element={ref}></div>", FILE);
-    expect(bindings).toEqual([{ kind: "element", attrs: [], events: [], binds: [{ kind: "element", expr: "ref" }] }]);
+    expect(bindings).toEqual([
+      { kind: "element", attrs: [], events: [], binds: [{ kind: "element", expr: { code: "ref", line: 1, column: 20 } }] },
+    ]);
   });
 
   test("bind works only on input, textarea and select", () => {
-    expect(() => compileTemplate("<div bind={x}></div>", FILE)).toThrow(
-      "bind works on input, textarea and select; use bind-<property>",
-    );
+    const error = catchError(() => compileTemplate("<div bind={x}></div>", FILE));
+    expect(error.code).toBe("L1024");
+    expect(error.message).toBe("bind works on input, textarea and select");
+    expect(error.line).toBe(1);
+    expect(error.column).toBe(6);
   });
 
   test("bind needs one {store}", () => {
@@ -94,8 +110,8 @@ describe("IF, ELSEIF and ELSE", () => {
       {
         kind: "if",
         branches: [
-          { test: "a", body: { html: "<p>1</p>", bindings: [] } },
-          { test: "b", body: { html: "2", bindings: [] } },
+          { test: { code: "a", line: 1, column: 6 }, body: { html: "<p>1</p>", bindings: [] } },
+          { test: { code: "b", line: 2, column: 10 }, body: { html: "2", bindings: [] } },
           { body: { html: "3", bindings: [] } },
         ],
       },
@@ -127,7 +143,11 @@ describe("IF, ELSEIF and ELSE", () => {
   });
 
   test("a missing close tag is reported at the opening tag", () => {
-    expect(() => compileTemplate("<p>\n<IF {a}>x", FILE)).toThrow(`${FILE}:2:1: unclosed <IF>`);
+    const error = catchError(() => compileTemplate("<p>\n<IF {a}>x", FILE));
+    expect(error.code).toBe("L1001");
+    expect(error.message).toBe("unclosed <IF>");
+    expect(error.line).toBe(2);
+    expect(error.column).toBe(1);
   });
 
   test("a mismatched close tag is an error", () => {
@@ -149,18 +169,20 @@ describe("EACH", () => {
     expect(bindings).toEqual([
       {
         kind: "each",
-        list: "todos",
+        list: { code: "todos", line: 1, column: 8 },
         item: "todo",
         index: "i",
-        key: "todo.id",
-        body: { html: "<li><!--l--></li>", bindings: [{ kind: "text", expr: "i" }] },
+        key: { code: "todo.id", line: 1, column: 40 },
+        body: { html: "<li><!--l--></li>", bindings: [{ kind: "text", expr: { code: "i", line: 1, column: 54 } }] },
       },
     ]);
   });
 
   test("everything but the list is optional", () => {
     const { bindings } = compileTemplate("<EACH {rows}>x</EACH>", FILE);
-    expect(bindings).toEqual([{ kind: "each", list: "rows", body: { html: "x", bindings: [] } }]);
+    expect(bindings).toEqual([
+      { kind: "each", list: { code: "rows", line: 1, column: 8 }, body: { html: "x", bindings: [] } },
+    ]);
   });
 
   test("as must be a name", () => {
@@ -185,7 +207,12 @@ describe("EACH", () => {
     expect(each.body.bindings).toEqual([
       {
         kind: "if",
-        branches: [{ test: "r.open", body: { html: "<b><!--l--></b>", bindings: [{ kind: "text", expr: "r.name" }] } }],
+        branches: [
+          {
+            test: { code: "r.open", line: 1, column: 26 },
+            body: { html: "<b><!--l--></b>", bindings: [{ kind: "text", expr: { code: "r.name", line: 1, column: 38 } }] },
+          },
+        ],
       },
     ]);
   });
@@ -195,7 +222,12 @@ describe("FOR", () => {
   test("loop name, bounds and defaults", () => {
     const { bindings } = compileTemplate("<FOR {n} to={5}><i>{n}</i></FOR>", FILE);
     expect(bindings).toEqual([
-      { kind: "for", name: "n", from: "0", to: "5", step: "1", body: { html: "<i><!--l--></i>", bindings: [{ kind: "text", expr: "n" }] } },
+      {
+        kind: "for",
+        name: "n",
+        to: { code: "5", line: 1, column: 14 },
+        body: { html: "<i><!--l--></i>", bindings: [{ kind: "text", expr: { code: "n", line: 1, column: 21 } }] },
+      },
     ]);
   });
 
@@ -208,6 +240,10 @@ describe("FOR", () => {
 describe("reserved tags", () => {
   test("an import named like a control tag is an error", () => {
     const source = `<script>\nimport IF from "./if.lucia";\n</script>\n<p>x</p>`;
-    expect(() => compile(source, FILE)).toThrow(`:2:1: IF is a reserved tag name and cannot be a component`);
+    const error = catchError(() => compile(source, FILE));
+    expect(error.code).toBe("L1004");
+    expect(error.message).toBe("IF is a reserved tag name and cannot be a component");
+    expect(error.line).toBe(2);
+    expect(error.column).toBe(1);
   });
 });

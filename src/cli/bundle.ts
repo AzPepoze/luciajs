@@ -14,15 +14,16 @@ export interface BundleOptions {
   dir: string;
   outdir?: string;
   minify: boolean;
+  dev: boolean;
 }
 
-export async function bundleApp({ dir, outdir, minify }: BundleOptions): Promise<Bun.BuildOutput> {
+export async function bundleApp({ dir, outdir, minify, dev }: BundleOptions): Promise<Bun.BuildOutput> {
   return Bun.build({
     entrypoints: [entryPath(dir)],
     outdir,
     minify,
     sourcemap: "linked",
     throw: false,
-    plugins: [lucia()],
+    plugins: [lucia({ dev })],
   });
 }

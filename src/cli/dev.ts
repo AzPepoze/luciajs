@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { stripAnsi } from "./color.ts";
 import { entryPath } from "./bundle.ts";
 import { buildDev } from "./dev-build.ts";
 import { createDevServer, type DevServer } from "./dev-server.ts";
@@ -51,8 +52,8 @@ function createRebuild(root: string, server: DevServer, log: Logger): Rebuild {
     const started = performance.now();
     const result = await buildDev(root);
     if (!result.ok) {
-      for (const message of result.messages) log.error(message);
-      server.showError(result.messages.join("\n\n"));
+      for (const message of result.messages) process.stderr.write(`${message}\n`);
+      server.showError(stripAnsi(result.messages.join("\n\n")));
       return;
     }
     server.publish(result.assets);

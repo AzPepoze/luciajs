@@ -1,6 +1,6 @@
 import * as sass from "sass";
 import { dirname } from "node:path";
-import { LuciaError } from "../errors.ts";
+import { luciaError } from "../errors/create.ts";
 import type { Section } from "../parse/sections.ts";
 import { scopeCss, styleMode } from "./modes.ts";
 
@@ -14,9 +14,10 @@ function compileScss(style: Section, file: string): string {
   try {
     return sass.compileString(style.content, { loadPaths: [dirname(file)], style: "expanded" }).css;
   } catch (error) {
-    const span = (error as sass.Exception).span;
+    const sassError = error as sass.Exception;
+    const span = sassError.span;
     const line = span ? style.line + span.start.line : style.line;
     const column = span ? span.start.column + 1 : 1;
-    throw new LuciaError((error as sass.Exception).sassMessage ?? String(error), file, line, column);
+    throw luciaError("L1005", { message: sassError.sassMessage ?? String(error) }, { file, line, column });
   }
 }

@@ -48,4 +48,5 @@ If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](docs/
 | [Animate](docs/animate.md) | The `animate` attribute: keyframes, triggers, easings, presets and leave |
 | [Development](docs/development.md) | Commands, tests, repo layout |
 | [Architecture](docs/architecture.md) | How the compiler and runtime work |
+| [Error codes](docs/errors.md) | Error codes and how to fix them |
 | [Editor](docs/editor.md) | The VS Code extension: highlighting and install |

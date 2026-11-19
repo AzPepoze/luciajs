@@ -1,16 +1,16 @@
-import type { AttrBinding, AttrPart, BindBinding, ElementBinding, EventBinding } from "./types.ts";
+import { markedCode } from "../sourcemap/marker.ts";
+import { trailingArg, type GenContext } from "./codegen-context.ts";
+import type { AttrBinding, AttrPart, BindBinding, ElementBinding, EventBinding, Expr } from "./types.ts";
 
-export function readExpression(expr: string): string {
-  return `__unwrap((${expr}))`;
+export function readExpression(expr: Expr): string {
+  return `__unwrap((${markedCode(expr)}))`;
 }
 
 export function attrValue(parts: AttrPart[]): string {
-  const [only] = parts;
   if (parts.length === 0) return "true";
-  if (parts.length === 1 && typeof only !== "string") return readExpression(only!.expr);
-  const pieces = parts.map((part) =>
-    typeof part === "string" ? JSON.stringify(part) : `__toText(${readExpression(part.expr)})`,
-  );
+  const single = parts.length === 1 ? parts[0] : undefined;
+  if (typeof single === "object") return readExpression(single);
+  const pieces = parts.map((part) => (typeof part === "string" ? JSON.stringify(part) : `__toText(${readExpression(part)})`));
   return pieces.join(" + ");
 }
 
@@ -19,19 +19,22 @@ function attrCall({ name, parts }: AttrBinding): string {
 }
 
 function eventCall({ type, expr }: EventBinding): string {
-  return `__listen(__node as Element, ${JSON.stringify(type)}, (${expr}), __cleanups);`;
+  return `__listen(__node as Element, ${JSON.stringify(type)}, (${markedCode(expr)}), __cleanups);`;
 }
 
-function bindCall(bind: BindBinding): string {
-  if (bind.kind === "input") return `__bindInput(__node as HTMLElement, (${bind.expr}), __cleanups);`;
+function bindCall(bind: BindBinding, ctx: GenContext): string {
+  const target = `(${markedCode(bind.expr)})`;
+  const at = trailingArg(ctx.whereOf(bind.expr));
+  if (bind.kind === "input") return `__bindInput(__node as HTMLElement, ${target}, __cleanups${at});`;
   if (bind.kind === "prop") {
-    return `__bindProp(__node as HTMLElement, ${JSON.stringify(bind.prop)}, (${bind.expr}), __cleanups);`;
+    return `__bindProp(__node as HTMLElement, ${JSON.stringify(bind.prop)}, ${target}, __cleanups${at});`;
   }
-  return `__bindElement(__node as Element, (${bind.expr}), __cleanups);`;
+  return `__bindElement(__node as Element, ${target}, __cleanups${at});`;
 }
 
-function animateCall(expr: string): string {
-  return `__animate(__node as HTMLElement, () => (${expr}), __cleanups, __leaves);`;
+function animateCall(expr: Expr, ctx: GenContext): string {
+  const at = trailingArg(ctx.whereOf(expr));
+  return `__animate(__node as HTMLElement, () => (${markedCode(expr)}), __cleanups, __leaves${at});`;
 }
 
 /** An object of getters, one per attribute: `{ "title": () => ... }`. */
@@ -40,12 +43,12 @@ export function getterObject(attrs: AttrBinding[]): string {
   return `{ ${entries.join(", ")} }`;
 }
 
-export function elementBinder(binding: ElementBinding): string {
+export function elementBinder(binding: ElementBinding, ctx: GenContext): string {
   const calls = [
     ...binding.attrs.map(attrCall),
     ...binding.events.map(eventCall),
-    ...binding.binds.map(bindCall),
+    ...binding.binds.map((bind) => bindCall(bind, ctx)),
   ];
-  if (binding.animate !== undefined) calls.push(animateCall(binding.animate));
+  if (binding.animate !== undefined) calls.push(animateCall(binding.animate, ctx));
   return `(__node, __cleanups, __leaves) => {\n  ${calls.join("\n  ")}\n}`;
 }

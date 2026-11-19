@@ -41,7 +41,7 @@ class TemplateScanner {
   private copyComment(): void {
     const c = this.cursor;
     const end = c.src.indexOf("-->", c.pos);
-    if (end === -1) c.fail("unclosed comment");
+    if (end === -1) c.fail("L1006");
     this.html += c.src.slice(c.pos, end + 3);
     c.pos = end + 3;
   }
@@ -67,7 +67,7 @@ class TemplateScanner {
     c.pos++;
     if (c.peek() === "/") {
       const end = c.src.indexOf(">", c.pos);
-      if (end === -1) c.fail("unclosed tag", start);
+      if (end === -1) c.fail("L1008", {}, start);
       this.html += c.src.slice(start, end + 1);
       c.pos = end + 1;
       return;
@@ -97,7 +97,7 @@ class TemplateScanner {
     const c = this.cursor;
     c.skipWhitespace();
     const close = `</${name}>`;
-    if (!c.startsWith(close)) c.fail(`<${name}> cannot have child content yet; use <${name} />`, start);
+    if (!c.startsWith(close)) c.fail("L1009", { name }, start);
     c.pos += close.length;
   }
 }

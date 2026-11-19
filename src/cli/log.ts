@@ -1,4 +1,4 @@
-import { categoryCode, paint } from "./color.ts";
+import { categoryCode, colorEnabled, paint } from "./color.ts";
 
 export type Level = "info" | "warn" | "error";
 
@@ -26,7 +26,7 @@ export function defaultLogOptions(
   isTerminal = Boolean(process.stderr.isTTY),
 ): LogOptions {
   return {
-    color: isTerminal && !env.NO_COLOR,
+    color: colorEnabled(env, isTerminal),
     write: (line) => void process.stderr.write(`${line}\n`),
     now: () => new Date(),
   };

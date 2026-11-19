@@ -1,6 +1,7 @@
 import { watch } from "../../store/graph.ts";
 import { isReactive, type Store } from "../../store/store.ts";
 import { listen, type Cleanup } from "../bindings.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** How one DOM property maps to a store: the value in each direction, and the events that report changes. */
 export interface Channel {
@@ -12,7 +13,7 @@ export interface Channel {
 
 export function assertWritable(target: unknown, attr: string): asserts target is Store<unknown> {
   const writable = isReactive(target) && Object.getOwnPropertyDescriptor(target, "value")?.set !== undefined;
-  if (!writable) throw new Error(`${attr} needs a writable store`);
+  if (!writable) throw runtimeError("L2043", { attr });
 }
 
 function readProp(el: HTMLElement, prop: string): unknown {

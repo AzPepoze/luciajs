@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { LuciaError } from "@compiler/errors.ts";
 import { splitImports } from "@compiler/parse/imports.ts";
 import { parse } from "@compiler/parse/sections.ts";
+import { catchError } from "../catch-error.ts";
 
 const FILE = "Card.lucia";
 
@@ -49,14 +49,18 @@ describe("splitImports", () => {
   });
 
   test("an export in the script is an error with its line and column", () => {
-    const run = () => split("\nconst a = 1;\nexport const b = 2;\n");
-    expect(run).toThrow(LuciaError);
-    expect(run).toThrow(`${FILE}:3:1: a component's <script> runs once per instance and cannot export`);
+    const error = catchError(() => split("\nconst a = 1;\nexport const b = 2;\n"));
+    expect(error.code).toBe("L1003");
+    expect(error.message).toBe("a component's <script> cannot export");
+    expect(error.file).toBe(FILE);
+    expect(error.line).toBe(3);
+    expect(error.column).toBe(1);
   });
 
   test("an indented export reports the column of the keyword", () => {
-    const run = () => split("\n  export const b = 2;\n");
-    expect(run).toThrow(`${FILE}:2:3: a component's <script> runs once per instance and cannot export`);
+    const error = catchError(() => split("\n  export const b = 2;\n"));
+    expect(error.line).toBe(2);
+    expect(error.column).toBe(3);
   });
 
   test("a missing script gives empty parts", () => {

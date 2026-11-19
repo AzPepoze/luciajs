@@ -3,4 +3,4 @@ import { plugin } from "bun";
 import { lucia } from "lucia/bun-plugin";
 
 GlobalRegistrator.register();
-plugin(lucia());
+plugin(lucia({ dev: true }));

@@ -23,9 +23,9 @@ export async function runBuild(options: BuildOptions): Promise<number> {
 
   const started = performance.now();
   await rm(outdir, { recursive: true, force: true });
-  const result = await bundleApp({ dir, outdir, minify: options.minify });
+  const result = await bundleApp({ dir, outdir, minify: options.minify, dev: false });
   if (!result.success) {
-    for (const message of result.logs) log.error(message.message);
+    for (const message of result.logs) process.stderr.write(`${message.message}\n`);
     return 1;
   }
 

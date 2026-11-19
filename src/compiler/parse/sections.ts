@@ -1,6 +1,6 @@
-import { LuciaError } from "../errors.ts";
+import { luciaError } from "../errors/create.ts";
 import { skipExpression } from "../utils/braces.ts";
-import { lineAt } from "../utils/position.ts";
+import { columnAt, lineAt } from "../utils/position.ts";
 import { parseAttrs } from "./attrs.ts";
 
 export interface Section {
@@ -34,6 +34,10 @@ function keepLineBreaks(text: string): string {
   return text.replace(/[^\n]/g, "");
 }
 
+function spanAt(source: string, index: number, file: string): { file: string; line: number; column: number } {
+  return { file, line: lineAt(source, index), column: columnAt(source, index) };
+}
+
 function readSection(source: string, start: number, file: string): SectionMatch | null {
   SECTION_OPEN.lastIndex = start;
   const open = SECTION_OPEN.exec(source);
@@ -42,7 +46,7 @@ function readSection(source: string, start: number, file: string): SectionMatch 
   const contentStart = start + open[0].length;
   const closeTag = `</${kind}>`;
   const contentEnd = source.indexOf(closeTag, contentStart);
-  if (contentEnd === -1) throw new LuciaError(`unclosed <${kind}>`, file, lineAt(source, start), 1);
+  if (contentEnd === -1) throw luciaError("L1001", { tag: kind }, spanAt(source, start, file));
   return { kind, rawAttrs: open[2], start, contentStart, contentEnd, end: contentEnd + closeTag.length };
 }
 
@@ -84,7 +88,7 @@ export function parse(source: string, file: string): ParsedFile {
     if (kind === "style") {
       result.styles.push(toSection(source, section));
     } else {
-      if (result.script) throw new LuciaError("only one <script> is allowed", file, lineAt(source, start), 1);
+      if (result.script) throw luciaError("L1002", {}, spanAt(source, start, file));
       result.script = toSection(source, section);
     }
     markup += source.slice(last, start) + keepLineBreaks(source.slice(start, end));
