@@ -1,0 +1,73 @@
+import { parseArgs } from "node:util";
+
+export class UsageError extends Error {}
+
+export type Command =
+  | { name: "help" }
+  | { name: "build"; dir: string; outdir: string; minify: boolean }
+  | { name: "dev"; dir: string; port: number };
+
+const DEFAULT_PORT = 3000;
+const DEFAULT_OUTDIR = "dist";
+
+export function parseCommand(argv: string[], env: Record<string, string | undefined>): Command {
+  const [name, ...rest] = argv;
+  if (!name || name === "help" || name === "--help" || name === "-h") return { name: "help" };
+  if (name === "build") return parseBuild(rest);
+  if (name === "dev") return parseDev(rest, env);
+  throw new UsageError(`unknown command "${name}"`);
+}
+
+function parseBuild(args: string[]): Command {
+  const { values, positionals } = withUsageErrors(() =>
+    parseArgs({
+      args,
+      allowPositionals: true,
+      options: {
+        outdir: { type: "string" },
+        "no-minify": { type: "boolean" },
+      },
+    }),
+  );
+  return {
+    name: "build",
+    dir: appDir(positionals),
+    outdir: values.outdir ?? DEFAULT_OUTDIR,
+    minify: !values["no-minify"],
+  };
+}
+
+function parseDev(args: string[], env: Record<string, string | undefined>): Command {
+  const { values, positionals } = withUsageErrors(() =>
+    parseArgs({
+      args,
+      allowPositionals: true,
+      options: { port: { type: "string" } },
+    }),
+  );
+  const port = values.port ?? env.PORT;
+  return {
+    name: "dev",
+    dir: appDir(positionals),
+    port: port === undefined ? DEFAULT_PORT : parsePort(port),
+  };
+}
+
+function withUsageErrors<T>(parse: () => T): T {
+  try {
+    return parse();
+  } catch (error) {
+    throw new UsageError(error instanceof Error ? error.message : String(error));
+  }
+}
+
+function appDir(positionals: string[]): string {
+  if (positionals.length > 1) throw new UsageError("expected one app folder");
+  return positionals[0] ?? ".";
+}
+
+function parsePort(value: string): number {
+  const port = Number(value);
+  if (!Number.isInteger(port) || port < 0 || port > 65535) throw new UsageError(`invalid port "${value}"`);
+  return port;
+}

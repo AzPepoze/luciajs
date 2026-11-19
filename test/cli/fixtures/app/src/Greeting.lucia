@@ -1,0 +1,7 @@
+<p class="greeting">Hello from the fixture</p>
+
+<style>
+.greeting {
+  color: rebeccapurple;
+}
+</style>

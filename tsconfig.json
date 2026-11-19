@@ -1,21 +1,22 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["bun"],
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "paths": {
-      "@runtime/*": ["./src/runtime/*"],
-      "@compiler/*": ["./src/compiler/*"],
-      "@bun-plugin/*": ["./src/bun-plugin/*"]
-    }
-  },
-  "include": ["src", "test", "examples", "lucia.d.ts"]
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"types": ["bun"],
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"skipLibCheck": true,
+		"noEmit": true,
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"paths": {
+			"@runtime/*": ["./src/runtime/*"],
+			"@compiler/*": ["./src/compiler/*"],
+			"@bun-plugin/*": ["./src/bun-plugin/*"],
+			"@cli/*": ["./src/cli/*"]
+		}
+	},
+	"include": ["src", "test", "examples", "reference", "lucia.d.ts"]
 }
