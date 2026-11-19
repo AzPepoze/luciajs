@@ -1,19 +1,238 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Paper Notes</title>
+    <title>LuciaJS showcase</title>
+    <style>
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; scroll-padding-top: 1rem; }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        line-height: 1.6;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      code, pre { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+      a { color: var(--accent); }
+
+      .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh; }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 1.5rem 1rem;
+        border-right: 1px solid var(--line);
+        background: var(--card);
+      }
+      .brand { display: block; margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--fg); text-decoration: none; }
+      .sidebar nav { display: grid; gap: 0.2rem; margin-top: 1rem; }
+      .sidebar nav a { padding: 0.35rem 0.6rem; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+      .sidebar nav a:hover { background: var(--bg); color: var(--fg); }
+
+      main { min-width: 0; max-width: 760px; padding: 2.5rem clamp(1rem, 4vw, 3rem) 5rem; }
+      h1 { margin: 0 0 0.5rem; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -0.02em; }
+      .intro { margin: 0 0 2rem; color: var(--muted); }
+      section { padding-bottom: 2.5rem; margin-bottom: 2.5rem; border-bottom: 1px solid var(--line); }
+      section:last-child { border-bottom: 0; }
+      h2 { margin: 0 0 0.5rem; font-size: 1.5rem; letter-spacing: -0.01em; }
+      section > p { margin: 0 0 0.5rem; }
+      section > p code, .intro code { padding: 0 0.3rem; border-radius: 4px; background: var(--code); font-size: 0.9em; }
+
+      .demo {
+        margin: 1.25rem 0;
+        padding: 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--bg);
+      }
+      .demos-stack { display: grid; gap: 1rem; }
+
+      .source { margin-top: 1rem; }
+      .file { margin: 0 0 0.35rem; font-size: 0.8rem; color: var(--muted); }
+      pre {
+        max-width: 100%;
+        margin: 0 0 1rem;
+        padding: 1rem;
+        overflow-x: auto;
+        border-radius: 10px;
+        background: var(--code);
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 719px) {
+        .layout { grid-template-columns: minmax(0, 1fr); }
+        .sidebar { position: static; height: auto; padding: 0.75rem 1rem; border-right: 0; border-bottom: 1px solid var(--line); }
+        .brand { margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .sidebar nav { display: flex; gap: 0.25rem; margin-top: 0.5rem; overflow-x: auto; }
+        .sidebar nav a { flex: none; white-space: nowrap; }
+        .sidebar #theme-slot { margin-top: 0.5rem; }
+        main { padding: 1.5rem 1rem 3rem; }
+      }
+    </style>
   </head>
   <body>
-    <div id="slot-header"></div>
-    <main>
-      <div id="slot-hero"></div>
-      <div id="slot-features"></div>
-      <div id="slot-counter"></div>
-      <div id="slot-signup"></div>
-    </main>
-    <div id="slot-footer"></div>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="#top">LuciaJS</a>
+        <div id="theme-slot"></div>
+        <nav>
+          <a href="#text">Text bindings</a>
+          <a href="#attributes">Attributes</a>
+          <a href="#signals">Signals and computed</a>
+          <a href="#batch">batch and untrack</a>
+          <a href="#shared">Shared state</a>
+          <a href="#events">Events</a>
+          <a href="#attach">Attach and detach</a>
+          <a href="#styles">Tree vs scoped styles</a>
+          <a href="#global-styles">Global styles</a>
+          <a href="#scss">SCSS</a>
+        </nav>
+      </aside>
+
+      <main id="top">
+        <h1>LuciaJS features</h1>
+        <p class="intro">Each section shows one feature with a live demo and the source behind it.</p>
+
+        <section id="text">
+          <h2>Text bindings</h2>
+          <p>Put <code>{expr}</code> in text. The text updates when a signal the expression reads changes.</p>
+          <p>Values are inserted as text, so HTML inside a value is shown as is.</p>
+          <div class="demo" id="demo-text"></div>
+          <div class="source">
+            <p class="file">src/demos/Text.lucia</p>
+            <pre><code data-source="src/demos/Text.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="attributes">
+          <h2>Attributes</h2>
+          <p>A whole attribute, <code>disabled={expr}</code>, follows its value. A partial attribute mixes text and values.</p>
+          <p><code>null</code>, <code>undefined</code> and <code>false</code> remove a whole attribute. <code>true</code> sets it empty.</p>
+          <div class="demo" id="demo-attributes"></div>
+          <div class="source">
+            <p class="file">src/demos/Attributes.lucia</p>
+            <pre><code data-source="src/demos/Attributes.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="signals">
+          <h2>Signals and computed</h2>
+          <p><code>signal(value)</code> holds state. Read and write it with <code>.value</code>.</p>
+          <p><code>computed(fn)</code> derives a value. It updates when the signals it reads change.</p>
+          <div class="demo" id="demo-signals"></div>
+          <div class="source">
+            <p class="file">src/demos/Signals.lucia</p>
+            <pre><code data-source="src/demos/Signals.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="batch">
+          <h2>batch and untrack</h2>
+          <p><code>batch(fn)</code> groups writes, so watchers run once at the end.</p>
+          <p><code>untrack(fn)</code> and <code>.peek()</code> read a signal without depending on it.</p>
+          <div class="demo" id="demo-batch"></div>
+          <div class="source">
+            <p class="file">src/demos/Batch.lucia</p>
+            <pre><code data-source="src/demos/Batch.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="shared">
+          <h2>Shared state</h2>
+          <p>Put signals in a <code>.ts</code> file and import them. Every component that imports them sees one value.</p>
+          <p>The writer changes the count. The reader shows it.</p>
+          <div class="demo demos-stack">
+            <div id="demo-shared-writer"></div>
+            <div id="demo-shared-reader"></div>
+          </div>
+          <div class="source">
+            <p class="file">src/store.ts</p>
+            <pre><code data-source="src/store.ts">Loading source...</code></pre>
+          </div>
+          <div class="source">
+            <p class="file">src/demos/SharedWriter.lucia</p>
+            <pre><code data-source="src/demos/SharedWriter.lucia">Loading source...</code></pre>
+          </div>
+          <div class="source">
+            <p class="file">src/demos/SharedReader.lucia</p>
+            <pre><code data-source="src/demos/SharedReader.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="events">
+          <h2>Events</h2>
+          <p>There is no event syntax yet. Export <code>setup(root)</code> and add listeners to elements in <code>root</code>.</p>
+          <p>Return a function from <code>setup</code> to remove the listeners when the component detaches.</p>
+          <div class="demo" id="demo-events"></div>
+          <div class="source">
+            <p class="file">src/demos/Events.lucia</p>
+            <pre><code data-source="src/demos/Events.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="attach">
+          <h2>Attach and detach</h2>
+          <p><code>attach(Component, element)</code> renders a component into an element and returns an instance.</p>
+          <p><code>detach()</code> removes its nodes and stops its updates.</p>
+          <div class="demo" id="demo-attach"></div>
+          <div class="source">
+            <p class="file">src/demos/Attach.lucia</p>
+            <pre><code data-source="src/demos/Attach.lucia">Loading source...</code></pre>
+          </div>
+          <div class="source">
+            <p class="file">src/demos/Chip.lucia</p>
+            <pre><code data-source="src/demos/Chip.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="styles">
+          <h2>Tree vs scoped styles</h2>
+          <p>Tree styles, the default, reach child components. Scoped styles, from <code>&lt;style scoped&gt;</code> or <code>@scoped { }</code>, stop at them.</p>
+          <p>The red paragraphs reach the child. The underline does not.</p>
+          <div class="demo" id="demo-style-parent"></div>
+          <div class="source">
+            <p class="file">src/demos/StyleParent.lucia</p>
+            <pre><code data-source="src/demos/StyleParent.lucia">Loading source...</code></pre>
+          </div>
+          <div class="source">
+            <p class="file">src/demos/StyleChild.lucia</p>
+            <pre><code data-source="src/demos/StyleChild.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="global-styles">
+          <h2>Global styles</h2>
+          <p>Global rules are not scoped. Use <code>&lt;style global&gt;</code>, an <code>@global { }</code> block, or <code>:global()</code> inside a selector.</p>
+          <p><code>:global()</code> leaves only the part inside it global. The rest of the selector stays scoped.</p>
+          <div class="demo" id="demo-global-styles"></div>
+          <div class="source">
+            <p class="file">src/demos/GlobalStyles.lucia</p>
+            <pre><code data-source="src/demos/GlobalStyles.lucia">Loading source...</code></pre>
+          </div>
+        </section>
+
+        <section id="scss">
+          <h2>SCSS</h2>
+          <p><code>&lt;style&gt;</code> is SCSS. Use <code>@use</code> to share variables and mixins between files.</p>
+          <p>Use <code>lang="css"</code> for plain CSS. Each block is still scoped.</p>
+          <div class="demo" id="demo-scss"></div>
+          <div class="source">
+            <p class="file">src/demos/Scss.lucia</p>
+            <pre><code data-source="src/demos/Scss.lucia">Loading source...</code></pre>
+          </div>
+          <div class="source">
+            <p class="file">src/styles/_theme.scss</p>
+            <pre><code data-source="src/styles/_theme.scss">Loading source...</code></pre>
+          </div>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>

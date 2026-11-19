@@ -1,0 +1,73 @@
+<script>
+import { attach, signal, type Instance } from "lucia";
+import { clicks } from "../store.ts";
+import Chip from "./Chip.lucia";
+
+const attached = signal(0);
+
+export function setup(root: Element) {
+  const slot = root.querySelector(".slot")!;
+  const attachButton = root.querySelector(".attach")!;
+  const detachButton = root.querySelector(".detach")!;
+  const bumpButton = root.querySelector(".bump")!;
+  const instances: Instance[] = [];
+
+  const onAttach = () => {
+    instances.push(attach(Chip, slot));
+    attached.value = instances.length;
+  };
+  const onDetach = () => {
+    instances.pop()?.detach();
+    attached.value = instances.length;
+  };
+  const onBump = () => clicks.value++;
+
+  attachButton.addEventListener("click", onAttach);
+  detachButton.addEventListener("click", onDetach);
+  bumpButton.addEventListener("click", onBump);
+  return () => {
+    attachButton.removeEventListener("click", onAttach);
+    detachButton.removeEventListener("click", onDetach);
+    bumpButton.removeEventListener("click", onBump);
+    for (const instance of instances) instance.detach();
+    instances.length = 0;
+    attached.value = 0;
+  };
+}
+</script>
+
+<div class="attach-demo">
+  <div class="actions">
+    <button class="attach" type="button">Attach a chip</button>
+    <button class="detach" type="button">Detach last chip</button>
+    <button class="bump" type="button">Add 1 shared click</button>
+  </div>
+  <p>Attached chips: {attached}</p>
+  <div class="slot"></div>
+</div>
+
+<style>
+@use "../styles/demo" as demo;
+
+.attach-demo {
+  display: grid;
+  gap: 0.75rem;
+  color: var(--fg);
+
+  p { margin: 0; }
+
+  .actions {
+    @include demo.row;
+  }
+
+  button {
+    @include demo.button;
+  }
+
+  .slot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+</style>

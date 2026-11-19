@@ -22,7 +22,7 @@ Update this file and the matching `docs/` page in the same change whenever comma
 
 - The user designs the markup syntax. Do not invent new syntax, and do not borrow Svelte's (`{#if}`, `on:`, runes, `export let`).
 - Deferred until designed with the user: events, conditions, lists, effects, animation, dev server/HMR, SSR, hydration.
-- `examples/web` shows every feature in a normal page. `examples/stress` pushes the limits. The plugin test attaches web's `Counter`, so update both together.
+- `examples/web` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches web's `Events` demo, so update both together.
 
 ## Project rules
 

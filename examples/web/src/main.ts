@@ -1,16 +1,35 @@
-import { attach } from "lucia";
-import Counter from "./components/Counter.lucia";
-import Features from "./components/Features.lucia";
-import Footer from "./components/Footer.lucia";
-import Header from "./components/Header.lucia";
-import Hero from "./components/Hero.lucia";
-import Signup from "./components/Signup.lucia";
+import { attach, type Component } from "lucia";
+import ThemeToggle from "./components/ThemeToggle.lucia";
+import Attach from "./demos/Attach.lucia";
+import Attributes from "./demos/Attributes.lucia";
+import Batch from "./demos/Batch.lucia";
+import Events from "./demos/Events.lucia";
+import GlobalStyles from "./demos/GlobalStyles.lucia";
+import Scss from "./demos/Scss.lucia";
+import Signals from "./demos/Signals.lucia";
+import SharedReader from "./demos/SharedReader.lucia";
+import SharedWriter from "./demos/SharedWriter.lucia";
+import StyleParent from "./demos/StyleParent.lucia";
+import Text from "./demos/Text.lucia";
+import { showSource } from "./source.ts";
 
-const slot = (name: string) => document.getElementById(`slot-${name}`)!;
+const demos: Record<string, Component> = {
+  "demo-text": Text,
+  "demo-attributes": Attributes,
+  "demo-signals": Signals,
+  "demo-batch": Batch,
+  "demo-shared-writer": SharedWriter,
+  "demo-shared-reader": SharedReader,
+  "demo-events": Events,
+  "demo-attach": Attach,
+  "demo-style-parent": StyleParent,
+  "demo-global-styles": GlobalStyles,
+  "demo-scss": Scss,
+};
 
-attach(Header, slot("header"));
-attach(Hero, slot("hero"));
-attach(Features, slot("features"));
-attach(Counter, slot("counter"));
-attach(Signup, slot("signup"));
-attach(Footer, slot("footer"));
+for (const [mountId, demo] of Object.entries(demos)) attach(demo, document.getElementById(mountId)!);
+attach(ThemeToggle, document.getElementById("theme-slot")!);
+
+for (const el of document.querySelectorAll<HTMLElement>("[data-source]")) {
+  showSource(el, el.dataset.source ?? "");
+}

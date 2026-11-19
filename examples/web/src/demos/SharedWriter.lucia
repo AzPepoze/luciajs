@@ -1,0 +1,46 @@
+<script>
+import { clicks } from "../store.ts";
+
+export function setup(root: Element) {
+  const add = root.querySelector(".add")!;
+  const reset = root.querySelector(".reset")!;
+  const onAdd = () => clicks.value++;
+  const onReset = () => (clicks.value = 0);
+  add.addEventListener("click", onAdd);
+  reset.addEventListener("click", onReset);
+  return () => {
+    add.removeEventListener("click", onAdd);
+    reset.removeEventListener("click", onReset);
+  };
+}
+</script>
+
+<div class="writer">
+  <p class="label">Writer</p>
+  <div class="actions">
+    <button class="add" type="button">Add 1</button>
+    <button class="reset" type="button">Reset</button>
+  </div>
+</div>
+
+<style>
+@use "../styles/demo" as demo;
+
+.writer {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--fg);
+
+  p { margin: 0; }
+
+  .label { font-weight: 700; }
+
+  .actions {
+    @include demo.row;
+  }
+
+  button {
+    @include demo.button;
+  }
+}
+</style>

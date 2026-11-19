@@ -1,0 +1,91 @@
+<script>
+import { batch, computed, signal, untrack } from "lucia";
+
+const first = signal("Ada");
+const last = signal("Lovelace");
+let round = 0;
+let renders = 0;
+
+const full = computed(() => {
+  renders++;
+  return `${first.value} ${last.value}`;
+});
+const greeting = computed(() => `Hi ${first.value} (last name, untracked: ${untrack(() => last.value)})`);
+
+export function setup(root: Element) {
+  const readout = root.querySelector(".readout")!;
+  const batched = root.querySelector(".batched")!;
+  const separate = root.querySelector(".separate")!;
+  const solo = root.querySelector(".solo")!;
+
+  const measure = (change: () => void) => {
+    const before = renders;
+    change();
+    readout.textContent = `Updates for that click: ${renders - before}`;
+  };
+  const onBatched = () =>
+    measure(() => {
+      round++;
+      batch(() => {
+        first.value = `First ${round}`;
+        last.value = `Last ${round}`;
+      });
+    });
+  const onSeparate = () =>
+    measure(() => {
+      round++;
+      first.value = `First ${round}`;
+      last.value = `Last ${round}`;
+    });
+  const onSolo = () =>
+    measure(() => {
+      round++;
+      last.value = `Solo ${round}`;
+    });
+
+  batched.addEventListener("click", onBatched);
+  separate.addEventListener("click", onSeparate);
+  solo.addEventListener("click", onSolo);
+  return () => {
+    batched.removeEventListener("click", onBatched);
+    separate.removeEventListener("click", onSeparate);
+    solo.removeEventListener("click", onSolo);
+  };
+}
+</script>
+
+<div class="batch-demo">
+  <p>Full name, a computed: {full}</p>
+  <p>Last name signal: {last}</p>
+  <p>Greeting, which does not track the last name: {greeting}</p>
+  <p>Peek reads without tracking, so this line never changes: {last.peek()}</p>
+  <div class="actions">
+    <button class="batched" type="button">Change both (batch)</button>
+    <button class="separate" type="button">Change both (no batch)</button>
+    <button class="solo" type="button">Change last only</button>
+  </div>
+  <p class="readout">Click a button to count the updates.</p>
+</div>
+
+<style>
+@use "../styles/demo" as demo;
+
+.batch-demo {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--fg);
+
+  p { margin: 0; }
+
+  .readout { color: var(--muted); font-size: 0.9rem; }
+
+  .actions {
+    @include demo.row;
+    margin: 0.5rem 0;
+  }
+
+  button {
+    @include demo.button;
+  }
+}
+</style>
