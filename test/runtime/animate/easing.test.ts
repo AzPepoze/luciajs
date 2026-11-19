@@ -1,11 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import { EASE } from "@runtime/animate/modes.ts";
 
-const { QUART } = TRANSITION;
+const { QUART } = EASE.STYLE;
 const { IN, OUT, INOUT } = EASE;
 
-const BUILT_INS = TRANSITION;
+const BUILT_INS = EASE.STYLE;
 
 describe("built-in easings", () => {
   for (const [name, ease] of Object.entries(BUILT_INS)) {

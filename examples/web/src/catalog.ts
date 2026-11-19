@@ -9,7 +9,7 @@ import Text from "./demos/basics/Text.lucia";
 import EachDemo from "./demos/flow/EachDemo.lucia";
 import ForDemo from "./demos/flow/ForDemo.lucia";
 import IfDemo from "./demos/flow/IfDemo.lucia";
-import ItemCurve from "./demos/motion/ItemCurve.lucia";
+import KeyframeDefault from "./demos/motion/KeyframeDefault.lucia";
 import Presets from "./demos/motion/Presets.lucia";
 import bindElementSource from "./demos/basics/BindElement.lucia?raw";
 import bindFieldsSource from "./demos/basics/BindFields.lucia?raw";
@@ -17,7 +17,7 @@ import setupSource from "./demos/basics/Setup.lucia?raw";
 import eachSource from "./demos/flow/EachDemo.lucia?raw";
 import forSource from "./demos/flow/ForDemo.lucia?raw";
 import ifSource from "./demos/flow/IfDemo.lucia?raw";
-import itemCurveSource from "./demos/motion/ItemCurve.lucia?raw";
+import keyframeDefaultSource from "./demos/motion/KeyframeDefault.lucia?raw";
 import presetsSource from "./demos/motion/Presets.lucia?raw";
 import Attach from "./demos/components/Attach.lucia";
 import Components from "./demos/components/Components.lucia";
@@ -74,6 +74,12 @@ import HoverDelay from "./demos/motion/HoverDelay.lucia";
 import FollowScroll from "./demos/motion/FollowScroll.lucia";
 import hoverDelaySource from "./demos/motion/HoverDelay.lucia?raw";
 import followScrollSource from "./demos/motion/FollowScroll.lucia?raw";
+import PinnedScroll from "./demos/motion/PinnedScroll.lucia";
+import HoverInOut from "./demos/motion/HoverInOut.lucia";
+import pinnedScrollSource from "./demos/motion/PinnedScroll.lucia?raw";
+import hoverInOutSource from "./demos/motion/HoverInOut.lucia?raw";
+import MidwayMode from "./demos/motion/MidwayMode.lucia";
+import midwayModeSource from "./demos/motion/MidwayMode.lucia?raw";
 
 // A source file shown in a code panel. The text is imported at build time.
 export interface SourceFile {
@@ -319,11 +325,11 @@ export const catalog: Record<string, CatalogEntry> = {
     icon: "tune",
     demos: [
       {
-        id: "animate-item-curve",
-        title: "Item settings",
-        caption: "The item's transition and ease set the curve for every key.",
-        components: [ItemCurve],
-        sources: [{ path: "src/demos/motion/ItemCurve.lucia", text: itemCurveSource }],
+        id: "animate-keyframe-default",
+        title: "Keyframe default",
+        caption: "default sets the style and ease for keys that do not set their own.",
+        components: [KeyframeDefault],
+        sources: [{ path: "src/demos/motion/KeyframeDefault.lucia", text: keyframeDefaultSource }],
       },
     ],
   },
@@ -374,7 +380,7 @@ export const catalog: Record<string, CatalogEntry> = {
     demos: [
       {
         id: "animate-enter",
-        title: "Enter only (ACTIVE.IN)",
+        title: "Enter only (WHEN.ATTACH)",
         caption: "Plays once when attached. detach() removes the box at once.",
         components: [Enter],
         sources: [
@@ -384,7 +390,7 @@ export const catalog: Record<string, CatalogEntry> = {
       },
       {
         id: "animate-leave",
-        title: "Leave only (ACTIVE.OUT)",
+        title: "Leave only (WHEN.DETACH)",
         caption: "Plays when detached. detach() waits for it, then removes the box.",
         components: [Leave],
         sources: [
@@ -457,6 +463,27 @@ export const catalog: Record<string, CatalogEntry> = {
         caption: "The bar fills and the card turns as you scroll.",
         components: [FollowScroll],
         sources: [{ path: "src/demos/motion/FollowScroll.lucia", text: followScrollSource }],
+      },
+      {
+        id: "animate-pinned-scroll",
+        title: "Pinned scroll",
+        caption: "A tall section holds the box on screen while you scroll past it.",
+        components: [PinnedScroll],
+        sources: [{ path: "src/demos/motion/PinnedScroll.lucia", text: pinnedScrollSource }],
+      },
+      {
+        id: "animate-hover-in-out",
+        title: "Hover in and out",
+        caption: "Plays in after a wait, and leaves with its own keys.",
+        components: [HoverInOut],
+        sources: [{ path: "src/demos/motion/HoverInOut.lucia", text: hoverInOutSource }],
+      },
+      {
+        id: "animate-midway",
+        title: "Midway: changing your mind",
+        caption: "Hover in and out quickly. Each box turns its own way.",
+        components: [MidwayMode],
+        sources: [{ path: "src/demos/motion/MidwayMode.lucia", text: midwayModeSource }],
       },
     ],
   },

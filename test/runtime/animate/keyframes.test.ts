@@ -1,15 +1,13 @@
 import { describe, expect, test } from "bun:test";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import { prepareTimeline, type Keyframes } from "@runtime/animate/keyframes.ts";
-import { DEFAULT_CURVE } from "@runtime/animate/keyform.ts";
 import { EASE } from "@runtime/animate/modes.ts";
 import { writeProgress } from "@runtime/animate/timeline.ts";
 
-const { LINEAR } = TRANSITION;
+const { LINEAR } = EASE.STYLE;
 const { IN } = EASE;
 
 function prepare(frames: Keyframes) {
-  return prepareTimeline(frames, DEFAULT_CURVE);
+  return prepareTimeline(frames);
 }
 
 function styleAt(frames: Keyframes, progress: number): Record<string, string> {
@@ -66,7 +64,7 @@ describe("prepareTimeline", () => {
   });
 
   test("keys must include 0 and 1", () => {
-    expect(() => prepare({ 0: [LINEAR, IN, {}], 0.5: [LINEAR, IN, {}] })).toThrow(
+    expect(() => prepare({ 0: [LINEAR, IN, {}], 0.5: [LINEAR, IN, {}] } as never)).toThrow(
       "animate keyframes must include the keys 0 and 1",
     );
   });

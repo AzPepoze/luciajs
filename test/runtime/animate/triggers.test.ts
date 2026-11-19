@@ -1,10 +1,9 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import type { Keyframes } from "@runtime/animate/keyframes.ts";
 import { EASE } from "@runtime/animate/modes.ts";
-import { ACTIVE } from "@runtime/animate/trigger.ts";
+import { WHEN } from "@runtime/animate/trigger.ts";
 import { store } from "@runtime/store/store.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
@@ -12,8 +11,8 @@ import { advance, onReset, useFakeClock } from "./clock.ts";
 useFakeClock();
 
 const fade: Keyframes = {
-  0: [TRANSITION.LINEAR, EASE.IN, { opacity: 0 }],
-  1: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
+  0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
+  1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
 };
 
 /** Records what the element observes, and lets a test say when it enters or leaves view. */
@@ -55,11 +54,11 @@ afterAll(() => {
   globalThis.IntersectionObserver = realIntersectionObserver;
 });
 
-function mount(item: Omit<AnimateItem, "animation"> = {}) {
+function mount(item: Omit<AnimateItem, "style"> = {}) {
   const el = document.createElement("div");
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ animation: fade, duration: 100, ...item }), cleanups, leaves);
+  animate(el, () => ({ style: fade, duration: 100, ...item }) as AnimateItem, cleanups, leaves);
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, cleanups, leaves, opacity: () => Number(el.style.opacity) };
 }
@@ -68,9 +67,9 @@ function observer(): FakeIntersectionObserver {
   return FakeIntersectionObserver.current!;
 }
 
-describe("ACTIVE.VIEW", () => {
+describe("WHEN.VIEW", () => {
   test("starts at key 0 and plays forward when it scrolls into view", () => {
-    const { el, opacity } = mount({ active: ACTIVE.VIEW });
+    const { el, opacity } = mount({ when: WHEN.VIEW });
     expect(opacity()).toBe(0);
     observer().report(el, 0.5);
     advance(100);
@@ -78,7 +77,7 @@ describe("ACTIVE.VIEW", () => {
   });
 
   test("plays once by default: leaving view does not play back", () => {
-    const { el, opacity } = mount({ active: ACTIVE.VIEW });
+    const { el, opacity } = mount({ when: WHEN.VIEW });
     observer().report(el, 0.5);
     advance(100);
     observer().report(el, 0);
@@ -87,7 +86,7 @@ describe("ACTIVE.VIEW", () => {
   });
 
   test("reverse plays back when it leaves view and again on re-entry", () => {
-    const { el, opacity } = mount({ active: ACTIVE.VIEW, more: { reverse: true } });
+    const { el, opacity } = mount({ when: WHEN.VIEW, more: { reverse: true } });
     observer().report(el, 0.5);
     advance(100);
     observer().report(el, 0);
@@ -99,14 +98,14 @@ describe("ACTIVE.VIEW", () => {
   });
 
   test("ratios below the threshold do not count as in view", () => {
-    const { el, opacity } = mount({ active: ACTIVE.VIEW });
+    const { el, opacity } = mount({ when: WHEN.VIEW });
     observer().report(el, 0.1);
     advance(100);
     expect(opacity()).toBe(0);
   });
 
   test("once: false with reverse off still plays back on leave", () => {
-    const { el, opacity } = mount({ active: ACTIVE.VIEW, once: false });
+    const { el, opacity } = mount({ when: WHEN.VIEW, once: false });
     observer().report(el, 0.5);
     advance(100);
     observer().report(el, 0);
@@ -115,26 +114,26 @@ describe("ACTIVE.VIEW", () => {
   });
 
   test("once stops observing after the first play", () => {
-    const { el } = mount({ active: ACTIVE.VIEW });
+    const { el } = mount({ when: WHEN.VIEW });
     observer().report(el, 0.5);
     expect(FakeIntersectionObserver.unobserved).toContain(el);
   });
 
   test("does not add a leave, so detach does not wait for it", () => {
-    const { leaves } = mount({ active: ACTIVE.VIEW, more: { reverse: true } });
+    const { leaves } = mount({ when: WHEN.VIEW, more: { reverse: true } });
     expect(leaves).toEqual([]);
   });
 
   test("cleanup stops observing", () => {
-    const { el, cleanups } = mount({ active: ACTIVE.VIEW, more: { reverse: true } });
+    const { el, cleanups } = mount({ when: WHEN.VIEW, more: { reverse: true } });
     for (const cleanup of cleanups) cleanup();
     expect(observer().targets.has(el)).toBe(false);
   });
 });
 
-describe("ACTIVE.HOVER", () => {
+describe("WHEN.HOVER", () => {
   test("pointer enter plays forward and pointer leave reverses", () => {
-    const { el, opacity } = mount({ active: ACTIVE.HOVER });
+    const { el, opacity } = mount({ when: WHEN.HOVER });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     expect(opacity()).toBe(1);
@@ -144,7 +143,7 @@ describe("ACTIVE.HOVER", () => {
   });
 
   test("once ignores the pointer after the first forward play", () => {
-    const { el, opacity } = mount({ active: ACTIVE.HOVER, once: true });
+    const { el, opacity } = mount({ when: WHEN.HOVER, once: true });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));
@@ -156,7 +155,7 @@ describe("ACTIVE.HOVER", () => {
   });
 
   test("cleanup removes the listeners", () => {
-    const { el, cleanups, opacity } = mount({ active: ACTIVE.HOVER });
+    const { el, cleanups, opacity } = mount({ when: WHEN.HOVER });
     for (const cleanup of cleanups) cleanup();
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
@@ -164,12 +163,12 @@ describe("ACTIVE.HOVER", () => {
   });
 
   test("does not add a leave, so detach does not wait for it", () => {
-    const { leaves } = mount({ active: ACTIVE.HOVER });
+    const { leaves } = mount({ when: WHEN.HOVER });
     expect(leaves).toEqual([]);
   });
 });
 
-describe("ACTIVE.IN", () => {
+describe("WHEN.ATTACH", () => {
   test("is the default: plays on attach and adds no leave", () => {
     const { leaves, opacity } = mount();
     advance(100);
@@ -178,25 +177,25 @@ describe("ACTIVE.IN", () => {
   });
 });
 
-describe("ACTIVE.MANUAL", () => {
+describe("WHEN.MANUAL", () => {
   test("does not play by itself and adds no leave", () => {
-    const { leaves, opacity } = mount({ active: ACTIVE.MANUAL });
+    const { leaves, opacity } = mount({ when: WHEN.MANUAL });
     advance(200);
     expect(opacity()).toBe(0);
     expect(leaves).toEqual([]);
   });
 });
 
-describe("a store or store.from value as active", () => {
+describe("a store or store.from value as when", () => {
   test("the first value is applied without animating", () => {
     const on = store(true);
-    const { opacity } = mount({ active: on });
+    const { opacity } = mount({ when: on });
     expect(opacity()).toBe(1);
   });
 
   test("a later truthy value plays forward and a falsy value plays back from the current progress", () => {
     const on = store(false);
-    const { opacity } = mount({ active: on });
+    const { opacity } = mount({ when: on });
     expect(opacity()).toBe(0);
     on.value = true;
     advance(50);
@@ -209,7 +208,7 @@ describe("a store or store.from value as active", () => {
   test("a store.from value works the same way", () => {
     const count = store(0);
     const big = store.from(() => count.value > 5);
-    const { opacity } = mount({ active: big });
+    const { opacity } = mount({ when: big });
     count.value = 9;
     advance(100);
     expect(opacity()).toBe(1);
@@ -217,7 +216,7 @@ describe("a store or store.from value as active", () => {
 
   test("once plays forward only the first time a truthy value arrives", () => {
     const on = store(false);
-    const { opacity } = mount({ active: on, once: true });
+    const { opacity } = mount({ when: on, once: true });
     on.value = true;
     advance(100);
     on.value = false;

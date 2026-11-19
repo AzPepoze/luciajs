@@ -1,5 +1,5 @@
 <script>
-import { ACTIVE, PRESET } from "lucia";
+import { WHEN, PRESET } from "lucia";
 
 // Every preset in PRESET, in order. Hovering a tile plays its preset.
 const presets = Object.entries(PRESET).map(([name, animation]) => ({ name, animation }));
@@ -11,7 +11,7 @@ const presets = Object.entries(PRESET).map(([name, animation]) => ({ name, anima
     <EACH {presets} as={preset} key={preset.name}>
       <div
         class="tile"
-        animate={{ animation: preset.animation, active: ACTIVE.HOVER, duration: 500 }}
+        animate={{ style: preset.animation, when: WHEN.HOVER, duration: 500 }}
       >{preset.name}</div>
     </EACH>
   </div>

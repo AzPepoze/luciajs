@@ -1,5 +1,5 @@
 <script>
-import { ACTIVE, PRESET, store } from "lucia";
+import { WHEN, PRESET, store } from "lucia";
 
 const mode = store("out");
 
@@ -10,8 +10,8 @@ const fadeOut = {
 };
 
 const branchMotion = [
-  { animation: PRESET.SLIDE_UP, active: ACTIVE.IN, duration: 300 },
-  { animation: fadeOut, active: ACTIVE.OUT, duration: 200 },
+  { style: PRESET.SLIDE_UP, when: WHEN.ATTACH, duration: 300 },
+  { style: fadeOut, when: WHEN.DETACH, duration: 200 },
 ];
 
 function signIn() {

@@ -1,12 +1,12 @@
 <script>
-import { ACTIVE, EASE, TRANSITION } from "lucia";
+import { WHEN, EASE } from "lucia";
 
 const rise = {
   0: { opacity: 0, translate: "0px 20px" },
-  1: [TRANSITION.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
+  1: [EASE.STYLE.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
 };
 
-const reveal = { animation: rise, active: ACTIVE.VIEW, duration: 500 };
+const reveal = { style: rise, when: WHEN.VIEW, duration: 500 };
 </script>
 
 <div class="motion-stage">

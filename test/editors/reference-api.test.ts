@@ -44,14 +44,14 @@ describe("reference api table", () => {
   test("covers the motion API: the animate attribute, its enums and types", () => {
     const ids = api.map((entry) => entry.id);
     for (const id of [
-      "animate", "transition", "ease", "active", "animate-item", "animate-type", "keyframes-type", "interpolate",
+      "animate", "ease", "when", "animate-item", "animate-type", "keyframes-type", "interpolate",
     ]) {
       expect(ids).toContain(id);
     }
   });
 
   test("each enum is one value entry listing its members in upper case", () => {
-    for (const name of ["TRANSITION", "EASE", "ACTIVE"]) {
+    for (const name of ["EASE", "WHEN"]) {
       const entry = api.find((item) => item.name === name);
       expect(entry?.kind, name).toBe("value");
       expect(entry?.members?.length ?? 0, name).toBeGreaterThan(0);
@@ -59,8 +59,9 @@ describe("reference api table", () => {
     }
   });
 
-  test("TRANSITION lists the eleven built-in curves", () => {
-    const members = api.find((entry) => entry.name === "TRANSITION")?.members?.map((member) => member.name);
+  test("EASE.STYLE lists the eleven built-in curves", () => {
+    const style = api.find((entry) => entry.name === "EASE")?.members?.find((member) => member.name === "STYLE");
+    const members = style?.members?.map((member) => member.name);
     expect(members).toEqual(["LINEAR", "QUAD", "CUBIC", "QUART", "QUINT", "SINE", "EXPO", "CIRC", "BACK", "ELASTIC", "BOUNCE"]);
   });
 });

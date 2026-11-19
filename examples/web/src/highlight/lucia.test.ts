@@ -61,7 +61,7 @@ describe("lucia Prism grammar", () => {
   });
 
   test("event, bind, and animate attributes get their own tokens", () => {
-    const list = tokenize(`<button onclick={save} class="x">Save</button>\n<input bind={name} bind-element={field} />\n<div animate={{ animation: fade }}></div>`);
+    const list = tokenize(`<button onclick={save} class="x">Save</button>\n<input bind={name} bind-element={field} />\n<div animate={{ style: fade }}></div>`);
     expect(hasPiece(list, "event-attr", "onclick")).toBe(true);
     expect(hasPiece(list, "bind-attr", "bind")).toBe(true);
     expect(hasPiece(list, "bind-attr", "bind-element")).toBe(true);

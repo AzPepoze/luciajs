@@ -7,7 +7,7 @@ import { Group } from "./group.ts";
 import type { ItemOptions } from "./options.ts";
 import { prefersReducedMotion, type Player } from "./player.ts";
 import { sameMore, type ReadMore, type ScrollRead } from "./more.ts";
-import { ACTIVE, type Active, type Source } from "./trigger.ts";
+import { WHEN, type When, type Source } from "./trigger.ts";
 import { type ViewSettings } from "./view-options.ts";
 import { watchScroll } from "./scroll.ts";
 import { watchView } from "./view.ts";
@@ -15,7 +15,7 @@ import { bindHover } from "./hover.ts";
 
 /** The players that share one trigger, `once`, controller and more. A group is driven together. */
 export interface Slot {
-  active: Active | Source;
+  when: When | Source;
   once: boolean;
   control: Controller | undefined;
   more: ReadMore;
@@ -23,7 +23,7 @@ export interface Slot {
 }
 
 interface Bucket {
-  active: Active | Source;
+  when: When | Source;
   once: boolean;
   control: Controller | undefined;
   more: ReadMore;
@@ -33,8 +33,8 @@ interface Bucket {
 export function groupSlots(items: ItemOptions[], players: Player[], refresh: () => void): Slot[] {
   const buckets: Bucket[] = [];
   items.forEach((item, i) => bucketFor(buckets, item).players.push(players[i]!));
-  return buckets.map(({ active, once, control, more, players: members }) => ({
-    active,
+  return buckets.map(({ when, once, control, more, players: members }) => ({
+    when,
     once,
     control,
     more,
@@ -42,22 +42,22 @@ export function groupSlots(items: ItemOptions[], players: Player[], refresh: () 
   }));
 }
 
-function bucketFor(buckets: Bucket[], { active, once, control, more }: ItemOptions): Bucket {
-  const found = buckets.find((b) => b.active === active && b.once === once && b.control === control && sameMore(b.more, more));
+function bucketFor(buckets: Bucket[], { when, once, control, more }: ItemOptions): Bucket {
+  const found = buckets.find((b) => b.when === when && b.once === once && b.control === control && sameMore(b.more, more));
   if (found) return found;
-  const bucket: Bucket = { active, once, control, more, players: [] };
+  const bucket: Bucket = { when, once, control, more, players: [] };
   buckets.push(bucket);
   return bucket;
 }
 
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
-export function bindTrigger(el: HTMLElement, { active, once, more, group }: Slot, cleanups: Cleanup[], leaves: Leave[]): void {
-  if (isReactive(active)) bindSource(active, group, once, cleanups);
-  else if (active === ACTIVE.IN) void group.forward();
-  else if (active === ACTIVE.OUT) leaves.push(() => group.forward());
-  else if (active === ACTIVE.VIEW) bindView(el, more.view, group, once, cleanups);
-  else if (active === ACTIVE.HOVER) bindHover(el, group, once, more.hover, cleanups);
-  else if (active === ACTIVE.SCROLL) bindScroll(el, more.scroll, group, cleanups);
+export function bindTrigger(el: HTMLElement, { when, once, more, group }: Slot, cleanups: Cleanup[], leaves: Leave[]): void {
+  if (isReactive(when)) bindSource(when, group, once, cleanups);
+  else if (when === WHEN.ATTACH) void group.forward();
+  else if (when === WHEN.DETACH) leaves.push(() => group.forward());
+  else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
+  else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
+  else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);
 }
 
 /** Scroll-linked: the group follows the element's place on screen. Reduced motion shows the end state. */

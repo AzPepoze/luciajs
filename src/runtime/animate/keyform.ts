@@ -1,52 +1,70 @@
-import { TRANSITION, type Transition } from "./easing.ts";
+import type { EaseStyle } from "./easing.ts";
 import type { Keyframe, KeyframeValue, Style } from "./keyframes.ts";
-import { EASE, isEase, type Ease } from "./modes.ts";
+import { isEase, type Ease } from "./modes.ts";
+import { runtimeError } from "../errors.ts";
 
-/** The transition and ease that keys use unless they set their own. */
-export interface Curve {
-  transition: Transition;
-  ease: Ease;
+/** One or both parts of an easing. Missing parts fall back to the next level. */
+export interface PartialEasing {
+  easeStyle?: EaseStyle;
+  ease?: Ease;
 }
 
-export const DEFAULT_CURVE: Curve = Object.freeze({ transition: TRANSITION.CUBIC, ease: EASE.OUT });
+/** The forms of a `default`: [style, ease], [style] or [ease]. */
+export type DefaultEasing = [EaseStyle, Ease] | [EaseStyle] | [Ease];
 
-const KEY_FORM = "animate key must be a style object, [transition, ease, style], [transition, style] or [ease, style]";
-
-/** Reads an item's `transition` and `ease`. Missing ones take the library defaults. */
-export function readCurve({ transition, ease }: { transition?: Transition; ease?: Ease }): Curve {
-  return {
-    transition: transition === undefined ? DEFAULT_CURVE.transition : checkTransition(transition),
-    ease: ease === undefined ? DEFAULT_CURVE.ease : checkEase(ease),
-  };
+/** Checks a `default` value. Undefined means no default, so nothing is set. */
+export function readDefault(value: DefaultEasing | undefined): PartialEasing {
+  if (value === undefined) return {};
+  if (!Array.isArray(value) || value.length < 1 || value.length > 2) throw runtimeError("L2032");
+  const [first, second] = value;
+  if (isEase(first)) {
+    if (second !== undefined) throw runtimeError("L2032");
+    return { ease: first };
+  }
+  const easeStyle = checkEaseStyle(first);
+  return second === undefined ? { easeStyle } : { easeStyle, ease: checkEase(second) };
 }
 
-/** Turns one key value into a full keyframe. Keys that set no curve use the item's curve. */
-export function readKey(value: KeyframeValue, curve: Curve): Keyframe {
-  if (!Array.isArray(value)) return [curve.transition, curve.ease, checkStyle(value)];
-  if (value.length === 3) return [checkTransition(value[0]), checkEase(value[1]), checkStyle(value[2])];
-  if (value.length === 2) return readPair(value, curve);
-  throw new Error(KEY_FORM);
+/** Resolves one key per part: the key first, then the keyframes `default`, then the engine default. */
+export function readKey(value: KeyframeValue, fromKeyframes: PartialEasing, engine: Required<PartialEasing>): Keyframe {
+  const own = readParts(value);
+  return [
+    own.easeStyle ?? fromKeyframes.easeStyle ?? engine.easeStyle,
+    own.ease ?? fromKeyframes.ease ?? engine.ease,
+    own.style,
+  ];
 }
 
-/** An EASE member in the first slot means `[ease, style]`; anything else is a transition. */
-function readPair([first, style]: [Transition | Ease, Style], curve: Curve): Keyframe {
-  if (isEase(first)) return [curve.transition, first, checkStyle(style)];
-  return [checkTransition(first), curve.ease, checkStyle(style)];
+interface KeyParts extends PartialEasing {
+  style: Style;
+}
+
+function readParts(value: KeyframeValue): KeyParts {
+  if (!Array.isArray(value)) return { style: checkStyle(value) };
+  if (value.length === 3) return { easeStyle: checkEaseStyle(value[0]), ease: checkEase(value[1]), style: checkStyle(value[2]) };
+  if (value.length === 2) return readPair(value);
+  throw runtimeError("L2033");
+}
+
+/** An EASE direction in the first slot means `[ease, style]`; anything else is an easing style. */
+function readPair([first, style]: [EaseStyle | Ease, Style]): KeyParts {
+  if (isEase(first)) return { ease: first, style: checkStyle(style) };
+  return { easeStyle: checkEaseStyle(first), style: checkStyle(style) };
 }
 
 function checkStyle(value: unknown): Style {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error(KEY_FORM);
+  if (typeof value !== "object" || value === null || Array.isArray(value)) throw runtimeError("L2033");
   return value as Style;
 }
 
-function checkTransition(value: unknown): Transition {
+function checkEaseStyle(value: unknown): EaseStyle {
   if (typeof value !== "function" || isEase(value)) {
-    throw new Error("animate transition must be a function of t, such as TRANSITION.QUART");
+    throw runtimeError("L2034");
   }
-  return value as Transition;
+  return value as EaseStyle;
 }
 
 function checkEase(value: unknown): Ease {
-  if (!isEase(value)) throw new Error("animate ease must be EASE.IN, EASE.OUT or EASE.INOUT");
+  if (!isEase(value)) throw runtimeError("L2035", { value: String(value) });
   return value;
 }

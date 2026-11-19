@@ -1,20 +1,20 @@
 <script>
-import { ACTIVE, EASE, TRANSITION } from "lucia";
+import { WHEN, EASE } from "lucia";
 
 // The bar fills and the card turns as the demo crosses the middle of the screen.
 const fill = {
   0: { scale: "0 1" },
-  1: [TRANSITION.LINEAR, EASE.OUT, { scale: "1 1" }],
+  1: [EASE.STYLE.LINEAR, EASE.OUT, { scale: "1 1" }],
 };
 
 const turn = {
   0: { rotate: "-10deg" },
-  1: [TRANSITION.LINEAR, EASE.OUT, { rotate: "10deg" }],
+  1: [EASE.STYLE.LINEAR, EASE.OUT, { rotate: "10deg" }],
 };
 
-const scrolled = { active: ACTIVE.SCROLL, more: { start: 0.1, end: 0.6 } };
-const barMotion = { ...scrolled, animation: fill };
-const cardMotion = { ...scrolled, animation: turn };
+const scrolled = { when: WHEN.SCROLL, more: { start: 0.1, end: 0.6 } };
+const barMotion = { ...scrolled, style: fill };
+const cardMotion = { ...scrolled, style: turn };
 </script>
 
 <div class="motion-stage">

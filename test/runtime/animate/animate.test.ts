@@ -1,18 +1,17 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { Animate, AnimateItem } from "@runtime/animate/animation.ts";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import { PRESET } from "@runtime/animate/presets.ts";
 import type { Keyframes } from "@runtime/animate/keyframes.ts";
 import { EASE } from "@runtime/animate/modes.ts";
-import { ACTIVE } from "@runtime/animate/trigger.ts";
+import { WHEN } from "@runtime/animate/trigger.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, pendingFrames, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();
 afterEach(() => setReducedMotion(false));
 
-const { LINEAR } = TRANSITION;
+const { LINEAR } = EASE.STYLE;
 const { IN } = EASE;
 
 const fade = (from: number, to: number): Keyframes => ({
@@ -35,11 +34,11 @@ function run(value: Animate) {
 }
 
 /** An item that runs for 100 ms unless the test says otherwise. */
-const timed = (animation: Keyframes, extra: Omit<AnimateItem, "animation"> = {}): AnimateItem => ({
-  animation,
+const timed = (style: Keyframes, extra: Record<string, unknown> = {}): AnimateItem => ({
+  style,
   duration: 100,
   ...extra,
-});
+}) as AnimateItem;
 
 describe("enter on attach", () => {
   test("enter plays from 0 to 1 and the final style stays", () => {
@@ -81,9 +80,9 @@ describe("enter on attach", () => {
   });
 });
 
-describe("ACTIVE.OUT", () => {
+describe("WHEN.DETACH", () => {
   test("nothing plays on attach; the item's own keyframes play on detach", async () => {
-    const { leaves, opacity } = run(timed(fade(1, 0), { active: ACTIVE.OUT }));
+    const { leaves, opacity } = run(timed(fade(1, 0), { when: WHEN.DETACH }));
     expect(opacity()).toBe(1);
     advance(100);
     expect(opacity()).toBe(1);
@@ -96,8 +95,8 @@ describe("ACTIVE.OUT", () => {
     expect(opacity()).toBe(0);
   });
 
-  test("an IN and an OUT item on one element use their own keyframes", async () => {
-    const { el, leaves } = run([timed(fade(0, 1)), timed(width("0px", "10px"), { active: ACTIVE.OUT })]);
+  test("an ATTACH and a DETACH item on one element use their own keyframes", async () => {
+    const { el, leaves } = run([timed(fade(0, 1)), timed(width("0px", "10px"), { when: WHEN.DETACH })]);
     advance(100);
     expect(Number(el.style.opacity)).toBe(1);
     expect(el.style.width).toBe("0px");
@@ -107,8 +106,8 @@ describe("ACTIVE.OUT", () => {
     expect(el.style.width).toBe("10px");
   });
 
-  test("detach waits for the longest OUT item", async () => {
-    const { leaves } = run([timed(fade(1, 0)), timed(fade(1, 0), { duration: 300, active: ACTIVE.OUT })]);
+  test("detach waits for the longest DETACH item", async () => {
+    const { leaves } = run([timed(fade(1, 0)), timed(fade(1, 0), { duration: 300, when: WHEN.DETACH })]);
     let done = false;
     const leaving = leaves[0]!().then(() => (done = true));
     advance(150);
@@ -121,7 +120,7 @@ describe("ACTIVE.OUT", () => {
 
 describe("a list of animations", () => {
   test("items with different durations both finish", () => {
-    const { opacity, el } = run([timed(fade(0, 1)), { animation: width("0px", "10px"), duration: 300 }]);
+    const { opacity, el } = run([timed(fade(0, 1)), { style: width("0px", "10px"), duration: 300 }]);
     advance(120);
     expect(opacity()).toBe(1);
     expect(el.style.width).not.toBe("10px");
@@ -144,7 +143,7 @@ describe("a list of animations", () => {
   });
 
   test("items with different triggers play on their own triggers", () => {
-    const { el } = run([timed(fade(0, 1)), { animation: width("0px", "10px"), active: ACTIVE.HOVER, duration: 100 }]);
+    const { el } = run([timed(fade(0, 1)), { style: width("0px", "10px"), when: WHEN.HOVER, duration: 100 }]);
     advance(100);
     expect(el.style.width).toBe("0px");
     el.dispatchEvent(new Event("pointerenter"));
@@ -235,7 +234,7 @@ describe("keyframes are read at every play", () => {
     let current = fade(0, 1);
     const el = document.createElement("div");
     const cleanups: Array<() => void> = [];
-    animate(el, () => timed(current, { active: ACTIVE.HOVER }), cleanups, []);
+    animate(el, () => timed(current, { when: WHEN.HOVER }), cleanups, []);
     onReset(() => cleanups.forEach((cleanup) => cleanup()));
     current = fade(0, 0.25);
     el.dispatchEvent(new Event("pointerenter"));
@@ -271,18 +270,30 @@ describe("first frame", () => {
 });
 
 describe("validation", () => {
-  test("an item without animation is an error", () => {
-    expect(() => run({ duration: 100 } as AnimateItem)).toThrow("animate item needs an animation");
+  test("an item without a style is an error", () => {
+    expect(() => run({ duration: 100 } as AnimateItem)).toThrow("animate item needs a style");
   });
 
   test("keyframes without the keys 0 and 1 are an error", () => {
-    expect(() => run({ animation: { 0: [LINEAR, IN, {}] } })).toThrow("animate keyframes must include the keys 0 and 1");
+    expect(() => run({ style: { 0: [LINEAR, IN, {}] } } as AnimateItem)).toThrow("animate keyframes must include the keys 0 and 1");
   });
 
-  test("an unknown active is an error", () => {
-    expect(() => run({ animation: fade(0, 1), active: "view" as never })).toThrow(
-      "animate active must be ACTIVE.IN, OUT, VIEW, HOVER or MANUAL, or a store",
+  test("an unknown when is an error", () => {
+    expect(() => run({ style: fade(0, 1), when: "view" as never })).toThrow(
+      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL or MANUAL, or a store",
     );
+  });
+
+  test("the old IN and OUT names point to the new ones", () => {
+    expect(() => run({ style: fade(0, 1), when: "IN" as never })).toThrow("ACTIVE.IN and ACTIVE.OUT were renamed");
+  });
+
+  test("animation is renamed to style", () => {
+    expect(() => run({ animation: fade(0, 1) } as never)).toThrow("animation was renamed to style");
+  });
+
+  test("active is renamed to when", () => {
+    expect(() => run({ style: fade(0, 1), active: WHEN.VIEW } as never)).toThrow("active was renamed to when");
   });
 
   test("a negative duration is an error", () => {
@@ -290,16 +301,16 @@ describe("validation", () => {
   });
 });
 
-describe("item curve and key forms", () => {
-  test("an item without a curve eases with the library default (CUBIC + OUT)", () => {
+describe("item style and key forms", () => {
+  test("a key without a default eases with the engine default (QUART + INOUT)", () => {
     const { opacity } = run(timed({ 0: { opacity: 0 }, 1: { opacity: 1 } }));
     advance(50);
-    // OUT of CUBIC at the middle is 0.875.
-    expect(opacity()).toBeCloseTo(0.875, 3);
+    // INOUT of QUART at the middle is 0.5.
+    expect(opacity()).toBeCloseTo(0.5, 3);
   });
 
-  test("item transition and ease replace the defaults for every key", () => {
-    const { opacity } = run(timed({ 0: { opacity: 0 }, 1: { opacity: 1 } }, { transition: TRANSITION.QUAD, ease: EASE.IN }));
+  test("the keyframes default replaces the engine default for every key", () => {
+    const { opacity } = run(timed({ default: [EASE.STYLE.QUAD, EASE.IN], 0: { opacity: 0 }, 1: { opacity: 1 } }));
     advance(50);
     // IN of QUAD at the middle is 0.25.
     expect(opacity()).toBeCloseTo(0.25, 3);

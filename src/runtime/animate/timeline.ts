@@ -1,13 +1,13 @@
-import type { Transition } from "./easing.ts";
+import type { EaseStyle } from "./easing.ts";
 import type { Ease } from "./modes.ts";
 import type { Interpolator } from "./interpolator.ts";
 import { interpolate } from "./interpolate.ts";
 
-/** One stretch between two keys. Its curve belongs to the key it ends at. */
+/** One stretch between two keys. Its easing style belongs to the key it ends at. */
 export interface Segment {
   start: number;
   end: number;
-  transition: Transition;
+  easeStyle: EaseStyle;
   ease: Ease;
   /** One per entry in `Timeline.props`. */
   values: Interpolator[];
@@ -25,7 +25,7 @@ export interface Timeline {
 export function writeProgress(style: CSSStyleDeclaration, { props, segments }: Timeline, progress: number): void {
   const segment = segmentAt(segments, progress);
   const local = (progress - segment.start) / (segment.end - segment.start);
-  const eased = segment.ease(segment.transition, local);
+  const eased = segment.ease(segment.easeStyle, local);
   for (let i = 0; i < props.length; i++) {
     style.setProperty(props[i]!, String(segment.values[i]!(eased)));
   }

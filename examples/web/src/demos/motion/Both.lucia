@@ -5,7 +5,7 @@ import Pop from "./Pop.lucia";
 const slot = store<Element | null>(null);
 let box: Instance | null = null;
 
-// Pop has an IN and an OUT animation: it pops in, and spins out when detached.
+// Pop has an IN and an OUT style: it pops in, and spins out when detached.
 function toggleBox() {
   if (box) {
     box.detach();

@@ -3,6 +3,7 @@ import { prepareTimeline } from "./keyframes.ts";
 import type { Group } from "./group.ts";
 import type { HoverRead } from "./more.ts";
 import type { Timing } from "./options.ts";
+import { DEFAULT_MIDWAY } from "./midway-options.ts";
 import { Player } from "./player.ts";
 
 interface HoverState {
@@ -15,7 +16,7 @@ interface HoverState {
   timer: ReturnType<typeof setTimeout> | undefined;
 }
 
-/** Mouse, keyboard and touch on ACTIVE.HOVER. Touch and keyboard use their own events. */
+/** Mouse, keyboard and touch on WHEN.HOVER. Touch and keyboard use their own events. */
 export function bindHover(el: HTMLElement, group: Group, once: boolean, hover: HoverRead, cleanups: Cleanup[]): void {
   const state: HoverState = { inside: false, entered: false, pending: undefined, timer: undefined };
   const outPlayer = hover.out ? outPlayerFor(el, hover.out) : undefined;
@@ -95,8 +96,8 @@ function isTouch(event: Event): boolean {
 }
 
 function outPlayerFor(el: HTMLElement, out: NonNullable<HoverRead["out"]>): Player {
-  const timing: Timing = { duration: out.duration, delay: 0, loop: undefined, keep: true };
+  const timing: Timing = { duration: out.duration, delay: 0, loop: undefined, keep: true, midway: DEFAULT_MIDWAY };
   const player = new Player(el.style);
-  player.load(prepareTimeline(out.keyframes, out.curve, el), timing);
+  player.load(prepareTimeline(out.keyframes, el), timing);
   return player;
 }

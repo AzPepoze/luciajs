@@ -1,15 +1,13 @@
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import type { Keyframes } from "@runtime/animate/keyframes.ts";
 import { EASE } from "@runtime/animate/modes.ts";
 import { readMore as readWith } from "@runtime/animate/more.ts";
-import { DEFAULT_CURVE } from "@runtime/animate/keyform.ts";
 
-const readBase = { duration: 300, curve: DEFAULT_CURVE };
-const readMore = (active: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(active, more, readBase);
-import { ACTIVE } from "@runtime/animate/trigger.ts";
+const readBase = { duration: 300 };
+const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(when, more, readBase);
+import { WHEN } from "@runtime/animate/trigger.ts";
 import { store } from "@runtime/store/store.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
@@ -18,8 +16,8 @@ useFakeClock();
 
 const VIEWPORT_HEIGHT = 1000;
 const fade: Keyframes = {
-  0: [TRANSITION.LINEAR, EASE.IN, { opacity: 0 }],
-  1: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
+  0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
+  1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
 };
 
 beforeEach(() => {
@@ -28,13 +26,13 @@ beforeEach(() => {
 afterEach(() => setReducedMotion(false));
 
 /** Mounts a scroll item on an element whose top edge sits at `top` px from the viewport top. */
-function mount(item: Omit<AnimateItem, "animation"> = {}, top = VIEWPORT_HEIGHT) {
+function mount(item: Omit<AnimateItem, "style"> = {}, top = VIEWPORT_HEIGHT) {
   const el = document.createElement("div");
   let position = top;
   el.getBoundingClientRect = () => ({ top: position }) as DOMRect;
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ animation: fade, active: ACTIVE.SCROLL, ...item }), cleanups, leaves);
+  animate(el, () => ({ style: fade, when: WHEN.SCROLL, ...item }) as AnimateItem, cleanups, leaves);
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return {
     el,
@@ -49,7 +47,7 @@ function mount(item: Omit<AnimateItem, "animation"> = {}, top = VIEWPORT_HEIGHT)
   };
 }
 
-describe("ACTIVE.SCROLL progress", () => {
+describe("WHEN.SCROLL progress", () => {
   test("is 0 when the top is at the bottom edge and 1 at the top edge", () => {
     const { opacity, scrollTo } = mount();
     expect(opacity()).toBe(0);
@@ -86,7 +84,7 @@ describe("ACTIVE.SCROLL progress", () => {
   });
 });
 
-describe("ACTIVE.SCROLL shared listener", () => {
+describe("WHEN.SCROLL shared listener", () => {
   test("two items share one scroll listener, removed when the last one stops", () => {
     const add = spyOn(document, "addEventListener");
     const remove = spyOn(document, "removeEventListener");
@@ -106,7 +104,7 @@ describe("ACTIVE.SCROLL shared listener", () => {
   });
 });
 
-describe("ACTIVE.SCROLL cleanup and reduced motion", () => {
+describe("WHEN.SCROLL cleanup and reduced motion", () => {
   test("after cleanup, scrolling no longer moves the item", () => {
     const { cleanups, opacity, scrollTo } = mount();
     scrollTo(0);
@@ -129,22 +127,22 @@ describe("ACTIVE.SCROLL cleanup and reduced motion", () => {
   });
 });
 
-describe("ACTIVE.SCROLL errors", () => {
+describe("WHEN.SCROLL errors", () => {
   test("loop is rejected", () => {
     const el = document.createElement("div");
-    expect(() => animate(el, () => ({ animation: fade, active: ACTIVE.SCROLL, loop: true }), [], [])).toThrow("loop does not work with ACTIVE.SCROLL");
+    expect(() => animate(el, () => ({ style: fade, when: WHEN.SCROLL, loop: true }), [], [])).toThrow("loop does not work with WHEN.SCROLL");
   });
 
   test("start and end must differ", () => {
-    expect(() => readMore(ACTIVE.SCROLL, { start: 0.5, end: 0.5 })).toThrow("start and end must be different lines");
+    expect(() => readMore(WHEN.SCROLL, { start: 0.5, end: 0.5 })).toThrow("start and end must be different lines");
   });
 
   test("start and end must be numbers", () => {
-    expect(() => readMore(ACTIVE.SCROLL, { start: Number.NaN })).toThrow("start and end must be numbers");
+    expect(() => readMore(WHEN.SCROLL, { start: Number.NaN })).toThrow("start and end must be numbers");
   });
 
   test("keys other than start and end are rejected", () => {
-    expect(() => readMore(ACTIVE.SCROLL, { outDelay: 10 } as never)).toThrow('more has an unknown key "outDelay", use start, end, follow or part');
+    expect(() => readMore(WHEN.SCROLL, { outDelay: 10 } as never)).toThrow('more has an unknown key "outDelay", use start, end, follow or part');
   });
 });
 
@@ -162,12 +160,12 @@ function mountFollow(more: { part?: [number, number]; start?: number; end?: numb
   const follow = store<Element | null>(null);
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ animation: fade, active: ACTIVE.SCROLL, more: { follow, ...more } }) as AnimateItem, cleanups, leaves);
+  animate(el, () => ({ style: fade, when: WHEN.SCROLL, more: { follow, ...more } }) as AnimateItem, cleanups, leaves);
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, follow, cleanups, opacity: () => Number(el.style.opacity) };
 }
 
-describe("ACTIVE.SCROLL follow", () => {
+describe("WHEN.SCROLL follow", () => {
   test("a tall element: 0 when its top reaches the screen top, 1 when its bottom reaches the screen bottom", () => {
     const section = box(0, 2000);
     const { follow, opacity } = mountFollow();
@@ -258,11 +256,11 @@ describe("ACTIVE.SCROLL follow", () => {
   });
 
   test("follow must be a store", () => {
-    expect(() => readMore(ACTIVE.SCROLL, { follow: { value: null } } as never)).toThrow("follow must be a store");
+    expect(() => readMore(WHEN.SCROLL, { follow: { value: null } } as never)).toThrow("follow must be a store");
   });
 });
 
-describe("ACTIVE.SCROLL part errors", () => {
+describe("WHEN.SCROLL part errors", () => {
   test.each([
     [[0.5, 0.2]],
     [[-0.1, 0.5]],
@@ -270,10 +268,10 @@ describe("ACTIVE.SCROLL part errors", () => {
     [[0.5, 0.5]],
     [[0.1, 0.2, 0.3]],
   ])("%j is rejected", (part) => {
-    expect(() => readMore(ACTIVE.SCROLL, { part } as never)).toThrow("part must be [from, to] with 0 <= from < to <= 1");
+    expect(() => readMore(WHEN.SCROLL, { part } as never)).toThrow("part must be [from, to] with 0 <= from < to <= 1");
   });
 
   test("part must be an array", () => {
-    expect(() => readMore(ACTIVE.SCROLL, { part: "abc" } as never)).toThrow("part must be [from, to]");
+    expect(() => readMore(WHEN.SCROLL, { part: "abc" } as never)).toThrow("part must be [from, to]");
   });
 });

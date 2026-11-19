@@ -1,12 +1,12 @@
 <script>
-import { EASE, store, TRANSITION } from "lucia";
+import { EASE, store } from "lucia";
 
 // A store is a trigger: true plays the animation forward, false plays it back.
 const open = store(false);
 
 const panelIn = {
   0: { opacity: 0, translate: "0px 12px" },
-  1: [TRANSITION.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
+  1: [EASE.STYLE.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
 };
 
 function toggleOpen() {
@@ -18,7 +18,7 @@ function toggleOpen() {
   <button onclick={toggleOpen} type="button">Open or close the panel</button>
   <div
     class="panel"
-    animate={{ animation: panelIn, active: open, duration: 400 }}
+    animate={{ style: panelIn, when: open, duration: 400 }}
   >Panel content</div>
 </div>
 

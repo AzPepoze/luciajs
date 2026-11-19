@@ -1,4 +1,6 @@
-/** The `more` options of ACTIVE.VIEW. */
+import { runtimeError } from "../errors.ts";
+
+/** The `more` options of WHEN.VIEW. */
 export interface ViewMore {
   margin?: number | string;
   amount?: number;
@@ -29,7 +31,7 @@ export function sameView(a: ViewSettings, b: ViewSettings): boolean {
 
 function readReverse(reverse: boolean | undefined): boolean {
   if (reverse === undefined) return false;
-  if (typeof reverse !== "boolean") throw new Error(`animate more reverse must be true or false, got ${String(reverse)}`);
+  if (typeof reverse !== "boolean") throw runtimeError("L2020", { value: String(reverse) });
   return reverse;
 }
 
@@ -58,13 +60,13 @@ function stringMargin(margin: string): string {
 }
 
 function badMargin(margin: unknown): Error {
-  return new Error(`animate more margin must be a number of px or a CSS length such as "10%", got ${String(margin)}`);
+  return runtimeError("L2021", { value: String(margin) });
 }
 
 function readAmount(amount: number | undefined): number {
   if (amount === undefined) return DEFAULT_VIEW.threshold;
   if (!Number.isFinite(amount) || amount < 0 || amount > 1) {
-    throw new Error(`animate more amount must be a number from 0 to 1, got ${String(amount)}`);
+    throw runtimeError("L2022", { value: String(amount) });
   }
   return amount;
 }

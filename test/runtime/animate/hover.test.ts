@@ -1,37 +1,35 @@
 import { describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import type { Keyframes } from "@runtime/animate/keyframes.ts";
 import { readMore as readWith } from "@runtime/animate/more.ts";
-import { DEFAULT_CURVE } from "@runtime/animate/keyform.ts";
 import { EASE } from "@runtime/animate/modes.ts";
-import { ACTIVE } from "@runtime/animate/trigger.ts";
+import { WHEN } from "@runtime/animate/trigger.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();
 
-const readBase = { duration: 300, curve: DEFAULT_CURVE };
-const readMore = (active: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(active, more, readBase);
+const readBase = { duration: 300 };
+const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) => readWith(when, more, readBase);
 
 const fade: Keyframes = {
-  0: [TRANSITION.LINEAR, EASE.IN, { opacity: 0 }],
-  1: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
+  0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
+  1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
 };
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function mount(item: Omit<AnimateItem, "animation"> = {}) {
+function mount(item: Omit<AnimateItem, "style"> = {}) {
   const el = document.createElement("div");
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
-  animate(el, () => ({ animation: fade, duration: 100, active: ACTIVE.HOVER, ...item }), cleanups, leaves);
+  animate(el, () => ({ style: fade, duration: 100, when: WHEN.HOVER, ...item }) as AnimateItem, cleanups, leaves);
   onReset(() => cleanups.forEach((cleanup) => cleanup()));
   return { el, cleanups, opacity: () => Number(el.style.opacity) };
 }
 
-describe("ACTIVE.HOVER more outDelay", () => {
+describe("WHEN.HOVER more outDelay", () => {
   test("waits outDelay after pointer leave before it plays back", async () => {
     const { el, opacity } = mount({ more: { outDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
@@ -77,12 +75,12 @@ describe("ACTIVE.HOVER more outDelay", () => {
   });
 
   test("rejects a negative or non-number outDelay", () => {
-    expect(() => readMore(ACTIVE.HOVER, { outDelay: -1 })).toThrow("animate more outDelay must be a time in ms, got -1");
-    expect(() => readMore(ACTIVE.HOVER, { outDelay: Number.NaN })).toThrow("outDelay must be a time in ms");
+    expect(() => readMore(WHEN.HOVER, { outDelay: -1 })).toThrow("animate more outDelay must be a time in ms, got -1");
+    expect(() => readMore(WHEN.HOVER, { outDelay: Number.NaN })).toThrow("outDelay must be a time in ms");
   });
 
   test("more on HOVER only accepts its own keys", () => {
-    expect(() => readMore(ACTIVE.HOVER, { margin: 10 } as never)).toThrow('more has an unknown key "margin", use inDelay, outDelay, out or outDuration');
+    expect(() => readMore(WHEN.HOVER, { margin: 10 } as never)).toThrow('more has an unknown key "margin", use inDelay, outDelay, out or outDuration');
   });
 });
 
@@ -91,7 +89,7 @@ function touch(type: string, target: EventTarget = document.body): void {
   target.dispatchEvent(Object.assign(new Event(type, { bubbles: true }), { pointerType: "touch" }));
 }
 
-describe("ACTIVE.HOVER more inDelay", () => {
+describe("WHEN.HOVER more inDelay", () => {
   test("waits inDelay after pointer enter before it plays in", async () => {
     const { el, opacity } = mount({ more: { inDelay: 50 } });
     el.dispatchEvent(new Event("pointerenter"));
@@ -112,10 +110,10 @@ describe("ACTIVE.HOVER more inDelay", () => {
   });
 });
 
-describe("ACTIVE.HOVER more out", () => {
+describe("WHEN.HOVER more out", () => {
   const out: Keyframes = {
-    0: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
-    1: [TRANSITION.LINEAR, EASE.IN, { opacity: 0.5 }],
+    0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
+    1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0.5 }],
   };
 
   test("leaving plays out keyframes, not the in backward", () => {
@@ -129,8 +127,8 @@ describe("ACTIVE.HOVER more out", () => {
 
   test("outDuration sets the length of the way out", () => {
     const linearOut: Keyframes = {
-      0: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
-      1: [TRANSITION.LINEAR, EASE.IN, { opacity: 0 }],
+      0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
+      1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
     };
     const { el, opacity } = mount({ more: { out: linearOut, outDuration: 200 } });
     el.dispatchEvent(new Event("pointerenter"));
@@ -195,16 +193,16 @@ describe("ACTIVE.HOVER more out", () => {
   });
 
   test("out keys are validated when the item is read", () => {
-    expect(() => readMore(ACTIVE.HOVER, { out: "fade" } as never)).toThrow("animate more out must be keyframes");
-    expect(() => readMore(ACTIVE.HOVER, { out: [] } as never)).toThrow("animate more out must be keyframes");
+    expect(() => readMore(WHEN.HOVER, { out: "fade" } as never)).toThrow("animate more out must be keyframes");
+    expect(() => readMore(WHEN.HOVER, { out: [] } as never)).toThrow("animate more out must be keyframes");
   });
 
   test("outDuration needs out", () => {
-    expect(() => readMore(ACTIVE.HOVER, { outDuration: 200 })).toThrow("animate more outDuration needs out");
+    expect(() => readMore(WHEN.HOVER, { outDuration: 200 })).toThrow("animate more outDuration needs out");
   });
 });
 
-describe("ACTIVE.HOVER touch and keyboard", () => {
+describe("WHEN.HOVER touch and keyboard", () => {
   test("a tap toggles in and out, and a touch pointer enter does nothing", () => {
     const { el, opacity } = mount();
     touch("pointerenter", el);

@@ -1,12 +1,12 @@
 <script>
-import { ACTIVE, controller, EASE, TRANSITION } from "lucia";
+import { WHEN, controller, EASE } from "lucia";
 
 // A controller plays the animation on demand: play, reverse or stop.
 const ctl = controller();
 
 const slide = {
   0: { translate: "0px 0px" },
-  1: [TRANSITION.LINEAR, EASE.OUT, { translate: "220px 0px" }],
+  1: [EASE.STYLE.LINEAR, EASE.OUT, { translate: "220px 0px" }],
 };
 
 function playSlide() {
@@ -30,7 +30,7 @@ function stopSlide() {
   </div>
   <div
     class="square"
-    animate={{ animation: slide, active: ACTIVE.MANUAL, control: ctl, duration: 1200 }}
+    animate={{ style: slide, when: WHEN.MANUAL, control: ctl, duration: 1200 }}
   ></div>
 </div>
 

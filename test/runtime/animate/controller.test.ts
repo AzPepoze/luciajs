@@ -2,18 +2,17 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
 import { controller } from "@runtime/animate/controller.ts";
-import { TRANSITION } from "@runtime/animate/easing.ts";
 import type { Keyframes } from "@runtime/animate/keyframes.ts";
 import { EASE } from "@runtime/animate/modes.ts";
-import { ACTIVE } from "@runtime/animate/trigger.ts";
+import { WHEN } from "@runtime/animate/trigger.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();
 
 
 const fade: Keyframes = {
-  0: [TRANSITION.LINEAR, EASE.IN, { opacity: 0 }],
-  1: [TRANSITION.LINEAR, EASE.IN, { opacity: 1 }],
+  0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
+  1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
 };
 
 function mount(item: AnimateItem) {
@@ -27,7 +26,7 @@ function mount(item: AnimateItem) {
 describe("controller", () => {
   test("play runs a MANUAL item forward and resolves when it ends", async () => {
     const ctl = controller();
-    const { opacity } = mount({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 });
+    const { opacity } = mount({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 });
     expect(opacity()).toBe(0);
     const playing = ctl.play();
     advance(100);
@@ -37,7 +36,7 @@ describe("controller", () => {
 
   test("reverse runs the item back to 0", async () => {
     const ctl = controller();
-    const { opacity } = mount({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 });
+    const { opacity } = mount({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 });
     const forward = ctl.play();
     advance(100);
     await forward;
@@ -49,7 +48,7 @@ describe("controller", () => {
 
   test("stop freezes the item where it is", () => {
     const ctl = controller();
-    const { opacity } = mount({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 });
+    const { opacity } = mount({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 });
     void ctl.play();
     advance(40);
     ctl.stop();
@@ -60,7 +59,7 @@ describe("controller", () => {
 
   test("seek sets the progress without playing", () => {
     const ctl = controller();
-    const { opacity } = mount({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 });
+    const { opacity } = mount({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 });
     ctl.seek(0.75);
     expect(opacity()).toBeCloseTo(0.75, 5);
     advance(100);
@@ -69,8 +68,8 @@ describe("controller", () => {
 
   test("one controller drives items on several elements", async () => {
     const ctl = controller();
-    const a = mount({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 });
-    const b = mount({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 });
+    const a = mount({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 });
+    const b = mount({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 });
     const playing = ctl.play();
     advance(100);
     await playing;
@@ -80,7 +79,7 @@ describe("controller", () => {
 
   test("a controlled IN item plays on attach and can also be driven by the controller", async () => {
     const ctl = controller();
-    const { opacity } = mount({ animation: fade, control: ctl, duration: 100 });
+    const { opacity } = mount({ style: fade, control: ctl, duration: 100 });
     advance(100);
     expect(opacity()).toBe(1);
     const back = ctl.reverse();
@@ -93,7 +92,7 @@ describe("controller", () => {
     const ctl = controller();
     const el = document.createElement("div");
     const cleanups: Array<() => void> = [];
-    animate(el, () => ({ animation: fade, active: ACTIVE.MANUAL, control: ctl, duration: 100 }), cleanups, []);
+    animate(el, () => ({ style: fade, when: WHEN.MANUAL, control: ctl, duration: 100 }), cleanups, []);
     for (const cleanup of cleanups) cleanup();
     await ctl.play();
     expect(el.style.opacity).toBe("0");

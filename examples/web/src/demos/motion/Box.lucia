@@ -1,15 +1,15 @@
 <script>
-import { EASE, TRANSITION } from "lucia";
+import { EASE } from "lucia";
 
 // Key 0 is where it starts. Key 1 sets the motion into place:
 // CUBIC, slowing down at the end.
 const fadeIn = {
   0: { opacity: 0, scale: "0.6" },
-  1: [TRANSITION.CUBIC, EASE.OUT, { opacity: 1, scale: "1" }],
+  1: [EASE.STYLE.CUBIC, EASE.OUT, { opacity: 1, scale: "1" }],
 };
 </script>
 
-<div class="motion-box" animate={{ animation: fadeIn, duration: 900 }}>Hello</div>
+<div class="motion-box" animate={{ style: fadeIn, duration: 900 }}>Hello</div>
 
 <style>
 .motion-box {

@@ -7,7 +7,7 @@ const entries: ApiEntry[] = [
   { id: "store-from", name: "store.from()", kind: "function", group: "reactivity", signature: "", summary: "Derived.", bullets: [], example: "" },
   {
     id: "active",
-    name: "ACTIVE",
+    name: "WHEN",
     kind: "value",
     group: "motion",
     signature: "",
@@ -38,7 +38,7 @@ describe("keyword tokenizer", () => {
   });
 
   test("links an enum member to its parent section", () => {
-    expect(chips(tokenize("Pick ACTIVE.VIEW.", index, "props"))).toEqual([["ACTIVE.VIEW", "active"]]);
+    expect(chips(tokenize("Pick WHEN.VIEW.", index, "props"))).toEqual([["WHEN.VIEW", "active"]]);
   });
 
   test("does not link a section to itself", () => {
@@ -64,8 +64,8 @@ describe("keyword tokenizer", () => {
   });
 
   test("keeps plain text between chips in order", () => {
-    const text = tokenize("A store() and ACTIVE.VIEW.", index, "props").map((part) => part.text);
-    expect(text.join("")).toBe("A store() and ACTIVE.VIEW.");
+    const text = tokenize("A store() and WHEN.VIEW.", index, "props").map((part) => part.text);
+    expect(text.join("")).toBe("A store() and WHEN.VIEW.");
   });
 
   test("text without keywords is one plain part", () => {

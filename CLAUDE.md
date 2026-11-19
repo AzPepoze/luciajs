@@ -27,10 +27,11 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 ## Design direction
 
 - Public API names use the simplest common English words, for beginners and non-native English developers (`store`, `store.from`, `store.onUpdate`, not `signal`, `derive`, `effect`). Avoid jargon and long words in names, errors and docs.
+- Reuse the words the API already uses. A new option for the same idea takes the same word, with a prefix for the variant: `duration` -> `outDuration`, `turnDuration`; `style`/`ease` -> `turnStyle`/`turnEase`. Never introduce a synonym (`time`, `length`, `curve`, `transition`) for an existing word.
 - The user designs the markup syntax. Do not invent new syntax, and do not borrow Svelte's (`{#if}`, `on:`, runes, `export let`).
 - Deferred until designed with the user: SSR, hydration.
 - Events (`onclick={fn}`), `bind` and the flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) are designed and implemented. Their syntax follows [docs/events.md](docs/events.md) and [docs/flow.md](docs/flow.md). Change it only with the user.
-- `animate` is designed. Its syntax follows [docs/animate.md](docs/animate.md): one special attribute, options inside the value, enums `TRANSITION`, `EASE` and `ACTIVE` (no flat names). Change its syntax only with the user.
+- `animate` is designed. Its syntax follows [docs/animate.md](docs/animate.md): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
 - `examples/web` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches web's `Events` demo, so update both together.
 
 ## Project rules
