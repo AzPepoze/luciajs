@@ -1,0 +1,25 @@
+@use "sass:color";
+
+$accent: #d9622b;
+$accent-hover: color.scale($accent, $lightness: -8%);
+
+// Put on a component's root element next to `data-theme`.
+@mixin vars {
+  &[data-theme="light"] {
+    --bg: #fafaf7;
+    --fg: #1d1d1b;
+    --muted: #6b6b66;
+    --card: #ffffff;
+    --line: #e7e5df;
+    --accent: #{$accent};
+  }
+
+  &[data-theme="dark"] {
+    --bg: #161615;
+    --fg: #f1efe9;
+    --muted: #9c9a92;
+    --card: #22221f;
+    --line: #33322f;
+    --accent: #f08a57;
+  }
+}

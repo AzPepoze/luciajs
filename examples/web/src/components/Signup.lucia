@@ -1,0 +1,80 @@
+<script>
+import { computed, signal } from "lucia";
+import { theme } from "../store.ts";
+
+const max = 120;
+const email = signal("");
+const length = computed(() => email.value.length);
+const preview = computed(() => email.value.trim() || "there");
+const invalid = computed(() => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value));
+
+export function setup(root: Element) {
+  const input = root.querySelector("input")!;
+  const onInput = () => (email.value = input.value);
+  input.addEventListener("input", onInput);
+  return () => input.removeEventListener("input", onInput);
+}
+</script>
+
+<section id="signup" class="signup" data-theme={theme}>
+  <h2>Get early access</h2>
+  <p class="intro">Be first in line. We only send one email a month.</p>
+  <div class="form">
+    <input type="email" placeholder="you@example.com" maxlength={max} aria-label="Email" />
+    <button type="button" disabled={invalid}>Join the list</button>
+  </div>
+  <p class="count">{length}/{max} characters</p>
+  <p class="preview">Hello {preview}!</p>
+</section>
+
+<style>
+@use "../styles/theme" as theme;
+
+.signup {
+  @include theme.vars;
+  padding: clamp(2.5rem, 8vw, 5rem) clamp(1rem, 5vw, 2rem);
+  background: var(--card);
+  color: var(--fg);
+  text-align: center;
+
+  h2 { margin: 0 0 0.5rem; font-size: clamp(1.5rem, 4vw, 2.25rem); }
+  .intro { margin: 0 0 2rem; color: var(--muted); }
+
+  .form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  input {
+    flex: 1 1 260px;
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--fg);
+    font: inherit;
+    &:focus { outline: 2px solid theme.$accent; outline-offset: 1px; }
+  }
+
+  button {
+    padding: 0.75rem 1.4rem;
+    border: 0;
+    border-radius: 10px;
+    background: theme.$accent;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    &:hover:not(:disabled) { background: theme.$accent-hover; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+
+  .count { margin: 0.75rem 0 0; font-size: 0.85rem; color: var(--muted); }
+  .preview { margin: 1.5rem 0 0; font-size: 1.1rem; }
+}
+</style>

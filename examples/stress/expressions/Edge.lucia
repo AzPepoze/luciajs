@@ -1,0 +1,41 @@
+<script>
+import { base, diamond } from "../store.ts";
+
+const nothing = null;
+const undef = undefined;
+const no = false;
+const yes = true;
+const zero = 0;
+const nan = NaN;
+const maybe: { name: string } | null = null;
+const user = { name: "Ada" };
+</script>
+
+<div class="edge">
+  <p id="nested">{ {a: 1}.a }</p>
+  <p id="braces">{"}{"}</p>
+  <p id="template">{`${base.value} + ${1 + 1} = ${base.value + 2}`}</p>
+  <p id="ternary">{base.value > 1 ? "big" : "small"}</p>
+  <p id="optional">{maybe?.name ?? "none"}</p>
+  <p id="optional-set">{user?.name}</p>
+  <p id="numbers">{zero} {nan}</p>
+  <p id="empty">[{nothing}][{undef}][{no}][{yes}]</p>
+  <p id="unicode">{"héllo 👋 日本語"}</p>
+  <p id="unsafe">{"<script>alert(1)</script>"}</p>
+  <p id="diamond">{diamond}</p>
+  <!-- comment with {not an expression} -->
+  <p id="attrs"
+    data-null={nothing}
+    data-undef={undef}
+    data-false={no}
+    data-true={yes}
+    data-zero={zero}
+    data-nan={nan}
+    data-partial="[{nothing}|{no}|{undef}|{yes}|{zero}|{nan}]"></p>
+  <p class="edge-global">global style</p>
+</div>
+
+<style>
+:global(.edge-global) { color: rebeccapurple; }
+.edge p { margin: 0.25rem 0; }
+</style>

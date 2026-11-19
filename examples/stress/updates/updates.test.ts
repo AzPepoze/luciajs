@@ -1,0 +1,78 @@
+import { afterEach, describe, expect, test } from "bun:test";
+import { attach, batch, type Instance } from "lucia";
+import { attachCells, createTarget, detachCells } from "../cells.ts";
+import Edge from "../expressions/Edge.lucia";
+import { base, count, probe, resetStore } from "../store.ts";
+
+const CELLS = 2000;
+const WRITES = 100;
+
+let instances: Instance[] = [];
+let targets: HTMLElement[] = [];
+
+afterEach(() => {
+  detachCells(instances);
+  instances = [];
+  for (const target of targets) target.remove();
+  targets = [];
+  resetStore();
+});
+
+function newTarget(): HTMLElement {
+  const target = createTarget("ul");
+  targets.push(target);
+  return target;
+}
+
+function writeCount(writes: number): void {
+  for (let i = 1; i <= writes; i++) count.value = i;
+}
+
+describe("updates", () => {
+  test(`one signal write updates all ${CELLS} cells`, () => {
+    const target = newTarget();
+    instances = attachCells(target, CELLS);
+
+    count.value = 42;
+    const items = target.querySelectorAll("li");
+    expect(items.length).toBe(CELLS);
+    for (const item of items) {
+      expect(item.getAttribute("data-count")).toBe("42");
+      expect(item.querySelector("b")!.textContent).toBe("42");
+    }
+  });
+
+  test("a batch of writes updates each binding once", () => {
+    const target = newTarget();
+    instances = attachCells(target, 10);
+    probe.reads = 0;
+    probe.tones = 0;
+
+    batch(() => writeCount(WRITES));
+    expect(probe.reads).toBe(10);
+    expect(probe.tones).toBe(1);
+    expect(target.querySelector("b")!.textContent).toBe(String(WRITES));
+  });
+
+  test("writes outside a batch update each binding on every write", () => {
+    const target = newTarget();
+    instances = attachCells(target, 10);
+    probe.reads = 0;
+    probe.tones = 0;
+
+    writeCount(WRITES);
+    expect(probe.reads).toBe(10 * WRITES);
+    expect(probe.tones).toBe(WRITES);
+  });
+
+  test("a diamond of computeds evaluates once per write", () => {
+    const target = newTarget();
+    instances = [attach(Edge, target)];
+    const before = probe.diamond;
+
+    const writes = 5;
+    for (let i = 2; i < 2 + writes; i++) base.value = i;
+    expect(probe.diamond - before).toBe(writes);
+    expect(target.querySelector("#diamond")!.textContent).toBe("19");
+  });
+});

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LuciaJS stress</title>
+    <style>
+      body { margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; }
+      h1 { margin: 0 0 0.25rem; font-size: 1.5rem; }
+      p { margin: 0 0 1rem; color: #666; }
+      table { border-collapse: collapse; width: 100%; max-width: 720px; }
+      th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #ddd; text-align: left; }
+      td:last-child { font-variant-numeric: tabular-nums; text-align: right; }
+    </style>
+  </head>
+  <body>
+    <h1>LuciaJS stress</h1>
+    <p id="status">Running...</p>
+    <table>
+      <thead><tr><th>Scenario</th><th>Time</th></tr></thead>
+      <tbody id="results"></tbody>
+    </table>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

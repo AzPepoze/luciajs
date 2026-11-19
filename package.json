@@ -2,9 +2,10 @@
   "name": "luciajs",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "examples/*"],
+  "workspaces": ["packages/*", "examples"],
   "scripts": {
-    "dev": "bun --watch examples/basic/serve.ts",
+    "dev": "bun --watch examples/serve.ts web",
+    "dev:stress": "bun --watch examples/serve.ts stress",
     "test": "bun test",
     "typecheck": "tsc --noEmit"
   },

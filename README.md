@@ -25,8 +25,9 @@ $accent: tomato;
 You need Bun 1.4 or newer.
 
 ```sh
-bun install    # install dependencies
-bun dev        # run the demo at http://localhost:3000
+bun install      # install dependencies
+bun dev          # run the web example at http://localhost:3000
+bun dev:stress   # run the stress example at http://localhost:3000
 ```
 
 If port 3000 is taken, run `PORT=3100 bun dev`.
@@ -35,7 +36,7 @@ If port 3000 is taken, run `PORT=3100 bun dev`.
 
 | Topic | What it covers |
 |---|---|
-| [Components](docs/components.md) | The `.lucia` file: script, markup with `{}`, scoped SCSS, mounting |
+| [Components](docs/components.md) | The `.lucia` file: script, markup with `{}`, scoped SCSS, attaching |
 | [Signals](docs/signals.md) | State, derived values and shared stores |
 | [Development](docs/development.md) | Commands, tests, repo layout |
 | [Architecture](docs/architecture.md) | How the compiler and runtime work |

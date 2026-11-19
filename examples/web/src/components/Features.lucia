@@ -1,0 +1,61 @@
+<script>
+import { theme } from "../store.ts";
+</script>
+
+<section id="features" class="features" data-theme={theme}>
+  <h2>Why Paper Notes</h2>
+  <div class="grid">
+    <article class="card">
+      <h3>Fast by default</h3>
+      <p>Notes open in a blink, even with thousands of pages in your library.</p>
+    </article>
+    <article class="card">
+      <h3>Works offline</h3>
+      <p>Write on a plane or underground. Your changes sync when you are back online.</p>
+    </article>
+    <article class="card">
+      <h3>Private</h3>
+      <p>Notes are encrypted on your device before they leave it. Only you hold the key.</p>
+    </article>
+  </div>
+</section>
+
+<style>
+@use "../styles/theme" as theme;
+
+.features {
+  @include theme.vars;
+  padding: clamp(2.5rem, 8vw, 5rem) clamp(1rem, 5vw, 3rem);
+  background: var(--bg);
+  color: var(--fg);
+
+  h2 {
+    margin: 0 0 2rem;
+    text-align: center;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  .grid {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 1080px;
+    margin: 0 auto;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 720px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+
+    h3 { margin: 0 0 0.5rem; color: theme.$accent; font-size: 1.15rem; }
+    p { margin: 0; color: var(--muted); }
+  }
+}
+</style>

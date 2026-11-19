@@ -1,0 +1,21 @@
+<script>
+import { count, label, tick, tone } from "../store.ts";
+</script>
+
+<li class="cell {tone}" data-count={count}>
+  <span>{label}</span>
+  <b>{tick(count)}</b>
+  <i>{tone}</i>
+</li>
+
+<style>
+.cell {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+.odd { background: #fff4ec; }
+.even { background: #f1f6ff; }
+</style>

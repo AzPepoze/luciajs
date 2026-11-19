@@ -1,26 +1,26 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { compile } from "@lucia/compiler";
-import { clicks } from "../../../examples/basic/src/store.ts";
+import { clicks } from "../../../examples/web/src/store.ts";
 
-const APP_PATH = "../../../examples/basic/src/App.lucia";
-const APP_FILE = new URL(APP_PATH, import.meta.url).pathname;
+const COUNTER_PATH = "../../../examples/web/src/components/Counter.lucia";
+const COUNTER_FILE = new URL(COUNTER_PATH, import.meta.url).pathname;
 
-type Mounted = { destroy(): void };
-let mounted: Mounted | null = null;
+type Attached = { detach(): void };
+let attached: Attached | null = null;
 
 afterEach(() => {
-  mounted?.destroy();
-  mounted = null;
+  attached?.detach();
+  attached = null;
   clicks.value = 0;
 });
 
-async function mountApp(): Promise<{ target: HTMLElement; scope: string }> {
-  const source = await Bun.file(APP_FILE).text();
-  const { scope } = compile(source, APP_FILE);
-  const App = (await import(APP_PATH)).default as (target: Element) => Mounted;
+async function attachCounter(): Promise<{ target: HTMLElement; scope: string }> {
+  const source = await Bun.file(COUNTER_FILE).text();
+  const { scope } = compile(source, COUNTER_FILE);
+  const Counter = (await import(COUNTER_PATH)).default as (target: Element) => Attached;
   const target = document.createElement("div");
   document.body.append(target);
-  mounted = App(target);
+  attached = Counter(target);
   return { target, scope };
 }
 
@@ -33,20 +33,19 @@ function textOf(target: HTMLElement, selector: string): string {
   return target.querySelector(selector)!.textContent!.replace(/\s+/g, " ").trim();
 }
 
-describe("lucia bun plugin with the basic example", () => {
+describe("lucia bun plugin with the web example's Counter", () => {
   test("scopes markup and injects compiled scss", async () => {
-    const { target, scope } = await mountApp();
-    expect(target.querySelector("h1")!.hasAttribute(scope)).toBe(true);
-    expect(textOf(target, "h1")).toBe("LuciaJS");
+    const { target, scope } = await attachCounter();
+    expect(target.querySelector("h2")!.hasAttribute(scope)).toBe(true);
+    expect(textOf(target, "h2")).toBe("Live demo");
 
     const css = document.querySelector(`style[data-lucia="${scope}"]`)!.textContent!;
-    expect(css).toContain(`h1[${scope}]`);
+    expect(css).toContain(`h2[${scope}]`);
     expect(css).toContain("color: tomato");
-    expect(css).toContain("body {");
   });
 
   test("text, partial and whole attributes follow signals", async () => {
-    const { target } = await mountApp();
+    const { target } = await attachCounter();
     const progress = target.querySelector("progress")!;
     const add = target.querySelector(".add")!;
     const reset = target.querySelector(".reset")!;
@@ -70,11 +69,11 @@ describe("lucia bun plugin with the basic example", () => {
     expect(textOf(target, ".hint")).toBe("10 left");
   });
 
-  test("destroy removes the nodes and stops updates", async () => {
-    const { target } = await mountApp();
+  test("detach removes the nodes and stops updates", async () => {
+    const { target } = await attachCounter();
     const status = target.querySelector(".status")!;
-    mounted!.destroy();
-    mounted = null;
+    attached!.detach();
+    attached = null;
     expect(target.childNodes.length).toBe(0);
 
     clicks.value = 5;

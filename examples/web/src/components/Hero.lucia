@@ -1,0 +1,51 @@
+<script>
+import { theme } from "../store.ts";
+
+const headline = "Notes that stay out of your way";
+const tagline = "Paper Notes is a quiet place for drafts, lists and half-formed ideas. It works offline and syncs everywhere.";
+</script>
+
+<section class="hero" data-theme={theme}>
+  <h1>{headline}</h1>
+  <p class="tagline">{tagline}</p>
+  <a class="cta" href="#signup">Start writing free</a>
+</section>
+
+<style>
+@use "../styles/theme" as theme;
+
+.hero {
+  @include theme.vars;
+  padding: clamp(3rem, 10vw, 6rem) clamp(1rem, 5vw, 3rem);
+  text-align: center;
+  background: var(--bg);
+  color: var(--fg);
+
+  h1 {
+    margin: 0 auto;
+    max-width: 16ch;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .tagline {
+    margin: 1.25rem auto 2rem;
+    max-width: 52ch;
+    font-size: 1.1rem;
+    color: var(--muted);
+  }
+
+  .cta {
+    display: inline-block;
+    padding: 0.8rem 1.6rem;
+    border-radius: 999px;
+    background: theme.$accent;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease;
+    &:hover { background: theme.$accent-hover; }
+  }
+}
+</style>
