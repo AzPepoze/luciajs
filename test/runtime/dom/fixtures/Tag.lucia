@@ -1,0 +1,7 @@
+<script>
+import { props } from "lucia";
+
+const { label } = props({ label: "" });
+</script>
+
+<b class="tag">{label}</b>

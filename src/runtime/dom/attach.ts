@@ -1,10 +1,5 @@
-export interface Instance {
-  root: Element;
-  detach(): void;
-}
+import type { Component, Instance, Props } from "./component.ts";
 
-export type Component = (target: Element) => Instance;
-
-export function attach(component: Component, target: Element): Instance {
-  return component(target);
+export function attach(component: Component, target: Element, props?: Props): Instance {
+  return component(target, props);
 }

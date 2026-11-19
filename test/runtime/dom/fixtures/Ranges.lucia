@@ -1,0 +1,9 @@
+<script>
+import { state } from "./state.ts";
+</script>
+
+<div class="range">
+  <FOR {n} from={state.from} to={state.to} step={state.step}>
+    <span class="n">{n}</span>
+  </FOR>
+</div>

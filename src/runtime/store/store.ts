@@ -1,20 +1,21 @@
 import { batch, clearSources, propagate, track, withObserver, type Observer, type Source } from "./graph.ts";
+import { onUpdate } from "./update.ts";
 
 const REACTIVE: unique symbol = Symbol("lucia.reactive");
 
-export interface Signal<T> {
+export interface Store<T> {
   value: T;
   peek(): T;
   readonly [REACTIVE]: true;
 }
 
-export interface Computed<T> {
+export interface ReadStore<T> {
   readonly value: T;
   peek(): T;
   readonly [REACTIVE]: true;
 }
 
-export function signal<T>(initial: T): Signal<T> {
+function createStore<T>(initial: T): Store<T> {
   let value = initial;
   const source: Source = { observers: new Set() };
   return {
@@ -32,7 +33,7 @@ export function signal<T>(initial: T): Signal<T> {
   };
 }
 
-export function computed<T>(fn: () => T): Computed<T> {
+function storeFrom<T>(fn: () => T): ReadStore<T> {
   let value: T;
   let dirty = true;
   const node: Source & Observer = {
@@ -62,11 +63,14 @@ export function computed<T>(fn: () => T): Computed<T> {
   };
 }
 
-export function isReactive(value: unknown): value is Signal<unknown> | Computed<unknown> {
+/** `store(value)` makes a writable store. `store.from(fn)` derives a read-only store. `store.onUpdate(fn)` runs fn on change. */
+export const store = Object.assign(createStore, { from: storeFrom, onUpdate });
+
+export function isReactive(value: unknown): value is Store<unknown> | ReadStore<unknown> {
   return typeof value === "object" && value !== null && REACTIVE in value;
 }
 
-/** A signal or computed gives its current value; anything else is returned as is. */
+/** A store or read store gives its current value; anything else is returned as is. */
 export function unwrap(value: unknown): unknown {
   return isReactive(value) ? value.value : value;
 }

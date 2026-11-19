@@ -1,5 +1,6 @@
 import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "../markers.ts";
 import type { Binder, Cleanup } from "./bindings.ts";
+import type { Leave } from "./leave.ts";
 
 export interface CompiledTemplate {
   template: HTMLTemplateElement;
@@ -40,9 +41,20 @@ function resolvePath(root: Node, path: number[]): Node {
 }
 
 /** Clone the template and run each binder on its node. */
-export function instantiate({ template, paths }: CompiledTemplate, binders: Binder[], cleanups: Cleanup[]): DocumentFragment {
+export function instantiate(
+  { template, paths }: CompiledTemplate,
+  binders: Binder[],
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): DocumentFragment {
   const fragment = template.content.cloneNode(true) as DocumentFragment;
   const nodes = paths.map((path) => resolvePath(fragment, path));
-  nodes.forEach((node, index) => binders[index]!(node, cleanups));
+  nodes.forEach((node, index) => binders[index]!(node, cleanups, leaves));
   return fragment;
+}
+
+/** Parses the markup on first use and reuses the parsed template for every instance. */
+export function lazyTemplate(html: string, id: string): () => CompiledTemplate {
+  let compiled: CompiledTemplate | undefined;
+  return () => (compiled ??= createTemplate(html, id));
 }

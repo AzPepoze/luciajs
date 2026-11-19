@@ -1,0 +1,9 @@
+<script>
+import { state } from "./state.ts";
+</script>
+
+<ul class="list">
+  <EACH {state.items} as={item} index={i} key={item.id}>
+    <li class="row" onclick={() => (state.picked.value = item.id)}>{i}:{item.title}</li>
+  </EACH>
+</ul>

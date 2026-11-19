@@ -4,7 +4,7 @@ export interface Source {
 
 export interface Observer {
   sources: Set<Source>;
-  /** Called synchronously when a source changes; must not read signals. */
+  /** Called synchronously when a source changes; must not read stores or read stores. */
   markDirty(): void;
 }
 

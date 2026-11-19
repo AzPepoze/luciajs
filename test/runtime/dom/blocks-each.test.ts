@@ -1,0 +1,169 @@
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { bindEach, type RowRender } from "@runtime/dom/blocks/each.ts";
+import { TEXT_MARKER } from "@runtime/markers.ts";
+import { store, type Store } from "@runtime/store/store.ts";
+import Groups from "./fixtures/Groups.lucia";
+import Rows from "./fixtures/Rows.lucia";
+import { resetStore, state, type Item } from "./fixtures/state.ts";
+import { host, mount, resetMounts, unmount } from "./fixtures/mount.ts";
+
+beforeEach(resetStore);
+afterEach(resetMounts);
+
+function items(...titles: string[]): Item[] {
+  return titles.map((title, id) => ({ id: id + 1, title }));
+}
+
+function rowTexts(root: ParentNode): string[] {
+  return [...root.querySelectorAll(".row")].map((el) => el.textContent ?? "");
+}
+
+function textRow(indexed: boolean): RowRender {
+  return (item, index, cleanups) => {
+    const fragment = document.createDocumentFragment();
+    const li = document.createElement("li");
+    li.textContent = String((item as Item).title);
+    fragment.append(li);
+    if (index) {
+      const marker = document.createTextNode("");
+      fragment.append(marker);
+      cleanups.push(() => marker.remove());
+    }
+    return fragment;
+  };
+}
+
+describe("EACH in a component", () => {
+  test("renders one row per item with its index", () => {
+    const el = host();
+    state.items.value = items("a", "b");
+    mount(Rows, el);
+    expect(rowTexts(el)).toEqual(["0:a", "1:b"]);
+  });
+
+  test("adding and removing items keeps the other rows", () => {
+    const el = host();
+    const list = items("a", "b", "c");
+    state.items.value = list;
+    mount(Rows, el);
+    const [first, , third] = el.querySelectorAll(".row");
+
+    state.items.value = [list[0]!, list[2]!];
+    expect(rowTexts(el)).toEqual(["0:a", "1:c"]);
+    expect(el.querySelectorAll(".row")[0]).toBe(first!);
+    expect(el.querySelectorAll(".row")[1]).toBe(third!);
+
+    state.items.value = [{ id: 9, title: "z" }, list[0]!, list[2]!];
+    expect(rowTexts(el)).toEqual(["0:z", "1:a", "2:c"]);
+  });
+
+  test("reversing keeps the same row nodes and updates their index", () => {
+    const el = host();
+    const list = items("a", "b", "c", "d");
+    state.items.value = list;
+    mount(Rows, el);
+    const before = [...el.querySelectorAll(".row")];
+
+    state.items.value = [...list].reverse();
+    expect(rowTexts(el)).toEqual(["0:d", "1:c", "2:b", "3:a"]);
+    const after = [...el.querySelectorAll(".row")];
+    expect(after).toEqual([before[3]!, before[2]!, before[1]!, before[0]!]);
+  });
+
+  test("a row whose key has a new object is rendered again", () => {
+    const el = host();
+    state.items.value = items("a");
+    mount(Rows, el);
+    const before = el.querySelector(".row");
+
+    state.items.value = [{ id: 1, title: "renamed" }];
+    expect(rowTexts(el)).toEqual(["0:renamed"]);
+    expect(el.querySelector(".row")).not.toBe(before);
+  });
+
+  test("clicking a row reads its item", () => {
+    const el = host();
+    state.items.value = items("a", "b");
+    mount(Rows, el);
+    (el.querySelectorAll(".row")[1] as HTMLElement).dispatchEvent(new Event("click"));
+    expect(state.picked.value).toBe(2);
+  });
+
+  test("detaching removes every row", () => {
+    const el = host();
+    state.items.value = items("a", "b");
+    const instance = mount(Rows, el);
+    unmount(instance);
+    expect(el.querySelectorAll(".row").length).toBe(0);
+    expect(el.childNodes.length).toBe(0);
+  });
+
+  test("nested EACH, IF and a component work together", () => {
+    const el = host();
+    state.groups.value = [
+      { name: "x", open: true, items: ["one", "two"] },
+      { name: "y", open: false, items: ["hidden"] },
+    ];
+    mount(Groups, el);
+    expect(el.querySelectorAll(".group").length).toBe(2);
+    expect([...el.querySelectorAll(".tag")].map((t) => t.textContent)).toEqual(["one", "two"]);
+
+    state.groups.value = [{ name: "y", open: true, items: ["hidden"] }];
+    expect([...el.querySelectorAll(".tag")].map((t) => t.textContent)).toEqual(["hidden"]);
+  });
+});
+
+describe("EACH runtime", () => {
+  test("duplicate keys are an error", () => {
+    const marker = document.createComment(TEXT_MARKER);
+    document.createElement("ul").append(marker);
+    const list = store([1, 1]);
+    const cleanups: Array<() => void> = [];
+    const render: RowRender = () => document.createDocumentFragment();
+    expect(() =>
+      bindEach(marker, { read: () => list.value, render, indexed: false }, cleanups, []),
+    ).toThrow("EACH keys must be unique, but 1 appears twice");
+  });
+
+  test("a removed row waits for its leave before its nodes go", async () => {
+    const parent = document.createElement("ul");
+    const marker = document.createComment(TEXT_MARKER);
+    parent.append(marker);
+    const list = store(["a", "b"]);
+    const release = new Map<string, () => void>();
+    const render: RowRender = (item, _index, _cleanups, leaves) => {
+      const fragment = document.createDocumentFragment();
+      const li = document.createElement("li");
+      li.textContent = String(item);
+      fragment.append(li);
+      leaves.push(() => new Promise<void>((resolve) => release.set(String(item), resolve)));
+      return fragment;
+    };
+    const cleanups: Array<() => void> = [];
+    bindEach(marker, { read: () => list.value, render, indexed: false }, cleanups, []);
+
+    list.value = ["b"];
+    expect(parent.querySelectorAll("li").length).toBe(2);
+
+    release.get("a")!();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect([...parent.querySelectorAll("li")].map((li) => li.textContent)).toEqual(["b"]);
+    for (const cleanup of cleanups) cleanup();
+  });
+
+  test("an index store is only created when the row asks for it", () => {
+    const parent = document.createElement("ul");
+    const marker = document.createComment(TEXT_MARKER);
+    parent.append(marker);
+    const seen: Array<Store<number> | undefined> = [];
+    const render: RowRender = (item, index, cleanups) => {
+      seen.push(index);
+      return textRow(index !== undefined)(item, index, cleanups, []);
+    };
+    const cleanups: Array<() => void> = [];
+    bindEach(marker, { read: () => ["a"], render, indexed: false }, cleanups, []);
+    expect(seen).toEqual([undefined]);
+    for (const cleanup of cleanups) cleanup();
+  });
+});

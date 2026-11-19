@@ -1,8 +1,9 @@
-import { watch } from "../signal/graph.ts";
+import { batch, watch } from "../store/graph.ts";
+import type { Leave } from "./leave.ts";
 
 export type Cleanup = () => void;
 
-export type Binder = (node: Node, cleanups: Cleanup[]) => void;
+export type Binder = (node: Node, cleanups: Cleanup[], leaves: Leave[]) => void;
 
 export function toText(value: unknown): string {
   return value == null || value === false ? "" : String(value);
@@ -25,9 +26,15 @@ export function attr(el: Element, name: string, read: () => unknown, cleanups: C
   );
 }
 
+/** The handler's store writes run as one batch, so dependent watchers run once per event. */
+function batched(handler: EventListener): EventListener {
+  return (event) => batch(() => handler(event));
+}
+
 export function listen(el: EventTarget, type: string, handler: EventListener, cleanups: Cleanup[]): void {
-  el.addEventListener(type, handler);
-  cleanups.push(() => el.removeEventListener(type, handler));
+  const listener = batched(handler);
+  el.addEventListener(type, listener);
+  cleanups.push(() => el.removeEventListener(type, listener));
 }
 
 export function insert(parent: Node, node: Node, anchor: Node | null = null): void {

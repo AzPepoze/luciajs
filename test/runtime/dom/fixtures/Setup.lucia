@@ -1,0 +1,10 @@
+<script>
+import { events } from "./log.ts";
+
+function setup(root: Element) {
+  events.push(root.querySelector(".ready") ? "setup" : "missing");
+  return () => events.push("cleanup");
+}
+</script>
+
+<p class="ready">Ready</p>

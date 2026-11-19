@@ -1,7 +1,16 @@
 // Helpers used by compiled .lucia output; not part of the public API.
 export { attr, bindText, insert, listen, toText } from "./dom/bindings.ts";
 export type { Binder, Cleanup } from "./dom/bindings.ts";
-export { createTemplate, instantiate } from "./dom/template.ts";
-export { injectStyle } from "./dom/styles.ts";
-export { unwrap } from "./signal/signal.ts";
-export { watch } from "./signal/graph.ts";
+export { bindComponent, defineComponent } from "./dom/component.ts";
+export type { Rendered } from "./dom/component.ts";
+export type { Leave } from "./dom/leave.ts";
+export { createTemplate, instantiate, lazyTemplate } from "./dom/template.ts";
+export { bindInput } from "./dom/bind/input.ts";
+export { bindProp } from "./dom/bind/property.ts";
+export { bindElement } from "./dom/bind/element.ts";
+export { bindIf } from "./dom/blocks/if.ts";
+export { bindEach } from "./dom/blocks/each.ts";
+export { bindFor } from "./dom/blocks/range.ts";
+export { animate } from "./animate/bind.ts";
+export { unwrap } from "./store/store.ts";
+export { watch } from "./store/graph.ts";

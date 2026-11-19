@@ -1,0 +1,7 @@
+<script>
+import { state } from "./state.ts";
+
+const bump = () => state.count.value++;
+</script>
+
+<button class="bump" onclick={bump}>{state.count}</button>

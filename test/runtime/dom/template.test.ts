@@ -10,7 +10,7 @@ describe("createTemplate and instantiate", () => {
 
     const seen: string[] = [];
     const binders = [0, 1, 2].map((i) => (node: Node) => void seen.push(`${i}:${node.nodeName}`));
-    const fragment = instantiate(compiled, binders, []);
+    const fragment = instantiate(compiled, binders, [], []);
     expect(seen).toEqual(["0:DIV", "1:#comment", "2:#comment"]);
 
     const div = fragment.firstChild as Element;
@@ -19,7 +19,7 @@ describe("createTemplate and instantiate", () => {
 
   test("stamps the component id only on top-level elements", () => {
     const html = `<h1>a</h1><div><h1>b</h1><p><span>c</span></p></div>text<!--${TEXT_MARKER}-->`;
-    const fragment = instantiate(createTemplate(html, "p"), [() => {}], []);
+    const fragment = instantiate(createTemplate(html, "p"), [() => {}], [], []);
     const topLevel = [...fragment.children];
     expect(topLevel.map((el) => el.getAttribute(COMPONENT_ATTR))).toEqual(["p", "p"]);
     expect(fragment.querySelectorAll(`[${COMPONENT_ATTR}]`).length).toBe(2);

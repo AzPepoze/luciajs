@@ -1,0 +1,11 @@
+<script>
+import { state } from "./state.ts";
+
+const writeThree = () => {
+  state.from.value = 1;
+  state.to.value = 2;
+  state.step.value = 3;
+};
+</script>
+
+<button class="write" onclick={writeThree}>write</button>
