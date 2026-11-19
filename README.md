@@ -1,5 +1,8 @@
 # LuciaJS
 
+> [!NOTE]
+> LuciaJS is a UI framework.
+
 A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through signals.
 
 > [!WARNING]
