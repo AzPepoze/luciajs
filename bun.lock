@@ -31,6 +31,7 @@
       "name": "@lucia/compiler",
       "version": "0.0.1",
       "dependencies": {
+        "lucia": "workspace:*",
         "sass": "^1.80.0",
       },
     },

@@ -1,18 +1,40 @@
 import { describe, expect, test } from "bun:test";
-import { attr, injectStyle, listen, text } from "../src/dom.ts";
+import { attr, bindText, createTemplate, injectStyle, instantiate, listen } from "../src/dom.ts";
+import { ELEMENT_MARKER, TEXT_MARKER } from "../src/markers.ts";
 import { signal } from "../src/signal.ts";
 
-describe("text", () => {
-  test("updates when the signal changes", () => {
+describe("bindText", () => {
+  test("replaces the marker and updates when the signal changes", () => {
     const count = signal(0);
     const cleanups: Array<() => void> = [];
-    const node = text(() => count.value, cleanups);
-    expect(node.data).toBe("0");
+    const parent = document.createElement("p");
+    const marker = document.createComment(TEXT_MARKER);
+    parent.append(marker);
+    bindText(marker, () => count.value, cleanups);
+    expect(parent.textContent).toBe("0");
 
     count.value = 3;
-    expect(node.data).toBe("3");
+    expect(parent.textContent).toBe("3");
+    expect(parent.childNodes.length).toBe(1);
 
     for (const cleanup of cleanups) cleanup();
+  });
+});
+
+describe("createTemplate and instantiate", () => {
+  test("scopes elements, strips markers and binds in document order", () => {
+    const html = `<div ${ELEMENT_MARKER}><b><!--${TEXT_MARKER}--></b><!--${TEXT_MARKER}--></div>`;
+    const compiled = createTemplate(html, "data-s");
+    expect(compiled.paths).toEqual([[0], [0, 0, 0], [0, 1]]);
+
+    const seen: string[] = [];
+    const binders = [0, 1, 2].map((i) => (node: Node) => void seen.push(`${i}:${node.nodeName}`));
+    const fragment = instantiate(compiled, binders, []);
+    expect(seen).toEqual(["0:DIV", "1:#comment", "2:#comment"]);
+
+    const div = fragment.firstChild as Element;
+    expect(div.hasAttribute("data-s")).toBe(true);
+    expect(div.hasAttribute(ELEMENT_MARKER)).toBe(false);
   });
 });
 
