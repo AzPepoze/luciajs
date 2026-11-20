@@ -28,3 +28,4 @@ Thumbs.db
 # Agent worktrees and their screenshots or scripts
 .worktrees/
 .agent/
+.claude/
