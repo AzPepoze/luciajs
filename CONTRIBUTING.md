@@ -4,41 +4,43 @@ LuciaJS is a Bun-native UI framework built from single-file `.lucia` components,
 
 ## Install, run and test
 
-| Task | Command |
-| ---- | ------- |
-| Install | `bun install` |
-| Web example (port 3000) | `bun run dev` |
-| Stress example (port 3000) | `bun run dev:stress` |
-| Build the web example (writes `dist/`) | `bun run build` |
-| All tests | `bun run test` (parallel, 6 workers) |
-| One test file | `bun test test/compiler/style/modes.test.ts` |
-| Tests by name | `bun test -t "diamond"` |
-| Typecheck | `bun run typecheck` |
-| Format all files | `bun run format` |
-| Check formatting without writing | `bun run format:check` |
-| Everything before a commit | `bun run check` |
+| Task                                   | Command                                      |
+| -------------------------------------- | -------------------------------------------- |
+| Install                                | `bun install`                                |
+| Web example (port 3000)                | `bun run dev`                                |
+| Stress example (port 3000)             | `bun run dev:stress`                         |
+| Build the web example (writes `dist/`) | `bun run build`                              |
+| All tests                              | `bun run test` (parallel, 6 workers)         |
+| One test file                          | `bun test test/compiler/style/modes.test.ts` |
+| Tests by name                          | `bun test -t "diamond"`                      |
+| Typecheck                              | `bun run typecheck`                          |
+| Format all files                       | `bun run format`                             |
+| Check formatting without writing       | `bun run format:check`                       |
+| Everything before a commit             | `bun run check`                              |
 
 `bun run dev` and `bun run build` first run `scripts/playground-runtime.ts`, which writes the playground preview runtime. Run `bun scripts/playground-runtime.ts` yourself before using the CLI directly.
 
 `bun run check` runs the typecheck, tests, site build and extension build. Set `LUCIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
 
+Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
+
 The `lucia` command builds and serves an app folder. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its two commands are `lucia build [dir]` and `lucia dev [dir]`; a `lucia.config.json` sets the same options and flags win over it.
 
 ## Repo layout
 
-| Path | What it holds |
-| ---- | ------------- |
-| `src/runtime` | Variables, DOM helpers, blocks, animate |
-| `src/compiler` | The `.lucia` compiler: parse, style, template, codegen |
-| `src/bun-plugin` | The Bun loader for `.lucia` files and `?raw` imports |
-| `src/cli` | The `lucia` command: `build` and `dev` |
-| `test/` | Tests. One folder per area, each mirroring its `src/` folder |
-| `docs` | The docs site: every feature with a live demo and source |
-| `examples/stress` | Scenarios that push the limits and report timings |
-| `editors/vscode` | The VS Code extension and `.lucia` grammar |
-| `reference/api.ts` | The single API table for the extension and the docs site |
-| `scripts/` | Build helpers, including `playground-runtime.ts` |
-| `test/setup.ts` | Sets up the fake DOM (happy-dom) and the `.lucia` loader |
+| Path               | What it holds                                                |
+| ------------------ | ------------------------------------------------------------ |
+| `src/runtime`      | Variables, DOM helpers, blocks, animate                      |
+| `src/compiler`     | The `.lucia` compiler: parse, style, template, codegen       |
+| `src/bun-plugin`   | The Bun loader for `.lucia` files and `?raw` imports         |
+| `src/cli`          | The `lucia` command: `build` and `dev`                       |
+| `test/`            | Tests. One folder per area, each mirroring its `src/` folder |
+| `docs`             | The docs site: every feature with a live demo and source     |
+| `examples/stress`  | Scenarios that push the limits and report timings            |
+| `editors/vscode`   | The VS Code extension and `.lucia` grammar                   |
+| `reference/api.ts` | The single API table for the extension and the docs site     |
+| `scripts/`         | Build helpers, including `playground-runtime.ts`             |
+| `test/setup.ts`    | Sets up the fake DOM (happy-dom) and the `.lucia` loader     |
 
 Domain folders own framework logic (`parse/`, `style/`, `template/`, `variable/`, `dom/`). `utils/` holds only helpers used by two or more domains. One job per file, around 150 lines. Imports across areas use `@runtime/`, `@compiler/`, `@bun-plugin/` and `@cli/` aliases; imports inside one area stay relative.
 
@@ -87,11 +89,11 @@ The VS Code extension is in `editors/vscode`. It provides colours, completion, h
 
 Editor checks:
 
-| Command | Checks |
-| ------- | ------ |
-| `bun test test/editors` | Grammar, token scopes, completion, hover, format, lint, API table |
-| `cd editors/vscode && bun run build` | The extension bundles |
-| `bunx tsc --noEmit -p editors/vscode` | The extension type checks |
+| Command                               | Checks                                                            |
+| ------------------------------------- | ----------------------------------------------------------------- |
+| `bun test test/editors`               | Grammar, token scopes, completion, hover, format, lint, API table |
+| `cd editors/vscode && bun run build`  | The extension bundles                                             |
+| `bunx tsc --noEmit -p editors/vscode` | The extension type checks                                         |
 
 ## Workflow
 

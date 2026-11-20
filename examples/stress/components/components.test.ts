@@ -2,9 +2,11 @@ import { afterEach, describe, expect, test } from "bun:test";
 import type { Instance } from "lucia";
 import { createTarget } from "../cells.ts";
 import { resetVariable, rowValue } from "../variable.ts";
-import { attachTables, detachTables, PARENTS, ROWS_PER_TABLE } from "./tables.ts";
+import { attachTables, detachTables, ROWS_PER_TABLE } from "./tables.ts";
 
-const ROWS = PARENTS * ROWS_PER_TABLE;
+// Small enough to check behaviour quickly. The stress page measures with PARENTS from tables.ts.
+const TEST_PARENTS = 10;
+const ROWS = TEST_PARENTS * ROWS_PER_TABLE;
 
 let instances: Instance[] = [];
 let targets: HTMLElement[] = [];
@@ -24,14 +26,14 @@ function newTarget(): HTMLElement {
 }
 
 describe("components", () => {
-  test(`renders ${PARENTS} tables with ${ROWS_PER_TABLE} rows each`, () => {
+  test(`renders ${TEST_PARENTS} tables with ${ROWS_PER_TABLE} rows each`, () => {
     const target = newTarget();
-    instances = attachTables(target, PARENTS);
+    instances = attachTables(target, TEST_PARENTS);
 
     const tables = target.querySelectorAll(".table");
-    expect(tables.length).toBe(PARENTS);
+    expect(tables.length).toBe(TEST_PARENTS);
     expect(target.querySelectorAll(".row").length).toBe(ROWS);
-    for (let id = 0; id < PARENTS; id++) {
+    for (let id = 0; id < TEST_PARENTS; id++) {
       expect(tables[id]!.querySelector("h3")!.textContent).toBe(`Table ${id}`);
     }
     expect(tables[0]!.querySelector(".row span")!.textContent).toBe("row 0");
@@ -39,7 +41,7 @@ describe("components", () => {
 
   test("one variable write updates every row's prop", () => {
     const target = newTarget();
-    instances = attachTables(target, PARENTS);
+    instances = attachTables(target, TEST_PARENTS);
 
     rowValue.value = 42;
     const values = target.querySelectorAll(".row b");
@@ -49,7 +51,7 @@ describe("components", () => {
 
   test("detach leaves no nodes and later writes do not change detached nodes", () => {
     const target = newTarget();
-    instances = attachTables(target, PARENTS);
+    instances = attachTables(target, TEST_PARENTS);
     const row = target.querySelector(".row")!;
     detachTables(instances);
     instances = [];

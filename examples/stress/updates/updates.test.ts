@@ -4,7 +4,7 @@ import { attachCells, createTarget, detachCells } from "../cells.ts";
 import Edge from "../expressions/Edge.lucia";
 import { base, count, probe, resetVariable } from "../variable.ts";
 
-const CELLS = 2000;
+const CELLS = 200;
 const WRITES = 100;
 
 let instances: Instance[] = [];

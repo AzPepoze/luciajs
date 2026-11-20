@@ -4,8 +4,8 @@ import { attachCells, createTarget, detachCells } from "../cells.ts";
 import { count, resetVariable } from "../variable.ts";
 import Cell from "./Cell.lucia";
 
-const CYCLES = 500;
-const CELLS = 2000;
+const CYCLES = 50;
+const CELLS = 200;
 
 let instances: Instance[] = [];
 let targets: HTMLElement[] = [];
