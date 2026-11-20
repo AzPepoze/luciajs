@@ -50,7 +50,7 @@ function celebrate(event: PointerEvent): void {
     <Sparks sparks={sparks} />
   </div>
   <div class="cta-content" animate={textScale}>
-    <RevealTitle text="Ready to play with it?" />
+    <RevealTitle text="Ready to play with it?" follow={follow} part={[0.86, 0.98]} />
     <p class="cta-text">Read the guide, then try every demo on the page.</p>
     <div class="cta-actions">
       <a
