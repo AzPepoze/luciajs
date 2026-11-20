@@ -1,10 +1,10 @@
 <script>
 import { props } from "lucia";
 import type { ApiEntry } from "../../../../reference/api.ts";
+import { guidePath, pageLink, referencePath } from "../page-link.ts";
 import {
   flattenMembers,
   languageOf,
-  referenceLink,
   searchText,
   wrapSignature,
 } from "../reference-model.ts";
@@ -28,7 +28,7 @@ const members = flattenMembers(shown.members);
 const language = languageOf(shown);
 const signature = wrapSignature(shown.signature);
 const search = searchText(shown);
-const anchor = location.origin + referenceLink(shown.id);
+const anchor = location.origin + pageLink(referencePath, shown.id);
 </script>
 
 <article
@@ -98,7 +98,7 @@ const anchor = location.origin + referenceLink(shown.id);
   </details>
 
   <footer class="ref-foot">
-    <a class="ref-guide" href={"/guide#" + shown.id}>
+    <a class="ref-guide" href={pageLink(guidePath, shown.id)}>
       Guide <span aria-hidden="true">→</span>
     </a>
   </footer>

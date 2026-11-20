@@ -5,7 +5,6 @@ import {
   groupEntries,
   kindsOf,
   matchesFilter,
-  referenceLink,
   searchText,
   wrapSignature,
 } from "./reference-model.ts";
@@ -106,11 +105,5 @@ describe("filter", () => {
   test("lists each kind once", () => {
     const kinds = kindsOf([entry("a"), entry("b", { kind: "value" }), entry("c")]);
     expect(kinds).toEqual(["function", "value"]);
-  });
-});
-
-describe("referenceLink", () => {
-  test("points at the entry's card on the Reference page", () => {
-    expect(referenceLink("store-from")).toBe("/reference#store-from");
   });
 });

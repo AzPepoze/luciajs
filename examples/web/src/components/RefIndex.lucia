@@ -1,5 +1,6 @@
 <script>
 import { props } from "lucia";
+import { pageLink, referencePath } from "../page-link.ts";
 
 // The index mirrors the Guide sidebar's markup, so both share its styles and scripts.
 interface IndexLink {
@@ -32,7 +33,7 @@ const { groups } = props({ groups: [] as IndexGroup[] });
       <div>
         <nav class="nav-links" aria-label={group.label}>
           <EACH {group.links} as={link}>
-            <a href={"#" + link.id} data-ref-link={link.id}>
+            <a href={pageLink(referencePath, link.id)} data-ref-link={link.id}>
               <span class="material-symbols-rounded" aria-hidden="true">{link.icon}</span>
               <code class="nav-label">{link.name}</code>
             </a>

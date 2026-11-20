@@ -3,7 +3,7 @@ import { keepInView } from "./sidebar-follow.ts";
 // Px from the top of the viewport where a section or demo becomes current. Below the scroll margin, so a clicked target is current.
 const SPY_LINE_PX = 200;
 
-// The CSS selectors of the page's section and demo targets. Each target's id matches a sidebar link's href.
+// The CSS selectors of the page's section and demo targets. Each target's id matches the hash of a sidebar link.
 export interface SpyTargets {
   sections: string;
   demos?: string;
@@ -82,7 +82,7 @@ function atPageBottom(): boolean {
 function groupLinksById(sidebar: HTMLElement): Map<string, HTMLAnchorElement[]> {
   const map = new Map<string, HTMLAnchorElement[]>();
   for (const link of sidebar.querySelectorAll<HTMLAnchorElement>("a")) {
-    const id = link.getAttribute("href")!.slice(1);
+    const id = link.hash.slice(1);
     map.set(id, [...(map.get(id) ?? []), link]);
   }
   return map;

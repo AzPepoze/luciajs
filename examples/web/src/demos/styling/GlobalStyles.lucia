@@ -9,7 +9,7 @@
     <code>@global</code> block.
   </p>
   <p class="frame">
-    Form 3: <a href="#global-styles">this link</a> is styled by an inline
+    Form 3: <a href="/guide#style-global-rules">this link</a> is styled by an inline
     <code>:global(a)</code> inside a scoped selector.
   </p>
 </div>

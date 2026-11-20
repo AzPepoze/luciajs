@@ -56,11 +56,6 @@ export function languageOf(entry: ApiEntry): string {
   return entry.kind === "function" ? "typescript" : "lucia";
 }
 
-// The path of an entry on the Reference page. Used by the anchor button and the deep links.
-export function referenceLink(id: string): string {
-  return `/reference#${id}`;
-}
-
 // Puts each parameter on its own line when the signature is long. Short signatures stay on one line.
 export function wrapSignature(signature: string): string {
   if (signature.length <= WRAP_AT) return signature;
