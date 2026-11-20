@@ -9,11 +9,11 @@ import { mount, resetMounts, unmount } from "../dom/fixtures/mount.ts";
 beforeEach(resetVariable);
 afterEach(resetMounts);
 
-describe("variable.onUpdate", () => {
+describe("variable.autoRun", () => {
   test("runs once right away", () => {
     const count = variable(0);
     let runs = 0;
-    variable.onUpdate(function countRuns() {
+    variable.autoRun(function countRuns() {
       runs++;
       count.value;
     });
@@ -24,7 +24,7 @@ describe("variable.onUpdate", () => {
     const read = variable(0);
     const unrelated = variable(0);
     let runs = 0;
-    variable.onUpdate(function readOne() {
+    variable.autoRun(function readOne() {
       runs++;
       read.value;
     });
@@ -40,7 +40,7 @@ describe("variable.onUpdate", () => {
     const base = variable(1);
     const doubled = variable.compute(() => base.value * 2);
     const seen: number[] = [];
-    variable.onUpdate(function recordDoubled() {
+    variable.autoRun(function recordDoubled() {
       seen.push(doubled.value);
     });
 
@@ -53,7 +53,7 @@ describe("variable.onUpdate", () => {
     const a = variable("a");
     const b = variable("b");
     let runs = 0;
-    variable.onUpdate(function pickOne() {
+    variable.autoRun(function pickOne() {
       runs++;
       return useA.value ? a.value : b.value;
     });
@@ -71,7 +71,7 @@ describe("variable.onUpdate", () => {
   test("stop function ends the updates", () => {
     const count = variable(0);
     let runs = 0;
-    const stop = variable.onUpdate(function countRuns() {
+    const stop = variable.autoRun(function countRuns() {
       runs++;
       count.value;
     });
@@ -86,7 +86,7 @@ describe("variable.onUpdate", () => {
     const first = variable(0);
     const second = variable(0);
     const third = variable(0);
-    variable.onUpdate(function writeThree() {
+    variable.autoRun(function writeThree() {
       const next = trigger.value;
       first.value = next;
       second.value = next;

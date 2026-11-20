@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { variable } from "@runtime/variable/variable.ts";
 
-describe("variable.onUpdate on one variable", () => {
+describe("count.onUpdate on one variable", () => {
   test("runs at start with before undefined", () => {
     const count = variable(3);
     const calls: unknown[][] = [];
@@ -77,11 +77,11 @@ describe("get and set", () => {
     const count = variable(0);
     let tracked = 0;
     let untracked = 0;
-    variable.onUpdate(() => {
+    variable.autoRun(() => {
       tracked++;
       count.get();
     });
-    variable.onUpdate(() => {
+    variable.autoRun(() => {
       untracked++;
       count.peek();
     });

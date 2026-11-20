@@ -18,7 +18,7 @@ export function mountPlayground(stage: HTMLElement, signal: AbortSignal): void {
   preview = new Preview(stage, (message) => {
     runtimeErrors.value = [{ message }];
   });
-  const stop = variable.onUpdate(() => {
+  const stop = variable.autoRun(() => {
     saveFiles(files.value);
     if (autoRun.value) scheduleRun();
   });

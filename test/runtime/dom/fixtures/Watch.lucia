@@ -3,7 +3,7 @@ import { variable } from "lucia";
 import { events } from "./log.ts";
 import { state } from "./state.ts";
 
-variable.onUpdate(function recordCount() {
+variable.autoRun(function recordCount() {
   events.push(`count ${state.count.value}`);
 });
 </script>

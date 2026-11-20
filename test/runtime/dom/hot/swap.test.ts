@@ -77,7 +77,7 @@ function bump() { count.value += 1; }
       "Effects",
       COUNTER(
         "{count}",
-        'variable.onUpdate(() => { globalThis.hotLog.push("one " + count.value); });',
+        'variable.autoRun(() => { globalThis.hotLog.push("one " + count.value); });',
       ),
     );
     const target = mount(first);
@@ -89,7 +89,7 @@ function bump() { count.value += 1; }
         "Effects",
         COUNTER(
           "{count}",
-          'variable.onUpdate(() => { globalThis.hotLog.push("two " + count.value); });',
+          'variable.autoRun(() => { globalThis.hotLog.push("two " + count.value); });',
         ),
       ),
     );

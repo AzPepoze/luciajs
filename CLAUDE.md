@@ -31,8 +31,8 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 
 ## Design direction
 
-- Public API names use the simplest common English words, for beginners and non-native English developers (`variable`, `variable.compute`, `variable.onUpdate`, not `signal`, `derive`, `effect`). Avoid jargon and long words in names, errors and docs.
-- Use "update", never "change", in public names and docs (`variable.onUpdate`, `count.onUpdate`, `UpdateOptions`, `AnimateDefaultUpdate`). The DOM `change` event keeps its name.
+- Public API names use the simplest common English words, for beginners and non-native English developers (`variable`, `variable.compute`, `variable.autoRun`, not `signal`, `derive`, `effect`). Avoid jargon and long words in names, errors and docs.
+- Use "update", never "change", in public names and docs (`variable.watch`, `count.onUpdate`, `UpdateOptions`, `AnimateDefaultUpdate`). The DOM `change` event keeps its name.
 - Reuse the words the API already uses. A new option for the same idea takes the same word, with a prefix for the variant: `duration` -> `outDuration`, `turnDuration`; `style`/`ease` -> `turnStyle`/`turnEase`. Never introduce a synonym (`time`, `length`, `curve`, `transition`) for an existing word.
 - The user designs the markup syntax. Do not invent new syntax, and do not borrow Svelte's (`{#if}`, `on:`, runes, `export let`).
 - Deferred until designed with the user: SSR, hydration.

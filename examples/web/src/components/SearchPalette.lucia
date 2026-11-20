@@ -29,7 +29,7 @@ const backdrop = {
 };
 
 // Focus follows the open state: opening focuses the field, closing leaves it.
-variable.onUpdate(() => {
+variable.autoRun(() => {
   if (searchOpen.value) field.value?.focus();
   else field.value?.blur();
 });

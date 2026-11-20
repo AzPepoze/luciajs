@@ -49,7 +49,7 @@ If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](docs/
 | [Components](docs/components.md)     | The `.lucia` file: script, props, markup with `{}`, child components, scoped SCSS, attaching |
 | [Events and bind](docs/events.md)    | `onclick={fn}`, two-way `bind` for form fields, `bind-element`                               |
 | [Flow](docs/flow.md)                 | `<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>` and `<FOR>`                                           |
-| [Variable](docs/variable.md)               | State, derived values, `variable.onUpdate` and shared variables                                    |
+| [Variable](docs/variable.md)               | State, derived values, `variable.autoRun` and shared variables                                    |
 | [Animate](docs/animate.md)           | The `animate` attribute: keyframes, triggers, easings, presets and leave                     |
 | [Development](docs/development.md)   | Commands, tests, repo layout                                                                 |
 | [Architecture](docs/architecture.md) | How the compiler and runtime work                                                            |
