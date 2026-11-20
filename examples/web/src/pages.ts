@@ -7,9 +7,6 @@ import { initReferenceFilter } from "./reference-filter.ts";
 import { initScrollSpy } from "./scroll-spy.ts";
 import { initSidebarFollow } from "./sidebar-follow.ts";
 import type { PageSpec } from "./router.ts";
-import Guide from "./pages/Guide.lucia";
-import Home from "./pages/Home.lucia";
-import Reference from "./pages/Reference.lucia";
 import { playgroundPath } from "./page-link.ts";
 
 // The Guide's wiring starts when the page attaches and stops when the signal aborts.
@@ -49,21 +46,21 @@ export const pageSpecs: PageSpec[] = [
     path: "/",
     route: "home",
     title: "LuciaJS",
-    load: () => Promise.resolve(Home),
+    load: () => import("./pages/Home.lucia").then((module) => module.default),
     mount: mountHome,
   },
   {
     path: "/guide",
     route: "guide",
     title: "Guide · LuciaJS",
-    load: () => Promise.resolve(Guide),
+    load: () => import("./pages/Guide.lucia").then((module) => module.default),
     mount: mountGuide,
   },
   {
     path: "/reference",
     route: "reference",
     title: "Reference · LuciaJS",
-    load: () => Promise.resolve(Reference),
+    load: () => import("./pages/Reference.lucia").then((module) => module.default),
     mount: mountReference,
   },
   {

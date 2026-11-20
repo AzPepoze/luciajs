@@ -1,0 +1,50 @@
+<script>
+import { lazy, variable } from "lucia";
+import LazySpinner from "./LazySpinner.lucia";
+
+const shown = variable(false);
+
+// The wait stands in for a slow network, so the fallback is visible.
+function loadChart() {
+  const wait = new Promise((done) => setTimeout(done, 1500));
+  return wait.then(() => import("./LazyChart.lucia"));
+}
+
+const Chart = lazy(loadChart, { fallback: LazySpinner });
+
+function show() {
+  shown.value = true;
+}
+
+function hide() {
+  shown.value = false;
+}
+</script>
+
+<div class="lazy-demo">
+  <div class="actions">
+    <button onclick={show} type="button">Show chart</button>
+    <button onclick={hide} type="button">Hide chart</button>
+  </div>
+  <IF {shown}>
+    <Chart />
+  </IF>
+</div>
+
+<style>
+@use "../../styles/demo" as demo;
+
+.lazy-demo {
+  display: grid;
+  gap: 0.75rem;
+  color: var(--fg);
+
+  .actions {
+    @include demo.row;
+  }
+
+  button {
+    @include demo.button;
+  }
+}
+</style>
