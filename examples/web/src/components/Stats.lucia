@@ -56,7 +56,7 @@ function setup(root: Element) {
 
 <section class="stats-section">
   <div animate={titleSlide}>
-    <RevealTitle text="Made with LuciaJS" />
+    <RevealTitle text="Made with LuciaJS" follow={follow} part={[0.7, 0.8]} />
   </div>
   <div class="stats">
     <EACH {stats} as="{stat}">
