@@ -46,12 +46,23 @@ describe("PRESET", () => {
 
   test("presets that move different properties keep all of them", () => {
     const timelines = ownTimelines([
-      prepareTimeline(PRESET.SLIDE_UP),
-      prepareTimeline(PRESET.ZOOM),
+      { timeline: prepareTimeline(PRESET.SLIDE_UP), detach: false },
+      { timeline: prepareTimeline(PRESET.ZOOM), detach: false },
     ]);
     expect(timelines.map((timeline) => timeline.props)).toEqual([
       ["translate", "opacity"],
       ["scale"],
+    ]);
+  });
+
+  test("a DETACH item does not take the properties of an enter item", () => {
+    const timelines = ownTimelines([
+      { timeline: prepareTimeline(PRESET.SLIDE_UP), detach: false },
+      { timeline: prepareTimeline(PRESET.FADE), detach: true },
+    ]);
+    expect(timelines.map((timeline) => timeline.props)).toEqual([
+      ["translate", "opacity"],
+      ["opacity"],
     ]);
   });
 });
