@@ -2,8 +2,8 @@ import type { ViewSettings } from "./view-options.ts";
 
 export type ViewChange = (inView: boolean, stop: () => void) => void;
 
-// The browser reports at each step, so the share is checked finely even for a tall element.
-const STEPS = 1000;
+// A 1% step is finer than any amount needs. Each step is a callback per observed element.
+const STEPS = 100;
 const STEP_RATIOS = Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS);
 
 /** One IntersectionObserver for every element with the same rootMargin and amount. */
