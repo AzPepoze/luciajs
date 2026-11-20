@@ -86,14 +86,16 @@ suite("Playground page", () => {
   );
 
   test(
-    "shows one bar and the mounted starter preview",
+    "shows one bar and the preview behind its tab",
     async () => {
       const page = await openPlayground(DESKTOP);
       expect(await page.locator(".play-bar").count()).toBe(1);
       expect(await page.locator(".code-head").count()).toBe(0);
       expect(await page.locator(".play-work > section").count()).toBe(2);
       expect(await page.locator(".play-editor .cm-editor").isVisible()).toBe(true);
-      expect(await page.locator(".play-preview .play-stage").isVisible()).toBe(true);
+      expect(await page.locator(".play-preview").isVisible()).toBe(false);
+      await page.locator(".play-views").getByRole("button", { name: "Preview" }).click();
+      await page.locator(".play-preview").waitFor({ state: "visible" });
       const frame = page.frameLocator(SHOWN_FRAME);
       await frame.locator("h1").waitFor({ state: "visible", timeout: 15_000 });
       expect((await frame.locator("h1").textContent())?.trim()).toBe("Counter");
@@ -106,7 +108,6 @@ suite("Playground page", () => {
     "opens the problems panel from the status bar after a compile error",
     async () => {
       const page = await openPlayground(DESKTOP);
-      await page.locator(SHOWN_FRAME).waitFor({ timeout: 15_000 });
       // Line 4 of the starter is `const count = variable(0);`, so this breaks it.
       await page.locator(".cm-content").click();
       await page.keyboard.press("Control+Home");
