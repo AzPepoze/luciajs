@@ -1,7 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { lintLusia } from "@language/lint.ts";
+import { lintLusia, type LintOptions } from "@language/lint.ts";
+import { applyFixes } from "@language/lint/fixes.ts";
 import { parsePropDefs, type PropDef } from "@language/props.ts";
 
 const BADGE = join(import.meta.dir, "../editors/fixtures/lint/badge.lusia");
@@ -12,8 +13,8 @@ function childProps(name: string): PropDef[] | undefined {
   return name === "Badge" ? BADGE_PROPS : undefined;
 }
 
-function codes(source: string): string[] {
-  return lintLusia(source, childProps).map((issue) => issue.code);
+function codes(source: string, options?: LintOptions): string[] {
+  return lintLusia(source, childProps, options).map((issue) => issue.code);
 }
 
 describe("lint rules", () => {
@@ -26,6 +27,7 @@ describe("lint rules", () => {
         message: '"Badge" is imported but never used as a tag',
         severity: "warning",
         code: "unused-import",
+        fix: { start: 9, end: 44, text: "" },
       },
     ]);
   });
@@ -187,5 +189,72 @@ describe("flow and bind-value lint rules", () => {
     expect(codes("<div animate={{ when: WHEN.VIEW, more: { start: 0.2 } }}>")).not.toContain(
       "scroll-numeric-line",
     );
+  });
+});
+
+describe("lint options", () => {
+  test("a configured level overrides the rule's own severity", () => {
+    const issues = lintLusia('<div animate="fade">x</div>', childProps, {
+      rules: { "animate-keyframes": "warn" },
+    });
+    expect(issues.map((issue) => issue.severity)).toEqual(["warning"]);
+    expect(
+      lintLusia("<p>{ }</p>", childProps, { rules: { "empty-expression": "error" } }).map(
+        (issue) => issue.severity,
+      ),
+    ).toEqual(["error"]);
+  });
+
+  test("off skips the rule", () => {
+    expect(codes('<div animate="fade">x</div>', { rules: { "animate-keyframes": "off" } })).toEqual(
+      [],
+    );
+    expect(codes(`${BADGE_IMPORT}<p>hi</p>`, { rules: { "unused-import": "off" } })).toEqual([]);
+  });
+
+  test("an empty settings object keeps the defaults", () => {
+    expect(codes('<div animate="fade">x</div>', { rules: {} })).toEqual(["animate-keyframes"]);
+  });
+});
+
+describe("lint disable comments", () => {
+  test("disable-next-line hides the finding on the next line only", () => {
+    const source =
+      "<p>{ }</p>\n<!-- lusia-lint-disable-next-line empty-expression -->\n<p>{ }</p>\n";
+    expect(lintLusia(source, childProps).map((issue) => issue.line)).toEqual([1]);
+  });
+
+  test("disable hides the rest of the file", () => {
+    const source = "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<p>{ }</p>\n";
+    expect(lintLusia(source, childProps)).toEqual([]);
+  });
+
+  test("a disable comment names only its rules", () => {
+    const source = "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<ELSE>\n</ELSE>\n";
+    expect(codes(source)).toEqual(["flow-chain"]);
+  });
+
+  test("a disable comment with no code turns every rule off", () => {
+    const source = "<!-- lusia-lint-disable -->\n<p>{ }</p>\n<ELSE>\n</ELSE>\n";
+    expect(lintLusia(source, childProps)).toEqual([]);
+  });
+
+  test("disableComments: false ignores the comments", () => {
+    const source = "<!-- lusia-lint-disable -->\n<p>{ }</p>\n";
+    expect(codes(source, { disableComments: false })).toEqual(["empty-expression"]);
+  });
+});
+
+describe("lint fixes", () => {
+  test("unused-import removes the whole import line", () => {
+    const source = `${BADGE_IMPORT}<p>hi</p>`;
+    expect(applyFixes(source, lintLusia(source, childProps))).toBe(
+      "<script>\n</script>\n<p>hi</p>",
+    );
+  });
+
+  test("a finding with no fix leaves the source alone", () => {
+    const source = "<p>{ }</p>";
+    expect(applyFixes(source, lintLusia(source, childProps))).toBe(source);
   });
 });
