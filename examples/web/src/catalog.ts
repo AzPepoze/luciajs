@@ -21,6 +21,12 @@ import keyframeDefaultSource from "./demos/motion/KeyframeDefault.lucia?raw";
 import presetsSource from "./demos/motion/Presets.lucia?raw";
 import Attach from "./demos/components/Attach.lucia";
 import Components from "./demos/components/Components.lucia";
+import FileTree from "./demos/components/FileTree.lucia";
+import CommentThread from "./demos/components/CommentThread.lucia";
+import fileTreeSource from "./demos/components/FileTree.lucia?raw";
+import folderSource from "./demos/components/Folder.lucia?raw";
+import commentThreadSource from "./demos/components/CommentThread.lucia?raw";
+import commentSource from "./demos/components/Comment.lucia?raw";
 import Props from "./demos/components/Props.lucia";
 import Batch from "./demos/reactivity/Batch.lucia";
 import Variable from "./demos/reactivity/Variable.lucia";
@@ -306,6 +312,31 @@ export const catalog: Record<string, CatalogEntry> = {
         sources: [
           { path: "src/demos/components/Components.lucia", text: componentsSource },
           { path: "src/demos/components/badge.lucia", text: badgeSource },
+        ],
+      },
+    ],
+  },
+  "recursive-components": {
+    icon: "folder",
+    demos: [
+      {
+        id: "recursive-files",
+        title: "File tree",
+        caption: "Folder.lucia places itself for each child folder. Click a folder to fold it.",
+        components: [FileTree],
+        sources: [
+          { path: "src/demos/components/FileTree.lucia", text: fileTreeSource },
+          { path: "src/demos/components/Folder.lucia", text: folderSource },
+        ],
+      },
+      {
+        id: "recursive-comments",
+        title: "Nested comments",
+        caption: "Each reply is a Comment inside a Comment. The depth prop stops it at 3.",
+        components: [CommentThread],
+        sources: [
+          { path: "src/demos/components/CommentThread.lucia", text: commentThreadSource },
+          { path: "src/demos/components/Comment.lucia", text: commentSource },
         ],
       },
     ],
