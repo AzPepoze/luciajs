@@ -50,17 +50,20 @@ interface Layout {
   scrollHeight: number;
   innerHeight: number;
   mainHeight: number;
+  stripHeight: number;
   topbarHeight: number;
 }
 
 function readLayout(page: Page): Promise<Layout> {
   return page.evaluate(() => {
     const main = document.querySelector<HTMLElement>("main.playground");
+    const strip = document.querySelector<HTMLElement>(".status-strip");
     const topbar = document.querySelector<HTMLElement>(".topbar");
     return {
       scrollHeight: document.documentElement.scrollHeight,
       innerHeight: window.innerHeight,
       mainHeight: main?.getBoundingClientRect().height ?? -1,
+      stripHeight: strip?.getBoundingClientRect().height ?? -1,
       topbarHeight: topbar?.getBoundingClientRect().height ?? -1,
     };
   });
@@ -68,7 +71,7 @@ function readLayout(page: Page): Promise<Layout> {
 
 function expectNoScroll(layout: Layout): void {
   expect(layout.scrollHeight).toBeLessThanOrEqual(layout.innerHeight + 1);
-  const available = layout.innerHeight - layout.topbarHeight;
+  const available = layout.innerHeight - layout.stripHeight - layout.topbarHeight;
   expect(Math.abs(layout.mainHeight - available)).toBeLessThanOrEqual(1);
 }
 
@@ -77,7 +80,7 @@ suite("Playground page", () => {
     "owns the viewport on a desktop screen",
     async () => {
       const page = await openPlayground(DESKTOP);
-      expect(await page.locator(".status-strip").isVisible()).toBe(false);
+      expect(await page.locator(".status-strip").isVisible()).toBe(true);
       expect(await page.locator(".site-footer").isVisible()).toBe(false);
       expectNoScroll(await readLayout(page));
       await page.close();
