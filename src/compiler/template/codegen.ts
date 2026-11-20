@@ -1,3 +1,4 @@
+import { hotStores } from "../hot/stores.ts";
 import { markLines } from "../sourcemap/marker.ts";
 import { GenContext, type GenOptions } from "./codegen-context.ts";
 import type { Template } from "./types.ts";
@@ -34,6 +35,12 @@ const RUNTIME_IMPORT = `import {
   type Rendered as __Rendered,
 } from "lucia/internal";`;
 
+// Dev builds only: the hot registry that lets `lucia dev` swap a component in place.
+const HOT_IMPORT = `import {
+  hotComponent as __hotComponent,
+  hotStore as __hotStore,
+} from "lucia/internal";`;
+
 function renderFunction(body: string, bodyLine: number, fragment: string): string {
   return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[]): __Rendered {
 ${markLines(body, bodyLine)}
@@ -58,9 +65,15 @@ export function generate({
   return [
     imports,
     RUNTIME_IMPORT,
+    ...(dev ? [HOT_IMPORT] : []),
     `const __css = ${JSON.stringify(css)};`,
     ...ctx.declarations,
-    renderFunction(body, bodyLine, fragment),
-    `export default __defineComponent(${JSON.stringify(id)}, __css, __render);`,
+    renderFunction(dev ? hotStores(body) : body, bodyLine, fragment),
+    exportLine(id, dev),
   ].join("\n");
+}
+
+function exportLine(id: string, dev: boolean): string {
+  const define = dev ? "__hotComponent" : "__defineComponent";
+  return `export default ${define}(${JSON.stringify(id)}, __css, __render);`;
 }
