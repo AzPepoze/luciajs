@@ -9,7 +9,7 @@
 A small UI framework for [Bun](https://bun.sh). You write components as single `.lusia` files: TypeScript, HTML and scoped SCSS. The page updates through variables.
 
 > [!NOTE]
-> Markup has `{expression}`, events, two-way `bind`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
+> Markup has `{expression}`, events, two-way `bind-value`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
 
 ```html
 <script>

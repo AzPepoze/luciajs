@@ -15,7 +15,9 @@ describe("error codes", () => {
 
 describe("fill", () => {
   test("replaces each $name with its value", () => {
-    expect(fill("$attr needs {variable}", { attr: "bind" })).toBe("bind needs {variable}");
+    expect(fill("$attr needs {variable}", { attr: "bind-value" })).toBe(
+      "bind-value needs {variable}",
+    );
   });
 
   test("leaves a $name without a value as it is", () => {

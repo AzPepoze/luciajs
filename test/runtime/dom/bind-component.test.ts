@@ -10,7 +10,7 @@ function type(input: HTMLInputElement, value: string): void {
   input.dispatchEvent(new Event("input"));
 }
 
-describe("bind on a component", () => {
+describe("bind-value on a component", () => {
   test("the child's input writes back to the parent's variable", () => {
     const el = host();
     mount(BoundField, el);
@@ -31,7 +31,7 @@ describe("bind on a component", () => {
     expect(first!.value).toBe("Grace");
   });
 
-  test("bind on its own binds the value prop", () => {
+  test("bind-value on its own binds the value prop", () => {
     const el = host();
     mount(BoundField, el);
     const [, second] = el.querySelectorAll("input") as NodeListOf<HTMLInputElement>;

@@ -110,12 +110,12 @@ describe("reference api table", () => {
   });
 });
 
-describe("reference api: flow, events and bind", () => {
-  test("covers the flow tags, events and bind entries", () => {
+describe("reference api: flow, events and bind-value", () => {
+  test("covers the flow tags, events and bind-value entries", () => {
     const ids = api.map((entry) => entry.id);
     for (const id of [
       "event",
-      "bind",
+      "bind-value",
       "bind-prop",
       "bind-element",
       "if",

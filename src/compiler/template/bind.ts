@@ -1,25 +1,25 @@
 import { expressionOf } from "./attributes.ts";
 import type { AttrBinding, BindBinding, ComponentBind, Expr } from "./types.ts";
 
-export const BIND_NAME = /^bind(-[a-z][a-z-]*)?$/;
+export const BIND_NAME = /^bind-[a-z][a-z-]*$/;
 
-/** Form tags where a plain `bind` knows which property to use. */
+/** Form tags where `bind-value` knows which property to use. */
 export const FORM_TAGS: ReadonlySet<string> = new Set(["input", "textarea", "select"]);
 
 export function isBindName(name: string): boolean {
-  return name === "bind" || name.startsWith("bind-");
+  return name.startsWith("bind-");
 }
 
 export function bindBinding(name: string, expr: Expr): BindBinding {
-  if (name === "bind") return { kind: "input", expr };
+  if (name === "bind-value") return { kind: "input", expr };
   const suffix = name.slice("bind-".length);
   if (suffix === "element") return { kind: "element", expr };
   return { kind: "prop", prop: toCamel(suffix), expr };
 }
 
-/** The prop a component attribute sets. `bind` sets `value`, as on a form field. `bind-<prop>` sets `<prop>`. */
+/** The prop a component attribute sets. `bind-value` sets `value`, as on a form field. `bind-<prop>` sets `<prop>`. */
 export function componentPropName(name: string): string {
-  if (name === "bind") return "value";
+  if (name === "bind-value") return "value";
   if (name.startsWith("bind-")) return toCamel(name.slice("bind-".length));
   return name;
 }

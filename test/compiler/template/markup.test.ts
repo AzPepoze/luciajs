@@ -75,15 +75,15 @@ describe("events", () => {
   });
 });
 
-describe("bind", () => {
-  test("bind on an input picks its property later, at attach", () => {
-    const { bindings } = compileTemplate("<input bind={name} />", FILE);
+describe("bind-value", () => {
+  test("bind-value on an input picks its property later, at attach", () => {
+    const { bindings } = compileTemplate("<input bind-value={name} />", FILE);
     expect(bindings).toEqual([
       {
         kind: "element",
         attrs: [],
         events: [],
-        binds: [{ kind: "input", expr: { code: "name", line: 1, column: 14 } }],
+        binds: [{ kind: "input", expr: { code: "name", line: 1, column: 20 } }],
       },
     ]);
   });
@@ -112,26 +112,28 @@ describe("bind", () => {
     ]);
   });
 
-  test("bind works only on input, textarea and select", () => {
-    const error = catchError(() => compileTemplate("<div bind={x}></div>", FILE));
+  test("bind-value works only on input, textarea and select", () => {
+    const error = catchError(() => compileTemplate("<div bind-value={x}></div>", FILE));
     expect(error.code).toBe("L1024");
-    expect(error.message).toBe("bind works on input, textarea and select");
+    expect(error.message).toBe("bind-value works on input, textarea and select");
     expect(error.line).toBe(1);
     expect(error.column).toBe(6);
   });
 
-  test("bind needs one {variable}", () => {
-    expect(() => compileTemplate("<input bind />", FILE)).toThrow("bind needs {variable}");
+  test("bind-value needs one {variable}", () => {
+    expect(() => compileTemplate("<input bind-value />", FILE)).toThrow(
+      "bind-value needs {variable}",
+    );
   });
 
-  test("bind on a component tag is the value prop, written back to the variable", () => {
-    const { bindings } = compileTemplate("<badge bind={x} />", FILE, 1, new Set(["badge"]));
+  test("bind-value on a component tag is the value prop, written back to the variable", () => {
+    const { bindings } = compileTemplate("<badge bind-value={x} />", FILE, 1, new Set(["badge"]));
     expect(bindings).toEqual([
       {
         kind: "component",
         name: "badge",
         props: [],
-        binds: [{ prop: "value", attr: "bind", expr: { code: "x", line: 1, column: 14 } }],
+        binds: [{ prop: "value", attr: "bind-value", expr: { code: "x", line: 1, column: 20 } }],
       },
     ]);
   });
@@ -165,9 +167,9 @@ describe("bind", () => {
     ).toThrow("bind-element works on elements only");
   });
 
-  test("bind on a component tag needs one {variable}", () => {
-    expect(() => compileTemplate("<badge bind />", FILE, 1, new Set(["badge"]))).toThrow(
-      "bind needs {variable}",
+  test("bind-value on a component tag needs one {variable}", () => {
+    expect(() => compileTemplate("<badge bind-value />", FILE, 1, new Set(["badge"]))).toThrow(
+      "bind-value needs {variable}",
     );
   });
 });

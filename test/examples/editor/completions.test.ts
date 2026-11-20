@@ -67,9 +67,9 @@ describe("markup completions", () => {
     expect(labelsOf(items)).toEqual(expect.arrayContaining(["animate", "onclick", "bind-element"]));
   });
 
-  test("on an input, also offers bind", () => {
+  test("on an input, also offers bind-value", () => {
     const items = completeAt(`<script>\n</script>\n<input |>`);
-    expect(labelsOf(items)).toContain("bind");
+    expect(labelsOf(items)).toContain("bind-value");
   });
 
   test("inside animate={...}, offers the item keys", () => {

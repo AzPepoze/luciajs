@@ -2,9 +2,9 @@
 import { state } from "./state.ts";
 </script>
 
-<input class="text" bind={state.text} />
-<input class="check" type="checkbox" bind={state.checked} />
-<input class="number" type="number" bind={state.number} />
+<input class="text" bind-value={state.text} />
+<input class="check" type="checkbox" bind-value={state.checked} />
+<input class="number" type="number" bind-value={state.number} />
 <input class="off" bind-disabled={state.disabled} />
 <div class="ref" bind-element={state.ref}></div>
 <p class="out">{state.text}</p>

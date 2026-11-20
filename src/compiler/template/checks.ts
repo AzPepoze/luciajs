@@ -11,10 +11,10 @@ const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 function checkBind(tag: string, attr: AttrBinding, fail: Fail): void {
   if (!BIND_NAME.test(attr.name)) fail("L1014");
   if (expressionOf(attr) === undefined) fail("L1015", { attr: attr.name });
-  if (attr.name === "bind" && !FORM_TAGS.has(tag)) fail("L1024");
+  if (attr.name === "bind-value" && !FORM_TAGS.has(tag)) fail("L1024");
 }
 
-/** Elements: `bind`, `animate` and dynamic events each need exactly one {expression}. */
+/** Elements: `bind-value`, `animate` and dynamic events each need exactly one {expression}. */
 export function elementCheck(tag: string): AttrCheck {
   return (attr, previous, fail) => {
     checkAnimateAttribute(attr, previous, fail);

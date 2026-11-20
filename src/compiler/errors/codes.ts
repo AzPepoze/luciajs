@@ -94,8 +94,8 @@ export const CODES = {
     hint: "Use bind-element on an element inside the component, not on its tag.",
   },
   L1024: {
-    message: "bind works on input, textarea and select",
-    hint: "Use bind-value, bind-checked and so on for other elements.",
+    message: "bind-value works on input, textarea and select",
+    hint: "Use bind-<property>, such as bind-checked or bind-open, for other elements.",
   },
   L1025: {
     message: "$attr needs a name in {}, like $attr={item}",

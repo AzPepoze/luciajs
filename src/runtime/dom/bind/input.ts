@@ -45,12 +45,12 @@ function channelFor(el: HTMLElement): Channel {
   return TEXT;
 }
 
-/** `bind={sig}` on a form control: the right property and event for its type. */
+/** `bind-value={sig}` on a form control: the right property and event for its type. */
 export function bindInput(
   el: HTMLElement,
   target: unknown,
   cleanups: Cleanup[],
   where?: string,
 ): void {
-  withWhere(where, () => bindChannel(el, target, channelFor(el), "bind", cleanups));
+  withWhere(where, () => bindChannel(el, target, channelFor(el), "bind-value", cleanups));
 }

@@ -22,7 +22,7 @@ describe("lusiaMarkRanges", () => {
     expect(marks).toContainEqual(["lusia-component", "Badge"]);
   });
 
-  test("marks events, bind and animate attributes", () => {
+  test("marks events, bind-value and animate attributes", () => {
     expect(marks).toContainEqual(["lusia-event", "onclick"]);
     expect(marks).toContainEqual(["lusia-bind", "bind-value"]);
     expect(marks).toContainEqual(["lusia-animate", "animate"]);

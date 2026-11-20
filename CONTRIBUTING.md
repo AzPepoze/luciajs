@@ -60,7 +60,7 @@ TypeScript module  --imports-->  lusia/internal (runtime helpers)
 
 - **Parse** splits script, style and markup. Removed sections keep their newlines so markup line numbers match the source.
 - **Style** compiles each `<style>` with Sass, then adds a scope filter to each selector. The scope id is the FNV-1a hash of the file path.
-- **Template** scans the markup into static HTML plus a list of bindings in document order. Components, flow tags, events and `bind` become bindings.
+- **Template** scans the markup into static HTML plus a list of bindings in document order. Components, flow tags, events and `bind-value` become bindings.
 - **Codegen** writes the module. Imports stay at module level, `export` is a compile error, and the script body runs once per instance.
 
 The compiler replaces each binding with a marker in the HTML (`<!--l-->` comments or `data-l-bind` on an element). Marker names live in `src/runtime/markers.ts`, shared by compiler and runtime. At runtime `createTemplate` parses the HTML and records the path to each marked node, `instantiate` clones it per attach, and one binder per binding wires the node to a `watch()`. Paths and binders are matched by index, so both sides must walk in document order.

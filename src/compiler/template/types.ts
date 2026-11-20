@@ -17,7 +17,7 @@ export interface EventBinding {
   expr: Expr;
 }
 
-/** `bind={sig}` picks the property by element type; the other two name it explicitly. */
+/** `bind-value={sig}` picks the property by element type; the other two name it explicitly. */
 export type BindBinding =
   | { kind: "input"; expr: Expr }
   | { kind: "prop"; prop: string; expr: Expr }
@@ -52,7 +52,7 @@ export interface ElementBinding {
 export interface ComponentBind {
   /** The prop name the child declares, such as `value`. */
   prop: string;
-  /** The attribute as written, for errors: `bind` or `bind-value`. */
+  /** The attribute as written, for errors: `bind-value` or `bind-<prop>`. */
   attr: string;
   expr: Expr;
 }

@@ -51,7 +51,7 @@ describe("onclick", () => {
   });
 });
 
-describe("bind on form controls", () => {
+describe("bind-value on form controls", () => {
   test("a text input reads the variable and writes it back on input", () => {
     const el = host();
     mount(Fields, el);
@@ -162,7 +162,7 @@ describe("bind runtime rules", () => {
         variable.compute(() => "x"),
         cleanups,
       ),
-    ).toThrow("bind needs a writable variable");
+    ).toThrow("bind-value needs a writable variable");
     expect(() => bindProp(input, "value", 5, cleanups)).toThrow(
       "bind-value needs a writable variable",
     );
