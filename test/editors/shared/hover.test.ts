@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { hoverAt, type HoverResult } from "../../../editors/shared/hover.ts";
 import { hoverMarkdown } from "../../../editors/shared/markdown.ts";
+import type { SymbolLookup } from "../../../editors/shared/script/imported-symbols.ts";
+import type { ScriptSymbol } from "../../../editors/shared/script/symbols.ts";
 
 const noProps = () => [];
 
@@ -131,5 +133,60 @@ describe("hover for markup features", () => {
   test("shows nothing on an on-word inside plain text", () => {
     const text = "<p>onclick</p>";
     expect(hoverAt(text, 6, noProps)).toBeUndefined();
+  });
+});
+
+const ADD_SYMBOL: ScriptSymbol = {
+  name: "add",
+  kind: "function",
+  signature: "function add(a: number): void",
+  isDefault: false,
+  doc: "Adds two numbers.",
+  specifier: "./math.ts",
+};
+const symbolsOf: SymbolLookup = (specifier) => (specifier === "./math.ts" ? [ADD_SYMBOL] : []);
+
+describe("hover for script names", () => {
+  test("shows variable.compute on every segment, with the whole range", () => {
+    const text = `<script>\nconst value = variable.compute(() => 0);\n</script>`;
+    const start = text.indexOf("variable.compute");
+    const end = start + "variable.compute".length;
+    for (const offset of [start, start + 1, start + 8, start + 12, end]) {
+      const result = hoverAt(text, offset, noProps);
+      expect(apiId(result)).toBe("variable-compute");
+      expect(result?.range).toEqual({ start, end });
+    }
+  });
+
+  test("shows the enum entry on a nested member in a markup expression, with the whole range", () => {
+    const text = "<p>{EASE.STYLE.QUART}</p>";
+    const start = text.indexOf("EASE");
+    const result = hoverAt(text, text.lastIndexOf("QUART") + 2, noProps);
+    expect(apiId(result)).toBe("ease");
+    expect(result?.range).toEqual({ start, end: start + "EASE.STYLE.QUART".length });
+  });
+
+  test("shows an imported symbol under its alias in the script", () => {
+    const text = `<script>\nimport { add as sum } from "./math.ts";\nconst total = sum(1, 2);\n</script>`;
+    const result = hoverAt(text, text.indexOf("sum") + 1, noProps, symbolsOf);
+    expect(result).toMatchObject({ kind: "symbol", local: "sum" });
+    if (result?.kind !== "symbol") throw new Error("expected a symbol");
+    expect(result.symbol.name).toBe("add");
+    const markdown = hoverMarkdown(result);
+    expect(markdown).toContain("imported as `sum`");
+    expect(markdown).toContain("function add(a: number): void");
+    expect(markdown).toContain("Adds two numbers.");
+  });
+
+  test("shows an imported symbol in a markup expression", () => {
+    const text = `<script>\nimport { add as sum } from "./math.ts";\n</script>\n<p>{sum}</p>`;
+    const result = hoverAt(text, text.lastIndexOf("sum") + 1, noProps, symbolsOf);
+    expect(result).toMatchObject({ kind: "symbol", local: "sum" });
+    expect(hoverMarkdown(result!)).toContain("Adds two numbers.");
+  });
+
+  test("shows nothing on a plain local name", () => {
+    const text = `<script>\nconst count = variable(0);\n</script>`;
+    expect(hoverAt(text, text.indexOf("count") + 2, noProps)).toBeUndefined();
   });
 });

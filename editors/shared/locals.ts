@@ -1,5 +1,5 @@
-import { findApiById } from "./api-lookup.ts";
 import type { CompletionItemData } from "./completion-data.ts";
+import { memberItems, type VariableKind } from "./members.ts";
 
 export interface LocalName {
   name: string;
@@ -11,7 +11,7 @@ const BOUND_LIST = /\b(?:const|let|var)\s*\{([^}]*)\}\s*=/g;
 const DEFAULT_IMPORT = /\bimport\s+([A-Za-z_$][\w$]*)\s+from\b/g;
 const NAMED_IMPORT = /\bimport\s*\{([^}]*)\}\s*from\b/g;
 const VARIABLE_DECLARATION =
-  /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*variable(?:\.compute)?\s*[(<]/g;
+  /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*variable(\.compute)?\s*[(<]/g;
 const PROPS_DESTRUCTURING = /\b(?:const|let|var)\s*\{([^}]*)\}\s*=\s*props\s*\(/g;
 const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 const RECEIVER = /([A-Za-z_$][\w$]*)\.[\w$]*$/;
@@ -50,49 +50,32 @@ export function localItems(script: string, taken: ReadonlySet<string>): Completi
     }));
 }
 
-/** Names that hold a variable: from `variable()`, `variable.compute()` or destructured from `props()`. */
-export function variableNames(script: string): Set<string> {
-  const names = new Set<string>();
-  for (const match of script.matchAll(VARIABLE_DECLARATION)) names.add(match[1] ?? "");
-  for (const match of script.matchAll(PROPS_DESTRUCTURING)) {
-    for (const name of boundNames(match[1] ?? "")) names.add(name);
+/** What each name holds: from `variable()`, `variable.compute()` or destructured from `props()`. */
+export function variableKinds(script: string): Map<string, VariableKind> {
+  const kinds = new Map<string, VariableKind>();
+  const declared = new Map<string, number>();
+  const remember = (name: string, kind: VariableKind, index: number) => {
+    if (index < (declared.get(name) ?? -1)) return;
+    kinds.set(name, kind);
+    declared.set(name, index);
+  };
+  for (const match of script.matchAll(VARIABLE_DECLARATION)) {
+    remember(match[1] ?? "", match[2] ? "computed" : "variable", match.index);
   }
-  return names;
+  for (const match of script.matchAll(PROPS_DESTRUCTURING)) {
+    for (const name of boundNames(match[1] ?? "")) remember(name, "prop", match.index);
+  }
+  return kinds;
 }
 
-/** `.value`, `.get()`, `.set()` and `.peek()` for a variable, described from the Variable entry in reference/api.ts. */
+/** Names that hold a variable: from `variable()`, `variable.compute()` or destructured from `props()`. */
+export function variableNames(script: string): Set<string> {
+  return new Set(variableKinds(script).keys());
+}
+
+/** `.value`, `.get()`, `.set()`, `.peek()` and `.onUpdate()` for a variable. */
 export function variableMemberItems(): CompletionItemData[] {
-  const bullets = findApiById("variable-type")?.bullets ?? [];
-  return [
-    {
-      label: "value",
-      kind: "property",
-      insertText: "value",
-      snippet: false,
-      detail: bullets[0] ?? "",
-    },
-    {
-      label: "get",
-      kind: "function",
-      insertText: "get()",
-      snippet: false,
-      detail: bullets[0] ?? "",
-    },
-    {
-      label: "set",
-      kind: "function",
-      insertText: "set($0)",
-      snippet: true,
-      detail: bullets[0] ?? "",
-    },
-    {
-      label: "peek",
-      kind: "function",
-      insertText: "peek()",
-      snippet: false,
-      detail: bullets[1] ?? "",
-    },
-  ];
+  return memberItems("variable");
 }
 
 /** The identifier before a `.` that the cursor is after, such as `count` in `count.va|`. */

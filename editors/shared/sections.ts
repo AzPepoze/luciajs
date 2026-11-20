@@ -49,3 +49,9 @@ export function sectionAt(text: string, offset: number): Section | undefined {
 export function scriptSection(text: string): Section | undefined {
   return findSections(text).find((section) => section.kind === "script");
 }
+
+/** The `<script>` content, or the whole text when there is no script section. */
+export function scriptSource(text: string): string {
+  const section = scriptSection(text);
+  return section ? text.slice(section.contentStart, section.contentEnd) : text;
+}
