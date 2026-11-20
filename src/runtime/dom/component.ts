@@ -38,7 +38,12 @@ export function currentComponentCleanups(): Cleanup[] | null {
   return currentCleanups;
 }
 
-function renderWith(render: Render, props: Props, cleanups: Cleanup[], leaves: Leave[]): Rendered {
+export function renderWith(
+  render: Render,
+  props: Props,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): Rendered {
   const previousProps = currentProps;
   const previousCleanups = currentCleanups;
   currentProps = props;
@@ -51,7 +56,7 @@ function renderWith(render: Render, props: Props, cleanups: Cleanup[], leaves: L
   }
 }
 
-function runSetup(setup: SetupHook | undefined, root: Node, cleanups: Cleanup[]): void {
+export function runSetup(setup: SetupHook | undefined, root: Node, cleanups: Cleanup[]): void {
   const cleanup = setup?.(root as ParentNode);
   if (typeof cleanup === "function") cleanups.push(cleanup as Cleanup);
 }
