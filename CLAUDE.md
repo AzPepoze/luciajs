@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-LuciaJS: a Bun-native UI framework with single-file `.lucia` components, stores and scoped SCSS.
+LuciaJS: a Bun-native UI framework with single-file `.lucia` components, variables and scoped SCSS.
 
 - Commands and layout: [docs/development.md](docs/development.md)
 - How the compiler and runtime fit together: [docs/architecture.md](docs/architecture.md)
@@ -21,7 +21,7 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 ## Workflow
 
 - The main agent orchestrates only: plan, write exact specs, review and test. Hand all coding, tests and docs edits to Haiku subagents to save tokens.
-- The main agent writes code itself only for the hard core logic (store graph, template scanner, binding order), and says so when it does.
+- The main agent writes code itself only for the hard core logic (variable graph, template scanner, binding order), and says so when it does.
 - Worktrees live in this repo under `.worktrees/` (gitignored), made with `git worktree add .worktrees/<name> -b <branch> dev`. Agents keep screenshots, benchmarks and scripts inside their worktree under `.agent/` (gitignored), never in a scratchpad or `/tmp` copy of the repo. A new worktree runs `git rebase dev` first, because it may start from `main`.
 - Each coding agent works in its own git worktree branched from `dev`, so one agent's half-done edits never break another's build. The main agent reviews, runs `bun run check`, and merges it into `dev`. `main` only gets `dev` when the user says so.
 - Every task the user gives gets a GitHub issue (`gh issue create`) before work starts, one per separate task, so nothing is forgotten. Gaps and follow-ups found during the work get their own issues too. Check open issues (`gh issue list`) at the start of a session and when choosing what to do next. Close an issue with a comment saying what was done only after `bun run check` passes and the change is committed or merged into the dev branch; reference the issue in the commit (`fixes #N`). Finished but uncommitted work keeps the `done-uncommitted` label until then.
@@ -31,7 +31,8 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 
 ## Design direction
 
-- Public API names use the simplest common English words, for beginners and non-native English developers (`store`, `store.from`, `store.onUpdate`, not `signal`, `derive`, `effect`). Avoid jargon and long words in names, errors and docs.
+- Public API names use the simplest common English words, for beginners and non-native English developers (`variable`, `variable.compute`, `variable.onUpdate`, not `signal`, `derive`, `effect`). Avoid jargon and long words in names, errors and docs.
+- Use "update", never "change", in public names and docs (`variable.onUpdate`, `count.onUpdate`, `UpdateOptions`, `AnimateDefaultUpdate`). The DOM `change` event keeps its name.
 - Reuse the words the API already uses. A new option for the same idea takes the same word, with a prefix for the variant: `duration` -> `outDuration`, `turnDuration`; `style`/`ease` -> `turnStyle`/`turnEase`. Never introduce a synonym (`time`, `length`, `curve`, `transition`) for an existing word.
 - The user designs the markup syntax. Do not invent new syntax, and do not borrow Svelte's (`{#if}`, `on:`, runes, `export let`).
 - Deferred until designed with the user: SSR, hydration.
@@ -41,7 +42,7 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 
 ## Project rules
 
-- Domain folders own framework logic (`parse/`, `style/`, `template/`, `store/`, `dom/`).
+- Domain folders own framework logic (`parse/`, `style/`, `template/`, `variable/`, `dom/`).
 - `utils/` only holds helpers used by 2+ domains. Move a helper there when a second domain needs it.
 - One job per file, about 150 lines max.
 - Tests mirror the source folders.
