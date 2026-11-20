@@ -6,6 +6,8 @@ export { attach } from "./dom/attach.ts";
 export { props } from "./dom/props.ts";
 export type { PropVariables } from "./dom/props.ts";
 export type { Component, Instance, Props } from "./dom/component.ts";
+export { lazy } from "./dom/lazy.ts";
+export type { LazyLoad, LazyOptions } from "./dom/lazy.ts";
 export type { EaseStyle } from "./animate/easing.ts";
 export { EASE } from "./animate/modes.ts";
 export type { Ease } from "./animate/modes.ts";

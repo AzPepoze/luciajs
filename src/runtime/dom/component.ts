@@ -61,8 +61,20 @@ export function runSetup(setup: SetupHook | undefined, root: Node, cleanups: Cle
   if (typeof cleanup === "function") cleanups.push(cleanup as Cleanup);
 }
 
+export type Place = Component["place"];
+
+/** Builds the callable form of a component from its `place`. Used by compiled components and by lazy. */
+export function componentFrom(place: Place): Component {
+  const component = (target: Element, props: Props = {}): Instance => {
+    const leaves: Leave[] = [];
+    const remove = place(target, null, props, leaves);
+    return { root: target, detach: () => leaveThen(leaves, remove) };
+  };
+  return Object.assign(component, { place });
+}
+
 export function defineComponent(id: string, css: string, render: Render): Component {
-  function place(parent: Node, anchor: Node | null, props: Props, leaves: Leave[]): Cleanup {
+  return componentFrom((parent, anchor, props, leaves) => {
     injectStyle(id, css);
     const cleanups: Cleanup[] = [];
     const { fragment, setup } = renderWith(render, props, cleanups, leaves);
@@ -73,13 +85,7 @@ export function defineComponent(id: string, css: string, render: Render): Compon
       for (const cleanup of cleanups) cleanup();
       for (const node of nodes) node.remove();
     };
-  }
-  const component = (target: Element, props: Props = {}): Instance => {
-    const leaves: Leave[] = [];
-    const remove = place(target, null, props, leaves);
-    return { root: target, detach: () => leaveThen(leaves, remove) };
-  };
-  return Object.assign(component, { place });
+  });
 }
 
 /** A child's leave animations join the parent's list, so the parent waits for them too. */

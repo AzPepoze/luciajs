@@ -335,6 +335,10 @@ export const CODES = {
     message: "animate more keepSpace must be true or false, got $value",
     hint: "Use true to keep the space, or false to let it close.",
   },
+  L2057: {
+    message: "lazy component failed to load: $message",
+    hint: "Check the import path, and that the file builds. The fallback stays on the page.",
+  },
   L3001: {
     message: '"$name" is not exported by "$module"',
     hint: "Check the name, or see reference/api.ts.",
