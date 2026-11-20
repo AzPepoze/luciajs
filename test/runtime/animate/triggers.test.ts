@@ -252,3 +252,25 @@ describe("a variable or variable.compute value as when", () => {
     expect(opacity()).toBe(1);
   });
 });
+
+describe("looping items off screen", () => {
+  test("a loop stops writing while its element is out of view, and resumes on return", () => {
+    const { el, opacity } = mount({ loop: true });
+    advance(30);
+    observer().report(el, 0);
+    advance(10);
+    const frozen = opacity();
+    advance(200);
+    expect(opacity()).toBe(frozen);
+    observer().report(el, 1);
+    advance(20);
+    expect(opacity()).not.toBe(frozen);
+  });
+
+  test("a one-off play finishes while its element is out of view", () => {
+    const { el, opacity } = mount({});
+    observer().report(el, 0);
+    advance(150);
+    expect(opacity()).toBe(1);
+  });
+});

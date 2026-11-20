@@ -22,6 +22,13 @@ $star: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 
   }
 }
 
+// The scroll-moved layers get their own GPU layer, so a move repaints nothing.
+.bg-rays,
+.bg-dots,
+.bg-sparkles {
+  will-change: translate, rotate;
+}
+
 // Pastel rays around the hero title, the same look the hero had before.
 .bg-rays {
   top: 0;
