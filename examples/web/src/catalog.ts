@@ -57,6 +57,12 @@ import Loops from "./demos/motion/Loops.lucia";
 import enterSource from "./demos/motion/Enter.lucia?raw";
 import boxSource from "./demos/motion/Box.lucia?raw";
 import easingSource from "./demos/motion/Easing.lucia?raw";
+import LayoutCard from "./demos/motion/LayoutCard.lucia";
+import LayoutCorners from "./demos/motion/LayoutCorners.lucia";
+import LayoutList from "./demos/motion/LayoutList.lucia";
+import layoutCardSource from "./demos/motion/LayoutCard.lucia?raw";
+import layoutCornersSource from "./demos/motion/LayoutCorners.lucia?raw";
+import layoutListSource from "./demos/motion/LayoutList.lucia?raw";
 import keysSource from "./demos/motion/Keys.lucia?raw";
 import revealSource from "./demos/motion/Reveal.lucia?raw";
 import loopsSource from "./demos/motion/Loops.lucia?raw";
@@ -448,6 +454,27 @@ export const catalog: Record<string, CatalogEntry> = {
         caption: "Each line plays once as it scrolls into view.",
         components: [Reveal],
         sources: [{ path: "src/demos/motion/Reveal.lucia", text: revealSource }],
+      },
+      {
+        id: "animate-layout-corners",
+        title: "Layout: move",
+        caption: "No keyframes. The box glides when its place changes, from any cause.",
+        components: [LayoutCorners],
+        sources: [{ path: "src/demos/motion/LayoutCorners.lucia", text: layoutCornersSource }],
+      },
+      {
+        id: "animate-layout-list",
+        title: "Layout: reorder",
+        caption: "Rows glide to their new place when the list reorders.",
+        components: [LayoutList],
+        sources: [{ path: "src/demos/motion/LayoutList.lucia", text: layoutListSource }],
+      },
+      {
+        id: "animate-layout-card",
+        title: "Layout: resize",
+        caption: "A card grows and shrinks smoothly when its content opens.",
+        components: [LayoutCard],
+        sources: [{ path: "src/demos/motion/LayoutCard.lucia", text: layoutCardSource }],
       },
       {
         id: "animate-easing",
