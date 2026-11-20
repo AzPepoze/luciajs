@@ -28,6 +28,7 @@ import {
   type KeyBinding,
   lineNumbers,
   rectangularSelection,
+  tooltips,
 } from "@codemirror/view";
 import { htmlCompletionSource } from "@codemirror/lang-html";
 import { highlightSelectionMatches, search, searchKeymap } from "@codemirror/search";
@@ -80,6 +81,8 @@ export function editorExtensions(options: EditorStateOptions): Extension[] {
     languageFor(fileName),
     editorTheme,
     EditorView.lineWrapping,
+    // Popups sit on the page, so the demo card and the editor scroller cannot clip them.
+    tooltips({ parent: document.body, position: "fixed" }),
     options.readOnly.of(readOnlyExtensions(options.readOnlyValue)),
     EditorView.contentAttributes.of({ "aria-label": `Code of ${fileName}` }),
     keymap.of([

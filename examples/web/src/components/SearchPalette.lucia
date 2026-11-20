@@ -28,6 +28,34 @@ const backdrop = {
   duration: 250,
 };
 
+// The results card drops from the box on open and rolls back on close.
+const panelIn = {
+  0: { opacity: 0, translate: "0px -8px", scale: 0.97 },
+  1: { opacity: 1, translate: "0px 0px", scale: 1 },
+};
+const panelOut = {
+  0: { opacity: 1, translate: "0px 0px", scale: 1 },
+  1: { opacity: 0, translate: "0px -8px", scale: 0.97 },
+};
+const panelMotion = [
+  { style: panelIn, when: WHEN.ATTACH, duration: 220, keep: false },
+  { style: panelOut, when: WHEN.DETACH, duration: 160, more: { keepSpace: true } },
+  { when: WHEN.RESIZE, duration: 260 },
+];
+
+// Rows rise in turn. Rows past the twelfth start together, so long lists stay quick.
+const rowIn = {
+  0: { opacity: 0, translate: "0px 6px" },
+  1: { opacity: 1, translate: "0px 0px" },
+};
+const ROW_STEP_MS = 25;
+const MAX_STAGGERED_ROWS = 12;
+
+function rowMotion(index: number) {
+  const stagger = Math.min(index, MAX_STAGGERED_ROWS) * ROW_STEP_MS;
+  return { style: rowIn, when: WHEN.ATTACH, duration: 200, delay: stagger };
+}
+
 // Focus follows the open state: opening focuses the field, closing leaves it.
 variable.autoRun(() => {
   if (searchOpen.value) field.value?.focus();
@@ -64,6 +92,10 @@ function onKey(event: KeyboardEvent) {
       closeSearch();
       break;
   }
+}
+
+function rowClass(index: number): string {
+  return index === active.value ? "search-row is-active" : "search-row";
 }
 
 function activeRow(): HTMLElement | null | undefined {
@@ -120,44 +152,57 @@ function pick(event: MouseEvent, row: Row) {
       </button>
     </div>
 
-    <div class="search-panel" id="search-results" role="listbox" bind-element={list}>
-      <IF {noResults.value}>
-        <p class="search-empty">No results for "{typed.value}". Try one of these:</p>
-      </IF>
-      <EACH {groups.value} as={group}>
-        <section class="search-group">
-          <h3 class="search-group-title">{group.label}</h3>
-          <EACH {group.rows} as={row}>
-            <a
-              class={row.index === active.value ? "search-row is-active" : "search-row"}
-              href={row.href}
-              data-index={row.index}
-              role="option"
-              onclick={(event) => pick(event, row)}
-              onpointerenter={() => setActive(row.index)}
-            >
-              <span class="material-symbols-rounded search-icon" aria-hidden="true"
-                >{row.icon}</span
-              >
-              <span class="search-text">
-                <span class="search-title"><Highlight parts={row.title} /></span>
-                <IF {row.summary.length > 0}>
-                  <span class="search-summary"><Highlight parts={row.summary} /></span>
-                </IF>
-              </span>
-              <IF {row.section !== ""}>
-                <span class="chip search-section">{row.section}</span>
-              </IF>
-            </a>
+    <IF {searchOpen.value}>
+      <div
+        class="search-panel"
+        id="search-results"
+        role="listbox"
+        bind-element={list}
+        animate={panelMotion}
+      >
+        <div class="search-results">
+          <IF {noResults.value}>
+            <p class="search-empty">No results for "{typed.value}". Try one of these:</p>
+          </IF>
+          <EACH {groups.value} as={group}>
+            <section class="search-group">
+              <h3 class="search-group-title">{group.label}</h3>
+              <EACH {group.rows} as={row}>
+                <a
+                  class={rowClass(row.index)}
+                  href={row.href}
+                  data-index={row.index}
+                  role="option"
+                  animate={rowMotion(row.index)}
+                  onclick={(event) => pick(event, row)}
+                  onpointerenter={() => setActive(row.index)}
+                >
+                  <span class="material-symbols-rounded search-icon" aria-hidden="true"
+                    >{row.icon}</span
+                  >
+                  <span class="search-text">
+                    <span class="search-title"><Highlight parts={row.title} /></span>
+                    <IF {row.summary.length > 0}>
+                      <span class="search-summary">
+                        <Highlight parts={row.summary} />
+                      </span>
+                    </IF>
+                  </span>
+                  <IF {row.section !== ""}>
+                    <span class="chip search-section">{row.section}</span>
+                  </IF>
+                </a>
+              </EACH>
+            </section>
           </EACH>
-        </section>
-      </EACH>
-      <p class="search-hint" aria-hidden="true">
-        <kbd>Up</kbd><kbd>Down</kbd> move
-        <kbd>Tab</kbd> next group
-        <kbd>Enter</kbd> open
-        <kbd>Esc</kbd> close
-      </p>
-    </div>
+          <p class="search-hint" aria-hidden="true">
+            <kbd>Up</kbd><kbd>Down</kbd> move
+            <kbd>Tab</kbd> next group
+            <kbd>Enter</kbd> open
+            <kbd>Esc</kbd> close
+          </p>
+        </div>
+      </div>
+    </IF>
   </div>
 </div>

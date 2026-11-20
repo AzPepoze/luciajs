@@ -1,6 +1,16 @@
+import type { Parser } from "@lezer/common";
+import { highlightCode } from "@lezer/highlight";
+import { luciaHighlight } from "./lang/highlight.ts";
+import { luciaLanguage, typescriptLanguage } from "./lang/language.ts";
+
 const FENCE = /^```/;
 const BULLET = /^- /;
 const INLINE = /(\*\*[^*]+\*\*|`[^`]+`)/;
+
+const parsers: Record<string, Parser> = {
+  ts: typescriptLanguage.language.parser,
+  html: luciaLanguage.language.parser,
+};
 
 /**
  * Renders the small Markdown that markdown.ts writes: bold lines, code fences,
@@ -14,7 +24,7 @@ export function docsElement(markdown: string): HTMLElement {
     const line = lines[i] ?? "";
     if (FENCE.test(line)) {
       const code = takeUntil(lines, i + 1, (next) => FENCE.test(next));
-      root.append(codeBlock(code.lines.join("\n")));
+      root.append(codeBlock(code.lines.join("\n"), line.slice(3).trim()));
       i = code.next;
     } else if (BULLET.test(line)) {
       const items = takeWhile(lines, i, (next) => BULLET.test(next));
@@ -27,12 +37,36 @@ export function docsElement(markdown: string): HTMLElement {
   return root;
 }
 
-function codeBlock(code: string): HTMLElement {
+function codeBlock(code: string, language: string): HTMLElement {
   const pre = document.createElement("pre");
   const element = document.createElement("code");
-  element.textContent = code;
+  highlightInto(element, code, language);
   pre.append(element);
   return pre;
+}
+
+/** Colours the code with the editor's parser and highlight style. Unknown languages stay plain. */
+function highlightInto(element: HTMLElement, code: string, language: string): void {
+  const parser = parsers[language];
+  if (!parser) {
+    element.textContent = code;
+    return;
+  }
+  highlightCode(
+    code,
+    parser.parse(code),
+    luciaHighlight,
+    (text, classes) => element.append(styledText(text, classes)),
+    () => element.append("\n"),
+  );
+}
+
+function styledText(text: string, classes: string): Node {
+  if (classes === "") return document.createTextNode(text);
+  const span = document.createElement("span");
+  span.className = classes;
+  span.textContent = text;
+  return span;
 }
 
 function bulletList(items: string[]): HTMLElement {

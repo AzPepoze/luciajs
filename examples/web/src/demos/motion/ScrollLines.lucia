@@ -10,12 +10,20 @@ function meetsAny(rect, line, others) {
   return others.some((other) => meets(rect, lineAt(line), lineAt(other)));
 }
 
+// The window lines are fixed to the screen, so they show only while the demo is on it.
+function isOnScreen(root) {
+  const rect = root.getBoundingClientRect();
+  return rect.bottom > 0 && rect.top < window.innerHeight;
+}
+
 function setup(root) {
   const card = root.querySelector(".card");
   const windowLines = [...root.querySelectorAll(".window-line")];
   const cardLines = [...root.querySelectorAll(".card-line")];
   return onScrollFrame(() => {
     const rect = card.getBoundingClientRect();
+    const onScreen = isOnScreen(root);
+    for (const line of windowLines) line.hidden = !onScreen;
     for (const line of cardLines) {
       line.classList.toggle("lit", meetsAny(rect, line, windowLines));
     }
