@@ -790,7 +790,7 @@ export const api: ApiEntry[] = [
     bullets: [
       'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
       "HOVER: inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
-      "SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE), or follow: a variable of the tall element that drives it. part: [from, to] plays only that slice.",
+      "SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE) on the item's own box. follow: a variable of the element whose box is measured. Alone it is pinned to the screen; with start and end it runs from those points. part: [from, to] plays only that slice, without start and end.",
       "DETACH: keepSpace (default false). true keeps the space the element holds until it is removed; false closes that space with the leave.",
       "Any other trigger that sets more is an error.",
     ],

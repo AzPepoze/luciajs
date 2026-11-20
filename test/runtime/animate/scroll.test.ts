@@ -308,9 +308,26 @@ describe("WHEN.SCROLL follow", () => {
     expect(opacity()).toBe(1);
   });
 
-  test("start and end with follow is an error", () => {
-    expect(() => mountFollow({ start: SCROLL_AT.ENTER })).toThrow(
-      "start and end cannot be used with follow",
+  test("start and end with follow measure the followed box like the item's own box", () => {
+    const short = box(1100, 300);
+    const end = { element: EDGE.TOP, window: 0.33 };
+    const { follow, opacity } = mountFollow({ start: SCROLL_AT.ENTER, end });
+    follow.value = short.el;
+    advance(16);
+    expect(opacity()).toBe(0);
+    short.state.top = 665;
+    document.dispatchEvent(new Event("scroll"));
+    advance(16);
+    expect(opacity()).toBeCloseTo(0.5);
+    short.state.top = 330;
+    document.dispatchEvent(new Event("scroll"));
+    advance(16);
+    expect(opacity()).toBe(1);
+  });
+
+  test("part with start and end on follow is an error", () => {
+    expect(() => mountFollow({ start: SCROLL_AT.ENTER, part: [0, 0.5] })).toThrow(
+      "part cannot be used with start and end",
     );
   });
 

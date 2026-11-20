@@ -84,12 +84,13 @@ function update(): void {
 }
 
 function targetProgress(target: Tracked): number {
-  if (target.scroll.follow) return followedProgress(target.followed);
+  if (target.scroll.follow) return followedProgress(target.followed, target.scroll);
   return scrollProgress(target.el, target.scroll.range);
 }
 
-function followedProgress(el: Element | null): number {
+function followedProgress(el: Element | null, scroll: ScrollRead): number {
   if (el === null) return 0;
+  if (!scroll.pinned) return scrollProgress(el, scroll.range);
   const found = measured.get(el);
   if (found !== undefined) return found;
   const progress = pinnedProgress(el.getBoundingClientRect(), window.innerHeight);
