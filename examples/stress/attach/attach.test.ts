@@ -18,6 +18,11 @@ afterEach(() => {
   resetStore();
 });
 
+// Dev builds add empty text markers around each instance, so leaks are counted without them.
+function contentNodes(target: HTMLElement): ChildNode[] {
+  return [...target.childNodes].filter((node) => node.textContent !== "");
+}
+
 function newTarget(): HTMLElement {
   const target = createTarget("ul");
   targets.push(target);
@@ -30,10 +35,10 @@ describe("attach and detach", () => {
       const target = newTarget();
       const instance = attach(Cell, target);
       const item = target.querySelector("li")!;
-      expect(target.childNodes.length).toBe(1);
+      expect(contentNodes(target).length).toBe(1);
 
       instance.detach();
-      expect(target.childNodes.length).toBe(0);
+      expect(contentNodes(target).length).toBe(0);
       expect(item.isConnected).toBe(false);
     }
   });
@@ -56,6 +61,6 @@ describe("attach and detach", () => {
 
     detachCells(instances);
     instances = [];
-    expect(target.childNodes.length).toBe(0);
+    expect(contentNodes(target).length).toBe(0);
   });
 });
