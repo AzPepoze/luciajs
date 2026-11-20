@@ -89,11 +89,13 @@ import revealSource from "./demos/motion/Reveal.lucia?raw";
 import loopsSource from "./demos/motion/Loops.lucia?raw";
 const Leave = lazy(() => import("./demos/motion/Leave.lucia"));
 const LeaveList = lazy(() => import("./demos/motion/LeaveList.lucia"));
+const SpinAway = lazy(() => import("./demos/motion/SpinAway.lucia"));
 const Both = lazy(() => import("./demos/motion/Both.lucia"));
 const VariableTrigger = lazy(() => import("./demos/motion/VariableTrigger.lucia"));
 const Control = lazy(() => import("./demos/motion/Control.lucia"));
 import leaveSource from "./demos/motion/Leave.lucia?raw";
 import leaveListSource from "./demos/motion/LeaveList.lucia?raw";
+import spinAwaySource from "./demos/motion/SpinAway.lucia?raw";
 import shrinkSource from "./demos/motion/Shrink.lucia?raw";
 import bothSource from "./demos/motion/Both.lucia?raw";
 import popSource from "./demos/motion/Pop.lucia?raw";
@@ -563,9 +565,17 @@ export const catalog: Record<string, CatalogEntry> = {
         id: "animate-leave-space",
         title: "Leave closes the space",
         caption:
-          "A removed row shrinks while it leaves, so the rows below slide up. Turn keepSpace on to keep the gap until the row is gone.",
+          "A removed row keeps its size while it fades, and the gap between rows closes with it, so the rows below slide up smoothly. Turn keepSpace on to keep the gap until the row is gone.",
         components: [LeaveList],
         sources: [{ path: "src/demos/motion/LeaveList.lucia", text: leaveListSource }],
+      },
+      {
+        id: "animate-leave-spin",
+        title: "Show or hide the box",
+        caption:
+          "The box spins away while the space it held closes. Its size and rotation stay whole until it is gone.",
+        components: [SpinAway],
+        sources: [{ path: "src/demos/motion/SpinAway.lucia", text: spinAwaySource }],
       },
       {
         id: "animate-both",
