@@ -86,14 +86,19 @@ const heroDrift = reduced
   : scrollBetween(
       follow,
       { opacity: 1, translate: "0 0" },
-      { opacity: 0.3, translate: "0 6vh" },
+      { opacity: 0.3, translate: "0 -4vh" },
       [0, 0.4],
     );
 
-// The title lags behind the scroll more than the rest of the hero, so the two separate as you scroll.
+// The title moves faster than the rest of the hero, so the two separate as you scroll.
 const titleDrift = reduced
   ? []
-  : scrollBetween(follow, { translate: "0 0" }, { translate: "0 12vh" }, [0, 0.4]);
+  : scrollBetween(
+      follow,
+      { translate: "0 0" },
+      { translate: "0 -8vh" },
+      [0, 0.4],
+    );
 
 // The two badges fly up and apart, one to each side, so they clear the title as it rises.
 const badgeStart = { translate: "0px 0px", rotate: "0deg" };
