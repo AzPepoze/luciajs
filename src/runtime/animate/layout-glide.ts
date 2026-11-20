@@ -7,6 +7,7 @@ import {
   cssHeight,
   cssWidth,
   glideBox,
+  layoutPlace,
   newBox,
   newSlide,
   readEdges,
@@ -39,6 +40,8 @@ export interface Glide {
   visual: Box;
   /** The translate last written to the element. */
   writtenSlide: Slide;
+  /** The layout place at the size written this frame, for the slide. */
+  place: Box;
   /** Padding and border from when the size glide started. */
   edges: Edges;
   /** The inline size before the glide took over, restored when it ends. */
@@ -58,6 +61,7 @@ export function newGlide(spec: GlideSpec): Glide {
     to: newBox(),
     visual: newBox(),
     writtenSlide: newSlide(),
+    place: newBox(),
     edges: { x: 0, y: 0, borderBox: true },
     baseWidth: "",
     baseHeight: "",
@@ -90,8 +94,8 @@ export function stepGlide(glide: Glide, el: HTMLElement, now: number): boolean {
   }
   const eased = glide.ease(glide.easeStyle, progress);
   glideBox(glide.from, glide.to, eased, mode, glide.visual);
-  if (mode.place) writeSlide(glide, el);
   if (mode.size) writeSize(glide, el);
+  if (mode.place) writeSlide(glide, el);
   return true;
 }
 
@@ -111,7 +115,13 @@ export function showLayoutSize(glide: Glide, el: HTMLElement): void {
 }
 
 function writeSlide(glide: Glide, el: HTMLElement): void {
-  slideFor(glide.visual, glide.to, glide.writtenSlide);
+  let place = glide.to;
+  if (glide.spec.mode.size) {
+    // Writing the size can move the layout box, for example a centred fixed element.
+    layoutPlace(el.getBoundingClientRect(), glide.writtenSlide, glide.place);
+    place = glide.place;
+  }
+  slideFor(glide.visual, place, glide.writtenSlide);
   el.style.setProperty("translate", `${glide.writtenSlide.x}px ${glide.writtenSlide.y}px`);
 }
 

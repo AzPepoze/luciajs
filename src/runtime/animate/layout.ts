@@ -85,8 +85,9 @@ function readItem(item: Watched): void {
   if (changed) item.pending = true;
   if (!changed && !glide.active) return;
   layoutPlace(rect, glide.writtenSlide, glide.to);
-  glide.to.width = rect.width;
-  glide.to.height = rect.height;
+  // The offsets are free of transforms, so another animation's scale cannot skew the target size.
+  glide.to.width = probe.width;
+  glide.to.height = probe.height;
 }
 
 function writeItem(item: Watched, now: number): void {

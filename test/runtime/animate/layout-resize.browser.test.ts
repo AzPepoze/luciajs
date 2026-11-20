@@ -35,6 +35,14 @@ interface Sample {
   childLayout: number;
 }
 
+interface CenteredSample {
+  x: number;
+  width: number;
+  inlineWidth: string;
+  scale: string;
+  docWidth: number;
+}
+
 const PANEL = `
   <style>
     body { margin: 0; }
@@ -80,6 +88,83 @@ async function sampleResize(page: Page): Promise<Sample[]> {
     return samples;
   });
 }
+
+// A centred box whose layout place moves with the inline width the glide writes.
+const CENTERED = `
+  <style>
+    body { margin: 0; }
+    #wrap { position: relative; width: 600px; height: 60px; }
+    #box { position: absolute; top: 10px; left: 0; right: 0; width: 100px; height: 30px; margin: 0 auto; }
+    #box.open { width: 300px; height: 34px; }
+  </style>
+  <div id="wrap"><div id="box"></div></div>`;
+
+/** Opens the centred box with a MOVE_OR_RESIZE glide and samples its visual box every frame. */
+async function sampleCentered(page: Page): Promise<CenteredSample[]> {
+  return await page.evaluate(async () => {
+    const box = document.getElementById("box")!;
+    const value = { when: (window as any).lusiaWhen.MOVE_OR_RESIZE, duration: 300 };
+    const cleanups: Array<() => void> = [];
+    (window as any).lusiaAnimate(box, () => value, cleanups, []);
+
+    const sample = (): CenteredSample => {
+      const rect = box.getBoundingClientRect();
+      return {
+        x: rect.x,
+        width: rect.width,
+        inlineWidth: box.style.width,
+        scale: box.style.scale,
+        docWidth: document.documentElement.scrollWidth,
+      };
+    };
+
+    const samples: CenteredSample[] = [sample()];
+    let running = true;
+    const tick = () => {
+      samples.push(sample());
+      if (running) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    box.classList.add("open");
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    running = false;
+    samples.push(sample());
+    cleanups.forEach((cleanup) => cleanup());
+    return samples;
+  });
+}
+
+suite("MOVE_OR_RESIZE keeps a centred box on its path", () => {
+  test("writing the size does not jump the box or stretch the page", async () => {
+    const page = await openPage(CENTERED);
+    try {
+      const samples = await sampleCentered(page);
+      const closed = samples[0]!;
+      expect(closed.x).toBeCloseTo(250, 0);
+      expect(closed.width).toBeCloseTo(100, 0);
+
+      const active = samples.filter((sample) => sample.inlineWidth !== "");
+      expect(active.length).toBeGreaterThan(3);
+      for (const sample of active) {
+        expect(sample.scale).toBe("");
+        expect(sample.x).toBeLessThanOrEqual(closed.x + 1);
+        expect(sample.x).toBeGreaterThanOrEqual(149);
+        expect(sample.docWidth).toBe(closed.docWidth);
+      }
+      for (let i = 1; i < active.length; i++) {
+        expect(active[i]!.x).toBeLessThanOrEqual(active[i - 1]!.x + 1);
+      }
+      expect(active[active.length - 1]!.x).toBeLessThan(active[0]!.x - 50);
+
+      const settled = samples[samples.length - 1]!;
+      expect(settled.inlineWidth).toBe("");
+      expect(settled.x).toBeCloseTo(150, 0);
+      expect(settled.width).toBeCloseTo(300, 0);
+    } finally {
+      await page.close();
+    }
+  });
+});
 
 suite("RESIZE glides the real size", () => {
   test("the width grows frame by frame with no scale, and the child never stretches", async () => {
