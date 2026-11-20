@@ -1,9 +1,10 @@
 import { store } from "lucia";
-import type { Bundle } from "./bundle.ts";
-import { Preview } from "./preview.ts";
-import { loadRuntime } from "./runtime-source.ts";
+import { ENTRY_FILE } from "./names.ts";
+import { Preview } from "../live/preview.ts";
+import { loadRuntime } from "../live/runtime-source.ts";
+import type { LiveBundle } from "../live/types.ts";
 import { saveFiles } from "./storage.ts";
-import { autoRun, compileErrors, files, hasSass, runtimeErrors } from "./state.ts";
+import { autoRun, compileErrors, files, runtimeErrors } from "./state.ts";
 
 const DEBOUNCE_MS = 300;
 
@@ -38,11 +39,10 @@ export function mountPlayground(stage: HTMLElement, signal: AbortSignal): void {
 export async function runNow(): Promise<void> {
   window.clearTimeout(timer);
   const id = ++runNumber;
-  const { buildBundle } = await import("./bundle.ts");
-  const result = buildBundle(files.peek());
+  const { buildLive } = await import("../live/build.ts");
+  const result = buildLive(files.peek(), { entries: [ENTRY_FILE] });
   if (id !== runNumber) return;
   compileErrors.value = result.errors;
-  hasSass.value = result.hasSass;
   if (result.bundle && preview) await showBundle(id, result.bundle, preview);
 }
 
@@ -52,7 +52,7 @@ function scheduleRun(): void {
 }
 
 // On failure the last good preview stays, and the error is listed under it.
-async function showBundle(id: number, bundle: Bundle, target: Preview): Promise<void> {
+async function showBundle(id: number, bundle: LiveBundle, target: Preview): Promise<void> {
   try {
     const runtime = await loadRuntime();
     if (id !== runNumber) return;

@@ -1,19 +1,19 @@
 <script>
 import { props, store } from "lucia";
-import type { PlayError } from "../playground/types.ts";
+import type { LiveError } from "../live/types.ts";
 
 const { errors, onJump } = props({
-  errors: [] as PlayError[],
-  onJump: (error: PlayError) => {},
+  errors: [] as LiveError[],
+  onJump: (error: LiveError) => {},
 });
 
 const isEmpty = store.from(() => errors.value.length === 0);
 
-function where(error: PlayError): string {
+function where(error: LiveError): string {
   return error.file ? `${error.file}:${error.line ?? 1}:${error.column ?? 1}` : "";
 }
 
-function jump(error: PlayError) {
+function jump(error: LiveError) {
   onJump.peek()(error);
 }
 </script>

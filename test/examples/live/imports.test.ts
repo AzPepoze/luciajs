@@ -1,25 +1,50 @@
 import { describe, expect, test } from "bun:test";
-import { findBrokenImports, linkImports } from "../../../examples/web/src/playground/imports.ts";
+import {
+  findBrokenImports,
+  linkImports,
+  rootNames,
+} from "../../../examples/web/src/live/imports.ts";
 
-const names = new Set(["App.lucia", "Card.lucia", "util.ts"]);
+const names = new Set(["App.lucia", "Card.lucia", "util.ts", "src/demos/x/Badge.lucia"]);
 
 describe("linkImports", () => {
-  test("points imports between playground files at their module names", () => {
+  test("points imports between files at their module names", () => {
     const code = `import Card from "./Card.lucia";\nconst util = await import('./util.ts');`;
-    expect(linkImports(code, names)).toBe(
-      `import Card from "@playground/Card.lucia";\nconst util = await import('@playground/util.ts');`,
+    expect(linkImports(code, "App.lucia", names)).toBe(
+      `import Card from "@live/Card.lucia";\nconst util = await import('@live/util.ts');`,
+    );
+  });
+
+  test("resolves a parent folder against the importing file", () => {
+    const code = `import Badge from "../x/Badge.lucia";`;
+    expect(linkImports(code, "src/demos/y/Props.lucia", names)).toBe(
+      `import Badge from "@live/src/demos/x/Badge.lucia";`,
     );
   });
 
   test("keeps imports of other modules, such as lucia", () => {
     const code = `import { store } from "lucia";\nimport Missing from "./Missing.lucia";`;
-    expect(linkImports(code, names)).toBe(code);
+    expect(linkImports(code, "App.lucia", names)).toBe(code);
   });
 });
 
 describe("findBrokenImports", () => {
   test("lists imports that name no file, with their line", () => {
     const source = `const x = 1;\nimport Missing from "./Missing.lucia";\nimport Card from "./Card.lucia";`;
-    expect(findBrokenImports(source, names)).toEqual([{ specifier: "./Missing.lucia", line: 2 }]);
+    expect(findBrokenImports(source, "App.lucia", names)).toEqual([
+      { specifier: "./Missing.lucia", line: 2 },
+    ]);
+  });
+});
+
+describe("rootNames", () => {
+  test("lists the .lucia files that nothing imports", () => {
+    const files = [
+      { name: "src/A.lucia", code: `import B from "./B.lucia";` },
+      { name: "src/B.lucia", code: "" },
+      { name: "src/C.lucia", code: "" },
+      { name: "src/util.ts", code: "" },
+    ];
+    expect(rootNames(files)).toEqual(["src/A.lucia", "src/C.lucia"]);
   });
 });
