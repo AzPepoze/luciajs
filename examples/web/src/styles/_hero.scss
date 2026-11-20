@@ -71,8 +71,13 @@
   letter-spacing: -0.02em;
 }
 
-// Each letter is its own box, so it can drop in and wobble.
+// The outer box moves with the scroll. The inner box drops in and wobbles.
+.letter-slot,
 .letter {
+  display: inline-block;
+}
+
+.badge-kaomoji {
   display: inline-block;
 }
 
@@ -123,20 +128,14 @@
   gap: 0.75rem;
 }
 
-// A soft pastel pill. The colours slide on hover and a light band sweeps across.
+// A pastel rainbow fill. The colours slide on hover and a light band sweeps across.
 .rainbow {
   position: relative;
   overflow: hidden;
-  border-color: transparent;
   background: var(--rainbow);
   background-size: 200% 100%;
   background-position: 0% 50%;
   color: var(--rainbow-ink);
-  box-shadow: 0 8px 24px var(--rainbow-shadow);
-  transition:
-    transform 0.2s ease,
-    background-position 0.6s ease,
-    box-shadow 0.2s ease;
 
   &::after {
     position: absolute;
@@ -148,10 +147,8 @@
   }
 
   &:hover {
-    border-color: transparent;
     background-position: 100% 50%;
     color: var(--rainbow-ink);
-    box-shadow: 0 12px 30px var(--rainbow-shadow);
 
     &::after {
       transform: translateX(100%);
@@ -161,12 +158,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rainbow {
-    transition: none;
-
-    &::after {
-      display: none;
-    }
+  .rainbow::after {
+    display: none;
   }
 }
 

@@ -5,10 +5,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - var(--topbar-h, #{$topbar-height}));
-  min-height: calc(100svh - var(--topbar-h, #{$topbar-height}));
-  padding: 4rem clamp(1.25rem, 3vw, 3rem);
+  padding: 1rem clamp(1.25rem, 3vw, 3rem) 0.5rem;
 }
 
 .features-inner {
@@ -20,7 +17,7 @@
 }
 
 .section-title {
-  margin-bottom: 2.25rem;
+  margin-bottom: 0.25rem;
   font-size: clamp(1.8rem, 3.6vw, 2.5rem);
   text-align: center;
 }
@@ -50,7 +47,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-auto-rows: minmax(15rem, auto);
-  gap: 22px;
+  gap: 12px;
 }
 
 .feature-card {
@@ -58,9 +55,9 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
   overflow: hidden;
-  padding: 1.5rem;
+  padding: 1.25rem;
   border: 2px solid var(--line);
   border-radius: 28px;
   background: color-mix(in srgb, var(--tone) 14%, var(--card));
@@ -157,8 +154,8 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 3.4rem;
-  height: 3.4rem;
+  width: 2.9rem;
+  height: 2.9rem;
 
   .material-symbols-rounded {
     position: relative;
@@ -184,14 +181,14 @@
 
 .snippet {
   margin: auto 0 0;
-  padding: 0.9rem 1rem;
+  padding: 0.75rem 1rem;
   overflow: auto;
   border: 2px solid var(--line);
   border-radius: 18px;
   background: var(--code);
   font-family: $font-mono;
   font-size: 0.8rem;
-  line-height: 1.6;
+  line-height: 1.5;
 
   code {
     font-family: inherit;
@@ -242,13 +239,6 @@
   .feature-card--wide,
   .feature-card--row {
     grid-column: auto;
-  }
-}
-
-@media (max-width: 719px) {
-  .features {
-    min-height: calc(100vh - var(--topbar-h, 8rem));
-    min-height: calc(100svh - var(--topbar-h, 8rem));
   }
 }
 
