@@ -4,27 +4,27 @@ Lusia is a Bun-native UI framework built from single-file `.lusia` components, v
 
 ## Install, run and test
 
-| Task                                   | Command                                      |
-| -------------------------------------- | -------------------------------------------- |
-| Install                                | `bun install`                                |
-| Web example (port 3000)                | `bun run dev`                                |
-| Stress example (port 3000)             | `bun run dev:stress`                         |
-| Build the web example (writes `dist/`) | `bun run build`                              |
-| All tests                              | `bun run test` (parallel, 6 workers)         |
-| One test file                          | `bun test test/compiler/style/modes.test.ts` |
-| Tests by name                          | `bun test -t "diamond"`                      |
-| Typecheck                              | `bun run typecheck`                          |
-| Format all files                       | `bun run format`                             |
-| Check formatting without writing       | `bun run format:check`                       |
-| Everything before a commit             | `bun run check`                              |
+| Task                                      | Command                                      |
+| ----------------------------------------- | -------------------------------------------- |
+| Install                                   | `bun install`                                |
+| Web example (port 3000)                   | `bun run dev`                                |
+| Stress example (port 3000)                | `bun run dev:stress`                         |
+| Build the docs site (writes `docs/dist/`) | `bun run build`                              |
+| All tests                                 | `bun run test` (parallel, 6 workers)         |
+| One test file                             | `bun test test/compiler/style/modes.test.ts` |
+| Tests by name                             | `bun test -t "diamond"`                      |
+| Typecheck                                 | `bun run typecheck`                          |
+| Format all files                          | `bun run format`                             |
+| Check formatting without writing          | `bun run format:check`                       |
+| Everything before a commit                | `bun run check`                              |
 
-`bun run dev` and `bun run build` first run `scripts/playground-runtime.ts`, which writes the playground preview runtime. Run `bun scripts/playground-runtime.ts` yourself before using the CLI directly.
+`bun run dev` and `bun run build:docs` first run `scripts/playground-runtime.ts`, which writes the playground preview runtime. `bun run build` runs that same site build. Run `bun scripts/playground-runtime.ts` yourself before using the CLI directly.
 
 `bun run check` runs the typecheck, tests, site build and extension build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
 
 Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
 
-The `lusia` command builds and serves an app folder, and formats and lints its `.lusia` files. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its commands are `lusia build [dir]`, `lusia dev [dir]`, `lusia format [path...]` and `lusia lint [path...]`; a `lusia.config.json` sets the same options and flags win over it.
+The `lusia` command builds and serves an app folder, and formats and lints its `.lusia` files. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its commands are `lusia build [dir]`, `lusia dev [dir]`, `lusia format [path...]` and `lusia lint [path...]`; a `lusia.config.json` sets the same options and flags win over it. `outdir` in the config file, and the default output folder, are relative to the app folder, while `--outdir` is relative to the current folder. The docs site builds into `docs/dist`; the repo's root `dist/` is kept for the Lusia package build.
 
 `lusia format` writes Prettier-formatted files, `--check` lists the files that would change and exits 1, and section content is formatted as TypeScript, SCSS or CSS and markup as HTML through the same formatter the editor uses. `lusia lint` compiles each file, prints the compile errors and the lint findings, and exits 1 on errors or too many warnings (`--max-warnings`); `--fix` applies the safe fixes, such as removing an unused import. `lint.rules` in `lusia.config.json` sets each rule to `"off"`, `"warn"` or `"error"`, and `<!-- lusia-lint-disable[-next-line] rule -->` turns a rule off for the rest of the file or for the next line.
 
