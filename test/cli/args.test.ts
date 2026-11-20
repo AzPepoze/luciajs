@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { resolve } from "node:path";
 import { parseCommand, UsageError } from "@cli/args.ts";
 
 const NO_ENV = {};
@@ -8,7 +9,7 @@ describe("parseCommand", () => {
     expect(parseCommand(["build"], NO_ENV)).toEqual({
       name: "build",
       dir: ".",
-      outdir: "dist",
+      outdir: resolve("dist"),
       minify: true,
       routes: [],
       quiet: false,
@@ -20,7 +21,7 @@ describe("parseCommand", () => {
     expect(parseCommand(["build", "app", "--outdir", "out", "--no-minify"], NO_ENV)).toEqual({
       name: "build",
       dir: "app",
-      outdir: "out",
+      outdir: resolve("out"),
       minify: false,
       routes: [],
       quiet: false,

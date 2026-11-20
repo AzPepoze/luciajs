@@ -9,7 +9,7 @@
     "outdir": {
       "type": "string",
       "minLength": 1,
-      "description": "Output folder for lusia build. Default: dist"
+      "description": "Output folder for lusia build, relative to the app folder. Default: dist"
     },
     "minify": {
       "type": "boolean",

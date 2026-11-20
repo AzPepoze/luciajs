@@ -6,7 +6,7 @@ export const USAGE = `Usage:
 
   dir       App folder with an index.html and optional lusia.config.json (default: .)
   paths     .lusia files, folders or globs (default: .)
-  --outdir  Output folder, relative to the current folder (default: dist)
+  --outdir  Output folder, relative to the current folder (default: dist inside the app folder)
   --port    Dev server port (default: $PORT or 3000)
   --routes  Client routes that get their own index.html, so deep links load on static hosts
   --check   List the files that would change and exit 1, without writing

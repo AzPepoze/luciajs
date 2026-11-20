@@ -1,5 +1,6 @@
 import { parseArgs } from "node:util";
 import { existsSync, statSync } from "node:fs";
+import { resolve } from "node:path";
 import type { LazySettings } from "@bun-plugin/children.ts";
 import type { LintRuleSettings } from "@language/lint.ts";
 import { isRoute, readConfig, type LusiaConfig } from "./config.ts";
@@ -61,12 +62,18 @@ function parseBuild(args: string[]): Command {
   return {
     name: "build",
     dir,
-    outdir: values.outdir ?? config.outdir ?? DEFAULT_OUTDIR,
+    outdir: outdirOf(dir, values.outdir, config),
     minify: values["no-minify"] ? false : (config.minify ?? true),
     routes: values.routes === undefined ? (config.routes ?? []) : parseRoutes(values.routes),
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
   };
+}
+
+/** The flag follows the current folder; the file and the default follow the app folder. */
+function outdirOf(dir: string, flag: string | undefined, config: LusiaConfig): string {
+  if (flag !== undefined) return resolve(flag);
+  return resolve(dir, config.outdir ?? DEFAULT_OUTDIR);
 }
 
 /** The lazy settings from the config file, with the defaults for what it leaves out. */

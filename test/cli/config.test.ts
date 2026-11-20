@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { parseConfig, readConfig } from "@cli/config.ts";
 import { parseCommand } from "@cli/args.ts";
 
@@ -74,16 +74,27 @@ describe("CLI merge", () => {
   test("the file sets the build options and flags win", () => {
     const dir = appWith(JSON.stringify({ outdir: "out", minify: false, routes: ["/guide"] }));
     expect(parseCommand(["build", dir], {})).toMatchObject({
-      outdir: "out",
+      outdir: join(dir, "out"),
       minify: false,
       routes: ["/guide"],
     });
     expect(
       parseCommand(["build", dir, "--outdir", "flag", "--routes", "/reference"], {}),
     ).toMatchObject({
-      outdir: "flag",
+      outdir: resolve("flag"),
       routes: ["/reference"],
     });
+  });
+
+  test("the file's outdir and the default follow the app folder", () => {
+    const app = mkdtempSync(join(tmpdir(), "lusia-app-"));
+    expect(parseCommand(["build", app], {})).toMatchObject({ outdir: join(app, "dist") });
+    expect(parseCommand(["build"], {})).toMatchObject({ outdir: resolve("dist") });
+  });
+
+  test("the docs app builds into its own folder", () => {
+    const docs = new URL("../../docs", import.meta.url).pathname;
+    expect(parseCommand(["build", docs], {})).toMatchObject({ outdir: join(docs, "dist") });
   });
 
   test("the lint rules come from the file", () => {

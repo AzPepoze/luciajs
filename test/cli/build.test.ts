@@ -66,6 +66,17 @@ describe("runBuild", () => {
     ).toBe(1);
   });
 
+  test("refuses the app folder itself as the output folder", async () => {
+    expect(
+      await runBuild({
+        dir: FIXTURE,
+        outdir: FIXTURE,
+        minify: true,
+        lazy: { mode: "smart", prefetch: "idle" },
+      }),
+    ).toBe(1);
+  });
+
   test("refuses an output folder that holds the app", async () => {
     expect(
       await runBuild({
