@@ -2,7 +2,11 @@ import type { ViewSettings } from "./view-options.ts";
 
 export type ViewChange = (inView: boolean, stop: () => void) => void;
 
-/** One IntersectionObserver for every element with the same rootMargin and threshold. */
+// The browser reports at each step, so the share is checked finely even for a tall element.
+const STEPS = 1000;
+const STEP_RATIOS = Array.from({ length: STEPS + 1 }, (_, i) => i / STEPS);
+
+/** One IntersectionObserver for every element with the same rootMargin and amount. */
 class SharedObserver {
   private readonly targets = new Map<Element, Set<ViewChange>>();
   private readonly observer: IntersectionObserver;
@@ -11,7 +15,10 @@ class SharedObserver {
     private readonly key: string,
     private readonly settings: ViewSettings,
   ) {
-    this.observer = new IntersectionObserver((entries) => this.onEntries(entries), settings);
+    this.observer = new IntersectionObserver((entries) => this.onEntries(entries), {
+      rootMargin: settings.rootMargin,
+      threshold: STEP_RATIOS,
+    });
   }
 
   add(el: Element, onChange: ViewChange): void {
@@ -41,7 +48,7 @@ class SharedObserver {
     for (const entry of entries) {
       const callbacks = this.targets.get(entry.target);
       if (!callbacks) continue;
-      const inView = entry.isIntersecting && entry.intersectionRatio >= this.settings.threshold;
+      const inView = entry.isIntersecting && visibleShare(entry) >= this.settings.amount;
       for (const onChange of [...callbacks]) {
         onChange(inView, () => this.remove(entry.target, onChange));
       }
@@ -52,7 +59,7 @@ class SharedObserver {
 const observers = new Map<string, SharedObserver>();
 
 function observerFor(settings: ViewSettings): SharedObserver {
-  const key = `${settings.rootMargin} ${settings.threshold}`;
+  const key = `${settings.rootMargin} ${settings.amount}`;
   const found = observers.get(key);
   if (found) return found;
   const created = new SharedObserver(key, settings);
@@ -62,7 +69,27 @@ function observerFor(settings: ViewSettings): SharedObserver {
 
 /** Calls onChange when el enters or leaves view. Returns the stop function. */
 export function watchView(el: Element, settings: ViewSettings, onChange: ViewChange): () => void {
+  let inside: boolean | undefined;
+  const onState: ViewChange = (inView, stop) => {
+    if (inView === inside) return;
+    inside = inView;
+    onChange(inView, stop);
+  };
   const observer = observerFor(settings);
-  observer.add(el, onChange);
-  return () => observer.remove(el, onChange);
+  observer.add(el, onState);
+  return () => observer.remove(el, onState);
+}
+
+/**
+ * The part of the screen that the element covers, as a share of what fits on screen. An element
+ * taller than the screen counts against the screen, so it can reach the full share.
+ */
+function visibleShare(entry: IntersectionObserverEntry): number {
+  const root = entry.rootBounds;
+  if (!root) return entry.intersectionRatio;
+  const target = entry.boundingClientRect;
+  const reach = Math.min(target.width, root.width) * Math.min(target.height, root.height);
+  if (reach === 0) return entry.intersectionRatio;
+  const visible = entry.intersectionRect;
+  return (visible.width * visible.height) / reach;
 }

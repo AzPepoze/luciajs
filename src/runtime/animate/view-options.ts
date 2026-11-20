@@ -7,26 +7,26 @@ export interface ViewMore {
   reverse?: boolean;
 }
 
-/** What the shared IntersectionObserver is built from. */
+/** The root margin and the share of the screen an element must cover. */
 export interface ViewSettings {
   rootMargin: string;
-  threshold: number;
+  amount: number;
 }
 
-export const DEFAULT_VIEW: ViewSettings = { rootMargin: "0px", threshold: 0.15 };
+export const DEFAULT_VIEW: ViewSettings = { rootMargin: "0px", amount: 0.15 };
 
 /** A CSS length or percentage, with an optional sign. A bare zero is allowed. */
 const CSS_LENGTH = /^(-?(?:\d+\.?\d*|\.\d+))(px|%|em|rem|vw|vh|vmin|vmax)?$/;
 
 export function readViewMore(more: ViewMore): { view: ViewSettings; reverse: boolean } {
   return {
-    view: { rootMargin: readMargin(more.margin), threshold: readAmount(more.amount) },
+    view: { rootMargin: readMargin(more.margin), amount: readAmount(more.amount) },
     reverse: readReverse(more.reverse),
   };
 }
 
 export function sameView(a: ViewSettings, b: ViewSettings): boolean {
-  return a.rootMargin === b.rootMargin && a.threshold === b.threshold;
+  return a.rootMargin === b.rootMargin && a.amount === b.amount;
 }
 
 function readReverse(reverse: boolean | undefined): boolean {
@@ -64,7 +64,7 @@ function badMargin(margin: unknown): Error {
 }
 
 function readAmount(amount: number | undefined): number {
-  if (amount === undefined) return DEFAULT_VIEW.threshold;
+  if (amount === undefined) return DEFAULT_VIEW.amount;
   if (!Number.isFinite(amount) || amount < 0 || amount > 1) {
     throw runtimeError("L2022", { value: String(amount) });
   }

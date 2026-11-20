@@ -31,7 +31,7 @@ const swipeMotion = {
 
 // The glows lift as the section scrolls past. The nearer layer moves faster.
 const scrolled = { when: WHEN.SCROLL, more: { start: 1, end: 2 } };
-const glowLift = { 0: { translate: "0 0" }, 1: { translate: "0 -15vh" } };
+const glowLift = { 0: { translate: "0px 0px" }, 1: { translate: "0px -15vh" } };
 const bgMotion = reduced ? [] : { ...scrolled, style: glowLift };
 
 const badgeSnippet = '<badge label={mail} tone="warn" />';

@@ -28,9 +28,9 @@ const noteMotion = { style: fadeIn, when: WHEN.ATTACH, duration: 600, delay: 450
 
 // The layers lift at different speeds as the hero scrolls past.
 const scrolled = { when: WHEN.SCROLL, more: { start: 1, end: 2 } };
-const backLift = { 0: { translate: "0 0" }, 1: { translate: "0 -12vh" } };
-const sparkleLift = { 0: { translate: "0 0" }, 1: { translate: "0 -25vh" } };
-const petalLift = { 0: { translate: "0 0" }, 1: { translate: "0 -40vh" } };
+const backLift = { 0: { translate: "0px 0px" }, 1: { translate: "0px -12vh" } };
+const sparkleLift = { 0: { translate: "0px 0px" }, 1: { translate: "0px -25vh" } };
+const petalLift = { 0: { translate: "0px 0px" }, 1: { translate: "0px -40vh" } };
 
 const backMotion = reduced ? [] : { ...scrolled, style: backLift };
 const sparkleMotion = reduced ? [] : { ...scrolled, style: sparkleLift };

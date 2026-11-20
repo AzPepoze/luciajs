@@ -6,6 +6,7 @@ import { readItem } from "@runtime/animate/options.ts";
 import { EASE } from "@runtime/animate/modes.ts";
 import { WHEN } from "@runtime/animate/trigger.ts";
 import { readMore as readWith } from "@runtime/animate/more.ts";
+import { watchView } from "@runtime/animate/view.ts";
 
 const readBase = { duration: 300 };
 const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
@@ -47,13 +48,19 @@ class FakeIntersectionObserver {
     this.targets.clear();
   }
 
-  report(el: Element, ratio: number): void {
+  /** Reports the share of the screen the element covers, the way the browser would measure it. */
+  report(el: Element, share: number): void {
+    const { target, root } = geometryOf(el);
+    const visibleHeight = share * Math.min(target, root);
     this.onEntries([
       {
         target: el,
-        intersectionRatio: ratio,
-        isIntersecting: ratio > 0,
-      } as IntersectionObserverEntry,
+        isIntersecting: share > 0,
+        intersectionRatio: visibleHeight / target,
+        intersectionRect: { width: 100, height: visibleHeight },
+        boundingClientRect: { width: 100, height: target },
+        rootBounds: { width: 100, height: root },
+      } as unknown as IntersectionObserverEntry,
     ]);
   }
 
@@ -90,10 +97,21 @@ function mount(item: Omit<AnimateItem, "style"> = {}) {
   return { el, cleanups, leaves, opacity: () => Number(el.style.opacity) };
 }
 
-function reportView(el: Element, ratio: number): void {
+/** Heights in px of the element and of the screen after the margin. Both default to 100. */
+const sizes = new WeakMap<Element, { target: number; root: number }>();
+
+function geometryOf(el: Element): { target: number; root: number } {
+  return sizes.get(el) ?? { target: 100, root: 100 };
+}
+
+function setSizes(el: Element, target: number, root: number): void {
+  sizes.set(el, { target, root });
+}
+
+function reportView(el: Element, share: number): void {
   const observer = FakeIntersectionObserver.watching(el);
   if (!observer) throw new Error("element is not watched");
-  observer.report(el, ratio);
+  observer.report(el, share);
 }
 
 function optionsOf(el: Element): IntersectionObserverInit | undefined {
@@ -133,15 +151,19 @@ describe("more margin", () => {
 
 describe("more amount", () => {
   test("defaults to 0.15", () => {
-    expect(readMore(WHEN.VIEW, undefined).view.threshold).toBe(0.15);
-    expect(readMore(WHEN.VIEW, {}).view).toEqual({ rootMargin: "0px", threshold: 0.15 });
-    const { el } = mount();
-    expect(optionsOf(el)?.threshold).toBe(0.15);
+    expect(readMore(WHEN.VIEW, undefined).view.amount).toBe(0.15);
+    expect(readMore(WHEN.VIEW, {}).view).toEqual({ rootMargin: "0px", amount: 0.15 });
+    const { el, opacity } = mount();
+    reportView(el, 0.14);
+    advance(100);
+    expect(opacity()).toBe(0);
+    reportView(el, 0.15);
+    advance(100);
+    expect(opacity()).toBe(1);
   });
 
   test("sets how much of the element must be visible", () => {
     const { el, opacity } = mount({ more: { amount: 0.5 } });
-    expect(optionsOf(el)?.threshold).toBe(0.5);
     reportView(el, 0.4);
     advance(100);
     expect(opacity()).toBe(0);
@@ -151,8 +173,8 @@ describe("more amount", () => {
   });
 
   test("0 and 1 are allowed", () => {
-    expect(readMore(WHEN.VIEW, { amount: 0 }).view.threshold).toBe(0);
-    expect(readMore(WHEN.VIEW, { amount: 1 }).view.threshold).toBe(1);
+    expect(readMore(WHEN.VIEW, { amount: 0 }).view.amount).toBe(0);
+    expect(readMore(WHEN.VIEW, { amount: 1 }).view.amount).toBe(1);
   });
 
   test("rejects values outside 0 to 1", () => {
@@ -251,5 +273,47 @@ describe("more reverse with view settings", () => {
     advance(100);
     expect(opacity()).toBe(1);
     expect(FakeIntersectionObserver.watching(el)).toBeUndefined();
+  });
+});
+
+describe("a tall element", () => {
+  // A 10000 px section under an 840 px screen (1000 px with an 80 px margin).
+  test("plays once the screen is covered by the amount, not the whole element", () => {
+    const { el, opacity } = mount({ more: { margin: 80, amount: 0.1 } });
+    setSizes(el, 10000, 840);
+    reportView(el, 0.09);
+    advance(100);
+    expect(opacity()).toBe(0);
+    reportView(el, 0.1);
+    advance(100);
+    expect(opacity()).toBe(1);
+  });
+
+  test("a full screen of the element counts as fully visible", () => {
+    const { el, opacity } = mount({ more: { margin: 80, amount: 1 } });
+    setSizes(el, 10000, 840);
+    reportView(el, 0.99);
+    advance(100);
+    expect(opacity()).toBe(0);
+    reportView(el, 1);
+    advance(100);
+    expect(opacity()).toBe(1);
+  });
+});
+
+describe("in view changes", () => {
+  test("a steady share does not call the change again", () => {
+    const calls: boolean[] = [];
+    const el = document.createElement("div");
+    const cleanups: Array<() => void> = [];
+    const stop = watchView(el, { rootMargin: "0px", amount: 0.5 }, (inView) => calls.push(inView));
+    cleanups.push(stop);
+    onReset(() => cleanups.forEach((cleanup) => cleanup()));
+    reportView(el, 0.6);
+    reportView(el, 0.7);
+    reportView(el, 0.8);
+    reportView(el, 0.2);
+    reportView(el, 0.1);
+    expect(calls).toEqual([true, false]);
   });
 });

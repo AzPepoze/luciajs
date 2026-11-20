@@ -92,12 +92,39 @@ describe("a bare 0 takes the unit of the other side", () => {
     expect(at(1)).toBe("translateY(20px)");
   });
 
-  test("a unit on both sides that differs still switches at the middle", () => {
-    expect(interpolate("10px", "5%")(0.25)).toBe("10px");
-    expect(interpolate("10px", "5%")(0.75)).toBe("5%");
-  });
-
   test("a non-zero number without a unit does not match a number with a unit", () => {
     expect(interpolate("3", "3px")(0.5)).toBe("3px");
+  });
+});
+
+describe("different length units blend through calc()", () => {
+  test("px to vh blends", () => {
+    const at = interpolate("0px", "-12vh");
+    expect(at(0.25)).toBe("calc(0px + -3vh)");
+    expect(at(0.5)).toBe("calc(0px + -6vh)");
+    expect(at(1)).toBe("calc(0px + -12vh)");
+  });
+
+  test("% to px blends", () => {
+    expect(interpolate("100%", "200px")(0.5)).toBe("calc(50% + 100px)");
+  });
+
+  test("a bare 0 takes the other unit, so it blends as a plain number", () => {
+    expect(interpolate("0", "-12vh")(0.5)).toBe("-6vh");
+  });
+
+  test("inside translate() each length blends on its own", () => {
+    const at = interpolate("translate(0px, 0px)", "translate(-12vh, 20px)");
+    expect(at(0.5)).toBe("translate(calc(0px + -6vh), 10px)");
+  });
+
+  test("negative values blend", () => {
+    expect(interpolate("-10px", "5vh")(0.5)).toBe("calc(-5px + 2.5vh)");
+    expect(interpolate("-4px", "-2%")(0.5)).toBe("calc(-2px + -1%)");
+  });
+
+  test("a non-length unit with a different unit still switches at the middle", () => {
+    expect(interpolate("1s", "200ms")(0.25)).toBe("1s");
+    expect(interpolate("1s", "200ms")(0.75)).toBe("200ms");
   });
 });
