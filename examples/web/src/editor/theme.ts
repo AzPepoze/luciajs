@@ -33,6 +33,14 @@ export const editorTheme = EditorView.theme({
     borderRadius: "12px",
     color: "var(--fg)",
     boxShadow: "var(--shadow)",
+    maxWidth: "min(32rem, calc(100vw - 2rem))",
+    whiteSpace: "normal",
+    overflowWrap: "anywhere",
+  },
+  ".cm-completionInfo": {
+    maxWidth: "min(24rem, calc(100vw - 2rem))",
+    whiteSpace: "normal",
+    overflowWrap: "anywhere",
   },
   ".cm-tooltip-autocomplete ul li[aria-selected]": {
     backgroundColor: "var(--accent-soft)",
@@ -53,6 +61,12 @@ export const editorTheme = EditorView.theme({
   ".lucia-animate": { color: "var(--tok-animate)" },
   ".editor-docs": { padding: "0.6rem 0.8rem", maxWidth: "24rem", fontSize: "0.85rem" },
   ".editor-docs p, .editor-docs ul": { margin: "0.3rem 0" },
-  ".editor-docs pre": { margin: "0.4rem 0", padding: "0.4rem 0.5rem", borderRadius: "8px" },
+  ".editor-docs pre": {
+    margin: "0.4rem 0",
+    padding: "0.4rem 0.5rem",
+    borderRadius: "8px",
+    overflowX: "auto",
+    whiteSpace: "pre",
+  },
   ".editor-docs pre, .editor-docs code": { backgroundColor: "var(--code)" },
 });
