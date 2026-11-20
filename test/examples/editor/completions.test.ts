@@ -3,7 +3,7 @@ import { editorCompletions } from "../../../examples/web/src/editor/editor-compl
 import type { CompletionResult } from "../../../examples/web/src/editor/completions.ts";
 
 const FILE = "App.lucia";
-const BADGE_SCRIPT = `<script>\nimport Badge from "./Badge.lucia";\nconst count = store(0);\n`;
+const BADGE_SCRIPT = `<script>\nimport Badge from "./Badge.lucia";\nconst count = variable(0);\n`;
 
 /** The completions at the first `|` in `source`. The marker is removed first. */
 function completeAt(source: string, files: { name: string; code: string }[] = [], fileName = FILE) {
@@ -19,17 +19,19 @@ function labelsOf(items: CompletionResult[]): string[] {
 describe("script completions", () => {
   test("offers lucia API names, each with an import edit", () => {
     const items = completeAt("<script>\n|\n</script>");
-    const store = items.find((item) => item.label === "store");
-    expect(store?.importEdit).toEqual({
+    const variable = items.find((item) => item.label === "variable");
+    expect(variable?.importEdit).toEqual({
       start: 8,
       end: 8,
-      text: 'import { store } from "lucia";\n',
+      text: 'import { variable } from "lucia";\n',
     });
   });
 
   test("API items link to their reference/api.ts entry for the docs popup", () => {
     const items = completeAt("<script>\n|\n</script>");
-    expect(items.find((item) => item.label === "store.from")?.entryId).toBe("store-from");
+    expect(items.find((item) => item.label === "variable.compute")?.entryId).toBe(
+      "variable-compute",
+    );
   });
 
   test("offers names declared in the file", () => {
@@ -43,9 +45,9 @@ describe("script completions", () => {
     expect(labelsOf(items)).toContain("count");
   });
 
-  test("a store offers value and peek after its name and dot", () => {
+  test("a variable offers value and peek after its name and dot", () => {
     const items = completeAt(`${BADGE_SCRIPT}</script>\n<p>{count.|}</p>`);
-    expect(labelsOf(items)).toEqual(["value", "peek"]);
+    expect(labelsOf(items)).toEqual(["value", "get", "set", "peek"]);
   });
 });
 
@@ -84,9 +86,13 @@ describe("markup completions", () => {
 
 describe(".ts files", () => {
   test("offer the names in the file, and no import for a name already imported", () => {
-    const items = completeAt('import { store } from "lucia";\nconst total = 1;\n|', [], "util.ts");
+    const items = completeAt(
+      'import { variable } from "lucia";\nconst total = 1;\n|',
+      [],
+      "util.ts",
+    );
     expect(labelsOf(items)).toContain("total");
-    const from = items.find((item) => item.label === "store.from");
+    const from = items.find((item) => item.label === "variable.compute");
     expect(from?.importEdit).toBeUndefined();
   });
 
