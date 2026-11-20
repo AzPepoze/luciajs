@@ -49,14 +49,6 @@ function animateCall(expr: Expr, ctx: GenContext): string {
   return `__animate(__node as HTMLElement, () => (${markedCode(expr)}), __cleanups, __leaves${locations});`;
 }
 
-/** An object of getters, one per attribute: `{ "title": () => ... }`. */
-export function getterObject(attrs: AttrBinding[]): string {
-  const entries = attrs.map(
-    ({ name, parts }) => `${JSON.stringify(name)}: () => ${attrValue(parts)}`,
-  );
-  return `{ ${entries.join(", ")} }`;
-}
-
 export function elementBinder(binding: ElementBinding, ctx: GenContext): string {
   const calls = [
     ...binding.attrs.map(attrCall),

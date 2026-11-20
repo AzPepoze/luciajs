@@ -33,7 +33,9 @@ describe("luciaError", () => {
     expect(error).toBeInstanceOf(LuciaError);
     expect(error.code).toBe("L1004");
     expect(error.message).toBe("IF is a reserved tag name and cannot be a component");
-    expect(error.hint).toBe("Rename the component. IF, ELSEIF, ELSE, EACH and FOR are built in.");
+    expect(error.hint).toBe(
+      "Rename the component. IF, ELSEIF, ELSE, EACH, FOR, CONTENT and HTML are built in.",
+    );
     expect(error.file).toBe("Card.lucia");
     expect(error.line).toBe(2);
     expect(error.column).toBe(1);

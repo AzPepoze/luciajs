@@ -32,7 +32,8 @@ export function moveBefore(mount: Mount, anchor: Node): void {
   }
 }
 
-function removeNodes(mount: Mount): void {
+/** Removes the nodes between the mount's comments, without running its cleanups. */
+export function removeNodes(mount: Mount): void {
   for (let node: Node | null = mount.start; node;) {
     const next: Node | null = node === mount.end ? null : node.nextSibling;
     (node as ChildNode).remove();

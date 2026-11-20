@@ -48,10 +48,33 @@ export interface ElementBinding {
   animate?: Expr;
 }
 
+/** `bind-<prop>={variable}` on a component: the prop reads the variable and writes back to it. */
+export interface ComponentBind {
+  /** The prop name the child declares, such as `value`. */
+  prop: string;
+  /** The attribute as written, for errors: `bind` or `bind-value`. */
+  attr: string;
+  expr: Expr;
+}
+
 export interface ComponentBinding {
   kind: "component";
   name: string;
   props: AttrBinding[];
+  binds: ComponentBind[];
+  /** The markup between the component's tags, compiled in the parent's scope. Missing when blank. */
+  children?: Template;
+}
+
+/** `<CONTENT />`: where a component renders the children its parent gave it. */
+export interface ContentBinding {
+  kind: "content";
+}
+
+/** `<HTML>{expr}</HTML>`: the value is inserted as HTML, not as text. */
+export interface HtmlBinding {
+  kind: "html";
+  expr: Expr;
 }
 
 export interface IfBinding {
@@ -79,4 +102,11 @@ export interface ForBinding {
 }
 
 export type Binding =
-  TextBinding | ElementBinding | ComponentBinding | IfBinding | EachBinding | ForBinding;
+  | TextBinding
+  | ElementBinding
+  | ComponentBinding
+  | ContentBinding
+  | HtmlBinding
+  | IfBinding
+  | EachBinding
+  | ForBinding;

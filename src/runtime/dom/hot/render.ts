@@ -42,7 +42,7 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
   const previous = frame;
   frame = { instance, variables };
   try {
-    const rendered: Rendered = renderWith(definition.render, instance.props, cleanups, leaves);
+    const rendered: Rendered = renderWith(definition.render, instance.host, cleanups, leaves);
     const start = emptyText();
     const end = emptyText();
     rendered.fragment.prepend(start);

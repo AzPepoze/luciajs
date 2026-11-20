@@ -1,6 +1,6 @@
 import type { Variable } from "../../variable/variable.ts";
 import type { Cleanup } from "../bindings.ts";
-import type { Props, Render } from "../component.ts";
+import type { Host, Render } from "../component.ts";
 import type { Leave } from "../leave.ts";
 import { currentFrame, insertRendering, renderInstance, type Rendering } from "./render.ts";
 import { type Restore, takeRestore } from "./session.ts";
@@ -15,7 +15,7 @@ export interface Definition {
 /** One mounted component in the dev build. Its place in the page is the region from `start` to `end`. */
 export interface HotInstance {
   readonly id: string;
-  readonly props: Props;
+  readonly host: Host;
   readonly owner: HotInstance | null;
   readonly children: Set<HotInstance>;
   /** The leave list this instance joined: its parent's, or the list of a root attach. */
@@ -31,11 +31,11 @@ export interface HotInstance {
   alive: boolean;
 }
 
-export function createInstance(id: string, props: Props, parentLeaves: Leave[]): HotInstance {
+export function createInstance(id: string, host: Host, parentLeaves: Leave[]): HotInstance {
   const owner = currentFrame()?.instance ?? null;
   const instance: HotInstance = {
     id,
-    props,
+    host,
     owner,
     children: new Set(),
     parentLeaves,

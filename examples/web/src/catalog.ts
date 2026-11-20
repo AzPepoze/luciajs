@@ -1,6 +1,7 @@
 import { lazy, type Component } from "lucia";
 import type { ApiGroup } from "../../../reference/api.ts";
 const Attributes = lazy(() => import("./demos/basics/Attributes.lucia"));
+const Markdown = lazy(() => import("./demos/basics/Markdown.lucia"));
 const BindElement = lazy(() => import("./demos/basics/BindElement.lucia"));
 const BindFields = lazy(() => import("./demos/basics/BindFields.lucia"));
 const Events = lazy(() => import("./demos/basics/Events.lucia"));
@@ -13,6 +14,7 @@ const KeyframeDefault = lazy(() => import("./demos/motion/KeyframeDefault.lucia"
 const Presets = lazy(() => import("./demos/motion/Presets.lucia"));
 import bindElementSource from "./demos/basics/BindElement.lucia?raw";
 import bindFieldsSource from "./demos/basics/BindFields.lucia?raw";
+import markdownSource from "./demos/basics/Markdown.lucia?raw";
 import setupSource from "./demos/basics/Setup.lucia?raw";
 import eachSource from "./demos/flow/EachDemo.lucia?raw";
 import forSource from "./demos/flow/ForDemo.lucia?raw";
@@ -29,6 +31,8 @@ import folderSource from "./demos/components/Folder.lucia?raw";
 import commentThreadSource from "./demos/components/CommentThread.lucia?raw";
 import commentSource from "./demos/components/Comment.lucia?raw";
 const Props = lazy(() => import("./demos/components/Props.lucia"));
+const Children = lazy(() => import("./demos/components/Children.lucia"));
+const BindChild = lazy(() => import("./demos/components/BindChild.lucia"));
 const Batch = lazy(() => import("./demos/reactivity/Batch.lucia"));
 const Variable = lazy(() => import("./demos/reactivity/Variable.lucia"));
 const AutoRun = lazy(() => import("./demos/reactivity/AutoRun.lucia"));
@@ -47,6 +51,10 @@ import lazySpinnerSource from "./demos/components/LazySpinner.lucia?raw";
 import badgeSource from "./demos/components/badge.lucia?raw";
 import componentsSource from "./demos/components/Components.lucia?raw";
 import propsSource from "./demos/components/Props.lucia?raw";
+import childrenSource from "./demos/components/Children.lucia?raw";
+import cardSource from "./demos/components/Card.lucia?raw";
+import bindChildSource from "./demos/components/BindChild.lucia?raw";
+import fieldSource from "./demos/components/Field.lucia?raw";
 import attributesSource from "./demos/basics/Attributes.lucia?raw";
 import eventsSource from "./demos/basics/Events.lucia?raw";
 import textSource from "./demos/basics/Text.lucia?raw";
@@ -363,6 +371,33 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
+  html: {
+    icon: "code",
+    demos: [
+      {
+        id: "html-markdown",
+        title: "Insert HTML",
+        caption: "Type text on the left. The preview is HTML from the escaped text.",
+        components: [Markdown],
+        sources: [{ path: "src/demos/basics/Markdown.lucia", text: markdownSource }],
+      },
+    ],
+  },
+  content: {
+    icon: "view_agenda",
+    demos: [
+      {
+        id: "content-children",
+        title: "Children and CONTENT",
+        caption: "Markup between a component's tags shows where its CONTENT is.",
+        components: [Children],
+        sources: [
+          { path: "src/demos/components/Children.lucia", text: childrenSource },
+          { path: "src/demos/components/Card.lucia", text: cardSource },
+        ],
+      },
+    ],
+  },
   setup: {
     icon: "touch_app",
     demos: [
@@ -396,6 +431,16 @@ export const catalog: Record<string, CatalogEntry> = {
         caption: "A field and a variable stay in sync, in both directions.",
         components: [BindFields],
         sources: [{ path: "src/demos/basics/BindFields.lucia", text: bindFieldsSource }],
+      },
+      {
+        id: "bind-child",
+        title: "Bind a child's input",
+        caption: "The child's input writes to the parent's variable through bind-value.",
+        components: [BindChild],
+        sources: [
+          { path: "src/demos/components/BindChild.lucia", text: bindChildSource },
+          { path: "src/demos/components/Field.lucia", text: fieldSource },
+        ],
       },
     ],
   },

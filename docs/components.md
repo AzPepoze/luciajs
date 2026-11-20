@@ -48,7 +48,7 @@ Declare the props this component accepts, with their defaults.
 | Rule  | Detail                                                                                              |
 | ----- | --------------------------------------------------------------------------------------------------- |
 | Value | The passed value. The default is used when nothing is passed, or the value is `null` or `undefined` |
-| Type  | Each prop is a computed variable. Use it as `{label}` or `label.value`                                |
+| Type  | Each prop is a variable. Use it as `{label}` or `label.value`. Writing it needs a bind, see [Two-way bind](#two-way-bind) |
 | Where | Only in the script, at top level. Calling it elsewhere throws                                       |
 
 ### `setup(root)`
@@ -112,6 +112,24 @@ An expression re-runs when a variable or computed variable it reads updates.
 
 Text is inserted as text, not HTML, so values cannot inject markup.
 
+### Raw HTML
+
+`<HTML>{expr}</HTML>` inserts the value as HTML. Use it only for HTML you trust.
+
+```html
+<HTML>{note}</HTML>
+```
+
+> [!WARNING]
+> Never pass user input to `<HTML>`. The value runs as HTML, so a `<script>` or an `onerror` attribute can run code. This is called XSS. Escape the text first, or use `{expr}` instead.
+
+| Rule        | Detail                                                             |
+| ----------- | ------------------------------------------------------------------ |
+| Content     | Exactly one `{expression}`. Text or a second `{}` is error L1037    |
+| Case        | Uppercase only. `<html>` is a normal tag                           |
+| Updates     | Each update replaces the nodes. Lucia markup in the value is not compiled |
+| Attributes  | None                                                               |
+
 ### Braces inside expressions
 
 Nested braces and strings work: `{ {a: 1}.a }` and `{`${n} left`}` are both fine.
@@ -137,15 +155,102 @@ Pass props as attributes.
 | `label={mailLabel}` | The variable's value. It updates when the variable updates |
 | `flag`              | `true`                                               |
 | `onclick={fn}`      | The function. The child reads it with `props()`      |
+| `bind={name}`       | The variable's value, and the child can write back. See [Two-way bind](#two-way-bind) |
+| `bind-value={name}` | The same, for the prop named `value`. Any `bind-<prop>` works |
 
 | Rule          | Detail                                                                                                                            |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | Name          | The tag name must match the import name exactly, so `<Badge />` needs `import Badge`                                              |
-| `bind`        | Not allowed on a component tag. Put `bind` on the field inside the child                                                          |
-| Child content | Not supported yet. `<badge />` and `<badge></badge>` are fine. Anything other than whitespace between the tags is a compile error |
+| Children      | Markup between the tags. The component places it with `<CONTENT />`. See [Children](#children) |
 | Unknown tags  | Any tag without a matching import is plain HTML                                                                                   |
 
-<<<<<<< HEAD
+### Two-way bind
+
+`bind-<prop>={variable}` links a prop to a variable in both directions. The child writes the prop, and the parent's variable changes.
+
+```html
+<script>
+  import Field from "./Field.lucia";
+  import { variable } from "lucia";
+
+  const name = variable("Ada");
+</script>
+
+<Field bind-value={name} />
+<p>Hello {name}</p>
+```
+
+```html
+<!-- Field.lucia -->
+<script>
+  import { props } from "lucia";
+
+  const { value } = props({ value: "" });
+</script>
+
+<input bind={value} />
+```
+
+| Rule             | Detail                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `bind={name}`    | Same as `bind-value={name}`, like a form field                                                          |
+| Child side       | `props()` gives a writable prop for a bound name. Writing it sets the parent's variable                |
+| Not bound        | A prop the parent did not bind is read-only. Writing it throws L2058                                    |
+| Writable only    | The variable must come from `variable()`. A plain value throws `bind-value needs a writable variable`  |
+| Default          | The default is used when the parent's variable is `null` or `undefined`                                 |
+| `bind-element`   | Not allowed on a component tag. Use it on an element inside the child (error L1023)                    |
+
+### Children
+
+### Children
+
+Put markup between a component's tags. The component decides where it goes with `<CONTENT />`.
+
+```html
+<script>
+  import Card from "./Card.lucia";
+  import { variable } from "lucia";
+
+  const count = variable(0);
+
+  function add() {
+    count.value++;
+  }
+</script>
+
+<Card title="Clicks">
+  <p>{count} clicks</p>
+  <button onclick={add}>Add</button>
+</Card>
+```
+
+```html
+<!-- Card.lucia -->
+<script>
+  import { props } from "lucia";
+
+  const { title } = props({ title: "Card" });
+</script>
+
+<section>
+  <h2>{title}</h2>
+  <CONTENT />
+</section>
+```
+
+| Rule         | Detail                                                                                              |
+| ------------ | --------------------------------------------------------------------------------------------------- |
+| Scope        | The children use the parent's variables, events, `animate`, blocks and scoped styles               |
+| Reactive     | Children update like any markup in the parent. They are removed with the component                  |
+| No children  | `<CONTENT />` renders nothing                                                                       |
+| One CONTENT  | A component file has one `<CONTENT />`. A second one is error L1035                                 |
+| Self-closing | Write `<CONTENT />`. `<CONTENT></CONTENT>` is error L1036                                           |
+| Attributes   | `<CONTENT />` takes none                                                                            |
+| Inside flow  | `<CONTENT />` works inside `<IF>`, `<EACH>` and `<FOR>`. Each place shows the children again          |
+
+> [!NOTE]
+> `CONTENT` is a built-in tag, like `IF`. Lowercase `<content>` is a plain HTML element.
+
 ### Recursive components
 
 A component can import itself. Its own tag then works inside its markup, so it can show a tree or nested replies.

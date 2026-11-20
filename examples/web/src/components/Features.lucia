@@ -50,7 +50,14 @@ function cardMotion(index: number) {
   return scrollBetween(follow, start, end, [from, from + 0.2]);
 }
 
-const badgeSnippet = '<badge label={mail} tone="warn" />';
+const childrenSnippet = [
+  '<Card title="Inbox">',
+  "  <p>{mail} new</p>",
+  "</Card>",
+  "",
+  "<!-- Card.lucia -->",
+  "<CONTENT />",
+].join("\n");
 const helloSnippet = "<p>Hi {name}</p>";
 
 const hintMotion = {
@@ -133,8 +140,11 @@ import {"{"} variable {"}"} from "lucia";
           </span>
           <h3>Props and children</h3>
         </div>
-        <p>Pass values as attributes. Each prop is a variable.</p>
-        <pre class="snippet"><code data-lang="lucia">{badgeSnippet}</code></pre>
+        <p>
+          Pass values as attributes. Put markup between the tags.
+          Place it with CONTENT.
+        </p>
+        <pre class="snippet"><code data-lang="lucia">{childrenSnippet}</code></pre>
       </article>
       <article
         class="feature-card"

@@ -1,14 +1,27 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "@runtime/markers.ts";
-import { componentCheck, elementCheck } from "./checks.ts";
+import { blockCheck, componentCheck, elementCheck } from "./checks.ts";
 import { compileElement } from "./element.ts";
+import { componentBindsOf, isBindName } from "./bind.ts";
+import { readHtml, HTML_TAG } from "./html.ts";
 import { readAttributes, type AttrCheck } from "./attributes.ts";
 import { atBlockBoundary, blockOpenAt, failBoundary, readBlock } from "./blocks.ts";
 import { Cursor } from "./cursor.ts";
-import type { AttrBinding, Binding, Template } from "./types.ts";
+import type { AttrBinding, Binding, ComponentBinding, Template } from "./types.ts";
 
 export type { AttrBinding, AttrPart, Binding, Template } from "./types.ts";
 
 const TAG_NAME_END = /[\s>/]/;
+const CONTENT_TAG = "CONTENT";
+
+/** What one component file's markup shares across all its scanners. */
+interface ScanScope {
+  components: ReadonlySet<string>;
+  contentUsed: boolean;
+}
+
+function isBlank(template: Template): boolean {
+  return template.html.trim() === "" && template.bindings.length === 0;
+}
 
 class TemplateScanner {
   private html = "";
@@ -16,13 +29,20 @@ class TemplateScanner {
 
   constructor(
     private readonly cursor: Cursor,
-    private readonly components: ReadonlySet<string>,
+    private readonly scope: ScanScope,
+    /** Inside a component's children, the close tag that ends them. */
+    private readonly closeTag?: string,
   ) {}
 
-  /** Reads markup until the input ends or a block boundary (a closing control tag or ELSE). */
+  /** Reads markup until the input ends, a block boundary (a closing control tag or ELSE) or the close tag. */
   scanBody(): Template {
-    while (this.cursor.pos < this.cursor.src.length && !atBlockBoundary(this.cursor)) this.step();
+    while (this.cursor.pos < this.cursor.src.length && !this.atEnd()) this.step();
     return { html: this.html, bindings: this.bindings };
+  }
+
+  private atEnd(): boolean {
+    const c = this.cursor;
+    return atBlockBoundary(c) || (this.closeTag !== undefined && c.startsWith(this.closeTag));
   }
 
   private step(): void {
@@ -58,7 +78,7 @@ class TemplateScanner {
   }
 
   private scanNested(): Template {
-    return new TemplateScanner(this.cursor, this.components).scanBody();
+    return new TemplateScanner(this.cursor, this.scope, this.closeTag).scanBody();
   }
 
   private readTag(): void {
@@ -73,11 +93,28 @@ class TemplateScanner {
       return;
     }
     const name = c.readUntil(TAG_NAME_END);
-    const isComponent = this.components.has(name);
+    if (name === CONTENT_TAG) return this.addContent(start);
+    if (name === HTML_TAG) return this.addHtml(start);
+    const isComponent = this.scope.components.has(name);
     const check: AttrCheck = isComponent ? componentCheck : elementCheck(name);
     const { attrs, selfClosing } = readAttributes(c, name, start, check);
     if (isComponent) this.addComponent(name, attrs, selfClosing, start);
     else this.addElement(name, attrs, selfClosing);
+  }
+
+  private addContent(start: number): void {
+    const c = this.cursor;
+    const { selfClosing } = readAttributes(c, CONTENT_TAG, start, blockCheck(CONTENT_TAG, new Map()));
+    if (!selfClosing) c.fail("L1036", {}, start);
+    if (this.scope.contentUsed) c.fail("L1035", {}, start);
+    this.scope.contentUsed = true;
+    this.bindings.push({ kind: "content" });
+    this.html += `<!--${TEXT_MARKER}-->`;
+  }
+
+  private addHtml(start: number): void {
+    this.bindings.push({ kind: "html", expr: readHtml(this.cursor, start) });
+    this.html += `<!--${TEXT_MARKER}-->`;
   }
 
   private addElement(name: string, attrs: AttrBinding[], selfClosing: boolean): void {
@@ -93,17 +130,31 @@ class TemplateScanner {
     selfClosing: boolean,
     start: number,
   ): void {
-    if (!selfClosing) this.skipComponentClose(name, start);
-    this.bindings.push({ kind: "component", name, props });
+    const binding: ComponentBinding = {
+      kind: "component",
+      name,
+      props: props.filter((attr) => !isBindName(attr.name)),
+      binds: componentBindsOf(props),
+    };
+    if (!selfClosing) {
+      const children = this.readChildren(name, start);
+      if (children) binding.children = children;
+    }
+    this.bindings.push(binding);
     this.html += `<!--${TEXT_MARKER}-->`;
   }
 
-  private skipComponentClose(name: string, start: number): void {
+  /** Reads the markup between a component's open and close tags. Blank children count as none. */
+  private readChildren(name: string, start: number): Template | undefined {
     const c = this.cursor;
-    c.skipWhitespace();
     const close = `</${name}>`;
-    if (!c.startsWith(close)) c.fail("L1009", { name }, start);
+    const children = new TemplateScanner(c, this.scope, close).scanBody();
+    if (!c.startsWith(close)) {
+      if (c.pos < c.src.length) failBoundary(c);
+      c.fail("L1009", { name }, start);
+    }
     c.pos += close.length;
+    return isBlank(children) ? undefined : children;
   }
 }
 
@@ -115,7 +166,8 @@ export function compileTemplate(
   components: ReadonlySet<string> = new Set(),
 ): Template {
   const cursor = new Cursor(markup, file, startLine);
-  const template = new TemplateScanner(cursor, components).scanBody();
+  const scope: ScanScope = { components, contentUsed: false };
+  const template = new TemplateScanner(cursor, scope).scanBody();
   if (cursor.pos < markup.length) failBoundary(cursor);
   return template;
 }

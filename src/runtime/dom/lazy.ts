@@ -1,5 +1,5 @@
 import type { Cleanup } from "./bindings.ts";
-import { componentFrom, type Component, type Place, type Props } from "./component.ts";
+import { componentFrom, type Component, type Host, type Place } from "./component.ts";
 import type { Leave } from "./leave.ts";
 import { runtimeError } from "../errors.ts";
 
@@ -18,9 +18,9 @@ const noop: Cleanup = () => {};
  */
 export function lazy(load: LazyLoad, options: LazyOptions = {}): Component {
   let loaded: Component | undefined;
-  const place: Place = (parent, anchor, props, leaves) => {
-    if (loaded) return loaded.place(parent, anchor, props, leaves);
-    return placeLoading(load, options.fallback, parent, anchor, props, leaves, (component) => {
+  const place: Place = (parent, anchor, host, leaves) => {
+    if (loaded) return loaded.place(parent, anchor, host, leaves);
+    return placeLoading(load, options.fallback, parent, anchor, host, leaves, (component) => {
       loaded = component;
     });
   };
@@ -32,14 +32,16 @@ function placeLoading(
   fallback: Component | undefined,
   parent: Node,
   anchor: Node | null,
-  props: Props,
+  host: Host,
   leaves: Leave[],
   remember: (component: Component) => void,
 ): Cleanup {
   // The marker keeps the position while the fallback and then the component come and go.
   const marker = document.createComment("");
   parent.insertBefore(marker, anchor);
-  let removeFallback: Cleanup = fallback ? fallback.place(parent, marker, {}, []) : noop;
+  let removeFallback: Cleanup = fallback
+    ? fallback.place(parent, marker, { props: {}, bound: {} }, [])
+    : noop;
   let removeLoaded: Cleanup = noop;
   let detached = false;
 
@@ -50,7 +52,7 @@ function placeLoading(
       removeFallback();
       removeFallback = noop;
       // The parent may have changed since placement: it can be a fragment that was already emptied.
-      removeLoaded = module.default.place(marker.parentNode!, marker, props, leaves);
+      removeLoaded = module.default.place(marker.parentNode!, marker, host, leaves);
     },
     (error: unknown) => {
       reportError(runtimeError("L2057",{ message: messageOf(error) }));

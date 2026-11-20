@@ -97,6 +97,7 @@ describe("compileTemplate component tags", () => {
           { name: "label", parts: ["New"] },
           { name: "flag", parts: [] },
         ],
+        binds: [],
       },
     ]);
   });
@@ -110,24 +111,28 @@ describe("compileTemplate component tags", () => {
     );
     expect(html).toBe(`<p>${TEXT}</p>`);
     expect(bindings).toEqual([
-      { kind: "component", name: "badge", props: [{ name: "label", parts: ["x"] }] },
+      {
+        kind: "component",
+        name: "badge",
+        props: [{ name: "label", parts: ["x"] }],
+        binds: [],
+      },
     ]);
   });
 
-  test("child content between open and close is an error", () => {
+  test("a component without its close tag is an error at the open tag", () => {
     const error = catchError(() =>
-      compileTemplate("<p>\n  <badge>hi</badge></p>", FILE, 1, COMPONENTS),
+      compileTemplate("<p>\n  <badge>hi</badge></p>\n<badge>", FILE, 1, COMPONENTS),
     );
     expect(error.code).toBe("L1009");
-    expect(error.message).toBe("<badge> cannot have child content yet");
-    expect(error.hint).toBe("Write <badge /> with nothing between the tags.");
-    expect(error.line).toBe(2);
-    expect(error.column).toBe(3);
+    expect(error.message).toBe("<badge> needs a closing </badge>");
+    expect(error.line).toBe(3);
+    expect(error.column).toBe(1);
   });
 
   test("lowercase component name matches the import name", () => {
     const { bindings } = compileTemplate("<badge />", FILE, 1, new Set(["badge"]));
-    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [] }]);
+    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [], binds: [] }]);
   });
 
   test("unknown tags stay plain HTML", () => {
@@ -143,6 +148,7 @@ describe("compileTemplate component tags", () => {
         kind: "component",
         name: "badge",
         props: [{ name: "label", parts: [{ code: "count", line: 1, column: 16 }, " new"] }],
+        binds: [],
       },
     ]);
   });
