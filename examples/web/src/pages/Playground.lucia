@@ -16,7 +16,7 @@ import {
 } from "../playground/actions.ts";
 import { ENTRY_FILE } from "../playground/names.ts";
 import { runNow } from "../playground/run.ts";
-import { active, autoRun, errors, files, hasSass, jump, notice } from "../playground/state.ts";
+import { active, autoRun, errors, files, jump, notice } from "../playground/state.ts";
 
 // "add" and "rename" open one name form at a time. "" means no form is open.
 const formMode = store<"" | "add" | "rename">("");
@@ -139,9 +139,6 @@ function reset() {
 
     <section class="play-pane play-preview" aria-label="Preview">
       <div class="play-stage" data-preview></div>
-      <IF {hasSass}>
-        <p class="play-note">Styles are plain CSS in the playground. Sass is not compiled here.</p>
-      </IF>
       <PlayErrors errors={errors} onJump={jumpTo} />
     </section>
   </div>
@@ -186,15 +183,10 @@ function reset() {
   gap: 0.5rem;
 }
 
-.play-notice,
-.play-note {
+.play-notice {
   margin: 0;
   color: var(--link);
   font-size: 0.85rem;
-}
-
-.play-note {
-  color: var(--muted);
 }
 
 // The stage holds one frame while a new one loads on top of it.

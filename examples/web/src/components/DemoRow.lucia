@@ -1,16 +1,95 @@
 <script>
-import { attach, props, store } from "lucia";
+import { attach, props, store, type Instance } from "lucia";
 import type { Demo } from "../catalog.ts";
+import type { EditorFile } from "../editor/files.ts";
+import { createDemoSession } from "../live/demo-session.ts";
+import { Preview } from "../live/preview.ts";
+import { loadRuntime } from "../live/runtime-source.ts";
+import type { LiveBundle, LiveRun } from "../live/types.ts";
 import { guidePath, pageLink } from "../page-link.ts";
+import CodeEditor from "./CodeEditor.lucia";
 import CodePanel from "./CodePanel.lucia";
+import ErrorNote from "./ErrorNote.lucia";
 
 const emptyDemo: Demo = { id: "", title: "", caption: "", components: [], sources: [] };
 const { demo } = props({ demo: emptyDemo });
 const body = store<Element | null>(null);
+const stage = store<HTMLElement | null>(null);
+const lazy = store<HTMLElement | null>(null);
+// The editor opens near the screen or on click. Until then the code is only shown.
+const near = store(false);
+// True while the edited build is shown in place of the original demo.
+const live = store(false);
+const sources: EditorFile[] = demo.peek().sources.map((file) => ({
+  name: file.path,
+  code: file.text,
+}));
+const firstName = sources[0]?.name ?? "";
+let originals: Instance[] = [];
+let preview: Preview | undefined;
 
-// Mounts the demo's components into its preview box once the box exists.
+const session = createDemoSession(sources, {
+  show: showLive,
+  restore: showOriginal,
+});
+
+// The demo mounts now. The editor is made once the demo is close to the screen.
 function setup() {
-  for (const component of demo.peek().components) attach(component, body.value!);
+  mountOriginals();
+  preview = new Preview(stage.peek()!, (message) => session.report({ message }), {
+    sizeToContent: true,
+  });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      openEditor();
+      observer.disconnect();
+    },
+    { rootMargin: "240px 0px" },
+  );
+  observer.observe(lazy.peek()!);
+  return () => {
+    observer.disconnect();
+    preview?.destroy();
+  };
+}
+
+function openEditor(): void {
+  near.value = true;
+}
+
+function mountOriginals(): void {
+  originals = demo.peek().components.map((component) => attach(component, body.peek()!));
+}
+
+// The original demo is live until the first edit that builds. Then the build replaces it.
+async function showLive(bundle: LiveBundle): Promise<LiveRun> {
+  try {
+    await preview!.show({ ...bundle, runtime: await loadRuntime(), theme: themeName() });
+  } catch (error) {
+    return { ok: false, error: { message: messageOf(error) } };
+  }
+  if (!live.peek()) {
+    for (const instance of originals) void instance.detach();
+    originals = [];
+    live.value = true;
+  }
+  return { ok: true };
+}
+
+function showOriginal(): void {
+  if (!live.peek()) return;
+  preview!.clear();
+  live.value = false;
+  mountOriginals();
+}
+
+function themeName(): string {
+  return document.documentElement.dataset.theme ?? "light";
+}
+
+function messageOf(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 </script>
 
@@ -33,8 +112,23 @@ function setup() {
       <p class="demo-label">
         <span class="material-symbols-rounded" aria-hidden="true">science</span>Sandbox
       </p>
-      <div class="demo-body" bind-element={body}></div>
+      <div class="demo-body" hidden={live.value} bind-element={body}></div>
+      <div class="live-preview" hidden={!live.value} bind-element={stage}></div>
+      <ErrorNote error={session.error} />
     </div>
-    <CodePanel sources={demo.value.sources} />
+    <IF {near.value}>
+      <CodeEditor
+        files={session.files.value}
+        active={firstName}
+        edited={session.edited.value}
+        onChange={session.edit}
+        onReset={session.reset}
+      />
+    </IF>
+    <ELSE>
+      <div class="lazy-code" bind-element={lazy} onclick={openEditor}>
+        <CodePanel sources={demo.value.sources} />
+      </div>
+    </ELSE>
   </div>
 </div>

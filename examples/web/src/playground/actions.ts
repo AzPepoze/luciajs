@@ -1,7 +1,8 @@
 import { ENTRY_FILE, nameProblem } from "./names.ts";
 import { active, files, jump, notice } from "./state.ts";
 import { starterFiles } from "./starter.ts";
-import type { PlayError, PlayFile } from "./types.ts";
+import type { LiveError } from "../live/types.ts";
+import type { PlayFile } from "./types.ts";
 
 const FORMAT_FAILED = "Could not format this file. Fix the syntax first.";
 
@@ -47,7 +48,7 @@ export function resetFiles(): void {
   notice.value = "";
 }
 
-export function jumpTo(error: PlayError): void {
+export function jumpTo(error: LiveError): void {
   if (!error.file) return;
   active.value = error.file;
   jump.value = { file: error.file, line: error.line ?? 1, column: error.column ?? 1 };

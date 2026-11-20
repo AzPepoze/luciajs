@@ -1,16 +1,19 @@
+import type { LiveBundle } from "./types.ts";
+
 const FRAME_URL = "/playground/frame.html";
 const START_LIMIT_MS = 8000;
 
-export interface RunPayload {
-  entry: string;
-  modules: Record<string, string>;
+/** What the frame needs to run a bundle: the bundle, the runtime's source and the theme. */
+export interface RunPayload extends LiveBundle {
   /** The runtime module's source, which the frame loads under the name "lucia". */
   runtime: string;
+  theme?: string;
 }
 
 interface FrameMessage {
   type: string;
   message?: string;
+  height?: number;
 }
 
 interface Pending {
@@ -19,6 +22,11 @@ interface Pending {
   resolve: () => void;
   reject: (error: Error) => void;
   timer: number;
+}
+
+export interface PreviewOptions {
+  /** Sets the frame's height to its content. Otherwise the frame fills its stage. */
+  sizeToContent?: boolean;
 }
 
 /**
@@ -30,10 +38,16 @@ export class Preview {
   private pending: Pending | undefined;
   private readonly stage: HTMLElement;
   private readonly onRuntimeError: (message: string) => void;
+  private readonly sizeToContent: boolean;
 
-  constructor(stage: HTMLElement, onRuntimeError: (message: string) => void) {
+  constructor(
+    stage: HTMLElement,
+    onRuntimeError: (message: string) => void,
+    options: PreviewOptions = {},
+  ) {
     this.stage = stage;
     this.onRuntimeError = onRuntimeError;
+    this.sizeToContent = options.sizeToContent ?? false;
     window.addEventListener("message", this.receive);
   }
 
@@ -51,11 +65,16 @@ export class Preview {
     });
   }
 
-  destroy(): void {
-    window.removeEventListener("message", this.receive);
-    this.dropPending(new Error("The preview closed."));
+  /** Removes the shown frame and any frame still loading. */
+  clear(): void {
+    this.dropPending(new Error("The preview was cleared."));
     this.shown?.remove();
     this.shown = undefined;
+  }
+
+  destroy(): void {
+    window.removeEventListener("message", this.receive);
+    this.clear();
   }
 
   private readonly receive = (event: MessageEvent<unknown>): void => {
@@ -64,7 +83,7 @@ export class Preview {
     if (pending && event.source === pending.frame.contentWindow) {
       this.onPending(pending, event.data);
     } else if (this.shown && event.source === this.shown.contentWindow) {
-      if (event.data.type === "error") this.onRuntimeError(event.data.message ?? "Unknown error");
+      this.onShown(this.shown, event.data);
     }
   };
 
@@ -75,6 +94,19 @@ export class Preview {
       this.promote(pending);
     } else if (message.type === "error") {
       this.fail(pending.frame, message.message ?? "Unknown error");
+    } else if (message.type === "size") {
+      this.resize(pending.frame, message);
+    }
+  }
+
+  private onShown(frame: HTMLIFrameElement, message: FrameMessage): void {
+    if (message.type === "error") this.onRuntimeError(message.message ?? "Unknown error");
+    else if (message.type === "size") this.resize(frame, message);
+  }
+
+  private resize(frame: HTMLIFrameElement, message: FrameMessage): void {
+    if (this.sizeToContent && message.height !== undefined) {
+      frame.style.height = `${message.height}px`;
     }
   }
 

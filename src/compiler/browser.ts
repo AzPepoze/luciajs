@@ -1,32 +1,38 @@
+import type * as sass from "sass";
 import { transform } from "sucrase";
 import { LuciaError } from "./errors.ts";
 import { compileParts } from "./pipeline.ts";
 import { parse, type Section } from "./parse/sections.ts";
 import { scopeCss, styleMode } from "./style/modes.ts";
+import { compileSectionScss } from "./style/sass-browser.ts";
 import type { StyleResult } from "./style/sass.ts";
 
 export { LuciaError } from "./errors.ts";
 
+export interface BrowserOptions {
+  /** Sass importers. They are the only way `@use` and `@import` find files in the browser. */
+  importers?: sass.Importer[];
+}
+
 export interface BrowserCompile {
   /** Plain JavaScript, with the TypeScript removed. */
   code: string;
-  /** True when a style is not plain CSS. Sass does not run in the browser, so those styles are used as written. */
-  hasSass: boolean;
 }
 
-/** Compiles a .lucia file for the browser, without Node modules or Sass. Syntax errors in the script point at the source. */
-export function compileForBrowser(source: string, file: string): BrowserCompile {
+/** Compiles a .lucia file for the browser, without Node modules. Syntax errors in the script point at the source. */
+export function compileForBrowser(
+  source: string,
+  file: string,
+  options: BrowserOptions = {},
+): BrowserCompile {
   checkScriptSyntax(source, file);
-  let hasSass = false;
+  const importers = options.importers ?? [];
   const { code } = compileParts(source, file, {
     dev: true,
     displayFile: file,
-    styles: (style, _index, id) => {
-      if (style.attrs.lang !== "css") hasSass = true;
-      return plainStyle(style, id);
-    },
+    styles: (style, _index, id) => browserStyle(style, file, id, importers),
   });
-  return { code: stripTypes(code, file), hasSass };
+  return { code: stripTypes(code, file) };
 }
 
 /** Removes the TypeScript from a script or module. Throws a SyntaxError with `loc` on bad syntax. */
@@ -55,6 +61,13 @@ export function cleanSyntaxMessage(message: string): string {
   return message.replace(/^Error transforming [^:]*: /, "").replace(/ \(\d+:\d+\)$/, "");
 }
 
-function plainStyle(style: Section, id: string): StyleResult {
-  return { css: scopeCss(style.content, id, styleMode(style)).trim(), deps: [], sassMs: 0 };
+function browserStyle(
+  style: Section,
+  file: string,
+  id: string,
+  importers: sass.Importer[],
+): StyleResult {
+  const css =
+    style.attrs.lang === "css" ? style.content : compileSectionScss(style, file, importers);
+  return { css: scopeCss(css, id, styleMode(style)).trim(), deps: [], sassMs: 0 };
 }

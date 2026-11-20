@@ -1,23 +1,28 @@
 import { describe, expect, test } from "bun:test";
+import type { Importer } from "sass";
 import { compileForBrowser, LuciaError } from "../../src/compiler/browser.ts";
 
 describe("compileForBrowser", () => {
   test("removes the TypeScript from the script", () => {
     const source = `<script>\nconst count: number = 1;\n</script>\n<p>{count}</p>\n`;
-    const { code, hasSass } = compileForBrowser(source, "App.lucia");
+    const { code } = compileForBrowser(source, "App.lucia");
     expect(code).not.toContain(": number");
     expect(code).toContain("export default");
-    expect(hasSass).toBe(false);
   });
 
-  test("reports a style that needs Sass", () => {
-    const source = `<style>\n.card { .title { color: red; } }\n</style>\n<p class="card">Hi</p>\n`;
-    expect(compileForBrowser(source, "App.lucia").hasSass).toBe(true);
+  test("compiles a Sass style with the importers it is given", () => {
+    const tone: Importer = {
+      canonicalize: (url) => new URL(`file:///${url}.scss`),
+      load: () => ({ contents: "$fg: red;", syntax: "scss" }),
+    };
+    const source = `<style>\n@use "tone" as t;\n.card { color: t.$fg; }\n</style>\n<p class="card">Hi</p>\n`;
+    const { code } = compileForBrowser(source, "App.lucia", { importers: [tone] });
+    expect(code).toContain("color: red");
   });
 
-  test("keeps plain CSS styles out of the Sass note", () => {
+  test("keeps plain CSS styles as written", () => {
     const source = `<style lang="css">\n.card { color: red; }\n</style>\n<p class="card">Hi</p>\n`;
-    expect(compileForBrowser(source, "App.lucia").hasSass).toBe(false);
+    expect(compileForBrowser(source, "App.lucia").code).toContain("color: red");
   });
 
   test("points a script syntax error at its line in the source", () => {

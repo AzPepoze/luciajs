@@ -3,12 +3,14 @@ import { props, store } from "lucia";
 import type { EditorFile, EditorJump } from "../editor/files.ts";
 import type { EditorSession } from "../editor/session.ts";
 
-const { files, active, readOnly, onChange, onSelect, jump } = props({
+const { files, active, readOnly, edited, onChange, onSelect, onReset, jump } = props({
   files: [] as EditorFile[],
   active: "",
   readOnly: false,
+  edited: false,
   onChange: (name: string, code: string) => {},
   onSelect: (name: string) => {},
+  onReset: () => {},
   jump: null as EditorJump | null,
 });
 
@@ -99,6 +101,10 @@ function onTabKey(event: KeyboardEvent) {
 
 const formatFailed = "Could not format this file. Fix the syntax first.";
 
+function reset() {
+  onReset.peek()();
+}
+
 function formatCode() {
   session?.format().then((formatted) => {
     status.value = formatted ? "" : formatFailed;
@@ -139,6 +145,10 @@ async function copyCode() {
       <span class="material-symbols-rounded" aria-hidden="true">description</span>
       <span class="file-name">{selected}</span>
     </ELSE>
+    <IF {edited.value}>
+      <span class="edited-mark">Edited</span>
+      <button class="reset-button" type="button" onclick={reset}>Reset</button>
+    </IF>
     <button
       class="icon-button"
       type="button"
@@ -171,6 +181,32 @@ async function copyCode() {
 .code-editor {
   .editor-body {
     min-width: 0;
+  }
+
+  .edited-mark {
+    flex: none;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: var(--lavender-soft);
+    color: var(--fg);
+    font-size: 0.75rem;
+  }
+
+  .reset-button {
+    flex: none;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.78rem;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
   }
 
   :global(.cm-editor) {
