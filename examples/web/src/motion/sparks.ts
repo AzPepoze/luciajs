@@ -1,6 +1,6 @@
 import { EASE, type AnimateItem, type Keyframes, type Variable } from "lucia";
 
-export type SparkKind = "petal" | "star" | "confetti";
+export type SparkKind = "petal" | "star";
 
 export type Spark = {
   id: number;

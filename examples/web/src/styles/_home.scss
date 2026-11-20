@@ -171,95 +171,6 @@ $star: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 
     height: 0.9rem;
     clip-path: $star;
   }
-
-  &.confetti {
-    width: 0.45rem;
-    height: 0.85rem;
-    border-radius: 2px;
-  }
-}
-
-.stats-section {
-  position: relative;
-  padding: 6rem 1.25rem 4rem;
-  text-align: center;
-}
-
-.reveal-title {
-  margin-bottom: 2rem;
-  font-size: clamp(1.8rem, 3.6vw, 2.5rem);
-}
-
-.reveal-word {
-  display: inline-block;
-  margin-right: 0.3em;
-
-  &:last-child {
-    margin-right: 0;
-  }
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
-  max-width: 40rem;
-  margin: 0 auto;
-}
-
-.stat {
-  padding: 0;
-}
-
-.stat-number {
-  margin: 0;
-  color: var(--accent);
-  font-family: $font-display;
-  font-size: clamp(2.4rem, 6vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-}
-
-.stat-label {
-  margin: 0.25rem 0 0;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.cta-section {
-  position: relative;
-  padding: 4rem 1.25rem 7rem;
-  overflow: hidden;
-  text-align: center;
-
-  .reveal-title {
-    margin-bottom: 0.75rem;
-  }
-}
-
-.cta-content {
-  position: relative;
-  z-index: 1;
-}
-
-.cta-sparks {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.cta-text {
-  margin: 0 0 1.5rem;
-  color: var(--muted);
-}
-
-.cta-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
 }
 
 .magnetic {
@@ -299,12 +210,6 @@ $star: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 
   50.01%,
   100% {
     opacity: 0;
-  }
-}
-
-@media (max-width: 639px) {
-  .stats {
-    grid-template-columns: minmax(0, 1fr);
   }
 }
 

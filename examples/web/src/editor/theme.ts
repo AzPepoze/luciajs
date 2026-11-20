@@ -18,9 +18,8 @@ export const editorTheme = EditorView.theme({
   },
   ".cm-activeLine": { backgroundColor: "var(--code-line)" },
   ".cm-activeLineGutter": { backgroundColor: "var(--code-line)", color: "var(--fg)" },
-  ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
-    backgroundColor: "var(--select-soft)",
-  },
+  "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, & > .cm-scroller > .cm-selectionLayer .cm-selectionBackground":
+    { backgroundColor: "var(--selection-bg)" },
   ".cm-matchingBracket": {
     backgroundColor: "var(--accent-soft)",
     outline: "1px solid var(--accent)",
