@@ -6,6 +6,13 @@ export interface EditorFile {
   code: string;
 }
 
+/** A place to move the cursor to. Line and column start at 1. */
+export interface EditorJump {
+  file: string;
+  line: number;
+  column: number;
+}
+
 /** The file that an import specifier in `fromName` points at, such as "../ui/Badge.lucia". */
 export function findImportedFile(
   files: readonly EditorFile[],

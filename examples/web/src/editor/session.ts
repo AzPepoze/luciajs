@@ -47,6 +47,19 @@ export class EditorSession {
     this.applyReadOnly();
   }
 
+  /** Moves the cursor to a place in a file, switching to that file first. Unknown files are ignored. */
+  reveal(name: string, line: number, column: number): void {
+    const file = this.files.find((item) => item.name === name);
+    if (!file) return;
+    if (name !== this.name) this.switchTo(file);
+    const doc = this.view.state.doc;
+    const info = doc.line(Math.min(Math.max(line, 1), doc.lines));
+    const offset = Math.min(Math.max(column - 1, 0), info.length);
+    this.view.dispatch({ selection: { anchor: info.from + offset }, scrollIntoView: true });
+    this.view.dom.scrollIntoView({ block: "nearest" });
+    this.view.focus();
+  }
+
   text(): string {
     return this.view.state.doc.toString();
   }

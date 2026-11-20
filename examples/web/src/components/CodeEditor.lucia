@@ -1,13 +1,15 @@
 <script>
 import { props, store } from "lucia";
-import type { EditorFile } from "../editor/files.ts";
+import type { EditorFile, EditorJump } from "../editor/files.ts";
 import type { EditorSession } from "../editor/session.ts";
 
-const { files, active, readOnly, onChange } = props({
+const { files, active, readOnly, onChange, onSelect, jump } = props({
   files: [] as EditorFile[],
   active: "",
   readOnly: false,
   onChange: (name: string, code: string) => {},
+  onSelect: (name: string) => {},
+  jump: null as EditorJump | null,
 });
 
 const selected = store("");
@@ -33,6 +35,14 @@ store.onUpdate(() => {
 store.onUpdate(() => {
   const isReadOnly = readOnly.value;
   session?.setReadOnly(isReadOnly);
+});
+
+// A new jump object moves the cursor, even to the place it was last at.
+store.onUpdate(() => {
+  const target = jump.value;
+  if (!target) return;
+  selected.value = target.file;
+  session?.reveal(target.file, target.line, target.column);
 });
 
 // The editor code loads on first mount, so a page without it stays small.
@@ -64,6 +74,7 @@ function changed(name: string, code: string) {
 
 function select(name: string) {
   selected.value = name;
+  onSelect.peek()(name);
 }
 
 function nextIndex(key: string, current: number, count: number): number | null {
