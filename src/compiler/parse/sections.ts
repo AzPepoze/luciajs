@@ -2,6 +2,7 @@ import { luciaError } from "../errors/create.ts";
 import { skipExpression } from "../utils/braces.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import { parseAttrs } from "./attrs.ts";
+import { extractMarkers, type FallbackBlock } from "./markers.ts";
 
 export interface Section {
   content: string;
@@ -18,6 +19,8 @@ export interface ParsedFile {
   styles: Section[];
   markup: string;
   markupLine: number;
+  fallback: FallbackBlock | null;
+  nolazy: boolean;
 }
 
 interface SectionMatch {
@@ -94,7 +97,14 @@ function toSection(source: string, section: SectionMatch): Section {
 }
 
 export function parse(source: string, file: string): ParsedFile {
-  const result: ParsedFile = { script: null, styles: [], markup: "", markupLine: 1 };
+  const result: ParsedFile = {
+    script: null,
+    styles: [],
+    markup: "",
+    markupLine: 1,
+    fallback: null,
+    nolazy: false,
+  };
   let markup = "";
   let last = 0;
   for (const section of findSections(source, file)) {
@@ -109,7 +119,13 @@ export function parse(source: string, file: string): ParsedFile {
     last = end;
   }
   markup += source.slice(last);
-  result.markup = markup.trim();
-  result.markupLine = lineAt(markup, markup.length - markup.trimStart().length);
+  const markers = extractMarkers(markup, file);
+  result.fallback = markers.fallback;
+  result.nolazy = markers.nolazy;
+  result.markup = markers.markup.trim();
+  result.markupLine = lineAt(
+    markers.markup,
+    markers.markup.length - markers.markup.trimStart().length,
+  );
   return result;
 }

@@ -4,6 +4,8 @@ import { existsSync } from "node:fs";
 export interface CachedModule {
   source: string;
   dev: boolean;
+  /** The lazy settings and the imported children that the compile depended on. */
+  lazyKey: string;
   deps: StyleDep[];
   code: string;
   css: string;
@@ -14,10 +16,16 @@ export interface CachedModule {
 // Module scope: Bun.build makes a new plugin per build, so a cache inside setup() would never hit.
 const modules = new Map<string, CachedModule>();
 
-export function toCachedModule(source: string, dev: boolean, result: CompileResult): CachedModule {
+export function toCachedModule(
+  source: string,
+  dev: boolean,
+  result: CompileResult,
+  lazyKey: string,
+): CachedModule {
   return {
     source,
     dev,
+    lazyKey,
     deps: result.deps,
     code: result.code,
     css: result.css,
@@ -26,10 +34,21 @@ export function toCachedModule(source: string, dev: boolean, result: CompileResu
   };
 }
 
-/** A hit needs the same source and the same text in every Sass file the styles imported. */
-export function cachedModule(path: string, source: string, dev: boolean): CachedModule | undefined {
+/** A hit needs the same source, the same lazy key, and the same text in every Sass file the styles imported. */
+export function cachedModule(
+  path: string,
+  source: string,
+  dev: boolean,
+  lazyKey: string,
+): CachedModule | undefined {
   const entry = modules.get(path);
-  if (entry && entry.source === source && entry.dev === dev && depsCurrent(entry.deps))
+  if (
+    entry &&
+    entry.source === source &&
+    entry.dev === dev &&
+    entry.lazyKey === lazyKey &&
+    depsCurrent(entry.deps)
+  )
     return entry;
   return undefined;
 }

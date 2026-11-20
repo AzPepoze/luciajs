@@ -34,7 +34,7 @@ afterAll(async () => {
 
 describe("buildDev", () => {
   test("a failed build gives one formatted message with the location, code, hint and summary", async () => {
-    const result = await buildDev(broken);
+    const result = await buildDev(broken, { mode: "smart", prefetch: "idle" });
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.messages).toHaveLength(1);
@@ -64,9 +64,9 @@ describe("buildDev changes", () => {
   });
 
   test("a style-only edit is a css update, and the build reports its steps", async () => {
-    expect((await buildDev(app)).ok).toBe(true);
+    expect((await buildDev(app, { mode: "smart", prefetch: "idle" })).ok).toBe(true);
     await writeFile(join(app, "src/Greeting.lucia"), GREETING.replace("rebeccapurple", "tomato"));
-    const result = await buildDev(app);
+    const result = await buildDev(app, { mode: "smart", prefetch: "idle" });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.changes).toEqual([
@@ -82,7 +82,7 @@ describe("buildDev changes", () => {
       join(app, "src/Greeting.lucia"),
       GREETING.replace("Hello from the fixture", "Changed text"),
     );
-    const result = await buildDev(app);
+    const result = await buildDev(app, { mode: "smart", prefetch: "idle" });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.changes).toEqual([expect.objectContaining({ kind: "code" })]);

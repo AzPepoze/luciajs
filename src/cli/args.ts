@@ -1,4 +1,6 @@
 import { parseArgs } from "node:util";
+import type { LazySettings } from "@bun-plugin/children.ts";
+import { isRoute, readConfig, type LuciaConfig } from "./config.ts";
 
 export class UsageError extends Error {}
 
@@ -11,11 +13,14 @@ export type Command =
       minify: boolean;
       routes: string[];
       quiet: boolean;
+      lazy: LazySettings;
     }
-  | { name: "dev"; dir: string; port: number; quiet: boolean };
+  | { name: "dev"; dir: string; port: number; quiet: boolean; lazy: LazySettings };
 
 const DEFAULT_PORT = 3000;
 const DEFAULT_OUTDIR = "dist";
+const DEFAULT_LAZY_MODE = "smart";
+const DEFAULT_LAZY_PREFETCH = "idle";
 
 export function parseCommand(argv: string[], env: Record<string, string | undefined>): Command {
   const [name, ...rest] = argv;
@@ -38,13 +43,24 @@ function parseBuild(args: string[]): Command {
       },
     }),
   );
+  const dir = appDir(positionals);
+  const config = readConfig(dir);
   return {
     name: "build",
-    dir: appDir(positionals),
-    outdir: values.outdir ?? DEFAULT_OUTDIR,
-    minify: !values["no-minify"],
-    routes: parseRoutes(values.routes),
+    dir,
+    outdir: values.outdir ?? config.outdir ?? DEFAULT_OUTDIR,
+    minify: values["no-minify"] ? false : (config.minify ?? true),
+    routes: values.routes === undefined ? (config.routes ?? []) : parseRoutes(values.routes),
     quiet: values.quiet ?? false,
+    lazy: lazyOf(config),
+  };
+}
+
+/** The lazy settings from the config file, with the defaults for what it leaves out. */
+function lazyOf(config: LuciaConfig): LazySettings {
+  return {
+    mode: config.lazy?.mode ?? DEFAULT_LAZY_MODE,
+    prefetch: config.lazy?.prefetch ?? DEFAULT_LAZY_PREFETCH,
   };
 }
 
@@ -56,7 +72,7 @@ export function parseRoutes(value: string | undefined): string[] {
     .map((route) => route.trim())
     .filter(Boolean);
   for (const route of routes) {
-    if (!route.startsWith("/") || route.includes(".."))
+    if (!isRoute(route))
       throw new UsageError(`invalid route "${route}", use a path such as /guide`);
   }
   return routes;
@@ -70,12 +86,15 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
       options: { port: { type: "string" }, quiet: { type: "boolean" } },
     }),
   );
+  const dir = appDir(positionals);
+  const config = readConfig(dir);
   const port = values.port ?? env.PORT;
   return {
     name: "dev",
-    dir: appDir(positionals),
-    port: port === undefined ? DEFAULT_PORT : parsePort(port),
+    dir,
+    port: port === undefined ? (config.dev?.port ?? DEFAULT_PORT) : parsePort(port),
     quiet: values.quiet ?? false,
+    lazy: lazyOf(config),
   };
 }
 

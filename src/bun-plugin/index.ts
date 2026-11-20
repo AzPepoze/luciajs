@@ -1,9 +1,9 @@
-import { compile, LuciaError, type CompileResult } from "@compiler/index.ts";
-import { formatError } from "@cli/format-error.ts";
-import { colorEnabled } from "@cli/color.ts";
-import { addStep, now, type Steps } from "@cli/timings.ts";
+import { toCachedModule, storeModule, cachedModule, pruneModules } from "./cache.ts";
+import { compileFile } from "./compile.ts";
+import { lazyKeyFor, lazyOptionsFor, type LazySettings } from "./children.ts";
+import { setupFallback } from "./fallback.ts";
+import { now, addStep, type Steps } from "@cli/timings.ts";
 import type { BunPlugin } from "bun";
-import { cachedModule, pruneModules, storeModule, toCachedModule } from "./cache.ts";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
 
@@ -14,39 +14,39 @@ export interface LuciaPluginOptions {
   steps?: Steps;
   /** Receives each .lucia file whose output was updated since the last build. */
   onUpdate?: (update: ModuleUpdate) => void;
+  /** Splits imported .lucia files into their own chunks. Default: off. */
+  lazy?: LazySettings;
 }
 
-export function lucia({ dev = false, steps = {}, onUpdate }: LuciaPluginOptions = {}): BunPlugin {
+export function lucia({
+  dev = false,
+  steps = {},
+  onUpdate,
+  lazy,
+}: LuciaPluginOptions = {}): BunPlugin {
   return {
     name: "lucia",
     setup(build) {
       pruneModules();
       build.onLoad({ filter: /\.lucia$/ }, async ({ path }) => {
         const source = await Bun.file(path).text();
-        const cached = cachedModule(path, source, dev);
+        const key = lazyKeyFor(path, source, lazy);
+        const cached = cachedModule(path, source, dev, key);
         if (cached) return { contents: cached.code, loader: "ts" };
 
         const start = now();
-        const result = compileModule(path, source, dev);
-        const next = toCachedModule(source, dev, result);
+        const result = compileFile(source, path, dev, lazy && lazyOptionsFor(path, lazy));
+        const next = toCachedModule(source, dev, result, key);
         const update = moduleUpdate(path, storeModule(path, next), next);
         if (update) onUpdate?.(update);
         addStep(steps, "sass", result.sassMs);
         addStep(steps, "compile", now() - start - result.sassMs);
         return { contents: result.code, loader: "ts" };
       });
+      setupFallback(build, dev);
       setupRaw(build);
     },
   };
-}
-
-function compileModule(path: string, source: string, dev: boolean): CompileResult {
-  try {
-    return compile(source, path, { dev });
-  } catch (error) {
-    if (error instanceof LuciaError) throw new Error(formatError(error, source, colorEnabled()));
-    throw error;
-  }
 }
 
 export default lucia;

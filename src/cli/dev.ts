@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import type { LazySettings } from "@bun-plugin/children.ts";
 import { colorEnabled, stripAnsi } from "./color.ts";
 import { entryPath } from "./bundle.ts";
 import { buildDev } from "./dev-build.ts";
@@ -14,6 +15,7 @@ export interface DevOptions {
   port: number;
   /** Hides the timing lines. Errors and file changes still show. */
   quiet?: boolean;
+  lazy: LazySettings;
 }
 
 export interface DevHandle {
@@ -21,7 +23,7 @@ export interface DevHandle {
   stop(): void;
 }
 
-export async function startDev({ dir, port, quiet = false }: DevOptions): Promise<DevHandle> {
+export async function startDev({ dir, port, quiet = false, lazy }: DevOptions): Promise<DevHandle> {
   const root = resolve(dir);
   const log = createLogger("dev");
   entryPath(root);
@@ -33,7 +35,7 @@ export async function startDev({ dir, port, quiet = false }: DevOptions): Promis
       if (!quiet) log.info(formatBrowserReady(ms, colorEnabled()));
     },
   });
-  const rebuild = createRebuild(root, server, log, quiet);
+  const rebuild = createRebuild(root, server, log, quiet, lazy);
   await rebuild.request({ files: [], waitMs: 0 });
 
   const watcher = watchFolder(root, (files, waitMs) => {
@@ -62,7 +64,13 @@ interface Rebuild {
 type HotPlan = { ok: true; modules: HotModule[] } | { ok: false; messages: string[] };
 
 /** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
-function createRebuild(root: string, server: DevServer, log: Logger, quiet: boolean): Rebuild {
+function createRebuild(
+  root: string,
+  server: DevServer,
+  log: Logger,
+  quiet: boolean,
+  lazy: LazySettings,
+): Rebuild {
   let busy = false;
   let pending: Change | null = null;
   // After a failed build the page may hold code the failed build never published, so the next success reloads.
@@ -88,7 +96,7 @@ function createRebuild(root: string, server: DevServer, log: Logger, quiet: bool
 
   async function buildAndPublish(change: Change): Promise<void> {
     const started = now();
-    const build = await buildDev(root);
+    const build = await buildDev(root, lazy);
     if (!build.ok) return report(build.messages);
     const planned: Update = needsReload ? RELOAD : chooseUpdate(change.files, build.changes);
     let update = planned;

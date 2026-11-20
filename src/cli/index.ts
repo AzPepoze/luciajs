@@ -1,7 +1,10 @@
 #!/usr/bin/env bun
+import { LuciaError } from "@compiler/errors.ts";
 import { parseCommand, UsageError } from "./args.ts";
 import { runBuild } from "./build.ts";
+import { colorEnabled } from "./color.ts";
 import { startDev } from "./dev.ts";
+import { formatError } from "./format-error.ts";
 import { createLogger } from "./log.ts";
 import { USAGE } from "./usage.ts";
 
@@ -18,6 +21,10 @@ async function main(argv: string[]): Promise<number> {
   } catch (error) {
     if (error instanceof UsageError) {
       process.stderr.write(`${error.message}\n\n${USAGE}`);
+      return 1;
+    }
+    if (error instanceof LuciaError) {
+      process.stderr.write(`${formatError(error, undefined, colorEnabled())}\n`);
       return 1;
     }
     createLogger("cli").error(error instanceof Error ? error.message : String(error));

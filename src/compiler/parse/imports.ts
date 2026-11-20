@@ -4,9 +4,23 @@ import { RESERVED_TAGS } from "../utils/reserved.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import type { Section } from "./sections.ts";
 
+/** A default import of a `.lucia` file: the tag name and the file it loads. */
+export interface LuciaImport {
+  name: string;
+  specifier: string;
+}
+
+export interface ImportStatement {
+  text: string;
+  /** Set when the statement is a default import of a `.lucia` file. */
+  lucia?: LuciaImport;
+}
+
 export interface SplitScript {
   /** Import statements, hoisted to module level so they run once per file. */
   imports: string;
+  /** The same statements, one by one, so the compiler can replace some of them. */
+  statements: ImportStatement[];
   /** The rest of the script, run once per instance. */
   body: string;
   /** Default-import names of `.lucia` files, usable as tags in markup. */
@@ -16,8 +30,6 @@ export interface SplitScript {
 const IMPORT_STATEMENT = /^[ \t]*import(?!\s*\()\s[^"']*?(["'])([^"'\n]+)\1[ \t]*;?/gm;
 const EXPORT_STATEMENT = /^[ \t]*export\b/m;
 const DEFAULT_IMPORT = /^\s*import\s+(?!type\s)([A-Za-z_$][\w$]*)\s*(?:,|from\b)/;
-// A top-level `const Name = lazy(...)` is a component too, so it can be used as a tag.
-const LAZY_DECLARATION = /^const\s+([A-Za-z_$][\w$]*)\s*=\s*lazy\s*\(/gm;
 
 function defaultLuciaImport(statement: string, specifier: string): string | undefined {
   if (!specifier.endsWith(".lucia")) return undefined;
@@ -44,26 +56,25 @@ function rejectExports(script: Section, file: string): void {
 }
 
 export function splitImports(section: Section | null, file: string): SplitScript {
-  if (!section) return { imports: "", body: "", components: new Set() };
+  if (!section) return { imports: "", statements: [], body: "", components: new Set() };
   rejectExports(section, file);
   const script = section.content;
-  const imports: string[] = [];
+  const statements: ImportStatement[] = [];
   const components = new Set<string>();
-  for (const match of script.matchAll(LAZY_DECLARATION)) {
-    const name = match[1]!;
-    if (RESERVED_TAGS.has(name)) throw scriptError(section, match.index, file, "L1004", { name });
-    components.add(name);
-  }
   const body = script.replace(
     IMPORT_STATEMENT,
     (statement, _quote, specifier: string, offset: number) => {
-      imports.push(statement.trim());
       const name = defaultLuciaImport(statement, specifier);
       if (name && RESERVED_TAGS.has(name))
         throw scriptError(section, offset, file, "L1004", { name });
       if (name) components.add(name);
+      statements.push({
+        text: statement.trim(),
+        lucia: name ? { name, specifier } : undefined,
+      });
       return "";
     },
   );
-  return { imports: imports.join("\n"), body, components };
+  const imports = statements.map((statement) => statement.text).join("\n");
+  return { imports, statements, body, components };
 }

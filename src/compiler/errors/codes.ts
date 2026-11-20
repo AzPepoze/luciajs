@@ -23,24 +23,39 @@ export const CODES = {
     message: "$name is a reserved tag name and cannot be a component",
     hint: "Rename the component. IF, ELSEIF, ELSE, EACH, FOR, CONTENT and HTML are built in.",
   },
-  L1005: { message: "$message", hint: "Check the Sass syntax in this <style> section." },
-  L1006: { message: "unclosed <!-- comment", hint: "Add --> to close the comment." },
+  L1005: {
+    message: "$message",
+    hint: "Check the Sass syntax in this <style> section.",
+  },
+  L1006: {
+    message: "unclosed <!-- comment",
+    hint: "Add --> to close the comment.",
+  },
   L1007: {
     message: "unclosed <$name>",
     hint: "Add > to close the tag, or /> if it has no content.",
   },
-  L1008: { message: "unclosed closing tag", hint: "Add > after the closing tag name." },
+  L1008: {
+    message: "unclosed closing tag",
+    hint: "Add > after the closing tag name.",
+  },
   L1009: {
     message: "<$name> needs a closing </$name>",
     hint: "Add </$name> after its content, or write <$name /> with no content.",
   },
   L1010: { message: "unclosed {", hint: "Add } to close the expression." },
-  L1011: { message: "empty {}", hint: "Put an expression between the braces, such as {count}." },
+  L1011: {
+    message: "empty {}",
+    hint: "Put an expression between the braces, such as {count}.",
+  },
   L1012: {
     message: "expected an attribute name",
     hint: "Remove the stray character, or add a name.",
   },
-  L1013: { message: "unclosed attribute value", hint: "Add the closing quote after the value." },
+  L1013: {
+    message: "unclosed attribute value",
+    hint: "Add the closing quote after the value.",
+  },
   L1014: {
     message: "bind-<property> needs a property name",
     hint: "Write the property after the dash, such as bind-value.",
@@ -61,7 +76,10 @@ export const CODES = {
     message: "animate needs {keyframes}",
     hint: "Put the keyframes in braces, such as animate={fadeIn}.",
   },
-  L1019: { message: "$tag takes no attributes", hint: "Remove the attributes from $tag." },
+  L1019: {
+    message: "$tag takes no attributes",
+    hint: "Remove the attributes from $tag.",
+  },
   L1020: {
     message: "$tag has no $attr attribute",
     hint: "Check the spelling. Only the attributes listed in the docs are allowed.",
@@ -87,7 +105,10 @@ export const CODES = {
     message: "<$name> needs a closing </$name>",
     hint: "Write <$name> ... </$name> instead of <$name />.",
   },
-  L1027: { message: "expected </$name>", hint: "Close the block with </$name> after its content." },
+  L1027: {
+    message: "expected </$name>",
+    hint: "Close the block with </$name> after its content.",
+  },
   L1028: {
     message: "expected </$name>, found </$found>",
     hint: "Close the block with </$name> before the other closing tag.",
@@ -104,8 +125,14 @@ export const CODES = {
     message: "FOR needs a name in {}, like {i}",
     hint: "Put the loop name in braces first, such as <FOR {i} to={10}>.",
   },
-  L1032: { message: "FOR needs to={end}", hint: "Add the end value, such as to={10}." },
-  L1033: { message: "unexpected </$tag>", hint: "Remove it, or open the block it closes." },
+  L1032: {
+    message: "FOR needs to={end}",
+    hint: "Add the end value, such as to={10}.",
+  },
+  L1033: {
+    message: "unexpected </$tag>",
+    hint: "Remove it, or open the block it closes.",
+  },
   L1034: {
     message: "<$tag> must directly follow </IF> or </ELSEIF>",
     hint: "Put ELSEIF or ELSE right after the branch before it.",
@@ -121,6 +148,26 @@ export const CODES = {
   L1037: {
     message: "<HTML> needs one {expression}",
     hint: "Put one expression in braces between the tags, such as <HTML>{html}</HTML>.",
+  },
+  L1038: {
+    message: "<$tag> must be at the top level of the file",
+    hint: "Move it out of the other elements, to the top level of the markup.",
+  },
+  L1039: {
+    message: "<FALLBACK> can only be used once",
+    hint: "Keep one <FALLBACK> block, and move its content into it.",
+  },
+  L1040: {
+    message: "<NOLAZY /> can only be used once",
+    hint: "Remove the extra <NOLAZY /> from this file.",
+  },
+  L1041: {
+    message: "<NOLAZY /> takes no children",
+    hint: "Write it as <NOLAZY /> with no content between the tags.",
+  },
+  L1042: {
+    message: "$what is not allowed in <FALLBACK>",
+    hint: "<FALLBACK> shows before the script runs, so use plain elements and text only.",
   },
   L2001: {
     message: "animate item needs a style",
@@ -272,7 +319,10 @@ export const CODES = {
     message: "animate keyframe $at is outside 0..1",
     hint: "Keyframe keys are fractions of the animation, from 0 to 1.",
   },
-  L2037: { message: "animate keyframe $at is listed twice", hint: "Keep one entry for each key." },
+  L2037: {
+    message: "animate keyframe $at is listed twice",
+    hint: "Keep one entry for each key.",
+  },
   L2038: {
     message: "animate keyframes must include the keys 0 and 1",
     hint: "Add a key 0 for the start and a key 1 for the end.",
@@ -305,7 +355,10 @@ export const CODES = {
     message: "animation was renamed to style",
     hint: "Write style: keyframes instead of animation: keyframes.",
   },
-  L2046: { message: "active was renamed to when", hint: "Write when: instead of active:." },
+  L2046: {
+    message: "active was renamed to when",
+    hint: "Write when: instead of active:.",
+  },
   L2047: {
     message: "animate more $name is a number, which is no longer used",
     hint: "Write $name: SCROLL_AT.ENTER, or $name: { element: EDGE.TOP, window: EDGE.BOTTOM }.",
@@ -355,6 +408,10 @@ export const CODES = {
     message: "$prop is read-only in this component",
     hint: "The parent can let it write back: pass it with bind-$prop={variable}.",
   },
+  L2059: {
+    message: "lazy() was removed",
+    hint: "Import the component normally. It loads later by itself. Put its loading view in a <FALLBACK> block in that file.",
+  },
   L3001: {
     message: '"$name" is not exported by "$module"',
     hint: "Check the name, or see reference/api.ts.",
@@ -363,7 +420,14 @@ export const CODES = {
     message: 'cannot resolve "$name"',
     hint: "Check the spelling of the path or package name, and that the file exists.",
   },
-  L3003: { message: "$message", hint: "Fix the code on this line, then build again." },
+  L3003: {
+    message: "$message",
+    hint: "Fix the code on this line, then build again.",
+  },
+  L3004: {
+    message: "$message",
+    hint: "Fix lucia.config.json, then run the command again.",
+  },
 } as const satisfies Record<string, ErrorCode>;
 
 export type ErrorCodeName = keyof typeof CODES;

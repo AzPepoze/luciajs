@@ -4,6 +4,10 @@ import { variable } from "lucia";
 const bars = variable([40, 70, 55, 90]);
 </script>
 
+<FALLBACK>
+  <p class="loading-text">Loading the chart...</p>
+</FALLBACK>
+
 <div class="lazy-chart">
   <p>Loaded in its own chunk.</p>
   <div class="bars">
@@ -14,6 +18,22 @@ const bars = variable([40, 70, 55, 90]);
 </div>
 
 <style scoped>
+.loading-text {
+  margin: 0;
+  color: var(--fg);
+  animation: loading-pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes loading-pulse {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+
 .lazy-chart {
   display: grid;
   gap: 0.5rem;

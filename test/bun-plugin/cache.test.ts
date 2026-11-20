@@ -98,6 +98,7 @@ describe("lucia plugin cache", () => {
     const entry: CachedModule = {
       source,
       dev: true,
+      lazyKey: "",
       deps: compiled.deps,
       code: compiled.code,
       css: compiled.css,

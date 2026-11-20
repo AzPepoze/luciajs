@@ -24,7 +24,14 @@ describe("runBuild", () => {
   test("bundles the app, hashes the script and copies public/", async () => {
     await mkdir(outdir, { recursive: true });
     await writeFile(join(outdir, "stale.txt"), "old");
-    expect(await runBuild({ dir: FIXTURE, outdir, minify: true })).toBe(0);
+    expect(
+      await runBuild({
+        dir: FIXTURE,
+        outdir,
+        minify: true,
+        lazy: { mode: "smart", prefetch: "idle" },
+      }),
+    ).toBe(0);
 
     const files = await readdir(outdir);
     expect(files).not.toContain("stale.txt");
@@ -50,11 +57,23 @@ describe("runBuild", () => {
       "<script>export const value = 1;</script>\n<p>x</p>\n",
     );
     expect(
-      await runBuild({ dir: broken, outdir: join(workRoot, "broken-dist"), minify: true }),
+      await runBuild({
+        dir: broken,
+        outdir: join(workRoot, "broken-dist"),
+        minify: true,
+        lazy: { mode: "smart", prefetch: "idle" },
+      }),
     ).toBe(1);
   });
 
   test("refuses an output folder that holds the app", async () => {
-    expect(await runBuild({ dir: FIXTURE, outdir: join(FIXTURE, ".."), minify: true })).toBe(1);
+    expect(
+      await runBuild({
+        dir: FIXTURE,
+        outdir: join(FIXTURE, ".."),
+        minify: true,
+        lazy: { mode: "smart", prefetch: "idle" },
+      }),
+    ).toBe(1);
   });
 });

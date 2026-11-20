@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { lazy, type Component } from "lucia";
+import { lazyComponent } from "@runtime/dom/lazy.ts";
+
 import Counter from "./fixtures/Counter.lucia";
 import Loading from "./fixtures/Loading.lucia";
 import { host, mount, resetMounts, text } from "./fixtures/mount.ts";
@@ -24,7 +26,7 @@ describe("lazy", () => {
   test("shows the fallback until the component has loaded", async () => {
     const { load, finish } = deferredLoad(Counter);
     const el = host();
-    mount(lazy(load, { fallback: Loading }), el);
+    mount(lazyComponent(load, Loading, "none"), el);
 
     expect(el.querySelector(".loading")).not.toBeNull();
     expect(el.querySelector(".counter")).toBeNull();
@@ -39,7 +41,7 @@ describe("lazy", () => {
   test("renders nothing before the load when there is no fallback", async () => {
     const { load, finish } = deferredLoad(Counter);
     const el = host();
-    mount(lazy(load), el);
+    mount(lazyComponent(load, undefined, "none"), el);
 
     expect(el.children.length).toBe(0);
 
@@ -53,7 +55,7 @@ describe("lazy", () => {
     const { load, finish } = deferredLoad(Counter);
     const el = host();
     el.append(document.createElement("hr"));
-    mount(lazy(load, { fallback: Loading }), el);
+    mount(lazyComponent(load, Loading, "none"), el);
     el.append(document.createElement("footer"));
 
     finish();
@@ -66,7 +68,7 @@ describe("lazy", () => {
     const { load, finish } = deferredLoad(Counter);
     const el = host();
     const fragment = document.createDocumentFragment();
-    mount(lazy(load, { fallback: Loading }), fragment as unknown as HTMLElement);
+    mount(lazyComponent(load, Loading, "none"), fragment as unknown as HTMLElement);
     el.append(fragment);
 
     finish();
@@ -78,7 +80,7 @@ describe("lazy", () => {
   test("detaching before the load finishes places nothing", async () => {
     const { load, finish } = deferredLoad(Counter);
     const el = host();
-    const instance = mount(lazy(load, { fallback: Loading }), el);
+    const instance = mount(lazyComponent(load, Loading, "none"), el);
 
     void instance.detach();
     finish();
@@ -90,7 +92,7 @@ describe("lazy", () => {
 
   test("loads once and reuses the component for later placements", async () => {
     const { load, finish, calls } = deferredLoad(Counter);
-    const Chart = lazy(load, { fallback: Loading });
+    const Chart = lazyComponent(load, Loading, "none");
     const first = host();
     const second = host();
     mount(Chart, first);
@@ -112,7 +114,7 @@ describe("lazy", () => {
     try {
       const el = host();
       mount(
-        lazy(() => Promise.reject(new Error("no file")), { fallback: Loading }),
+        lazyComponent(() => Promise.reject(new Error("no file")), Loading, "none"),
         el,
       );
       await flush();
@@ -124,5 +126,9 @@ describe("lazy", () => {
     } finally {
       globalThis.reportError = original;
     }
+  });
+
+  test("lazy() is removed, and calling it says to import the component instead", () => {
+    expect(() => lazy()).toThrow("lazy() was removed");
   });
 });
