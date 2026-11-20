@@ -8,7 +8,7 @@ import { Preview, RunError } from "../live/preview.ts";
 import { loadRuntime } from "../live/runtime-source.ts";
 import type { LiveBundle, LiveError, LiveRun } from "../live/types.ts";
 import { guidePath, pageLink } from "../page-link.ts";
-// The editor (CodeMirror) is large. It sits in an IF, so it loads when the row nears the screen.
+// CodeEditor is large. Inside an IF, smart mode splits it into its own chunk.
 import CodeEditor from "./CodeEditor.lucia";
 import CodePanel from "./CodePanel.lucia";
 import ErrorNote from "./ErrorNote.lucia";
