@@ -54,7 +54,7 @@ function letterScatter(index: number) {
     scale: `${offset.scale}`,
   };
   const from = { translate: "0em 0em", rotate: "0deg", scale: "1" };
-  return scrollBetween(follow, from, to, [0, 0.2]);
+  return scrollBetween(follow, from, to, [0, 0.4]);
 }
 
 const letters = "LuciaJS"
@@ -86,28 +86,28 @@ const heroDrift = reduced
   : scrollBetween(
       follow,
       { opacity: 1, translate: "0 0" },
-      { opacity: 0.1, translate: "0 -14vh" },
-      [0, 0.18],
+      { opacity: 0.3, translate: "0 6vh" },
+      [0, 0.4],
     );
 
-// The title moves faster than the rest of the hero, so the two separate as you scroll.
+// The title lags behind the scroll more than the rest of the hero, so the two separate as you scroll.
 const titleDrift = reduced
   ? []
-  : scrollBetween(follow, { translate: "0 0" }, { translate: "0 -24vh" }, [0, 0.2]);
+  : scrollBetween(follow, { translate: "0 0" }, { translate: "0 12vh" }, [0, 0.4]);
 
 // The two badges fly up and apart, one to each side, so they clear the title as it rises.
 const badgeStart = { translate: "0px 0px", rotate: "0deg" };
 const eyebrowDrift = scrollBetween(
   follow,
   badgeStart,
-  { translate: "-22vw -30vh", rotate: "-16deg" },
-  [0, 0.2],
+  { translate: "-12vw -8vh", rotate: "-16deg" },
+  [0, 0.4],
 );
 const kaomojiDrift = scrollBetween(
   follow,
   badgeStart,
-  { translate: "22vw -30vh", rotate: "14deg" },
-  [0, 0.2],
+  { translate: "12vw -8vh", rotate: "14deg" },
+  [0, 0.4],
 );
 const eyebrowAnimate = reduced ? eyebrowMotion : [eyebrowMotion, eyebrowDrift];
 const kaomojiAnimate = reduced ? [] : kaomojiDrift;
