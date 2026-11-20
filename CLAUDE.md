@@ -8,6 +8,7 @@ LuciaJS: a Bun-native UI framework with single-file `.lucia` components, variabl
 - How the compiler and runtime fit together: [docs/architecture.md](docs/architecture.md)
 - The `.lucia` format: [docs/components.md](docs/components.md)
 - Events and `bind`: [docs/events.md](docs/events.md). Flow tags: [docs/flow.md](docs/flow.md). Animate: [docs/animate.md](docs/animate.md)
+- Lazy components (`lazy()`, one chunk each): [docs/lazy.md](docs/lazy.md)
 - The docs site playground (`/playground`): [docs/playground.md](docs/playground.md). It needs `scripts/playground-runtime.ts`, which `dev` and `build` run first.
 
 ## Keep docs current
