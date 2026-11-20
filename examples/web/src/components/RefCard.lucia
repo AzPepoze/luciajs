@@ -20,10 +20,11 @@ const emptyEntry: ApiEntry = {
   bullets: [],
   example: "",
 };
-const { entry } = props({ entry: emptyEntry });
+const { entry, block } = props({ entry: emptyEntry, block: "" });
 
 // The entry never changes after mount, so everything derived from it is computed once.
 const shown = entry.peek();
+const shownBlock = block.peek();
 const members = flattenMembers(shown.members);
 const language = languageOf(shown);
 const signature = wrapSignature(shown.signature);
@@ -36,6 +37,7 @@ const anchor = location.origin + pageLink(referencePath, shown.id);
   id={shown.id}
   data-ref-entry
   data-group={shown.group}
+  data-block={shownBlock}
   data-kind={shown.kind}
   data-search={search}
 >

@@ -1,13 +1,19 @@
 import { matchesFilter } from "./reference-model.ts";
 import { refreshScrollSpy } from "./scroll-spy.ts";
 
+function countShown(counts: Map<string, number>, key: string, shown: boolean): void {
+  counts.set(key, (counts.get(key) ?? 0) + Number(shown));
+}
+
 // Filters the Reference cards and the index by text and kind.
 export function initReferenceFilter(root: HTMLElement, signal: AbortSignal): void {
   const filter = root.querySelector<HTMLInputElement>("#ref-filter")!;
   const picked = new Set<string>();
   const cards = [...root.querySelectorAll<HTMLElement>("[data-ref-entry]")];
-  const sections = [...root.querySelectorAll<HTMLElement>("[data-ref-section]")];
+  const groups = [...root.querySelectorAll<HTMLElement>("[data-ref-group]")];
+  const blocks = [...root.querySelectorAll<HTMLElement>("[data-ref-section]")];
   const indexGroups = [...root.querySelectorAll<HTMLElement>("[data-index-group]")];
+  const indexBlocks = [...root.querySelectorAll<HTMLElement>("[data-index-block]")];
   const indexLinks = new Map(
     [...root.querySelectorAll<HTMLElement>("[data-ref-link]")].map((link) => [
       link.dataset.refLink!,
@@ -19,6 +25,7 @@ export function initReferenceFilter(root: HTMLElement, signal: AbortSignal): voi
 
   function apply(): void {
     const shownByGroup = new Map<string, number>();
+    const shownByBlock = new Map<string, number>();
     let shownTotal = 0;
     for (const card of cards) {
       const shown = matchesFilter(
@@ -28,12 +35,14 @@ export function initReferenceFilter(root: HTMLElement, signal: AbortSignal): voi
       );
       card.hidden = !shown;
       indexLinks.get(card.id)!.hidden = !shown;
-      const group = card.dataset.group!;
-      shownByGroup.set(group, (shownByGroup.get(group) ?? 0) + Number(shown));
+      countShown(shownByGroup, card.dataset.group!, shown);
+      countShown(shownByBlock, card.dataset.block!, shown);
       shownTotal += Number(shown);
     }
-    for (const section of sections) section.hidden = !shownByGroup.get(section.dataset.group!);
+    for (const group of groups) group.hidden = !shownByGroup.get(group.dataset.refGroup!);
+    for (const block of blocks) block.hidden = !shownByBlock.get(block.dataset.block!);
     for (const group of indexGroups) group.hidden = !shownByGroup.get(group.dataset.indexGroup!);
+    for (const block of indexBlocks) block.hidden = !shownByBlock.get(block.dataset.indexBlock!);
     empty.hidden = shownTotal > 0;
     refreshScrollSpy();
   }

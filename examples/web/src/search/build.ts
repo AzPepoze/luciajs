@@ -1,6 +1,7 @@
 import { api, type ApiEntry } from "../../../../reference/api.ts";
-import { catalog, entryIcon, groupTitles } from "../catalog.ts";
-import { orderedEntries } from "../render.ts";
+import { catalog, entryIcon } from "../catalog.ts";
+import { blockTitle, placedRows, placeGroups, type PlacedRow } from "../guide-placement.ts";
+import { guideGroups } from "../render.ts";
 import { guidePath, pageLink, playgroundPath, referencePath } from "../page-link.ts";
 import { flattenMembers } from "../reference-model.ts";
 import { field, type Field } from "./fuzzy.ts";
@@ -25,15 +26,19 @@ export function buildSearchIndex(): SearchEntry[] {
 }
 
 function guideSections(): SearchEntry[] {
-  return orderedEntries.map((entry) => ({
+  return placedRows(guideGroups).map((row) => ({
     page: "Guide",
-    section: groupTitles[entry.group].label,
-    href: pageLink(guidePath, entry.id),
-    icon: entryIcon(entry.id),
-    title: field(entry.name),
-    summary: field(entry.summary),
-    keywords: field(bulletText(entry)),
+    section: rowSection(row),
+    href: pageLink(guidePath, row.entry.id),
+    icon: entryIcon(row.entry.id),
+    title: field(row.entry.name),
+    summary: field(row.entry.summary),
+    keywords: field(bulletText(row.entry)),
   }));
+}
+
+function rowSection(row: PlacedRow): string {
+  return blockTitle(row.group, row.block);
 }
 
 function guideDemos(): SearchEntry[] {
@@ -51,14 +56,14 @@ function guideDemos(): SearchEntry[] {
 }
 
 function referenceEntries(): SearchEntry[] {
-  return api.map((entry) => ({
+  return placedRows(placeGroups()).map((row) => ({
     page: "Reference",
-    section: groupTitles[entry.group].label,
-    href: pageLink(referencePath, entry.id),
-    icon: entryIcon(entry.id),
-    title: field(entry.name),
-    summary: field(entry.summary),
-    keywords: field(referenceKeywords(entry)),
+    section: rowSection(row),
+    href: pageLink(referencePath, row.entry.id),
+    icon: entryIcon(row.entry.id),
+    title: field(row.entry.name),
+    summary: field(row.entry.summary),
+    keywords: field(referenceKeywords(row.entry)),
   }));
 }
 

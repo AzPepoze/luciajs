@@ -9,12 +9,18 @@ interface IndexLink {
   icon: string;
 }
 
+interface IndexBlock {
+  id: string;
+  label?: string;
+  links: IndexLink[];
+}
+
 interface IndexGroup {
   group: string;
   label: string;
   icon: string;
   color: string;
-  links: IndexLink[];
+  blocks: IndexBlock[];
 }
 
 const { groups } = props({ groups: [] as IndexGroup[] });
@@ -31,14 +37,32 @@ const { groups } = props({ groups: [] as IndexGroup[] });
     </button>
     <div class="nav-items">
       <div>
-        <nav class="nav-links" aria-label={group.label}>
-          <EACH {group.links} as={link}>
-            <a href={pageLink(referencePath, link.id)} data-ref-link={link.id}>
-              <span class="material-symbols-rounded" aria-hidden="true">{link.icon}</span>
-              <code class="nav-label">{link.name}</code>
-            </a>
-          </EACH>
-        </nav>
+        <EACH {group.blocks} as={block}>
+          <div class="nav-subgroup" data-index-block={block.id}>
+            <IF {block.label}>
+              <button class="nav-title nav-subtitle" type="button" aria-expanded="true">
+                <span class="group-name">{block.label}</span>
+                <span class="material-symbols-rounded chevron" aria-hidden="true">
+                  expand_more
+                </span>
+              </button>
+            </IF>
+            <div class="nav-items">
+              <div>
+                <nav class="nav-links" aria-label={group.label}>
+                  <EACH {block.links} as={link}>
+                    <a href={pageLink(referencePath, link.id)} data-ref-link={link.id}>
+                      <span class="material-symbols-rounded" aria-hidden="true">
+                        {link.icon}
+                      </span>
+                      <code class="nav-label">{link.name}</code>
+                    </a>
+                  </EACH>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </EACH>
       </div>
     </div>
   </div>

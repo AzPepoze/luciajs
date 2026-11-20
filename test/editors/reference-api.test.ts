@@ -2,7 +2,15 @@ import { describe, expect, test } from "bun:test";
 import { api } from "../../reference/api.ts";
 
 const KINDS = new Set(["function", "type", "markup", "style", "value"]);
-const GROUPS = new Set(["basics", "reactivity", "flow", "components", "styling", "motion"]);
+const GROUPS = new Set([
+  "basics",
+  "reactivity",
+  "events",
+  "flow",
+  "components",
+  "styling",
+  "motion",
+]);
 
 describe("reference api table", () => {
   test("ids are unique url-safe anchors", () => {

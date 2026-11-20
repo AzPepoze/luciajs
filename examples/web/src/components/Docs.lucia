@@ -4,7 +4,7 @@ import type { ApiEntry } from "../../../../reference/api.ts";
 import { catalog } from "../catalog.ts";
 import { headingFlash } from "../flash.ts";
 import { buildKeywordIndex, tokenize } from "../keywords.ts";
-import { orderedEntries } from "../render.ts";
+import { guideGroups, orderedEntries } from "../render.ts";
 import CodeBlock from "./CodeBlock.lucia";
 import DemoRow from "./DemoRow.lucia";
 import DocTable from "./DocTable.lucia";
@@ -28,8 +28,7 @@ const flashKeys = {
   1: { backgroundColor: "var(--lavender-soft)" },
 };
 
-// Each section appears once, in sidebar order.
-const sections = orderedEntries.map((entry) => {
+function sectionOf(entry: ApiEntry) {
   const flash = headingFlash(entry.id);
   return {
     entry,
@@ -44,37 +43,56 @@ const sections = orderedEntries.map((entry) => {
       duration: 900,
     },
   };
-});
+}
+
+// Groups, then their blocks, then the sections: the same order as the sidebar.
+const groups = guideGroups.map((group) => ({
+  label: group.label,
+  color: group.color,
+  blocks: group.blocks.map((block) => ({
+    id: block.id,
+    label: block.label,
+    sections: block.entries.map(sectionOf),
+  })),
+}));
 
 function languageOf(entry: ApiEntry): string {
   return entry.kind === "function" ? "typescript" : "lucia";
 }
 </script>
 
-<EACH {sections} as={section}>
-  <section class="doc-section" id={section.entry.id} animate={sectionMotion}>
-    <h2
-      class="doc-title"
-      animate={section.flashMotion}
-    >
-      <code class="doc-name">{section.entry.name}</code>
-      <span class="doc-subtitle"><RichText parts={section.subtitle} /></span>
-    </h2>
-    <CodeBlock
-      text={section.entry.signature}
-      language={languageOf(section.entry)}
-      className="declaration"
-    />
-    <ul class="notes">
-      <EACH {section.bullets} as={parts}>
-        <li><RichText parts={parts} /></li>
-      </EACH>
-    </ul>
-    <IF {section.table}>
-      <DocTable head={section.table.head} rows={section.table.rows} />
+<EACH {groups} as={group}>
+  <h2 class="guide-group-title" style={"--group: " + group.color}>{group.label}</h2>
+  <EACH {group.blocks} as={block}>
+    <IF {block.label}>
+      <h3 class="guide-subgroup-title">{block.label}</h3>
     </IF>
-    <EACH {section.demos} as={demo}>
-      <DemoRow demo={demo} />
+    <EACH {block.sections} as={section}>
+      <section class="doc-section" id={section.entry.id} animate={sectionMotion}>
+        <h2
+          class="doc-title"
+          animate={section.flashMotion}
+        >
+          <code class="doc-name">{section.entry.name}</code>
+          <span class="doc-subtitle"><RichText parts={section.subtitle} /></span>
+        </h2>
+        <CodeBlock
+          text={section.entry.signature}
+          language={languageOf(section.entry)}
+          className="declaration"
+        />
+        <ul class="notes">
+          <EACH {section.bullets} as={parts}>
+            <li><RichText parts={parts} /></li>
+          </EACH>
+        </ul>
+        <IF {section.table}>
+          <DocTable head={section.table.head} rows={section.table.rows} />
+        </IF>
+        <EACH {section.demos} as={demo}>
+          <DemoRow demo={demo} />
+        </EACH>
+      </section>
     </EACH>
-  </section>
+  </EACH>
 </EACH>
