@@ -17,9 +17,17 @@ describe("chooseUpdate", () => {
     });
   });
 
-  test("a script or markup change reloads", () => {
-    expect(chooseUpdate(["src/Card.lucia"], [CODE])).toBe(RELOAD);
-    expect(chooseUpdate(["src/Card.lucia"], [STYLE, CODE])).toBe(RELOAD);
+  test("a script or markup change hot swaps the component, with its style change if any", () => {
+    expect(chooseUpdate(["src/Card.lucia"], [CODE])).toEqual({
+      kind: "hot",
+      paths: ["/app/src/Card.lucia"],
+      styles: [],
+    });
+    expect(chooseUpdate(["src/Card.lucia"], [STYLE, CODE])).toEqual({
+      kind: "hot",
+      paths: ["/app/src/Card.lucia"],
+      styles: [{ id: "abc", css: ".a{}" }],
+    });
   });
 
   test("a changed .ts or other file reloads, even when only styles changed in the build", () => {

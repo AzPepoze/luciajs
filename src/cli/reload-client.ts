@@ -1,3 +1,5 @@
+import { RUNTIME_PATH } from "./runtime-module.ts";
+
 export const RELOAD_PATH = "/__lucia/reload";
 const ERROR_DOCS_URL = "https://github.com/AzPepoze/luciajs/blob/main/docs/errors.md";
 
@@ -57,6 +59,24 @@ const CLIENT_CODE = `
     sendReady();
   }
 
+  // Imports the new module and swaps every mounted instance of it. A module without an id cannot be swapped.
+  function hotUpdate(message) {
+    Promise.all([import(message.url), import("${RUNTIME_PATH}")]).then(function (loaded) {
+      var component = loaded[0].default;
+      if (!component || !component.id) return location.reload();
+      loaded[1].swapComponent(component);
+      hideError();
+      sendReady();
+    }).catch(function (error) {
+      showError("Hot update failed\\n\\n" + String(error && error.stack ? error.stack : error));
+    });
+  }
+
+  function hideError() {
+    if (overlay) overlay.remove();
+    overlay = null;
+  }
+
   function connect() {
     socket = new WebSocket(url);
     socket.onopen = function () {
@@ -67,6 +87,7 @@ const CLIENT_CODE = `
       var message = JSON.parse(event.data);
       if (message.type === "reload") location.reload();
       else if (message.type === "css") swapStyle(message);
+      else if (message.type === "hot") hotUpdate(message);
       else showError(message.message);
     };
     socket.onclose = function () {

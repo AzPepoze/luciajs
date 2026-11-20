@@ -92,3 +92,32 @@ describe("startDev", () => {
     await waitForBundle(base, "Edited in dev");
   });
 });
+
+describe("hot updates", () => {
+  test("a component edit sends a hot message, not a reload, and serves the new module", async () => {
+    dir = await mkdtemp(join(tmpdir(), "lucia-hot-"));
+    await cp(FIXTURE, dir, { recursive: true });
+    await mkdir(join(dir, "node_modules"));
+    await symlink(REPO, join(dir, "node_modules", "lucia"), "dir");
+    const base = await startServer(dir);
+
+    const messages: { type: string; url?: string }[] = [];
+    const socket = new WebSocket(`ws://${base.host}/__lucia/reload`);
+    socket.onmessage = (event) => messages.push(JSON.parse(String(event.data)));
+    await new Promise((resolve) => (socket.onopen = resolve));
+
+    const component = join(dir, "src/Greeting.lucia");
+    await writeFile(
+      component,
+      (await readFile(component, "utf8")).replace("Hello from the fixture", "Hot edit"),
+    );
+    const deadline = Date.now() + TIMEOUT_MS;
+    while (messages.length === 0 && Date.now() < deadline) await Bun.sleep(50);
+    socket.close();
+
+    expect(messages.map((message) => message.type)).toEqual(["hot"]);
+    const hot = await get(new URL(messages[0]!.url!, base));
+    expect(hot.status).toBe(200);
+    expect(hot.text).toContain("Hot edit");
+  });
+});

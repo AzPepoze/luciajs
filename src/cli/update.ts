@@ -5,28 +5,37 @@ export interface StyleUpdate {
   css: string;
 }
 
-export type Update = { kind: "reload" } | { kind: "styles"; styles: StyleUpdate[] };
+/** A hot update swaps the changed components (`paths`, absolute) in place. */
+export type Update =
+  | { kind: "reload" }
+  | { kind: "styles"; styles: StyleUpdate[] }
+  | { kind: "hot"; paths: string[]; styles: StyleUpdate[] };
 
 export const RELOAD: Update = { kind: "reload" };
 
 const STYLE_FILE = /\.(lucia|scss|sass)$/;
+const COMPONENT_FILE = /\.lucia$/;
 
 /**
- * A css swap is safe only when every changed file is a style file and no component's
- * script or markup changed. Anything else reloads the page.
+ * Only style files changed: a css swap. `.lucia` script or markup changed: a hot swap, if every
+ * changed file is a component. Anything else reloads the page.
  */
 export function chooseUpdate(files: string[], changes: ModuleChange[]): Update {
   if (files.length === 0 || !files.every(isStyleFile)) return RELOAD;
   const styles: StyleUpdate[] = [];
+  const paths: string[] = [];
   for (const change of changes) {
-    if (change.kind === "code") return RELOAD;
-    styles.push({ id: change.id, css: change.css });
+    if (change.kind === "code") paths.push(change.path);
+    else styles.push({ id: change.id, css: change.css });
   }
-  return { kind: "styles", styles };
+  if (paths.length === 0) return { kind: "styles", styles };
+  if (!paths.every((path) => COMPONENT_FILE.test(path))) return RELOAD;
+  return { kind: "hot", paths, styles };
 }
 
 export function describeUpdate(update: Update): string {
-  return update.kind === "reload" ? "reload" : "css swap";
+  if (update.kind === "reload") return "reload";
+  return update.kind === "styles" ? "css swap" : "hot swap";
 }
 
 function isStyleFile(file: string): boolean {

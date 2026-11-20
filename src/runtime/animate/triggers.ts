@@ -1,4 +1,5 @@
 import { listen, type Cleanup } from "../dom/bindings.ts";
+import { isSwapping } from "../dom/hot/session.ts";
 import type { Leave } from "../dom/leave.ts";
 import { untrack, watch } from "../store/graph.ts";
 import { isReactive, unwrap } from "../store/store.ts";
@@ -60,11 +61,17 @@ export function bindTrigger(
   leaves: Leave[],
 ): void {
   if (isReactive(when)) bindSource(when, group, once, cleanups);
-  else if (when === WHEN.ATTACH) void group.forward();
+  else if (when === WHEN.ATTACH) attachTrigger(group);
   else if (when === WHEN.DETACH) leaves.push(() => group.forward());
   else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
   else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
   else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);
+}
+
+/** A hot swap shows the end state at once, so the element does not play its entrance again. */
+function attachTrigger(group: Group): void {
+  if (isSwapping()) group.show(1);
+  else void group.forward();
 }
 
 /** Scroll-linked: the group follows the element's place on screen. Reduced motion shows the end state. */

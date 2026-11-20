@@ -1,10 +1,17 @@
-const injectedStyles = new Set<string>();
+const injectedStyles = new Map<string, HTMLStyleElement>();
 
 export function injectStyle(id: string, css: string): void {
   if (!css || injectedStyles.has(id)) return;
-  injectedStyles.add(id);
   const style = document.createElement("style");
   style.dataset.lucia = id;
   style.textContent = css;
   document.head.appendChild(style);
+  injectedStyles.set(id, style);
+}
+
+/** Changes a component's injected style in place. Used by the dev hot swap. */
+export function replaceStyle(id: string, css: string): void {
+  const style = injectedStyles.get(id);
+  if (style) style.textContent = css;
+  else injectStyle(id, css);
 }
