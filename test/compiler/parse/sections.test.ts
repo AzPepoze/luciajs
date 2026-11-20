@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { parse } from "@compiler/parse/sections.ts";
 
-const FILE = "Card.lucia";
+const FILE = "Card.lusia";
 
 describe("parse", () => {
   test("splits script, style and markup", () => {
@@ -50,13 +50,13 @@ describe("parse", () => {
     expect(parsed.styles[2]?.line).toBe(4);
   });
 
-  test("throws LuciaError on an unclosed section", () => {
+  test("throws LusiaError on an unclosed section", () => {
     expect(() => parse("<style>p {}", FILE)).toThrow("unclosed <style>");
   });
 
-  test("throws LuciaError on a duplicate <script>", () => {
+  test("throws LusiaError on a duplicate <script>", () => {
     const source = "<script>const a = 1;</script>\n<script>const b = 2;</script>";
-    expect(() => parse(source, FILE)).toThrow(LuciaError);
+    expect(() => parse(source, FILE)).toThrow(LusiaError);
     expect(() => parse(source, FILE)).toThrow("only one <script> is allowed");
   });
 });

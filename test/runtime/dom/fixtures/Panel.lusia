@@ -1,0 +1,11 @@
+<script>
+import { props } from "lusia";
+
+const { open } = props({ open: true });
+</script>
+
+<IF {open}>
+  <div class="panel">
+    <CONTENT />
+  </div>
+</IF>

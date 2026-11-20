@@ -1,0 +1,10 @@
+<script>
+import { props } from "lusia";
+
+const { value } = props({ value: "" });
+</script>
+
+<label class="field">
+  <span>Name</span>
+  <input bind={value} />
+</label>

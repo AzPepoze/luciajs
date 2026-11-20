@@ -8,14 +8,14 @@ const PAGE = `<!doctype html><html><body class="dark">${DOM}</body></html>`;
 
 // Launched once per file. Top-level await, because bun cannot skip a test after it is registered.
 const launch = await chromium
-  .launch({ executablePath: process.env.LUCIA_CHROMIUM || undefined })
+  .launch({ executablePath: process.env.LUSIA_CHROMIUM || undefined })
   .then((browser) => ({ browser, reason: "" }))
   .catch((error: Error) => ({ browser: null, reason: error.message.split("\n")[0] }));
 const browser: Browser | null = launch.browser;
 afterAll(() => browser?.close());
 
 const suite = browser ? describe : describe.skip;
-const SKIP_HINT = `set LUCIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
+const SKIP_HINT = `set LUSIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
 
 function selectorOf(rule: string, mode: StyleMode): string {
   const out = scopeCss(`${rule} { color: red; }`, ID, mode);

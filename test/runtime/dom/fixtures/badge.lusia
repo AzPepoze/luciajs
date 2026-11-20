@@ -1,0 +1,7 @@
+<script>
+import { props } from "lusia";
+
+const { label, tone, flag } = props({ label: "New", tone: "info", flag: false });
+</script>
+
+<span class="badge {tone}" data-flag={flag}>{label}</span>

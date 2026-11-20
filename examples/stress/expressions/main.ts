@@ -1,7 +1,7 @@
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
-import Edge from "./Edge.lucia";
+import Edge from "./Edge.lusia";
 
 export async function run(): Promise<Result[]> {
   const target = createTarget("div");

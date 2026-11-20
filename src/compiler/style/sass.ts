@@ -2,7 +2,7 @@ import * as sass from "sass";
 import { readFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { luciaError } from "../errors/create.ts";
+import { lusiaError } from "../errors/create.ts";
 import type { Section } from "../parse/sections.ts";
 import { scopeCss, styleMode } from "./modes.ts";
 
@@ -104,7 +104,7 @@ function runSass(style: Section, file: string): sass.CompileResult {
     const span = sassError.span;
     const line = span ? style.line + span.start.line : style.line;
     const column = span ? span.start.column + 1 : 1;
-    throw luciaError(
+    throw lusiaError(
       "L1005",
       { message: sassError.sassMessage ?? String(error) },
       { file, line, column },

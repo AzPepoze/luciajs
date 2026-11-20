@@ -6,21 +6,21 @@ import { parseConfig, readConfig } from "@cli/config.ts";
 import { parseCommand } from "@cli/args.ts";
 
 function appWith(json: string): string {
-  const dir = mkdtempSync(join(tmpdir(), "lucia-config-"));
-  writeFileSync(join(dir, "lucia.config.json"), json);
+  const dir = mkdtempSync(join(tmpdir(), "lusia-config-"));
+  writeFileSync(join(dir, "lusia.config.json"), json);
   return dir;
 }
 
 describe("readConfig", () => {
   test("a missing file means no settings", () => {
-    expect(readConfig(mkdtempSync(join(tmpdir(), "lucia-empty-")))).toEqual({});
+    expect(readConfig(mkdtempSync(join(tmpdir(), "lusia-empty-")))).toEqual({});
   });
 
   test("reads every known key", () => {
     const config = readConfig(
       appWith(
         JSON.stringify({
-          $schema: "./node_modules/lucia/config.schema.json",
+          $schema: "./node_modules/lusia/config.schema.json",
           outdir: "out",
           minify: false,
           routes: ["/guide"],
@@ -54,7 +54,7 @@ describe("parseConfig errors", () => {
     ["[]", "the file must hold a JSON object"],
     ["{ nope", "not valid JSON"],
   ])("%s names the problem", (text, detail) => {
-    expect(() => parseConfig(text)).toThrow(`lucia.config.json: ${detail}`);
+    expect(() => parseConfig(text)).toThrow(`lusia.config.json: ${detail}`);
   });
 });
 

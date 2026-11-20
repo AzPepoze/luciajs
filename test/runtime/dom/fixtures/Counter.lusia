@@ -1,0 +1,17 @@
+<script>
+import { variable } from "lusia";
+
+const count = variable(0);
+
+function setup(root: Element) {
+  const button = root.querySelector(".inc")!;
+  const onClick = () => count.value++;
+  button.addEventListener("click", onClick);
+  return () => button.removeEventListener("click", onClick);
+}
+</script>
+
+<div class="counter">
+  <p class="count">{count}</p>
+  <button class="inc" type="button">Add</button>
+</div>

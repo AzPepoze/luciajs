@@ -1,5 +1,5 @@
-import { attach, type Instance } from "lucia";
-import Table from "./Table.lucia";
+import { attach, type Instance } from "lusia";
+import Table from "./Table.lusia";
 
 export const PARENTS = 500;
 export const ROWS_PER_TABLE = 10;

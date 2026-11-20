@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { rangeOf } from "@runtime/dom/blocks/range.ts";
-import Ranges from "./fixtures/Ranges.lucia";
+import Ranges from "./fixtures/Ranges.lusia";
 import { resetVariable, state } from "./fixtures/state.ts";
 import { host, mount, resetMounts } from "./fixtures/mount.ts";
 

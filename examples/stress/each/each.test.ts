@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { createTarget } from "../cells.ts";
-import List from "./List.lucia";
+import List from "./List.lusia";
 import { makeRows, rows, shuffled } from "./rows.ts";
 
 // Small enough to check behaviour quickly. The stress page measures with ROWS from main.ts.

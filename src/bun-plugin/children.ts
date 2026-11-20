@@ -5,7 +5,7 @@ import {
   splitImports,
   type ChildInfo,
   type LazyOptions,
-  type LuciaImport,
+  type LusiaImport,
 } from "@compiler/index.ts";
 
 export type LazySettings = Pick<LazyOptions, "mode" | "prefetch">;
@@ -13,7 +13,7 @@ export type LazySettings = Pick<LazyOptions, "mode" | "prefetch">;
 const NO_CHILD: ChildInfo = { nolazy: false, fallback: false };
 const infos = new Map<string, { source: string; info: ChildInfo }>();
 
-/** Reads a child .lucia file's <NOLAZY /> and <FALLBACK>. The result is kept while the file's text is unchanged. */
+/** Reads a child .lusia file's <NOLAZY /> and <FALLBACK>. The result is kept while the file's text is unchanged. */
 export function childInfo(path: string): ChildInfo {
   if (!existsSync(path)) return NO_CHILD;
   const source = readFileSync(path, "utf8");
@@ -34,11 +34,11 @@ function readChildInfo(source: string, path: string): ChildInfo {
   }
 }
 
-/** The .lucia default imports of a file. A file that does not parse has none. */
-export function luciaImportsOf(source: string, path: string): LuciaImport[] {
+/** The .lusia default imports of a file. A file that does not parse has none. */
+export function lusiaImportsOf(source: string, path: string): LusiaImport[] {
   try {
     const { statements } = splitImports(parse(source, path).script, path);
-    return statements.flatMap((statement) => (statement.lucia ? [statement.lucia] : []));
+    return statements.flatMap((statement) => (statement.lusia ? [statement.lusia] : []));
   } catch {
     return [];
   }
@@ -55,7 +55,7 @@ export function lazyOptionsFor(path: string, settings: LazySettings): LazyOption
 /** Changes whenever a compile would differ: the settings, and what each imported child has. */
 export function lazyKeyFor(path: string, source: string, settings: LazySettings | undefined): string {
   if (!settings) return "off";
-  const children = luciaImportsOf(source, path).map((item) =>
+  const children = lusiaImportsOf(source, path).map((item) =>
     childInfo(resolve(dirname(path), item.specifier)),
   );
   return JSON.stringify([settings.mode, settings.prefetch, children]);

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import Tree from "./fixtures/Tree.lucia";
+import Tree from "./fixtures/Tree.lusia";
 import { click, host, mount, resetMounts } from "./fixtures/mount.ts";
 
 afterEach(resetMounts);

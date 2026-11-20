@@ -7,28 +7,28 @@ import type { BunPlugin } from "bun";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
 
-export interface LuciaPluginOptions {
+export interface LusiaPluginOptions {
   /** Dev builds keep runtime error locations. Default false. */
   dev?: boolean;
   /** Receives the time spent in the compiler (`compile`) and in Sass (`sass`). */
   steps?: Steps;
-  /** Receives each .lucia file whose output was updated since the last build. */
+  /** Receives each .lusia file whose output was updated since the last build. */
   onUpdate?: (update: ModuleUpdate) => void;
-  /** Splits imported .lucia files into their own chunks. Default: off. */
+  /** Splits imported .lusia files into their own chunks. Default: off. */
   lazy?: LazySettings;
 }
 
-export function lucia({
+export function lusia({
   dev = false,
   steps = {},
   onUpdate,
   lazy,
-}: LuciaPluginOptions = {}): BunPlugin {
+}: LusiaPluginOptions = {}): BunPlugin {
   return {
-    name: "lucia",
+    name: "lusia",
     setup(build) {
       pruneModules();
-      build.onLoad({ filter: /\.lucia$/ }, async ({ path }) => {
+      build.onLoad({ filter: /\.lusia$/ }, async ({ path }) => {
         const source = await Bun.file(path).text();
         const key = lazyKeyFor(path, source, lazy);
         const cached = cachedModule(path, source, dev, key);
@@ -49,4 +49,4 @@ export function lucia({
   };
 }
 
-export default lucia;
+export default lusia;

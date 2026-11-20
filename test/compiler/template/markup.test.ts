@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { ELEMENT_MARKER, TEXT_MARKER } from "lucia/markers";
+import { ELEMENT_MARKER, TEXT_MARKER } from "lusia/markers";
 import { compile } from "@compiler/index.ts";
 import { compileTemplate } from "@compiler/template/scanner.ts";
 import { catchError } from "../catch-error.ts";
 
-const FILE = "Card.lucia";
+const FILE = "Card.lusia";
 const TEXT = `<!--${TEXT_MARKER}-->`;
 
 describe("events", () => {
@@ -340,7 +340,7 @@ describe("FOR", () => {
 
 describe("reserved tags", () => {
   test("an import named like a control tag is an error", () => {
-    const source = `<script>\nimport IF from "./if.lucia";\n</script>\n<p>x</p>`;
+    const source = `<script>\nimport IF from "./if.lusia";\n</script>\n<p>x</p>`;
     const error = catchError(() => compile(source, FILE));
     expect(error.code).toBe("L1004");
     expect(error.message).toBe("IF is a reserved tag name and cannot be a component");

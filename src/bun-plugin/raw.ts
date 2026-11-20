@@ -2,7 +2,7 @@ import type { PluginBuilder } from "bun";
 import { dirname } from "node:path";
 
 const RAW_SUFFIX = "?raw";
-const RAW_NAMESPACE = "lucia-raw";
+const RAW_NAMESPACE = "lusia-raw";
 
 export function setupRaw(build: PluginBuilder): void {
   build.onResolve({ filter: /\?raw$/ }, ({ path, importer }) => ({

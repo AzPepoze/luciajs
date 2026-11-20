@@ -1,8 +1,8 @@
 // Relative imports: the runtime ships to apps, where the @compiler alias does not resolve.
-import { luciaError, type Values } from "../compiler/errors/create.ts";
+import { lusiaError, type Values } from "../compiler/errors/create.ts";
 import type { ErrorCodeName } from "../compiler/errors/codes.ts";
 import { parseWhere } from "../compiler/errors/where.ts";
-import type { LuciaError } from "../compiler/errors.ts";
+import type { LusiaError } from "../compiler/errors.ts";
 
 /** The location of each key that a dev build found wrong, by key name. */
 export type KeyWheres = Record<string, string>;
@@ -31,10 +31,10 @@ function locationOf(key: string | undefined): string | undefined {
 }
 
 /** In a dev build the location is also added to the message, so the browser console shows it. */
-export function runtimeError(code: ErrorCodeName, values?: Values, key?: string): LuciaError {
+export function runtimeError(code: ErrorCodeName, values?: Values, key?: string): LusiaError {
   const at = locationOf(key);
-  if (at === undefined) return luciaError(code, values);
-  const error = luciaError(code, values, parseWhere(at));
+  if (at === undefined) return lusiaError(code, values);
+  const error = lusiaError(code, values, parseWhere(at));
   error.message = `${error.message} (${at})`;
   return error;
 }

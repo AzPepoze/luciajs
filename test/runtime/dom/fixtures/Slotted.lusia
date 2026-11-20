@@ -1,0 +1,35 @@
+<script>
+import { variable } from "lusia";
+import Card from "./Card.lusia";
+import Panel from "./Panel.lusia";
+
+const count = variable(0);
+const open = variable(true);
+const items = variable(["a", "b"]);
+
+function add() {
+  count.value++;
+}
+
+function toggle() {
+  open.value = !open.value;
+}
+</script>
+
+<Card title="Hello">
+  <p class="count">{count} clicks</p>
+  <button class="add" onclick={add}>Add</button>
+</Card>
+
+<Card title="Empty" />
+
+<button class="toggle" onclick={toggle}>Toggle</button>
+<Panel open={open}>
+  <p class="panel-count">{count}</p>
+</Panel>
+
+<Card title="List">
+  <EACH {items} as={item}>
+    <i class="item">{item}</i>
+  </EACH>
+</Card>

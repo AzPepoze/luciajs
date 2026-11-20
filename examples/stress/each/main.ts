@@ -1,7 +1,7 @@
-import { attach } from "lucia";
+import { attach } from "lusia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
-import List from "./List.lucia";
+import List from "./List.lusia";
 import { makeRows, rows, shuffled } from "./rows.ts";
 
 export const ROWS = 10000;

@@ -1,4 +1,4 @@
-import { LuciaError } from "../errors.ts";
+import { LusiaError } from "../errors.ts";
 import { CODES, type ErrorCodeName } from "./codes.ts";
 
 export type Values = Record<string, string | number>;
@@ -20,9 +20,9 @@ export function fill(template: string, values: Values = {}): string {
 }
 
 /** Builds the error for a code, with its message and hint filled in. */
-export function luciaError(code: ErrorCodeName, values: Values = {}, span?: Span): LuciaError {
+export function lusiaError(code: ErrorCodeName, values: Values = {}, span?: Span): LusiaError {
   const entry = CODES[code];
-  return new LuciaError(fill(entry.message, values), span?.file, span?.line, span?.column, {
+  return new LusiaError(fill(entry.message, values), span?.file, span?.line, span?.column, {
     code,
     hint: fill(entry.hint, values),
     length: span?.length,

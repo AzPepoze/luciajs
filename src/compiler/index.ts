@@ -2,11 +2,11 @@ import { relative } from "node:path";
 import { compileParts, type CompileOptions, type CompileResult } from "./pipeline.ts";
 import { compileStyleResult } from "./style/sass.ts";
 
-export { LuciaError } from "./errors.ts";
+export { LusiaError } from "./errors.ts";
 export { CODES, type ErrorCodeName } from "./errors/codes.ts";
 export { hash } from "./id.ts";
 export { parse } from "./parse/sections.ts";
-export { splitImports, type LuciaImport } from "./parse/imports.ts";
+export { splitImports, type LusiaImport } from "./parse/imports.ts";
 export { depsCurrent, forgetStyles, type StyleDep } from "./style/sass.ts";
 export { scopeCss } from "./style/modes.ts";
 export { LAZY_MODES, LAZY_PREFETCH, type ChildInfo, type LazyOptions } from "./lazy/options.ts";

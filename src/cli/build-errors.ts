@@ -1,4 +1,4 @@
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { CODES, type ErrorCodeName } from "@compiler/errors/codes.ts";
 import { fill, type Values } from "@compiler/errors/create.ts";
 import { readFileSync } from "node:fs";
@@ -19,7 +19,7 @@ interface Where {
 const MISSING_EXPORT = /^No matching export in "(.+)" for import "(.+)"$/;
 const UNRESOLVED = /^Could not resolve: "(.+)"$/;
 const IMPORT_FROM = /\bfrom\s+["']([^"']+)["']/;
-const LUCIA_ERROR = /\berror L\d{4}: /;
+const LUSIA_ERROR = /\berror L\d{4}: /;
 
 /** Formats the logs of a failed Bun.build like tsc: one block per log, then a summary line. */
 export function formatBuildFailure(logs: BuildLog[], color: boolean): string {
@@ -32,13 +32,13 @@ function summary(count: number): string {
 }
 
 function formatLog(log: BuildLog, color: boolean): string {
-  // A .lucia compile error is already formatted by the plugin, so it is printed as it is.
-  if (LUCIA_ERROR.test(stripAnsi(log.message))) return log.message;
-  const error = toLuciaError(log);
+  // A .lusia compile error is already formatted by the plugin, so it is printed as it is.
+  if (LUSIA_ERROR.test(stripAnsi(log.message))) return log.message;
+  const error = toLusiaError(log);
   return formatError(error, error.file === undefined ? undefined : readSource(error.file), color);
 }
 
-function toLuciaError(log: BuildLog): LuciaError {
+function toLusiaError(log: BuildLog): LusiaError {
   const missing = MISSING_EXPORT.exec(log.message);
   if (missing) return missingExportError(log, missing[1]!, missing[2]!);
   const unresolved = UNRESOLVED.exec(log.message);
@@ -47,7 +47,7 @@ function toLuciaError(log: BuildLog): LuciaError {
   return bundleError("L3003", { message: log.message }, whereOf(log), CODES.L3003.hint);
 }
 
-function missingExportError(log: BuildLog, modulePath: string, name: string): LuciaError {
+function missingExportError(log: BuildLog, modulePath: string, name: string): LusiaError {
   const where = whereOf(log);
   const specifier = importSpecifier(log) ?? modulePath;
   const exportNames = where.file === undefined ? [] : exportsOf(specifier, dirname(where.file));
@@ -63,8 +63,8 @@ function importSpecifier(log: BuildLog): string | undefined {
   return IMPORT_FROM.exec(log.position?.lineText ?? "")?.[1];
 }
 
-function bundleError(code: ErrorCodeName, values: Values, where: Where, hint: string): LuciaError {
-  return new LuciaError(fill(CODES[code].message, values), where.file, where.line, where.column, {
+function bundleError(code: ErrorCodeName, values: Values, where: Where, hint: string): LusiaError {
+  return new LusiaError(fill(CODES[code].message, values), where.file, where.line, where.column, {
     code,
     hint,
     length: where.length,
@@ -74,7 +74,7 @@ function bundleError(code: ErrorCodeName, values: Values, where: Where, hint: st
 function whereOf(log: BuildLog): Where {
   const position = log.position;
   if (!position) return {};
-  if (!position.file.endsWith(".lucia")) {
+  if (!position.file.endsWith(".lusia")) {
     return {
       file: position.file,
       line: position.line,
@@ -82,11 +82,11 @@ function whereOf(log: BuildLog): Where {
       length: position.length,
     };
   }
-  return luciaWhere(position.file, position.lineText, position.column, position.length);
+  return lusiaWhere(position.file, position.lineText, position.column, position.length);
 }
 
-/** Bun reports the position in the compiled module. Import lines are copied as they are, so the line text finds them in the .lucia file. */
-function luciaWhere(file: string, lineText: string, column: number, length: number): Where {
+/** Bun reports the position in the compiled module. Import lines are copied as they are, so the line text finds them in the .lusia file. */
+function lusiaWhere(file: string, lineText: string, column: number, length: number): Where {
   const lines = readSource(file)?.split("\n");
   const text = lineText.trim();
   const row = lines?.findIndex((line) => line.trim() === text) ?? -1;

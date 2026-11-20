@@ -16,7 +16,7 @@ const TEST_TIMEOUT_MS = 30_000;
 const SHOWN_FRAME = "iframe.preview-frame:not(.is-pending)";
 
 const launch = await chromium
-  .launch({ executablePath: process.env.LUCIA_CHROMIUM || undefined })
+  .launch({ executablePath: process.env.LUSIA_CHROMIUM || undefined })
   .then((browser) => ({ browser, reason: "" }))
   .catch((error: Error) => ({ browser: null, reason: error.message.split("\n")[0] }));
 const browser: Browser | null = launch.browser;
@@ -58,7 +58,7 @@ function serveFolder(out: string): Server {
 
 // Builds the web example into a temp folder and serves it, as the static site would be served.
 async function serveSite(): Promise<void> {
-  const out = await mkdtemp(join(tmpdir(), "lucia-reload-"));
+  const out = await mkdtemp(join(tmpdir(), "lusia-reload-"));
   await runBun(["scripts/playground-runtime.ts"]);
   await runBun(["src/cli/index.ts", "build", SITE, "--outdir", out, "--routes", "/guide"]);
   server = serveFolder(out);

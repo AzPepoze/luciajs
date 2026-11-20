@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { storeModule, pruneModules, type CachedModule } from "@bun-plugin/cache.ts";
 import type { ModuleUpdate } from "@bun-plugin/update.ts";
-import { lucia } from "@bun-plugin/index.ts";
+import { lusia } from "@bun-plugin/index.ts";
 import { compile, hash } from "@compiler/index.ts";
 import type { Steps } from "@cli/timings.ts";
 
@@ -30,12 +30,12 @@ function cardSource(label = "card", styleRule = "color: tokens.$accent;"): strin
 }
 
 beforeEach(async () => {
-  dir = await mkdtemp(join(tmpdir(), "lucia-cache-"));
+  dir = await mkdtemp(join(tmpdir(), "lusia-cache-"));
   await mkdir(join(dir, "node_modules"));
-  await symlink(REPO, join(dir, "node_modules", "lucia"), "dir");
-  await writeFile(join(dir, "entry.ts"), 'import "./Card.lucia";\n');
+  await symlink(REPO, join(dir, "node_modules", "lusia"), "dir");
+  await writeFile(join(dir, "entry.ts"), 'import "./Card.lusia";\n');
   await writeFile(join(dir, "_tokens.scss"), "$accent: red;\n");
-  card = join(dir, "Card.lucia");
+  card = join(dir, "Card.lusia");
   await writeFile(card, cardSource());
 });
 
@@ -48,14 +48,14 @@ async function build(): Promise<{ steps: Steps; changes: ModuleUpdate[] }> {
   const changes: ModuleUpdate[] = [];
   const result = await Bun.build({
     entrypoints: [join(dir, "entry.ts")],
-    plugins: [lucia({ dev: true, steps, onUpdate: (update) => changes.push(update) })],
+    plugins: [lusia({ dev: true, steps, onUpdate: (update) => changes.push(update) })],
     throw: false,
   });
   if (!result.success) throw new Error(result.logs.map((log) => log.message).join("\n"));
   return { steps, changes };
 }
 
-describe("lucia plugin cache", () => {
+describe("lusia plugin cache", () => {
   test("an unchanged file is a cache hit: nothing is compiled and nothing changed", async () => {
     await build();
     const second = await build();
@@ -91,7 +91,7 @@ describe("lucia plugin cache", () => {
   });
 
   test("a deleted file is pruned from the cache", async () => {
-    const gone = join(dir, "Gone.lucia");
+    const gone = join(dir, "Gone.lusia");
     const source = cardSource();
     await writeFile(gone, source);
     const compiled = compile(source, gone);

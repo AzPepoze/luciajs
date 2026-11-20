@@ -1,4 +1,4 @@
-import { lucia, type LuciaPluginOptions } from "@bun-plugin/index.ts";
+import { lusia, type LusiaPluginOptions } from "@bun-plugin/index.ts";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { RUNTIME_SPECIFIER, runtimeShim } from "./runtime-shim.ts";
@@ -18,7 +18,7 @@ export function assetKey(path: string): string {
   return key || INDEX_KEY;
 }
 
-export interface BundleOptions extends LuciaPluginOptions {
+export interface BundleOptions extends LusiaPluginOptions {
   dir: string;
   minify: boolean;
 }
@@ -36,6 +36,6 @@ export async function bundleApp({
     sourcemap: "linked",
     throw: false,
     external: plugin.dev ? [RUNTIME_SPECIFIER] : [],
-    plugins: plugin.dev ? [lucia(plugin), runtimeShim()] : [lucia(plugin)],
+    plugins: plugin.dev ? [lusia(plugin), runtimeShim()] : [lusia(plugin)],
   });
 }

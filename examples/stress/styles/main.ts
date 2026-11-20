@@ -1,6 +1,6 @@
-import { attach } from "lucia";
+import { attach } from "lusia";
 import type { Result } from "../report.ts";
-import Parent from "./Parent.lucia";
+import Parent from "./Parent.lusia";
 
 const SCOPED_BACKGROUND = "rgb(255, 255, 224)";
 

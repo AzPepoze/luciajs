@@ -2,27 +2,27 @@ import { describe, expect, test } from "bun:test";
 import { nameProblem } from "../../../docs/src/playground/names.ts";
 
 const files = [
-  { name: "App.lucia", code: "" },
-  { name: "Card.lucia", code: "" },
+  { name: "App.lusia", code: "" },
+  { name: "Card.lusia", code: "" },
 ];
 
 describe("nameProblem", () => {
-  test("accepts a new .lucia or .ts name", () => {
-    expect(nameProblem("Badge.lucia", files)).toBeUndefined();
+  test("accepts a new .lusia or .ts name", () => {
+    expect(nameProblem("Badge.lusia", files)).toBeUndefined();
     expect(nameProblem("variable-utils.ts", files)).toBeUndefined();
   });
 
   test("rejects other extensions, folders and odd characters", () => {
     expect(nameProblem("style.css", files)).toBeDefined();
-    expect(nameProblem("ui/Badge.lucia", files)).toBeDefined();
-    expect(nameProblem("1st.lucia", files)).toBeDefined();
+    expect(nameProblem("ui/Badge.lusia", files)).toBeDefined();
+    expect(nameProblem("1st.lusia", files)).toBeDefined();
   });
 
   test("rejects a name that another file has", () => {
-    expect(nameProblem("Card.lucia", files)).toBeDefined();
+    expect(nameProblem("Card.lusia", files)).toBeDefined();
   });
 
   test("allows a file to keep its own name when renamed", () => {
-    expect(nameProblem("Card.lucia", files, "Card.lucia")).toBeUndefined();
+    expect(nameProblem("Card.lusia", files, "Card.lusia")).toBeUndefined();
   });
 });

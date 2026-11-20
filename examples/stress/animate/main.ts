@@ -1,8 +1,8 @@
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
-import Tile from "./Tile.lucia";
-import KeepTile from "./KeepTile.lucia";
+import Tile from "./Tile.lusia";
+import KeepTile from "./KeepTile.lusia";
 
 export const TILES = 2000;
 export const DURATION = 300;

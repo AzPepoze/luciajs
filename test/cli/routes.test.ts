@@ -12,7 +12,7 @@ const DEV_SERVER = new URL("../../src/cli/dev-server.ts", import.meta.url).pathn
 let workRoot: string;
 
 beforeAll(async () => {
-  workRoot = await mkdtemp(join(tmpdir(), "lucia-routes-"));
+  workRoot = await mkdtemp(join(tmpdir(), "lusia-routes-"));
 });
 
 afterAll(async () => {

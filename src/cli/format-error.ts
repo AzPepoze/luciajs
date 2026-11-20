@@ -1,11 +1,11 @@
-import type { LuciaError } from "@compiler/errors.ts";
+import type { LusiaError } from "@compiler/errors.ts";
 import { relative } from "node:path";
 import { ANSI, paint } from "./color.ts";
 
 const CONTEXT_LINES = 2;
 
 /** Prints an error like tsc: a location line, a code frame, then the hint. */
-export function formatError(error: LuciaError, source: string | undefined, color: boolean): string {
+export function formatError(error: LusiaError, source: string | undefined, color: boolean): string {
   const paintWith = (text: string, code: string): string => (color ? paint(text, code) : text);
   const parts = [headline(error, paintWith)];
   const frame = source === undefined ? undefined : codeFrame(error, source, paintWith);
@@ -16,7 +16,7 @@ export function formatError(error: LuciaError, source: string | undefined, color
 
 type Painter = (text: string, code: string) => string;
 
-function headline(error: LuciaError, paintWith: Painter): string {
+function headline(error: LusiaError, paintWith: Painter): string {
   const code = error.code ? ` ${error.code}` : "";
   const message = `${paintWith("error", ANSI.red)}${paintWith(code, ANSI.red)}: ${messageText(error)}`;
   if (error.file === undefined || error.line === undefined) return message;
@@ -25,7 +25,7 @@ function headline(error: LuciaError, paintWith: Painter): string {
 }
 
 /** A dev runtime error ends its message with its location. The headline already shows it, so it is removed here. */
-function messageText(error: LuciaError): string {
+function messageText(error: LusiaError): string {
   if (error.file === undefined || error.line === undefined) return error.message;
   const suffix = ` (${error.file}:${error.line}:${error.column ?? 1})`;
   return error.message.endsWith(suffix) ? error.message.slice(0, -suffix.length) : error.message;
@@ -35,7 +35,7 @@ function displayPath(file: string): string {
   return file.startsWith("/") ? relative(process.cwd(), file) : file;
 }
 
-function codeFrame(error: LuciaError, source: string, paintWith: Painter): string | undefined {
+function codeFrame(error: LusiaError, source: string, paintWith: Painter): string | undefined {
   if (error.line === undefined) return undefined;
   const lines = source.split("\n");
   const errorRow = error.line - 1;
@@ -52,7 +52,7 @@ function codeFrame(error: LuciaError, source: string, paintWith: Painter): strin
 }
 
 /** `^` at the error column, then `~` for the rest of the span. */
-function caret(error: LuciaError): string {
+function caret(error: LusiaError): string {
   const offset = " ".repeat(Math.max(0, (error.column ?? 1) - 1));
   const tildes = "~".repeat(Math.max(0, (error.length ?? 1) - 1));
   return `${offset}^${tildes}`;

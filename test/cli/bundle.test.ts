@@ -13,9 +13,9 @@ const SCRIPT = /\.js$/;
 let app: string;
 
 beforeAll(async () => {
-  app = await mkdtemp(join(tmpdir(), "lucia-bundle-"));
+  app = await mkdtemp(join(tmpdir(), "lusia-bundle-"));
   await mkdir(join(app, "node_modules"));
-  await symlink(REPO, join(app, "node_modules", "lucia"), "dir");
+  await symlink(REPO, join(app, "node_modules", "lusia"), "dir");
   await writeFile(
     join(app, "index.html"),
     '<!doctype html><html><body><script type="module" src="./main.ts"></script></body></html>\n',
@@ -32,9 +32,9 @@ describe("lazy chunks", () => {
   const SHARED_MARKER = "shared-chunk-marker-2c9";
 
   test("each lazy module is its own chunk, and a shared module is in one chunk only", async () => {
-    const shared = await mkdtemp(join(tmpdir(), "lucia-shared-"));
+    const shared = await mkdtemp(join(tmpdir(), "lusia-shared-"));
     await mkdir(join(shared, "node_modules"));
-    await symlink(REPO, join(shared, "node_modules", "lucia"), "dir");
+    await symlink(REPO, join(shared, "node_modules", "lusia"), "dir");
     await writeFile(
       join(shared, "index.html"),
       '<!doctype html><html><body><script type="module" src="./main.ts"></script></body></html>\n',
@@ -71,8 +71,8 @@ describe("splitting", () => {
     expect(withLazy).toHaveLength(1);
   });
 
-  test("lucia build writes the lazy chunk next to the entry", async () => {
-    const outdir = await mkdtemp(join(tmpdir(), "lucia-bundle-out-"));
+  test("lusia build writes the lazy chunk next to the entry", async () => {
+    const outdir = await mkdtemp(join(tmpdir(), "lusia-bundle-out-"));
     expect(
       await runBuild({
         dir: app,
@@ -95,7 +95,7 @@ describe("splitting", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     const scripts = [...result.assets.entries()].filter(
-      ([key]) => SCRIPT.test(key) && !key.startsWith("__lucia/"),
+      ([key]) => SCRIPT.test(key) && !key.startsWith("__lusia/"),
     );
     expect(scripts).toHaveLength(2);
     const texts = await Promise.all(scripts.map(([, blob]) => blob.text()));

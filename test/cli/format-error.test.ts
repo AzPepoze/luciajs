@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { formatError } from "@cli/format-error.ts";
 
 const SOURCE = ["<script>", "const a = 1;", "</script>", "<p>{a + }</p>", "<p>ok</p>"].join("\n");
-const FILE = `${process.cwd()}/src/Card.lucia`;
+const FILE = `${process.cwd()}/src/Card.lusia`;
 
-function sample(): LuciaError {
-  return new LuciaError("empty {}", FILE, 4, 3, {
+function sample(): LusiaError {
+  return new LusiaError("empty {}", FILE, 4, 3, {
     code: "L1011",
     hint: "Put an expression between the braces, such as {count}.",
     length: 2,
@@ -17,7 +17,7 @@ describe("formatError", () => {
   test("prints a tsc-style location, code frame and hint without color", () => {
     expect(formatError(sample(), SOURCE, false)).toBe(
       [
-        "src/Card.lucia:4:3 - error L1011: empty {}",
+        "src/Card.lusia:4:3 - error L1011: empty {}",
         "",
         "2 | const a = 1;",
         "3 | </script>",
@@ -38,9 +38,9 @@ describe("formatError", () => {
   });
 
   test("drops the dev runtime suffix from the message, since the location is already printed", () => {
-    const error = new LuciaError(
-      "FOR needs a step that is not 0 (src/Card.lucia:24:8)",
-      "src/Card.lucia",
+    const error = new LusiaError(
+      "FOR needs a step that is not 0 (src/Card.lusia:24:8)",
+      "src/Card.lusia",
       24,
       8,
       {
@@ -49,19 +49,19 @@ describe("formatError", () => {
       },
     );
     expect(formatError(error, undefined, false)).toBe(
-      "src/Card.lucia:24:8 - error L2042: FOR needs a step that is not 0\n\nhint: Use a step such as 1, or -1 to count down.",
+      "src/Card.lusia:24:8 - error L2042: FOR needs a step that is not 0\n\nhint: Use a step such as 1, or -1 to count down.",
     );
   });
 
   test("keeps a message whose parenthesis is not the location", () => {
-    const error = new LuciaError("step (see docs)", "src/Card.lucia", 2, 1, { code: "L2042" });
+    const error = new LusiaError("step (see docs)", "src/Card.lusia", 2, 1, { code: "L2042" });
     expect(formatError(error, undefined, false)).toBe(
-      "src/Card.lucia:2:1 - error L2042: step (see docs)",
+      "src/Card.lusia:2:1 - error L2042: step (see docs)",
     );
   });
 
   test("a runtime error with no location prints the code and hint only", () => {
-    const error = new LuciaError(
+    const error = new LusiaError(
       "animate duration must be a time in ms, got -1",
       undefined,
       undefined,

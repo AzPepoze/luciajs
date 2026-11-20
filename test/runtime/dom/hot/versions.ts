@@ -1,7 +1,7 @@
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { compile } from "@compiler/index.ts";
-import type { HotComponent } from "lucia/internal";
+import type { HotComponent } from "lusia/internal";
 
 export const VERSIONS = join(import.meta.dir, ".versions");
 
@@ -13,17 +13,17 @@ let sequence = 0;
  */
 export async function version(name: string, source: string): Promise<HotComponent> {
   await mkdir(VERSIONS, { recursive: true });
-  const logical = join(VERSIONS, `${name}.lucia`);
+  const logical = join(VERSIONS, `${name}.lusia`);
   const { code } = compile(source, logical, { dev: true });
   const path = join(VERSIONS, `${name}.${++sequence}.ts`);
   await writeFile(path, code);
   return (await import(path)).default as HotComponent;
 }
 
-/** Writes a `.lucia` file that compiled modules can import by relative path. */
+/** Writes a `.lusia` file that compiled modules can import by relative path. */
 export async function sourceFile(name: string, source: string): Promise<void> {
   await mkdir(VERSIONS, { recursive: true });
-  await writeFile(join(VERSIONS, `${name}.lucia`), source);
+  await writeFile(join(VERSIONS, `${name}.lusia`), source);
 }
 
 export async function removeVersions(): Promise<void> {

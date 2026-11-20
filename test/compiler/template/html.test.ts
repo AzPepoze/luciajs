@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { TEXT_MARKER } from "lucia/markers";
+import { TEXT_MARKER } from "lusia/markers";
 import { compile } from "@compiler/index.ts";
 import { compileTemplate } from "@compiler/template/scanner.ts";
 import { catchError } from "../catch-error.ts";
 
-const FILE = "Note.lucia";
+const FILE = "Note.lusia";
 const TEXT = `<!--${TEXT_MARKER}-->`;
 
 describe("HTML", () => {
@@ -58,7 +58,7 @@ describe("HTML", () => {
   });
 
   test("HTML cannot be a component name", () => {
-    const source = `<script>\nimport HTML from "./html.lucia";\n</script>\n<p>x</p>`;
+    const source = `<script>\nimport HTML from "./html.lusia";\n</script>\n<p>x</p>`;
     const error = catchError(() => compile(source, FILE));
     expect(error.code).toBe("L1004");
     expect(error.message).toBe("HTML is a reserved tag name and cannot be a component");

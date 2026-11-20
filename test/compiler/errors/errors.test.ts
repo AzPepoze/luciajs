@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { CODES } from "@compiler/errors/codes.ts";
-import { fill, luciaError } from "@compiler/errors/create.ts";
+import { fill, lusiaError } from "@compiler/errors/create.ts";
 import { formatWhere, parseWhere } from "@compiler/errors/where.ts";
 
 describe("error codes", () => {
@@ -23,20 +23,20 @@ describe("fill", () => {
   });
 });
 
-describe("luciaError", () => {
-  test("returns a LuciaError with the code, filled message and hint, and the span", () => {
-    const error = luciaError(
+describe("lusiaError", () => {
+  test("returns a LusiaError with the code, filled message and hint, and the span", () => {
+    const error = lusiaError(
       "L1004",
       { name: "IF" },
-      { file: "Card.lucia", line: 2, column: 1, length: 3 },
+      { file: "Card.lusia", line: 2, column: 1, length: 3 },
     );
-    expect(error).toBeInstanceOf(LuciaError);
+    expect(error).toBeInstanceOf(LusiaError);
     expect(error.code).toBe("L1004");
     expect(error.message).toBe("IF is a reserved tag name and cannot be a component");
     expect(error.hint).toBe(
       "Rename the component. IF, ELSEIF, ELSE, EACH, FOR, CONTENT and HTML are built in.",
     );
-    expect(error.file).toBe("Card.lucia");
+    expect(error.file).toBe("Card.lusia");
     expect(error.line).toBe(2);
     expect(error.column).toBe(1);
     expect(error.length).toBe(3);
@@ -45,17 +45,17 @@ describe("luciaError", () => {
 
 describe("where strings", () => {
   test("parseWhere reads back what formatWhere wrote", () => {
-    const where = formatWhere("src/app/Card.lucia", 3, 5);
-    expect(where).toBe("src/app/Card.lucia:3:5");
-    expect(parseWhere(where)).toEqual({ file: "src/app/Card.lucia", line: 3, column: 5 });
+    const where = formatWhere("src/app/Card.lusia", 3, 5);
+    expect(where).toBe("src/app/Card.lusia:3:5");
+    expect(parseWhere(where)).toEqual({ file: "src/app/Card.lusia", line: 3, column: 5 });
   });
 
   test("a file name with colons survives the round trip", () => {
-    const where = formatWhere("C:/work/a:b/Card.lucia", 12, 40);
-    expect(parseWhere(where)).toEqual({ file: "C:/work/a:b/Card.lucia", line: 12, column: 40 });
+    const where = formatWhere("C:/work/a:b/Card.lusia", 12, 40);
+    expect(parseWhere(where)).toEqual({ file: "C:/work/a:b/Card.lusia", line: 12, column: 40 });
   });
 
   test("a string without a position is not a where", () => {
-    expect(parseWhere("Card.lucia")).toBeUndefined();
+    expect(parseWhere("Card.lusia")).toBeUndefined();
   });
 });

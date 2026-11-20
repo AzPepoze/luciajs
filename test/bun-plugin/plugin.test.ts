@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { compile } from "lucia/compiler";
+import { compile } from "lusia/compiler";
 
-const EVENTS_PATH = "../../docs/src/demos/basics/Events.lucia";
+const EVENTS_PATH = "../../docs/src/demos/basics/Events.lusia";
 const EVENTS_FILE = new URL(EVENTS_PATH, import.meta.url).pathname;
 
 type Attached = { detach(): void };
@@ -36,14 +36,14 @@ function textOf(root: HTMLElement, selector: string): string {
   return root.querySelector(selector)!.textContent!.replace(/\s+/g, " ").trim();
 }
 
-describe("lucia bun plugin with the web example's Events demo", () => {
+describe("lusia bun plugin with the web example's Events demo", () => {
   test("stamps only the top-level element and injects compiled scss", async () => {
     const { id } = await attachEvents();
     expect(target!.querySelector("div")!.getAttribute("data-l")).toBe(id);
     expect(target!.querySelector(".status")!.hasAttribute("data-l")).toBe(false);
     expect(textOf(target!, ".status")).toBe("Clicked 0 of 5 times.");
 
-    const css = document.querySelector(`style[data-lucia="${id}"]`)!.textContent!;
+    const css = document.querySelector(`style[data-lusia="${id}"]`)!.textContent!;
     expect(css).toContain(`.status.done:where([data-l="${id}"]`);
     expect(css).toContain("color: var(--accent)");
   });

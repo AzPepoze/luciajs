@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 // A RESIZE glide writes the real width, so the element this test checks needs real layout.
 const launch = await chromium
-  .launch({ executablePath: process.env.LUCIA_CHROMIUM || undefined })
+  .launch({ executablePath: process.env.LUSIA_CHROMIUM || undefined })
   .then((browser) => ({ browser, reason: "" }))
   .catch((error: Error) => ({ browser: null, reason: error.message.split("\n")[0] }));
 const browser: Browser | null = launch.browser;
@@ -49,9 +49,9 @@ async function sampleResize(page: Page): Promise<Sample[]> {
   return await page.evaluate(async () => {
     const panel = document.getElementById("panel")!;
     const child = document.getElementById("child")!;
-    const value = { when: (window as any).luciaWhen.RESIZE, duration: 400 };
+    const value = { when: (window as any).lusiaWhen.RESIZE, duration: 400 };
     const cleanups: Array<() => void> = [];
-    (window as any).luciaAnimate(panel, () => value, cleanups, []);
+    (window as any).lusiaAnimate(panel, () => value, cleanups, []);
 
     const sample = (): Sample => {
       const rect = panel.getBoundingClientRect();

@@ -1,4 +1,4 @@
-import { variable } from "lucia";
+import { variable } from "lusia";
 
 export interface Row {
   id: number;

@@ -1,13 +1,13 @@
 import type * as sass from "sass";
 import { transform } from "sucrase";
-import { LuciaError } from "./errors.ts";
+import { LusiaError } from "./errors.ts";
 import { compileParts } from "./pipeline.ts";
 import { parse, type Section } from "./parse/sections.ts";
 import { scopeCss, styleMode } from "./style/modes.ts";
 import { compileSectionScss } from "./style/sass-browser.ts";
 import type { StyleResult } from "./style/sass.ts";
 
-export { LuciaError } from "./errors.ts";
+export { LusiaError } from "./errors.ts";
 
 export interface BrowserOptions {
   /** Sass importers. They are the only way `@use` and `@import` find files in the browser. */
@@ -19,7 +19,7 @@ export interface BrowserCompile {
   code: string;
 }
 
-/** Compiles a .lucia file for the browser, without Node modules. Syntax errors in the script point at the source. */
+/** Compiles a .lusia file for the browser, without Node modules. Syntax errors in the script point at the source. */
 export function compileForBrowser(
   source: string,
   file: string,
@@ -50,7 +50,7 @@ function checkScriptSyntax(source: string, file: string): void {
     const loc = (error as { loc?: { line: number; column: number } }).loc;
     if (!(error instanceof SyntaxError) || !loc) throw error;
     const line = script.line + loc.line - 1;
-    throw new LuciaError(cleanSyntaxMessage(error.message), file, line, loc.column, {
+    throw new LusiaError(cleanSyntaxMessage(error.message), file, line, loc.column, {
       hint: "Fix the TypeScript in the script.",
     });
   }

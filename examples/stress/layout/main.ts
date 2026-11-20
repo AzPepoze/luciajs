@@ -1,7 +1,7 @@
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
-import Mover from "./Mover.lucia";
+import Mover from "./Mover.lusia";
 
 export const MOVERS = 1000;
 const WINDOW_MS = 1000;

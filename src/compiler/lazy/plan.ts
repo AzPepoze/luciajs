@@ -1,8 +1,8 @@
-import type { ImportStatement, LuciaImport } from "../parse/imports.ts";
+import type { ImportStatement, LusiaImport } from "../parse/imports.ts";
 import type { LazyOptions, LazyPrefetch } from "./options.ts";
 import { onlyInFlow, usedInScript } from "./uses.ts";
 
-/** The import statements of a script, with each split `.lucia` import replaced by a lazy component. */
+/** The import statements of a script, with each split `.lusia` import replaced by a lazy component. */
 export function importsWithSplits(
   statements: ImportStatement[],
   markup: string,
@@ -10,11 +10,11 @@ export function importsWithSplits(
   lazy: LazyOptions | undefined,
 ): string {
   if (!lazy) return statements.map((statement) => statement.text).join("\n");
-  const imports = statements.flatMap((statement) => (statement.lucia ? [statement.lucia] : []));
+  const imports = statements.flatMap((statement) => (statement.lusia ? [statement.lusia] : []));
   const split = namesToSplit(lazy, imports, markup, script);
   return statements
     .map((statement) => {
-      const item = statement.lucia;
+      const item = statement.lusia;
       if (!item || !split.has(item.name)) return statement.text;
       const hasFallback = lazy.childOf(item.specifier).fallback;
       return splitImportCode(item, hasFallback, lazy.prefetch);
@@ -25,7 +25,7 @@ export function importsWithSplits(
 /** The names of the imports to split, under the mode's rule. `<NOLAZY />` files are never split. */
 export function namesToSplit(
   lazy: LazyOptions,
-  imports: LuciaImport[],
+  imports: LusiaImport[],
   markup: string,
   script: string,
 ): Set<string> {
@@ -39,9 +39,9 @@ export function namesToSplit(
   return names;
 }
 
-/** The code that replaces `import Name from "./Name.lucia"`: a lazy component, with its fallback when the file has one. */
+/** The code that replaces `import Name from "./Name.lusia"`: a lazy component, with its fallback when the file has one. */
 export function splitImportCode(
-  item: LuciaImport,
+  item: LusiaImport,
   hasFallback: boolean,
   prefetch: LazyPrefetch,
 ): string {

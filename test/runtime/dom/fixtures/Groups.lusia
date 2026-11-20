@@ -1,0 +1,14 @@
+<script>
+import { state } from "./state.ts";
+import Tag from "./Tag.lusia";
+</script>
+
+<EACH {state.groups} as={group} key={group.name}>
+  <section class="group">
+    <IF {group.open}>
+      <EACH {group.items} as={name}>
+        <Tag label={name} />
+      </EACH>
+    </IF>
+  </section>
+</EACH>

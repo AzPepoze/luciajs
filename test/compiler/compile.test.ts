@@ -2,11 +2,11 @@ import { describe, expect, test } from "bun:test";
 import { relative } from "node:path";
 import { compile } from "@compiler/index.ts";
 
-const FILE = `${process.cwd()}/test/compiler/Dim.lucia`;
+const FILE = `${process.cwd()}/test/compiler/Dim.lusia`;
 const WHERE = relative(process.cwd(), FILE);
 
 describe("compile dev option", () => {
-  test("dev keeps a source map that points at the .lucia file", () => {
+  test("dev keeps a source map that points at the .lusia file", () => {
     const { code, map } = compile("<script>\nlet a = 1;\n</script>\n<p>{a}</p>", FILE, {
       dev: true,
     });
@@ -18,7 +18,7 @@ describe("compile dev option", () => {
   test("without dev the code has no location strings", () => {
     const { code } = compile("<script>\nlet a = 1;\n</script>\n<p>{a}</p>", FILE);
     expect(code).toContain("__unwrap((a))");
-    expect(code).not.toContain("Dim.lucia:");
+    expect(code).not.toContain("Dim.lusia:");
   });
 
   test("dev registers the component and wraps its variables for hot swap", () => {
@@ -31,7 +31,7 @@ describe("compile dev option", () => {
     );
     expect(code).toContain('__hotVariable("count", variable(0))');
     expect(code).toContain(`export default __hotComponent("`);
-    expect(code).toContain('} from "lucia/internal";');
+    expect(code).toContain('} from "lusia/internal";');
   });
 
   test("prod output has no hot code", () => {

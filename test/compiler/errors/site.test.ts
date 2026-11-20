@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { CODES } from "@compiler/errors/codes.ts";
 
-const PAGE = new URL("../../../docs/src/pages/Errors.lucia", import.meta.url).pathname;
+const PAGE = new URL("../../../docs/src/pages/Errors.lusia", import.meta.url).pathname;
 
 describe("site Errors page", () => {
   test("reads the code table and renders every field", async () => {

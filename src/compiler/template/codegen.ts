@@ -6,7 +6,7 @@ import type { Template } from "./types.ts";
 export interface ComponentParts extends GenOptions {
   imports: string;
   body: string;
-  /** The .lucia line where `body` starts. */
+  /** The .lusia line where `body` starts. */
   bodyLine: number;
   template: Template;
   css: string;
@@ -38,13 +38,13 @@ const RUNTIME_IMPORT = `import {
   type Host as __Host,
   type Leave as __Leave,
   type Rendered as __Rendered,
-} from "lucia/internal";`;
+} from "lusia/internal";`;
 
-// Dev builds only: the hot registry that lets `lucia dev` swap a component in place.
+// Dev builds only: the hot registry that lets `lusia dev` swap a component in place.
 const HOT_IMPORT = `import {
   hotComponent as __hotComponent,
   hotVariable as __hotVariable,
-} from "lucia/internal";`;
+} from "lusia/internal";`;
 
 function renderFunction(body: string, bodyLine: number, fragment: string): string {
   return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): __Rendered {

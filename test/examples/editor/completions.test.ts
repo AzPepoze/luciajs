@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { editorCompletions } from "../../../docs/src/editor/editor-completions.ts";
 import type { CompletionResult } from "../../../docs/src/editor/completions.ts";
 
-const FILE = "App.lucia";
-const BADGE_SCRIPT = `<script>\nimport Badge from "./Badge.lucia";\nconst count = variable(0);\n`;
+const FILE = "App.lusia";
+const BADGE_SCRIPT = `<script>\nimport Badge from "./Badge.lusia";\nconst count = variable(0);\n`;
 
 /** The completions at the first `|` in `source`. The marker is removed first. */
 function completeAt(source: string, files: { name: string; code: string }[] = [], fileName = FILE) {
@@ -17,13 +17,13 @@ function labelsOf(items: CompletionResult[]): string[] {
 }
 
 describe("script completions", () => {
-  test("offers lucia API names, each with an import edit", () => {
+  test("offers lusia API names, each with an import edit", () => {
     const items = completeAt("<script>\n|\n</script>");
     const variable = items.find((item) => item.label === "variable");
     expect(variable?.importEdit).toEqual({
       start: 8,
       end: 8,
-      text: 'import { variable } from "lucia";\n',
+      text: 'import { variable } from "lusia";\n',
     });
   });
 
@@ -78,7 +78,7 @@ describe("markup completions", () => {
   });
 
   test("a component tag offers the props the imported file declares", () => {
-    const badge = { name: "Badge.lucia", code: `<script>\nprops({ label: "New" })\n</script>` };
+    const badge = { name: "Badge.lusia", code: `<script>\nprops({ label: "New" })\n</script>` };
     const items = completeAt(`${BADGE_SCRIPT}</script>\n<Badge |`, [badge]);
     expect(labelsOf(items)).toEqual(["label"]);
   });
@@ -87,7 +87,7 @@ describe("markup completions", () => {
 describe(".ts files", () => {
   test("offer the names in the file, and no import for a name already imported", () => {
     const items = completeAt(
-      'import { variable } from "lucia";\nconst total = 1;\n|',
+      'import { variable } from "lusia";\nconst total = 1;\n|',
       [],
       "util.ts",
     );
@@ -106,7 +106,7 @@ describe(".ts files", () => {
     expect(props?.importEdit).toEqual({
       start: 0,
       end: 0,
-      text: 'import { props } from "lucia";\n',
+      text: 'import { props } from "lusia";\n',
     });
   });
 });

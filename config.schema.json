@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "lucia.config.json",
-  "description": "Settings for lucia build and lucia dev. Put the file in the app folder. CLI flags override it.",
+  "title": "lusia.config.json",
+  "description": "Settings for lusia build and lusia dev. Put the file in the app folder. CLI flags override it.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -9,7 +9,7 @@
     "outdir": {
       "type": "string",
       "minLength": 1,
-      "description": "Output folder for lucia build. Default: dist"
+      "description": "Output folder for lusia build. Default: dist"
     },
     "minify": {
       "type": "boolean",

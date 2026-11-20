@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { advance, useFakeClock } from "./clock.ts";
 import { host, mount, resetMounts } from "../dom/fixtures/mount.ts";
-import Fade from "./fixtures/Fade.lucia";
-import Wrap from "./fixtures/Wrap.lucia";
+import Fade from "./fixtures/Fade.lusia";
+import Wrap from "./fixtures/Wrap.lusia";
 
 useFakeClock();
 afterEach(resetMounts);

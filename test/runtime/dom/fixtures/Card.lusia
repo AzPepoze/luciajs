@@ -1,0 +1,10 @@
+<script>
+import { props } from "lusia";
+
+const { title } = props({ title: "Card" });
+</script>
+
+<section class="card">
+  <h2 class="title">{title}</h2>
+  <CONTENT />
+</section>

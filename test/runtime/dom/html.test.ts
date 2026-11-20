@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import Raw from "./fixtures/Raw.lucia";
+import Raw from "./fixtures/Raw.lusia";
 import { click, host, mount, resetMounts } from "./fixtures/mount.ts";
 
 afterEach(resetMounts);

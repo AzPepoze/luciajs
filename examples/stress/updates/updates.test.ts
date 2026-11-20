@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { attachCells, createTarget, detachCells } from "../cells.ts";
-import Edge from "../expressions/Edge.lucia";
+import Edge from "../expressions/Edge.lusia";
 import { base, count, probe, resetVariable } from "../variable.ts";
 
 const CELLS = 200;

@@ -4,7 +4,7 @@ export const LAZY_PREFETCH = ["idle", "view", "none"] as const;
 export type LazyMode = (typeof LAZY_MODES)[number];
 export type LazyPrefetch = (typeof LAZY_PREFETCH)[number];
 
-/** What the compiler needs to know about an imported .lucia file. */
+/** What the compiler needs to know about an imported .lusia file. */
 export interface ChildInfo {
   /** The file has <NOLAZY />, so it is never split. */
   nolazy: boolean;

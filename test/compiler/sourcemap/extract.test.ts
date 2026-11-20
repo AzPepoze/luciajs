@@ -58,23 +58,23 @@ function decodeMappings(mappings: string): Segment[][] {
 }
 
 describe("extractSourceMap", () => {
-  test("removes the marker and maps the code after it to its .lucia position", () => {
-    const { code, map } = extractSourceMap("/*@3:5*/x", "Card.lucia", "source text");
+  test("removes the marker and maps the code after it to its .lusia position", () => {
+    const { code, map } = extractSourceMap("/*@3:5*/x", "Card.lusia", "source text");
     expect(code).toBe("x");
     const parsed = JSON.parse(map);
     expect(parsed.version).toBe(3);
-    expect(parsed.sources).toEqual(["Card.lucia"]);
+    expect(parsed.sources).toEqual(["Card.lusia"]);
     expect(decodeMappings(parsed.mappings)).toEqual([[[0, 0, 2, 4]]]);
   });
 
   test("maps each marker on its own line, with columns counted from the line start", () => {
-    const { code, map } = extractSourceMap("a = /*@7:1*/b;\n  /*@8:3*/c", "Card.lucia", "");
+    const { code, map } = extractSourceMap("a = /*@7:1*/b;\n  /*@8:3*/c", "Card.lusia", "");
     expect(code).toBe("a = b;\n  c");
     expect(decodeMappings(JSON.parse(map).mappings)).toEqual([[[4, 0, 6, 0]], [[2, 0, 7, 2]]]);
   });
 
   test("code without markers has no segments", () => {
-    const { code, map } = extractSourceMap("const a = 1;", "Card.lucia", "");
+    const { code, map } = extractSourceMap("const a = 1;", "Card.lusia", "");
     expect(code).toBe("const a = 1;");
     expect(JSON.parse(map).mappings).toBe("");
   });

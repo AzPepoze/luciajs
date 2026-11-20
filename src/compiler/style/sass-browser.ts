@@ -1,5 +1,5 @@
 import * as sass from "sass";
-import { luciaError } from "../errors/create.ts";
+import { lusiaError } from "../errors/create.ts";
 import type { Section } from "../parse/sections.ts";
 
 // Sass for the browser. Files come only from the importers, because there is no file system.
@@ -19,7 +19,7 @@ export function compileScssText(
       line: span ? line + span.start.line : line,
       column: span ? span.start.column + 1 : 1,
     };
-    throw luciaError("L1005", { message: sassError.sassMessage ?? String(error) }, where);
+    throw lusiaError("L1005", { message: sassError.sassMessage ?? String(error) }, where);
   }
 }
 

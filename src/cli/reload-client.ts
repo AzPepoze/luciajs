@@ -1,6 +1,6 @@
 import { RUNTIME_PATH } from "./runtime-module.ts";
 
-export const RELOAD_PATH = "/__lucia/reload";
+export const RELOAD_PATH = "/__lusia/reload";
 const ERROR_DOCS_URL = "/errors";
 
 // Reloads the page on a new build, swaps changed component css in place, shows build errors
@@ -44,9 +44,9 @@ const CLIENT_CODE = `
   }
 
   function findStyle(id) {
-    var styles = document.querySelectorAll("style[data-lucia]");
+    var styles = document.querySelectorAll("style[data-lusia]");
     for (var i = 0; i < styles.length; i++) {
-      if (styles[i].dataset.lucia === id) return styles[i];
+      if (styles[i].dataset.lusia === id) return styles[i];
     }
     return null;
   }

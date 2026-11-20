@@ -1,4 +1,4 @@
-import type { Instance } from "lucia";
+import type { Instance } from "lusia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
 import { rowValue } from "../variable.ts";

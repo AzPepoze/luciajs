@@ -1,0 +1,19 @@
+<script>
+import { variable } from "lusia";
+import Field from "./Field.lusia";
+import ReadOnly from "./ReadOnly.lusia";
+
+const name = variable("Ada");
+const other = variable("Turing");
+
+function rename() {
+  name.value = "Grace";
+}
+</script>
+
+<p class="name">{name}</p>
+<p class="other">{other}</p>
+<Field bind-value={name} />
+<Field bind={other} />
+<ReadOnly label={name} />
+<button class="rename" onclick={rename}>Rename</button>

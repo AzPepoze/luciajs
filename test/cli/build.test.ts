@@ -12,7 +12,7 @@ let workRoot: string;
 let outdir: string;
 
 beforeAll(async () => {
-  workRoot = await mkdtemp(join(tmpdir(), "lucia-build-"));
+  workRoot = await mkdtemp(join(tmpdir(), "lusia-build-"));
   outdir = join(workRoot, "dist");
 });
 
@@ -51,9 +51,9 @@ describe("runBuild", () => {
     const broken = join(workRoot, "broken");
     await cp(FIXTURE, broken, { recursive: true });
     await mkdir(join(broken, "node_modules"));
-    await symlink(REPO, join(broken, "node_modules", "lucia"), "dir");
+    await symlink(REPO, join(broken, "node_modules", "lusia"), "dir");
     await writeFile(
-      join(broken, "src/Greeting.lucia"),
+      join(broken, "src/Greeting.lusia"),
       "<script>export const value = 1;</script>\n<p>x</p>\n",
     );
     expect(

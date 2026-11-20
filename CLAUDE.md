@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-LuciaJS: a Bun-native UI framework with single-file `.lucia` components, variables and scoped SCSS.
+Lusia: a Bun-native UI framework with single-file `.lusia` components, variables and scoped SCSS.
 
 - Commands, tests and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md)
 - The site Guide (learning path, live demos and source): https://azpepoze.github.io/luciajs/guide
@@ -13,9 +13,9 @@ LuciaJS: a Bun-native UI framework with single-file `.lucia` components, variabl
 
 Update the site Guide and `reference/api.ts` in the same change instead of keeping a `.md` page per topic. The README is a front page only: keep the detail on the site.
 
-Any `.lucia` syntax change (new tag, attribute, keyword or export) must update both highlighters in the same change, with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lucia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lucia` language in `docs`. A change is not done while either one shows the new syntax as plain text. See the Editor section of the site Guide.
+Any `.lusia` syntax change (new tag, attribute, keyword or export) must update both highlighters in the same change, with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lusia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lusia` language in `docs`. A change is not done while either one shows the new syntax as plain text. See the Editor section of the site Guide.
 
-`reference/api.ts` is the API table. It feeds both the VS Code extension and `docs`, so it must change in the same change whenever the public API or the `.lucia` markup changes.
+`reference/api.ts` is the API table. It feeds both the VS Code extension and `docs`, so it must change in the same change whenever the public API or the `.lusia` markup changes.
 
 ## Workflow
 
@@ -24,7 +24,7 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 - Worktrees live in this repo under `.worktrees/` (gitignored), made with `git worktree add .worktrees/<name> -b <branch> dev`. Agents keep screenshots, benchmarks and scripts inside their worktree under `.agent/` (gitignored), never in a scratchpad or `/tmp` copy of the repo. A new worktree runs `git rebase dev` first, because it may start from `main`.
 - Each coding agent works in its own git worktree branched from `dev`, so one agent's half-done edits never break another's build. The main agent reviews, runs `bun run check`, and merges it into `dev`. `main` only gets `dev` when the user says so.
 - Create a GitHub issue only for work that will not be finished now: a feature or design the user asks to track, or a real gap left open after a task. Small fixes, tweaks and UI feedback that are done right away get no issue; the commit message is the record. Add details to an existing issue as a comment instead of opening a new one, and never open an issue per screenshot or per sub-step. Check open issues (`gh issue list`) at the start of a session and when choosing what to do next. Close an issue yourself, with a comment saying what was done, as soon as its work is merged into `dev` and `bun run check` passes. Do not wait for `main` (`fixes #N` only closes on `main`), and do not use an "on dev" label. Reference the issue in the commit (`refs #N`). Finished but uncommitted work keeps the `done-uncommitted` label until then.
-- `bun run check` (typecheck, tests, site build, extension build) must pass before any change is reported done or committed. Set `LUCIA_CHROMIUM` so the browser tests run too.
+- `bun run check` (typecheck, tests, site build, extension build) must pass before any change is reported done or committed. Set `LUSIA_CHROMIUM` so the browser tests run too.
 - Every change updates the docs that describe it, in the same change. A task is not done while the docs are stale.
 - Every feature or behavior change also updates the demos in the same change: add or adjust the `docs` showcase section, and the `examples/stress` scenarios when it affects them. A task is not done while the demos are stale.
 

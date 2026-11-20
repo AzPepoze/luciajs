@@ -1,4 +1,4 @@
-export { LuciaError } from "../compiler/errors.ts";
+export { LusiaError } from "../compiler/errors.ts";
 export { variable } from "./variable/variable.ts";
 export type { Variable, UpdateOptions } from "./variable/variable.ts";
 export type { ComputedVariable } from "./variable/compute.ts";

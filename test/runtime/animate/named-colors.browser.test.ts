@@ -4,14 +4,14 @@ import { fileURLToPath } from "node:url";
 
 // Named and hsl() colors are resolved by the browser, so this runs in Chromium.
 const launch = await chromium
-  .launch({ executablePath: process.env.LUCIA_CHROMIUM || undefined })
+  .launch({ executablePath: process.env.LUSIA_CHROMIUM || undefined })
   .then((browser) => ({ browser, reason: "" }))
   .catch((error: Error) => ({ browser: null, reason: error.message.split("\n")[0] }));
 const browser: Browser | null = launch.browser;
 afterAll(() => browser?.close());
 
 const suite = browser ? describe : describe.skip;
-const SKIP_HINT = `set LUCIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
+const SKIP_HINT = `set LUSIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
 
 async function bundledRuntime(): Promise<string> {
   const entry = fileURLToPath(new URL("./fixtures/browser-entry.ts", import.meta.url));
@@ -26,7 +26,7 @@ async function interpolateInPage(from: string, to: string, t: number): Promise<u
     await page.setContent("<!doctype html><html><body></body></html>");
     await page.addScriptTag({ content: await bundledRuntime() });
     return await page.evaluate(
-      ([a, b, p]) => (window as any).luciaInterpolate(a, b)(p),
+      ([a, b, p]) => (window as any).lusiaInterpolate(a, b)(p),
       [from, to, t],
     );
   } finally {
@@ -69,7 +69,7 @@ suite(browser ? "var() resolves on the element" : "var() resolves on the element
       await page.addScriptTag({ content: await bundledRuntime() });
       const value = await page.evaluate(() => {
         const el = document.getElementById("e")!;
-        return (window as any).luciaInterpolate("var(--c)", "blue", el)(0);
+        return (window as any).lusiaInterpolate("var(--c)", "blue", el)(0);
       });
       expect(value).toBe("rgba(255, 0, 0, 1)");
     } finally {

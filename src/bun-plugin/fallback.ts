@@ -6,11 +6,11 @@ import { compileFile } from "./compile.ts";
 type PluginBuild = Parameters<BunPlugin["setup"]>[0];
 
 const QUERY = "?fallback";
-const NAMESPACE = "lucia-fallback";
+const NAMESPACE = "lusia-fallback";
 
-/** `import Card from "./Card.lucia?fallback"` is a module with only the FALLBACK block of Card.lucia, and its styles. */
+/** `import Card from "./Card.lusia?fallback"` is a module with only the FALLBACK block of Card.lusia, and its styles. */
 export function setupFallback(build: PluginBuild, dev: boolean): void {
-  build.onResolve({ filter: /\.lucia\?fallback$/ }, ({ path, importer }) => ({
+  build.onResolve({ filter: /\.lusia\?fallback$/ }, ({ path, importer }) => ({
     path: resolve(dirname(importer), path.slice(0, -QUERY.length)),
     namespace: NAMESPACE,
   }));

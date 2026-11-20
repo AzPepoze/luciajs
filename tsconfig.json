@@ -18,5 +18,5 @@
       "@cli/*": ["./src/cli/*"]
     }
   },
-  "include": ["src", "test", "examples", "docs", "reference", "lucia.d.ts"]
+  "include": ["src", "test", "examples", "docs", "reference", "lusia.d.ts"]
 }

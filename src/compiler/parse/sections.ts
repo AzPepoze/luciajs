@@ -1,4 +1,4 @@
-import { luciaError } from "../errors/create.ts";
+import { lusiaError } from "../errors/create.ts";
 import { skipExpression } from "../utils/braces.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import { parseAttrs } from "./attrs.ts";
@@ -55,7 +55,7 @@ function readSection(source: string, start: number, file: string): SectionMatch 
   const contentStart = start + open[0].length;
   const closeTag = `</${kind}>`;
   const contentEnd = source.indexOf(closeTag, contentStart);
-  if (contentEnd === -1) throw luciaError("L1001", { tag: kind }, spanAt(source, start, file));
+  if (contentEnd === -1) throw lusiaError("L1001", { tag: kind }, spanAt(source, start, file));
   return {
     kind,
     rawAttrs: open[2],
@@ -112,7 +112,7 @@ export function parse(source: string, file: string): ParsedFile {
     if (kind === "style") {
       result.styles.push(toSection(source, section));
     } else {
-      if (result.script) throw luciaError("L1002", {}, spanAt(source, start, file));
+      if (result.script) throw lusiaError("L1002", {}, spanAt(source, start, file));
       result.script = toSection(source, section);
     }
     markup += source.slice(last, start) + keepLineBreaks(source.slice(start, end));

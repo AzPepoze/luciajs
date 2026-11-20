@@ -13,11 +13,11 @@ export type Update =
 
 export const RELOAD: Update = { kind: "reload" };
 
-const STYLE_FILE = /\.(lucia|scss|sass)$/;
-const COMPONENT_FILE = /\.lucia$/;
+const STYLE_FILE = /\.(lusia|scss|sass)$/;
+const COMPONENT_FILE = /\.lusia$/;
 
 /**
- * Only style files changed: a css swap. `.lucia` script or markup changed: a hot swap, if every
+ * Only style files changed: a css swap. `.lusia` script or markup changed: a hot swap, if every
  * changed file is a component. Anything else reloads the page.
  */
 export function chooseUpdate(files: string[], changes: ModuleUpdate[]): Update {

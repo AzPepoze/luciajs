@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { createTarget } from "../cells.ts";
-import Tile from "./Tile.lucia";
+import Tile from "./Tile.lusia";
 import { attachTiles, DURATION, wait } from "./main.ts";
 
 const LEAVE_MARGIN_MS = 200;

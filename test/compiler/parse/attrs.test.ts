@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { parseAttrs } from "@compiler/parse/attrs.ts";
 import { parse } from "@compiler/parse/sections.ts";
 
-const FILE = "Card.lucia";
+const FILE = "Card.lusia";
 
 describe("parseAttrs", () => {
   test("parses valued and bare attributes on sections", () => {

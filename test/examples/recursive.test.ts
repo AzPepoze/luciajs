@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import CommentThread from "../../docs/src/demos/components/CommentThread.lucia";
-import FileTree from "../../docs/src/demos/components/FileTree.lucia";
+import CommentThread from "../../docs/src/demos/components/CommentThread.lusia";
+import FileTree from "../../docs/src/demos/components/FileTree.lusia";
 import { host, mount, resetMounts } from "../runtime/dom/fixtures/mount.ts";
 
 afterEach(resetMounts);

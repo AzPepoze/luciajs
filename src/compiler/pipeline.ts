@@ -12,7 +12,7 @@ import { extractSourceMap } from "./sourcemap/extract.ts";
 export interface CompileOptions {
   /** Dev builds keep runtime error locations. Default false. */
   dev?: boolean;
-  /** Splits imported .lucia files into their own chunks. Off when absent. */
+  /** Splits imported .lusia files into their own chunks. Off when absent. */
   lazy?: LazyOptions;
 }
 
@@ -38,7 +38,7 @@ export interface PipelineOptions {
   /** The file name written into the generated code. */
   displayFile: string;
   styles: StyleCompiler;
-  /** Splits imported .lucia files into their own chunks. Off when absent. */
+  /** Splits imported .lusia files into their own chunks. Off when absent. */
   lazy?: LazyOptions;
 }
 

@@ -9,7 +9,7 @@ export interface GenOptions {
   file: string;
   /** Dev builds pass each runtime check its location. */
   dev: boolean;
-  /** The whole .lucia file, and where its script sits in it. Dev builds use them to find keys. */
+  /** The whole .lusia file, and where its script sits in it. Dev builds use them to find keys. */
   source: string;
   script: ScriptRange;
 }

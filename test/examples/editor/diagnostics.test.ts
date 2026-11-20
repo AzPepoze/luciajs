@@ -6,32 +6,32 @@ import { diagnosticsFor } from "../../../docs/src/editor/diagnostics.ts";
 const noChildren = () => undefined;
 
 describe("compile errors", () => {
-  test("a LuciaError has its code, hint and 1-based position", () => {
+  test("a LusiaError has its code, hint and 1-based position", () => {
     const [error] = diagnosticsFor(
       "<p>a</p>\n<ELSE>\n  <p>b</p>\n</ELSE>\n",
-      "App.lucia",
+      "App.lusia",
       noChildren,
     );
     expect(error).toMatchObject({
       line: 2,
       column: 1,
       severity: "error",
-      source: "lucia",
+      source: "lusia",
       code: "L1034",
-      where: "App.lucia:2:1",
+      where: "App.lusia:2:1",
     });
     expect(error?.hint).toBeString();
   });
 
   test("a valid file has no errors", () => {
-    const source = `<script>\nimport { variable } from "lucia";\nconst count = variable(0);\n</script>\n<p>{count.value}</p>\n`;
-    expect(diagnosticsFor(source, "App.lucia", noChildren)).toEqual([]);
+    const source = `<script>\nimport { variable } from "lusia";\nconst count = variable(0);\n</script>\n<p>{count.value}</p>\n`;
+    expect(diagnosticsFor(source, "App.lusia", noChildren)).toEqual([]);
   });
 });
 
 describe("syntax errors in the script", () => {
   test("a script error is placed on its line and column", () => {
-    const [error] = diagnosticsFor("<script>\nconst a = ;\n</script>\n", "App.lucia", noChildren);
+    const [error] = diagnosticsFor("<script>\nconst a = ;\n</script>\n", "App.lusia", noChildren);
     expect(error).toMatchObject({ code: "syntax", line: 2, column: 11, severity: "error" });
   });
 
@@ -43,20 +43,20 @@ describe("syntax errors in the script", () => {
 
 describe("lint warnings", () => {
   test("an unused import is a warning at its line", () => {
-    const source = `<script>\nimport Badge from "./Badge.lucia";\n</script>\n<p>x</p>\n`;
-    const [warning] = diagnosticsFor(source, "App.lucia", noChildren);
+    const source = `<script>\nimport Badge from "./Badge.lusia";\n</script>\n<p>x</p>\n`;
+    const [warning] = diagnosticsFor(source, "App.lusia", noChildren);
     expect(warning).toMatchObject({
       code: "unused-import",
       line: 2,
       column: 1,
       severity: "warning",
-      source: "lucia-lint",
-      where: "App.lucia:2:1",
+      source: "lusia-lint",
+      where: "App.lusia:2:1",
     });
   });
 
   test("the compile error comes first, then the lint warning, as in the extension", () => {
-    const found = diagnosticsFor("<p>x</p>\n\n<p>{}</p>\n", "App.lucia", noChildren);
+    const found = diagnosticsFor("<p>x</p>\n\n<p>{}</p>\n", "App.lusia", noChildren);
     expect(found.map((item) => item.code)).toEqual(["L1011", "empty-expression"]);
   });
 });

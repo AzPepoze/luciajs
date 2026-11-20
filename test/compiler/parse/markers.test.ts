@@ -3,7 +3,7 @@ import { parse } from "@compiler/parse/sections.ts";
 
 function codeOf(source: string): string | undefined {
   try {
-    parse(source, "Card.lucia");
+    parse(source, "Card.lusia");
   } catch (error) {
     return (error as { code?: string }).code;
   }
@@ -14,7 +14,7 @@ describe("<FALLBACK>", () => {
   test("its content is kept apart from the markup, and its line is kept", () => {
     const parsed = parse(
       "<script>\nconst a = 1;\n</script>\n<FALLBACK>\n  <p>Loading</p>\n</FALLBACK>\n<main>{a}</main>\n",
-      "Card.lucia",
+      "Card.lusia",
     );
     expect(parsed.fallback?.content).toBe("\n  <p>Loading</p>\n");
     expect(parsed.fallback?.line).toBe(4);
@@ -23,17 +23,17 @@ describe("<FALLBACK>", () => {
   });
 
   test("works in a file with no script", () => {
-    const parsed = parse("<FALLBACK>wait</FALLBACK>\n<p>Done</p>", "Card.lucia");
+    const parsed = parse("<FALLBACK>wait</FALLBACK>\n<p>Done</p>", "Card.lusia");
     expect(parsed.fallback?.content).toBe("wait");
     expect(parsed.markup).toBe("<p>Done</p>");
   });
 
   test("is optional", () => {
-    expect(parse("<p>Done</p>", "Card.lucia").fallback).toBeNull();
+    expect(parse("<p>Done</p>", "Card.lusia").fallback).toBeNull();
   });
 
   test("a line break after a removed marker keeps the line numbers of the markup after it", () => {
-    const parsed = parse("<FALLBACK>x</FALLBACK>\n\n<p>{a}</p>", "Card.lucia");
+    const parsed = parse("<FALLBACK>x</FALLBACK>\n\n<p>{a}</p>", "Card.lusia");
     expect(parsed.markupLine).toBe(3);
   });
 
@@ -65,17 +65,17 @@ describe("<FALLBACK>", () => {
 
 describe("<NOLAZY />", () => {
   test("is removed from the markup and sets nolazy", () => {
-    const parsed = parse("<NOLAZY />\n<p>Hi</p>", "Card.lucia");
+    const parsed = parse("<NOLAZY />\n<p>Hi</p>", "Card.lusia");
     expect(parsed.nolazy).toBe(true);
     expect(parsed.markup).toBe("<p>Hi</p>");
   });
 
   test("works in a file with no script", () => {
-    expect(parse("<NOLAZY />", "Card.lucia").nolazy).toBe(true);
+    expect(parse("<NOLAZY />", "Card.lusia").nolazy).toBe(true);
   });
 
   test("is false when absent", () => {
-    expect(parse("<p>Hi</p>", "Card.lucia").nolazy).toBe(false);
+    expect(parse("<p>Hi</p>", "Card.lusia").nolazy).toBe(false);
   });
 
   test("cannot sit inside another element", () => {

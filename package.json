@@ -1,9 +1,9 @@
 {
-  "name": "lucia",
+  "name": "lusia",
   "private": true,
   "type": "module",
   "bin": {
-    "lucia": "./src/cli/index.ts"
+    "lusia": "./src/cli/index.ts"
   },
   "exports": {
     ".": "./src/runtime/index.ts",

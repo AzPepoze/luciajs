@@ -10,7 +10,7 @@ describe("variable.compute", () => {
     expect(doubled.get()).toBe(6);
   });
 
-  test("set throws a LuciaError with the hint", () => {
+  test("set throws a LusiaError with the hint", () => {
     const doubled = variable.compute(() => 4) as unknown as { set(value: number): void };
     expect(() => doubled.set(1)).toThrow("a computed variable cannot be set");
   });

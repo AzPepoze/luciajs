@@ -5,7 +5,7 @@ const MARKER = /\/\*@(\d+):(\d+)\*\//g;
 interface Segment {
   /** 0-based column in the generated line. */
   column: number;
-  /** 0-based line and column in the .lucia source. */
+  /** 0-based line and column in the .lusia source. */
   sourceLine: number;
   sourceColumn: number;
 }

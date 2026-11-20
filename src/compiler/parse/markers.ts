@@ -1,6 +1,6 @@
-import { luciaError, type Values } from "../errors/create.ts";
+import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
-import { LuciaError } from "../errors.ts";
+import { LusiaError } from "../errors.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import { nextDepth, readTags, type Tag } from "./tags.ts";
 
@@ -33,9 +33,9 @@ function failAt(
   index: number,
   code: ErrorCodeName,
   values?: Values,
-): LuciaError {
+): LusiaError {
   const span = { file, line: lineAt(markup, index), column: columnAt(markup, index) };
-  return luciaError(code, values, span);
+  return lusiaError(code, values, span);
 }
 
 /** Index of the closing tag that ends a block opened at `open`, counting only the tags inside it. */

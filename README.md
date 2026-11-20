@@ -1,19 +1,19 @@
-# LuciaJS
+# Lusia
 
 > [!NOTE]
-> LuciaJS is a UI framework.
+> Lusia is a UI framework.
 
 > [!IMPORTANT]
-> LuciaJS is under active development and has no release yet. APIs and markup may change without notice.
+> Lusia is under active development and has no release yet. APIs and markup may change without notice.
 
-A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through variables.
+A small UI framework for [Bun](https://bun.sh). You write components as single `.lusia` files: TypeScript, HTML and scoped SCSS. The page updates through variables.
 
 > [!NOTE]
 > Markup has `{expression}`, events, two-way `bind`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
 
 ```html
 <script>
-  import { variable } from "lucia";
+  import { variable } from "lusia";
 
   const count = variable(0);
   const hot = variable.compute(() => (count.value > 4 ? "hot" : ""));

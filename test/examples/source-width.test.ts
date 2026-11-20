@@ -7,7 +7,7 @@ const SOURCE_ROOTS = ["../../docs/src/demos/", "../../docs/src/components/"].map
 );
 
 const sources = SOURCE_ROOTS.flatMap((root) =>
-  [...new Bun.Glob("**/*.lucia").scanSync({ cwd: root.pathname })].map((file) => ({ root, file })),
+  [...new Bun.Glob("**/*.lusia").scanSync({ cwd: root.pathname })].map((file) => ({ root, file })),
 );
 
 function longLines(root: URL, file: string): number[] {

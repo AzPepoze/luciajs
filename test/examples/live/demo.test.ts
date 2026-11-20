@@ -21,9 +21,9 @@ describe("Guide demos in the live build", () => {
 
   test("a compile error comes back as data with its file", () => {
     const result = buildDemo([
-      { name: "src/broken/Bad.lucia", code: "<script>\nlet = ;\n</script>\n<p>x</p>" },
+      { name: "src/broken/Bad.lusia", code: "<script>\nlet = ;\n</script>\n<p>x</p>" },
     ]);
     expect(result.bundle).toBeUndefined();
-    expect(result.errors[0]?.file).toBe("src/broken/Bad.lucia");
+    expect(result.errors[0]?.file).toBe("src/broken/Bad.lusia");
   });
 });

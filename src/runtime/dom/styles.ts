@@ -3,7 +3,7 @@ const injectedStyles = new Map<string, HTMLStyleElement>();
 export function injectStyle(id: string, css: string): void {
   if (!css || injectedStyles.has(id)) return;
   const style = document.createElement("style");
-  style.dataset.lucia = id;
+  style.dataset.lusia = id;
   style.textContent = css;
   document.head.appendChild(style);
   injectedStyles.set(id, style);

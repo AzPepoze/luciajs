@@ -3,8 +3,8 @@ import { hash } from "@compiler/id.ts";
 
 describe("hash", () => {
   test("is stable and differs by input", () => {
-    expect(hash("Card.lucia")).toBe(hash("Card.lucia"));
-    expect(hash("Card.lucia")).not.toBe(hash("Other.lucia"));
+    expect(hash("Card.lusia")).toBe(hash("Card.lusia"));
+    expect(hash("Card.lusia")).not.toBe(hash("Other.lusia"));
   });
 
   test("matches FNV-1a offset basis for empty input", () => {

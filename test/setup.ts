@@ -1,6 +1,6 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { plugin } from "bun";
-import { lucia } from "lucia/bun-plugin";
+import { lusia } from "lusia/bun-plugin";
 
 GlobalRegistrator.register();
-plugin(lucia({ dev: true }));
+plugin(lusia({ dev: true }));

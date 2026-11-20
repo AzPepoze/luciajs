@@ -3,11 +3,11 @@ import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { formatBuildFailure, type BuildLog } from "@cli/build-errors.ts";
-import { lucia } from "@bun-plugin/index.ts";
+import { lusia } from "@bun-plugin/index.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
 const ACTIVE_IMPORT = `<script>
-import { variable, ACTIVE } from "lucia";
+import { variable, ACTIVE } from "lusia";
 const count = variable(1);
 console.log(ACTIVE, count);
 </script>
@@ -17,9 +17,9 @@ console.log(ACTIVE, count);
 let workRoot: string;
 
 beforeAll(async () => {
-  workRoot = await mkdtemp(join(tmpdir(), "lucia-build-errors-"));
+  workRoot = await mkdtemp(join(tmpdir(), "lusia-build-errors-"));
   await mkdir(join(workRoot, "node_modules"));
-  await symlink(REPO, join(workRoot, "node_modules", "lucia"), "dir");
+  await symlink(REPO, join(workRoot, "node_modules", "lusia"), "dir");
 });
 
 afterAll(async () => {
@@ -38,7 +38,7 @@ async function failingLogs(
   const result = await Bun.build({
     entrypoints: [join(dir, entry)],
     throw: false,
-    plugins: [lucia({ dev: false })],
+    plugins: [lusia({ dev: false })],
   });
   expect(result.success).toBe(false);
   return result.logs;
@@ -49,17 +49,17 @@ function displayPath(path: string): string {
 }
 
 describe("formatBuildFailure", () => {
-  test("a .lucia import of a renamed export gets a location, a caret and a rename hint", async () => {
+  test("a .lusia import of a renamed export gets a location, a caret and a rename hint", async () => {
     const logs = await failingLogs(
       "active",
-      { "src/Card.lucia": ACTIVE_IMPORT, "src/index.ts": 'import "./Card.lucia";\n' },
+      { "src/Card.lusia": ACTIVE_IMPORT, "src/index.ts": 'import "./Card.lusia";\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
     expect(text).toContain(
-      `${displayPath(logs[0]!.position!.file)}:2:20 - error L3001: "ACTIVE" is not exported by "lucia"`,
+      `${displayPath(logs[0]!.position!.file)}:2:20 - error L3001: "ACTIVE" is not exported by "lusia"`,
     );
-    expect(text).toContain('2 | import { variable, ACTIVE } from "lucia";');
+    expect(text).toContain('2 | import { variable, ACTIVE } from "lusia";');
     expect(text).toContain("  | " + " ".repeat(19) + "^~~~~~");
     expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
     expect(text).toContain("Build failed: 1 error");
@@ -68,11 +68,11 @@ describe("formatBuildFailure", () => {
   test("an import of the old store name points to variable", async () => {
     const logs = await failingLogs(
       "store",
-      { "src/index.ts": 'import { store } from "lucia";\nconsole.log(store);\n' },
+      { "src/index.ts": 'import { store } from "lusia";\nconsole.log(store);\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
-    expect(text).toContain('error L3001: "store" is not exported by "lucia"');
+    expect(text).toContain('error L3001: "store" is not exported by "lusia"');
     expect(text).toContain("hint: store was renamed to variable.");
   });
 
@@ -91,18 +91,18 @@ describe("formatBuildFailure", () => {
   test("a misspelled export suggests the closest real export", async () => {
     const logs = await failingLogs(
       "typo",
-      { "src/index.ts": 'import { variabl } from "lucia";\nconsole.log(variabl);\n' },
+      { "src/index.ts": 'import { variabl } from "lusia";\nconsole.log(variabl);\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
-    expect(text).toContain('error L3001: "variabl" is not exported by "lucia"');
+    expect(text).toContain('error L3001: "variabl" is not exported by "lusia"');
     expect(text).toContain('hint: Did you mean "variable"?');
   });
 
   test("a compile error from the plugin is printed once, as it was formatted", async () => {
     const logs = await failingLogs(
       "compile",
-      { "src/Bad.lucia": "<p>{}</p>\n", "src/index.ts": 'import "./Bad.lucia";\n' },
+      { "src/Bad.lusia": "<p>{}</p>\n", "src/index.ts": 'import "./Bad.lusia";\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
@@ -113,7 +113,7 @@ describe("formatBuildFailure", () => {
   test("no ANSI colors when color is off", async () => {
     const logs = await failingLogs(
       "plain",
-      { "src/index.ts": 'import { variabl } from "lucia";\nconsole.log(variabl);\n' },
+      { "src/index.ts": 'import { variabl } from "lusia";\nconsole.log(variabl);\n' },
       "src/index.ts",
     );
     expect(formatBuildFailure(logs, false)).not.toContain("\x1b[");

@@ -64,7 +64,7 @@ export const api: ApiEntry[] = [
       "Returns a stop function.",
       "Inside a component's <script>, it stops when the component is removed.",
     ],
-    example: `import { variable } from "lucia";\n\nconst count = variable(0);\n\nfunction logCount() {\n  console.log("count is", count.value);\n}\n\nconst stop = variable.autoRun(logCount);\ncount.value++; // logs again\nstop();`,
+    example: `import { variable } from "lusia";\n\nconst count = variable(0);\n\nfunction logCount() {\n  console.log("count is", count.value);\n}\n\nconst stop = variable.autoRun(logCount);\ncount.value++; // logs again\nstop();`,
   },
   {
     id: "variable-watch",
@@ -80,7 +80,7 @@ export const api: ApiEntry[] = [
       "Returns a stop function.",
       "Inside a component's <script>, it stops when the component is removed.",
     ],
-    example: `import { variable } from "lucia";\n\nconst first = variable("Ada");\nconst last = variable("Lovelace");\n\nconst stop = variable.watch([first, last], () => {\n  console.log("name is", first.value, last.value);\n});\nfirst.value = "Grace"; // logs again\nstop();`,
+    example: `import { variable } from "lusia";\n\nconst first = variable("Ada");\nconst last = variable("Lovelace");\n\nconst stop = variable.watch([first, last], () => {\n  console.log("name is", first.value, last.value);\n});\nfirst.value = "Grace"; // logs again\nstop();`,
   },
   {
     id: "variable-instance-on-update",
@@ -169,7 +169,7 @@ export const api: ApiEntry[] = [
       "A new branch appears at once. The old one plays its DETACH animations first.",
       "Uses JavaScript truthiness: 0, empty text and null are false.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst loggedIn = variable(false);\n\nfunction logIn() {\n  loggedIn.value = true;\n}\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <button onclick={logIn}>Log in</button>\n</ELSE>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst loggedIn = variable(false);\n\nfunction logIn() {\n  loggedIn.value = true;\n}\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <button onclick={logIn}>Log in</button>\n</ELSE>`,
   },
   {
     id: "elseif",
@@ -183,7 +183,7 @@ export const api: ApiEntry[] = [
       "Needs its own {condition}.",
       "Checked in order. The first true branch wins.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst score = variable(72);\n</script>\n\n<IF {score.value >= 90}>\n  <p>A</p>\n</IF>\n<ELSEIF {score.value >= 70}>\n  <p>C</p>\n</ELSEIF>\n<ELSE>\n  <p>Try again</p>\n</ELSE>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst score = variable(72);\n</script>\n\n<IF {score.value >= 90}>\n  <p>A</p>\n</IF>\n<ELSEIF {score.value >= 70}>\n  <p>C</p>\n</ELSEIF>\n<ELSE>\n  <p>Try again</p>\n</ELSE>`,
   },
   {
     id: "else",
@@ -197,7 +197,7 @@ export const api: ApiEntry[] = [
       "Must come right after </IF> or </ELSEIF>.",
       "Ends the chain. Nothing can follow it.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst loggedIn = variable(false);\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <p>Please log in.</p>\n</ELSE>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst loggedIn = variable(false);\n</script>\n\n<IF {loggedIn}>\n  <p>Welcome back.</p>\n</IF>\n<ELSE>\n  <p>Please log in.</p>\n</ELSE>`,
   },
   {
     id: "each",
@@ -213,7 +213,7 @@ export const api: ApiEntry[] = [
       "Without key, the item itself is the key. The list can be an array or a variable that holds one.",
       "A removed row plays its DETACH animations before it leaves the page.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst todos = variable([\n  { id: 1, title: "Write docs" },\n  { id: 2, title: "Ship" },\n]);\n\nfunction remove(id: number) {\n  todos.value = todos.value.filter((todo) => todo.id !== id);\n}\n</script>\n\n<ul>\n  <EACH {todos} as={todo} index={i} key={todo.id}>\n    <li>{i.value + 1}. {todo.title} <button onclick={() => remove(todo.id)}>Remove</button></li>\n  </EACH>\n</ul>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst todos = variable([\n  { id: 1, title: "Write docs" },\n  { id: 2, title: "Ship" },\n]);\n\nfunction remove(id: number) {\n  todos.value = todos.value.filter((todo) => todo.id !== id);\n}\n</script>\n\n<ul>\n  <EACH {todos} as={todo} index={i} key={todo.id}>\n    <li>{i.value + 1}. {todo.title} <button onclick={() => remove(todo.id)}>Remove</button></li>\n  </EACH>\n</ul>`,
   },
   {
     id: "for",
@@ -228,7 +228,7 @@ export const api: ApiEntry[] = [
       "step is the gap, default 1. A negative step counts down: from={3} to={0} step={-1}.",
       "A step of 0 throws. The bounds are read reactively, so the rows update when they change.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst rows = variable(3);\n</script>\n\n<FOR {i} from={0} to={rows.value}>\n  <p>Row {i + 1}</p>\n</FOR>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst rows = variable(3);\n</script>\n\n<FOR {i} from={0} to={rows.value}>\n  <p>Row {i + 1}</p>\n</FOR>`,
   },
   {
     id: "component",
@@ -236,13 +236,13 @@ export const api: ApiEntry[] = [
     kind: "type",
     group: "components",
     signature: "(target: Element, props?: Props): Instance",
-    summary: "A compiled .lucia component. Pass it to attach().",
+    summary: "A compiled .lusia component. Pass it to attach().",
     bullets: [
-      "Each .lucia file default-exports one Component.",
+      "Each .lusia file default-exports one Component.",
       "Calling it places the component inside target.",
       "Use attach() to mount it from code.",
     ],
-    example: `import Counter from "./Counter.lucia";\nattach(Counter, slot);`,
+    example: `import Counter from "./Counter.lusia";\nattach(Counter, slot);`,
   },
   {
     id: "instance",
@@ -298,9 +298,9 @@ export const api: ApiEntry[] = [
       "Holds one {expression} and nothing else. Uppercase only: lowercase <html> is a normal tag.",
       "Each update replaces its nodes.",
       "Never pass untrusted input. The value runs as HTML, so a script or an onerror attribute can run code (XSS).",
-      "Lucia markup inside the value is not compiled. Only plain HTML is shown.",
+      "Lusia markup inside the value is not compiled. Only plain HTML is shown.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst note = variable("<b>Bold</b> text");\n</script>\n\n<HTML>{note}</HTML>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst note = variable("<b>Bold</b> text");\n</script>\n\n<HTML>{note}</HTML>`,
   },
   {
     id: "script",
@@ -315,7 +315,7 @@ export const api: ApiEntry[] = [
       "Declarations run once per instance.",
       "export is a compile error.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\nconst count = variable(0);\n</script>`,
+    example: `<script>\nimport { variable } from "lusia";\nconst count = variable(0);\n</script>`,
   },
   {
     id: "event",
@@ -331,7 +331,7 @@ export const api: ApiEntry[] = [
       "The listener is removed when the component is detached.",
       "On a child component, onclick is a normal prop. The child reads it with props().",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
   },
   {
     id: "bind",
@@ -347,7 +347,7 @@ export const api: ApiEntry[] = [
       "The variable must be writable, from variable(). A variable.compute() value is refused.",
       "On input, textarea and select only. On a component tag, bind is the value prop.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst name = variable("");\n</script>\n\n<input bind={name} />\n<p>Hello {name}</p>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst name = variable("");\n</script>\n\n<input bind={name} />\n<p>Hello {name}</p>`,
   },
   {
     id: "bind-prop",
@@ -362,7 +362,7 @@ export const api: ApiEntry[] = [
       "The variable must be writable, from variable().",
       "Use it when bind does not cover the property you need.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst name = variable("Ada");\n</script>\n\n<input type="text" bind-value={name} />`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst name = variable("Ada");\n</script>\n\n<input type="text" bind-value={name} />`,
   },
   {
     id: "bind-element",
@@ -376,7 +376,7 @@ export const api: ApiEntry[] = [
       "Sets the variable to null when the component is detached.",
       "The variable must be writable, from variable(). Start it with null.",
     ],
-    example: `<script>\nimport { variable } from "lucia";\n\nconst field = variable<HTMLInputElement | null>(null);\n\nfunction focusField() {\n  field.value?.focus();\n}\n</script>\n\n<input bind-element={field} />\n<button onclick={focusField}>Focus</button>`,
+    example: `<script>\nimport { variable } from "lusia";\n\nconst field = variable<HTMLInputElement | null>(null);\n\nfunction focusField() {\n  field.value?.focus();\n}\n</script>\n\n<input bind-element={field} />\n<button onclick={focusField}>Focus</button>`,
   },
   {
     id: "style",
@@ -475,7 +475,7 @@ export const api: ApiEntry[] = [
       "Return a function to run when the component is detached.",
       "Do not use export on it.",
     ],
-    example: `import { variable } from "lucia";\n\nconst count = variable(0);\n\nfunction add() {\n  count.value++;\n}\n\nfunction setup(root: Element) {\n  const button = root.querySelector("button")!;\n  button.addEventListener("click", add);\n  function cleanup() {\n    button.removeEventListener("click", add);\n  }\n  return cleanup;\n}`,
+    example: `import { variable } from "lusia";\n\nconst count = variable(0);\n\nfunction add() {\n  count.value++;\n}\n\nfunction setup(root: Element) {\n  const button = root.querySelector("button")!;\n  button.addEventListener("click", add);\n  function cleanup() {\n    button.removeEventListener("click", add);\n  }\n  return cleanup;\n}`,
   },
   {
     id: "component-tag",
@@ -483,7 +483,7 @@ export const api: ApiEntry[] = [
     kind: "markup",
     group: "components",
     signature: '<Name prop="text" prop={expr} flag />',
-    summary: "Places an imported .lucia component in markup.",
+    summary: "Places an imported .lusia component in markup.",
     bullets: [
       "The tag name must match the import name exactly.",
       "A string attribute passes the string.",
@@ -491,23 +491,23 @@ export const api: ApiEntry[] = [
       "A bare attribute passes true. bind-<prop>={variable} links the prop both ways.",
       "Markup between its tags is the children. The component places it with <CONTENT />.",
     ],
-    example: `<script>\nimport Badge from "./badge.lucia";\n</script>\n\n<Badge label={mailLabel} tone="warn" />`,
+    example: `<script>\nimport Badge from "./badge.lusia";\n</script>\n\n<Badge label={mailLabel} tone="warn" />`,
   },
   {
     id: "recursive-components",
     name: "Recursive components",
     kind: "markup",
     group: "components",
-    signature: "<Folder item={child} /> inside Folder.lucia",
+    signature: "<Folder item={child} /> inside Folder.lusia",
     summary: "A component can import itself and place its own tag inside its markup.",
     bullets: [
-      'Import the file in itself, with the same name as the tag: import Folder from "./Folder.lucia".',
+      'Import the file in itself, with the same name as the tag: import Folder from "./Folder.lusia".',
       "The recursion stops when the data ends, or when an IF hides the tag.",
       "Give each EACH row a key from the data, such as a name or id. Keys must be unique among siblings.",
       "There is no depth limit. Add one with a prop and an IF, as the comments demo does.",
       "Each instance has its own state, so each folder keeps its own open flag.",
     ],
-    example: `<script>\nimport { props, variable } from "lucia";\nimport Folder from "./Folder.lucia";\n\nconst { item } = props({ item: { name: "" } });\nconst open = variable(true);\nconst children = variable.compute(() => item.value.children ?? []);\n\nfunction toggle() {\n  open.value = !open.value;\n}\n</script>\n\n<li>\n  <IF {item.value.children}>\n    <button onclick={toggle}>{item.value.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  </IF>\n  <ELSE>\n    <span>{item.value.name}</span>\n  </ELSE>\n</li>`,
+    example: `<script>\nimport { props, variable } from "lusia";\nimport Folder from "./Folder.lusia";\n\nconst { item } = props({ item: { name: "" } });\nconst open = variable(true);\nconst children = variable.compute(() => item.value.children ?? []);\n\nfunction toggle() {\n  open.value = !open.value;\n}\n</script>\n\n<li>\n  <IF {item.value.children}>\n    <button onclick={toggle}>{item.value.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  </IF>\n  <ELSE>\n    <span>{item.value.name}</span>\n  </ELSE>\n</li>`,
   },
   {
     id: "content",
@@ -522,7 +522,7 @@ export const api: ApiEntry[] = [
       "With no children, CONTENT renders nothing.",
       "A component has one CONTENT. It takes no attributes and must self-close.",
     ],
-    example: `<!-- Card.lucia -->\n<section>\n  <CONTENT />\n</section>\n\n<!-- Parent.lucia -->\n<Card>\n  <p>{count} clicks</p>\n</Card>`,
+    example: `<!-- Card.lusia -->\n<section>\n  <CONTENT />\n</section>\n\n<!-- Parent.lusia -->\n<Card>\n  <p>{count} clicks</p>\n</Card>`,
   },
   {
     id: "fallback",
@@ -549,7 +549,7 @@ export const api: ApiEntry[] = [
     bullets: [
       "Write it at the top level of the file. It takes no children.",
       "Use it in a component that is needed on the first render.",
-      "It wins over the lazy.mode setting in lucia.config.json.",
+      "It wins over the lazy.mode setting in lusia.config.json.",
     ],
     example: `<NOLAZY />\n\n<header>...</header>`,
   },
@@ -581,7 +581,7 @@ export const api: ApiEntry[] = [
       "WHEN.MOVE glides on a place change, WHEN.RESIZE on a size change, WHEN.MOVE_OR_RESIZE on either.",
       "Any cause works: a class change, a list reorder, or content that opens.",
     ],
-    example: `import { WHEN } from "lucia";\n\n<div animate={{ when: WHEN.MOVE, duration: 600 }}>Box</div>`,
+    example: `import { WHEN } from "lusia";\n\n<div animate={{ when: WHEN.MOVE, duration: 600 }}>Box</div>`,
   },
   {
     id: "ease",
@@ -597,7 +597,7 @@ export const api: ApiEntry[] = [
       "Each STYLE member is a function (t) => number that goes from 0 to 1. Your own functions work too.",
       "A keyframes default sets the style and ease for keys that do not set their own. Without one, the engine default applies: QUART and INOUT.",
     ],
-    example: `import { EASE } from "lucia";\n\nconst land = { default: [EASE.STYLE.QUART, EASE.OUT], 0: { translate: "0px 40px" }, 1: { translate: "0px 0px" } };`,
+    example: `import { EASE } from "lusia";\n\nconst land = { default: [EASE.STYLE.QUART, EASE.OUT], 0: { translate: "0px 40px" }, 1: { translate: "0px 0px" } };`,
     members: [
       {
         name: "STYLE",
@@ -636,7 +636,7 @@ export const api: ApiEntry[] = [
       "SCROLL: the progress follows the element's place on screen. Time settings do not apply.",
       "MOVE, RESIZE, MOVE_OR_RESIZE: the element glides from its old box to its new one when its layout box changes. style is optional.",
     ],
-    example: `import { WHEN } from "lucia";\n\n<section animate={{ style: fadeUp, when: WHEN.VIEW }}>...</section>`,
+    example: `import { WHEN } from "lusia";\n\n<section animate={{ style: fadeUp, when: WHEN.VIEW }}>...</section>`,
     members: [
       { name: "ATTACH", summary: "Plays 0 to 1 once when attached. The default." },
       {
@@ -671,7 +671,7 @@ export const api: ApiEntry[] = [
       "reverse at the top level is an error: it moved into more.",
       "control: a controller() plays, reverses, stops or seeks the item.",
     ],
-    example: `import type { AnimateItem } from "lucia";\n\nconst slideIn: AnimateItem = { style: slideFrom, duration: 600 };`,
+    example: `import type { AnimateItem } from "lusia";\n\nconst slideIn: AnimateItem = { style: slideFrom, duration: 600 };`,
   },
   {
     id: "set-animate-default",
@@ -686,7 +686,7 @@ export const api: ApiEntry[] = [
       "It is read at each play, so a call at app start applies everywhere.",
       "Only ease and duration are accepted. Other keys throw.",
     ],
-    example: `import { setAnimateDefault, EASE } from "lucia";\n\nsetAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });`,
+    example: `import { setAnimateDefault, EASE } from "lusia";\n\nsetAnimateDefault({ ease: [EASE.STYLE.CUBIC, EASE.OUT], duration: 400 });`,
   },
   {
     id: "controller",
@@ -700,7 +700,7 @@ export const api: ApiEntry[] = [
       "play() and reverse() return a Promise that resolves when the play ends.",
       "stop() ends the play where it is. seek(progress) jumps to a progress from 0 to 1.",
     ],
-    example: `import { controller, WHEN } from "lucia";\n\nconst ctl = controller();\n// in markup: <div animate={{ style: pop, when: WHEN.MANUAL, control: ctl }}>\nawait ctl.play();`,
+    example: `import { controller, WHEN } from "lusia";\n\nconst ctl = controller();\n// in markup: <div animate={{ style: pop, when: WHEN.MANUAL, control: ctl }}>\nawait ctl.play();`,
   },
   {
     id: "midway",
@@ -717,7 +717,7 @@ export const api: ApiEntry[] = [
       "RESTART starts the new play from its own beginning. SKIP jumps the running play to its end first.",
       "IGNORE drops requests while a play runs.",
     ],
-    example: `import { WHEN, MIDWAY } from "lucia";\n\n<div animate={{ style: grow, when: WHEN.HOVER, midway: MIDWAY.FINISH }}>...</div>`,
+    example: `import { WHEN, MIDWAY } from "lusia";\n\n<div animate={{ style: grow, when: WHEN.HOVER, midway: MIDWAY.FINISH }}>...</div>`,
     members: [
       { name: "TURN", summary: "Switch at once from the current progress. The default." },
       { name: "FINISH", summary: "Let the running play end, then run the newest request." },
@@ -765,7 +765,7 @@ export const api: ApiEntry[] = [
       "Or write { element, window } with EDGE values: element is the point on the element, window the point on the window.",
       "{ element: EDGE.TOP, window: EDGE.BOTTOM } is the same as ENTER.",
     ],
-    example: `import { WHEN, SCROLL_AT } from "lucia";\n\n<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } }}>...</div>`,
+    example: `import { WHEN, SCROLL_AT } from "lusia";\n\n<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } }}>...</div>`,
     members: [
       { name: "ENTER", summary: "The element's top meets the window's bottom. The default start." },
       { name: "CENTER", summary: "The element's centre meets the window's centre." },
@@ -820,7 +820,7 @@ export const api: ApiEntry[] = [
       "An array plays each item on its own trigger.",
       "Same-property conflicts: the later item wins.",
     ],
-    example: `import type { Animate } from "lucia";\n\nconst value: Animate = [fadeIn, { style: glow, when: WHEN.HOVER }];`,
+    example: `import type { Animate } from "lusia";\n\nconst value: Animate = [fadeIn, { style: glow, when: WHEN.HOVER }];`,
   },
   {
     id: "keyframes-type",
@@ -837,7 +837,7 @@ export const api: ApiEntry[] = [
       "Precedence per part: the key, then the keyframes default, then the engine default (QUART + INOUT).",
       "Style is a record of CSS properties in camelCase, such as backgroundColor. Custom properties start with --.",
     ],
-    example: `import { EASE, type Keyframes } from "lucia";\n\nconst fade: Keyframes = {\n  default: [EASE.STYLE.QUART, EASE.OUT],\n  0: { opacity: 0 },\n  0.5: [EASE.IN, { opacity: 0.8 }],\n  1: { opacity: 1 },\n};`,
+    example: `import { EASE, type Keyframes } from "lusia";\n\nconst fade: Keyframes = {\n  default: [EASE.STYLE.QUART, EASE.OUT],\n  0: { opacity: 0 },\n  0.5: [EASE.IN, { opacity: 0.8 }],\n  1: { opacity: 1 },\n};`,
   },
   {
     id: "preset",
@@ -852,7 +852,7 @@ export const api: ApiEntry[] = [
       "Spread one to change it: { ...PRESET.FADE, 1: { opacity: 0.5 } }.",
       "Each preset has its own default: CUBIC and OUT. A key in a spread can still set its own.",
     ],
-    example: `import { WHEN, PRESET } from "lucia";\n\n<section animate={{ style: PRESET.SLIDE_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
+    example: `import { WHEN, PRESET } from "lusia";\n\n<section animate={{ style: PRESET.SLIDE_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
     members: [
       { name: "FADE", summary: "Fades in from transparent." },
       {
@@ -891,6 +891,6 @@ export const api: ApiEntry[] = [
       "Returns a function: call it with t from 0 to 1.",
       "Values that cannot blend switch at the middle.",
     ],
-    example: `import { interpolate } from "lucia";\n\nconst mix = interpolate("0px", "100px");\nmix(0.5); // "50px"`,
+    example: `import { interpolate } from "lusia";\n\nconst mix = interpolate("0px", "100px");\nmix(0.5); // "50px"`,
   },
 ];

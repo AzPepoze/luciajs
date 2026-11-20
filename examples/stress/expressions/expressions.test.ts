@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { resetVariable } from "../variable.ts";
-import Edge from "./Edge.lucia";
+import Edge from "./Edge.lusia";
 
 let target: HTMLElement;
 let instance: Instance;
@@ -62,7 +62,7 @@ describe("tricky expressions", () => {
   });
 
   test(":global styles are not scoped", () => {
-    const styles = [...document.querySelectorAll("style[data-lucia]")].map(
+    const styles = [...document.querySelectorAll("style[data-lusia]")].map(
       (style) => style.textContent,
     );
     expect(styles.some((css) => css!.includes(".edge-global {"))).toBe(true);

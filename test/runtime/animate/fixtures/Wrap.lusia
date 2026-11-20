@@ -1,0 +1,4 @@
+<script>
+import fade from "./Fade.lusia";
+</script>
+<div class="wrap"><fade /></div>

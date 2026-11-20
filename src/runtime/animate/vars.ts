@@ -1,4 +1,4 @@
-const PROBE_PROPERTY = "--lucia-probe";
+const PROBE_PROPERTY = "--lusia-probe";
 
 /** Resolves var() references on the element itself, so scoped variables are seen. Without a probe the text is kept. */
 export function resolveVars(probe: HTMLElement | undefined, text: string): string {

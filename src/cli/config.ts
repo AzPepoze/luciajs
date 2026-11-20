@@ -1,12 +1,12 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { luciaError } from "@compiler/errors/create.ts";
-import { LuciaError } from "@compiler/errors.ts";
+import { lusiaError } from "@compiler/errors/create.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { LAZY_MODES, LAZY_PREFETCH, type LazyMode, type LazyPrefetch } from "@compiler/lazy/options.ts";
 
-export const CONFIG_FILE = "lucia.config.json";
+export const CONFIG_FILE = "lusia.config.json";
 
-export interface LuciaConfig {
+export interface LusiaConfig {
   outdir?: string;
   minify?: boolean;
   routes?: string[];
@@ -16,14 +16,14 @@ export interface LuciaConfig {
 
 type JsonObject = Record<string, unknown>;
 
-/** Reads the app folder's lucia.config.json. A missing file means no settings. */
-export function readConfig(dir: string): LuciaConfig {
+/** Reads the app folder's lusia.config.json. A missing file means no settings. */
+export function readConfig(dir: string): LusiaConfig {
   const file = join(dir, CONFIG_FILE);
   if (!existsSync(file)) return {};
   return parseConfig(readFileSync(file, "utf8"));
 }
 
-export function parseConfig(text: string): LuciaConfig {
+export function parseConfig(text: string): LusiaConfig {
   let value: unknown;
   try {
     value = JSON.parse(text);
@@ -38,7 +38,7 @@ export function isRoute(route: string): boolean {
   return route.startsWith("/") && !route.includes("..");
 }
 
-function checkRoot(value: unknown): LuciaConfig {
+function checkRoot(value: unknown): LusiaConfig {
   const root = asObject(value, "the file must hold a JSON object");
   checkKeys(root, ["$schema", "outdir", "minify", "routes", "dev", "lazy"]);
   return {
@@ -50,7 +50,7 @@ function checkRoot(value: unknown): LuciaConfig {
   };
 }
 
-function optionalDev(root: JsonObject): LuciaConfig["dev"] {
+function optionalDev(root: JsonObject): LusiaConfig["dev"] {
   if (root.dev === undefined) return undefined;
   const dev = asObject(root.dev, '"dev" must be an object');
   checkKeys(dev, ["port"], "dev");
@@ -65,7 +65,7 @@ function optionalPort(dev: JsonObject): number | undefined {
   return port;
 }
 
-function optionalLazy(root: JsonObject): LuciaConfig["lazy"] {
+function optionalLazy(root: JsonObject): LusiaConfig["lazy"] {
   if (root.lazy === undefined) return undefined;
   const lazy = asObject(root.lazy, '"lazy" must be an object');
   checkKeys(lazy, ["mode", "prefetch"], "lazy");
@@ -123,6 +123,6 @@ function checkKeys(object: JsonObject, allowed: readonly string[], parent?: stri
   }
 }
 
-function configError(detail: string): LuciaError {
-  return luciaError("L3004", { message: `${CONFIG_FILE}: ${detail}` });
+function configError(detail: string): LusiaError {
+  return lusiaError("L3004", { message: `${CONFIG_FILE}: ${detail}` });
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { parseCommand, UsageError } from "./args.ts";
 import { runBuild } from "./build.ts";
 import { colorEnabled } from "./color.ts";
@@ -23,7 +23,7 @@ async function main(argv: string[]): Promise<number> {
       process.stderr.write(`${error.message}\n\n${USAGE}`);
       return 1;
     }
-    if (error instanceof LuciaError) {
+    if (error instanceof LusiaError) {
       process.stderr.write(`${formatError(error, undefined, colorEnabled())}\n`);
       return 1;
     }

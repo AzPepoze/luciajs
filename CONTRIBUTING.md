@@ -1,6 +1,6 @@
-# Contributing to LuciaJS
+# Contributing to Lusia
 
-LuciaJS is a Bun-native UI framework built from single-file `.lucia` components, variables and scoped SCSS. This page is for contributors and coding agents. It covers the commands, the repo layout, how the compiler and runtime fit together, and the rules that keep a change consistent. It only includes facts that are not obvious from the code.
+Lusia is a Bun-native UI framework built from single-file `.lusia` components, variables and scoped SCSS. This page is for contributors and coding agents. It covers the commands, the repo layout, how the compiler and runtime fit together, and the rules that keep a change consistent. It only includes facts that are not obvious from the code.
 
 ## Install, run and test
 
@@ -20,42 +20,42 @@ LuciaJS is a Bun-native UI framework built from single-file `.lucia` components,
 
 `bun run dev` and `bun run build` first run `scripts/playground-runtime.ts`, which writes the playground preview runtime. Run `bun scripts/playground-runtime.ts` yourself before using the CLI directly.
 
-`bun run check` runs the typecheck, tests, site build and extension build. Set `LUCIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
+`bun run check` runs the typecheck, tests, site build and extension build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
 
 Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
 
-The `lucia` command builds and serves an app folder. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its two commands are `lucia build [dir]` and `lucia dev [dir]`; a `lucia.config.json` sets the same options and flags win over it.
+The `lusia` command builds and serves an app folder. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its two commands are `lusia build [dir]` and `lusia dev [dir]`; a `lusia.config.json` sets the same options and flags win over it.
 
 ## Repo layout
 
 | Path               | What it holds                                                |
 | ------------------ | ------------------------------------------------------------ |
 | `src/runtime`      | Variables, DOM helpers, blocks, animate                      |
-| `src/compiler`     | The `.lucia` compiler: parse, style, template, codegen       |
-| `src/bun-plugin`   | The Bun loader for `.lucia` files and `?raw` imports         |
-| `src/cli`          | The `lucia` command: `build` and `dev`                       |
+| `src/compiler`     | The `.lusia` compiler: parse, style, template, codegen       |
+| `src/bun-plugin`   | The Bun loader for `.lusia` files and `?raw` imports         |
+| `src/cli`          | The `lusia` command: `build` and `dev`                       |
 | `test/`            | Tests. One folder per area, each mirroring its `src/` folder |
 | `docs`             | The docs site: every feature with a live demo and source     |
 | `examples/stress`  | Scenarios that push the limits and report timings            |
-| `editors/vscode`   | The VS Code extension and `.lucia` grammar                   |
+| `editors/vscode`   | The VS Code extension and `.lusia` grammar                   |
 | `reference/api.ts` | The single API table for the extension and the docs site     |
 | `scripts/`         | Build helpers, including `playground-runtime.ts`             |
-| `test/setup.ts`    | Sets up the fake DOM (happy-dom) and the `.lucia` loader     |
+| `test/setup.ts`    | Sets up the fake DOM (happy-dom) and the `.lusia` loader     |
 
 Domain folders own framework logic (`parse/`, `style/`, `template/`, `variable/`, `dom/`). `utils/` holds only helpers used by two or more domains. One job per file, around 150 lines. Imports across areas use `@runtime/`, `@compiler/`, `@bun-plugin/` and `@cli/` aliases; imports inside one area stay relative.
 
 ## How the compiler and runtime fit together
 
-A `.lucia` file becomes DOM through the Bun plugin and a four-step compiler pipeline:
+A `.lusia` file becomes DOM through the Bun plugin and a four-step compiler pipeline:
 
 ```text
-App.lucia
-   |  lucia/bun-plugin (onLoad, loader "ts")
+App.lusia
+   |  lusia/bun-plugin (onLoad, loader "ts")
    v
-lucia/compiler:  parse  ->  style  ->  template  ->  codegen
+lusia/compiler:  parse  ->  style  ->  template  ->  codegen
    |
    v
-TypeScript module  --imports-->  lucia/internal (runtime helpers)
+TypeScript module  --imports-->  lusia/internal (runtime helpers)
 ```
 
 - **Parse** splits script, style and markup. Removed sections keep their newlines so markup line numbers match the source.
@@ -74,7 +74,7 @@ Error codes live in the `CODES` table in `src/compiler/errors/codes.ts`. Each co
 To add a code:
 
 1. Add one entry to `CODES`. Use `L1xxx` for compile errors and `L2xxx` for runtime errors.
-2. Raise it with `luciaError` (compiler) or `runtimeError` (runtime), passing a value for each `$name` placeholder.
+2. Raise it with `lusiaError` (compiler) or `runtimeError` (runtime), passing a value for each `$name` placeholder.
 3. Add the code to the docs site's Errors page.
 
 > [!WARNING]
@@ -82,10 +82,10 @@ To add a code:
 
 ## Editor setup
 
-The VS Code extension is in `editors/vscode`. It provides colours, completion, hover, diagnostics, navigation and formatting for `.lucia` files. The docs site also has a browser editor (`docs/src/components/CodeEditor.lucia`) and a Prism `lucia` language in `docs`, both backed by the same API table.
+The VS Code extension is in `editors/vscode`. It provides colours, completion, hover, diagnostics, navigation and formatting for `.lusia` files. The docs site also has a browser editor (`docs/src/components/CodeEditor.lusia`) and a Prism `lusia` language in `docs`, both backed by the same API table.
 
 - `reference/api.ts` is the **single source of truth** for the API. Completion, hover and the docs site all read it. Update it in the same change as any public API or markup change.
-- Any `.lucia` syntax change (new tag, attribute, keyword or export) must update **both highlighters in the same change** with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lucia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lucia` language. A change is not done while either one shows the new syntax as plain text.
+- Any `.lusia` syntax change (new tag, attribute, keyword or export) must update **both highlighters in the same change** with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lusia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lusia` language. A change is not done while either one shows the new syntax as plain text.
 
 Editor checks:
 

@@ -8,7 +8,7 @@ async function runServer(body: string): Promise<unknown> {
     import { createDevServer } from "${DEV_SERVER}";
     const readies = [];
     const server = createDevServer({ dir: "/", port: 0, onReady: (ms) => readies.push(typeof ms) });
-    const socket = new WebSocket("ws://localhost:" + server.url.port + "/__lucia/reload");
+    const socket = new WebSocket("ws://localhost:" + server.url.port + "/__lusia/reload");
     const messages = [];
     socket.onmessage = (event) => {
       const message = JSON.parse(String(event.data));

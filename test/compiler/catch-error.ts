@@ -1,12 +1,12 @@
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 
-/** Runs `run` and returns the LuciaError it throws. Fails the test if it throws anything else or nothing. */
-export function catchError(run: () => unknown): LuciaError {
+/** Runs `run` and returns the LusiaError it throws. Fails the test if it throws anything else or nothing. */
+export function catchError(run: () => unknown): LusiaError {
   try {
     run();
   } catch (error) {
-    if (error instanceof LuciaError) return error;
+    if (error instanceof LusiaError) return error;
     throw error;
   }
-  throw new Error("expected a LuciaError");
+  throw new Error("expected a LusiaError");
 }

@@ -1,5 +1,5 @@
-import { attach, type Instance } from "lucia";
-import Cell from "./attach/Cell.lucia";
+import { attach, type Instance } from "lusia";
+import Cell from "./attach/Cell.lusia";
 
 export function createTarget(tag: string): HTMLElement {
   const target = document.createElement(tag);

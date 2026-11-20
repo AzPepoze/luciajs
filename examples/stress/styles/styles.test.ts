@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { attach } from "lucia";
-import { compile } from "lucia/compiler";
-import Parent from "./Parent.lucia";
+import { attach } from "lusia";
+import { compile } from "lusia/compiler";
+import Parent from "./Parent.lusia";
 
-const PARENT_FILE = new URL("./Parent.lucia", import.meta.url).pathname;
+const PARENT_FILE = new URL("./Parent.lusia", import.meta.url).pathname;
 
 describe("tree and scoped rules on the same class", () => {
   test("compiles a tree selector and a scoped selector that stops at child roots", async () => {

@@ -1,4 +1,4 @@
-import { attach, type Component, type Instance, type Props } from "lucia";
+import { attach, type Component, type Instance, type Props } from "lusia";
 
 const instances: Instance[] = [];
 const hosts: HTMLElement[] = [];

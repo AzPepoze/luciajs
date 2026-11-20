@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { attachCells, createTarget, detachCells } from "../cells.ts";
 import { count, resetVariable } from "../variable.ts";
-import Cell from "./Cell.lucia";
+import Cell from "./Cell.lusia";
 
 const CYCLES = 50;
 const CELLS = 200;

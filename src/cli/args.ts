@@ -1,6 +1,6 @@
 import { parseArgs } from "node:util";
 import type { LazySettings } from "@bun-plugin/children.ts";
-import { isRoute, readConfig, type LuciaConfig } from "./config.ts";
+import { isRoute, readConfig, type LusiaConfig } from "./config.ts";
 
 export class UsageError extends Error {}
 
@@ -57,7 +57,7 @@ function parseBuild(args: string[]): Command {
 }
 
 /** The lazy settings from the config file, with the defaults for what it leaves out. */
-function lazyOf(config: LuciaConfig): LazySettings {
+function lazyOf(config: LusiaConfig): LazySettings {
   return {
     mode: config.lazy?.mode ?? DEFAULT_LAZY_MODE,
     prefetch: config.lazy?.prefetch ?? DEFAULT_LAZY_PREFETCH,

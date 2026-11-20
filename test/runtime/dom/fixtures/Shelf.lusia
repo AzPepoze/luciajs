@@ -1,0 +1,12 @@
+<script>
+import { props } from "lusia";
+import badge from "./badge.lusia";
+
+const { label } = props({ label: "Inbox" });
+</script>
+
+<section class="shelf">
+  <h2 class="title">{label}</h2>
+  <badge label={label} flag />
+  <badge tone="warn" />
+</section>

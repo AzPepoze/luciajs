@@ -1,0 +1,7 @@
+<script>
+import Field from "./Field.lusia";
+
+const fixed = "Ada";
+</script>
+
+<Field bind-value={fixed} />

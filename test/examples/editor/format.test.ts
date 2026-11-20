@@ -5,35 +5,35 @@ const SAMPLE = `<style scoped>
 .card{padding:1rem}
 </style>
 <script>
-import {variable} from "lucia";
+import {variable} from "lusia";
 const name=variable("Ada");
 </script>
 <p class="a {name}">Hi {name.value}</p>
 <button disabled={name.value === "" || {a:1}.a}>Go</button>
 `;
 
-describe("format a .lucia file", () => {
+describe("format a .lusia file", () => {
   test("is idempotent", async () => {
-    const once = await formatFile("App.lucia", SAMPLE);
-    expect(await formatFile("App.lucia", once)).toBe(once);
+    const once = await formatFile("App.lusia", SAMPLE);
+    expect(await formatFile("App.lusia", once)).toBe(once);
   });
 
   test("keeps every {expr} and a whole attribute value as an expression", async () => {
-    const output = await formatFile("App.lucia", SAMPLE);
+    const output = await formatFile("App.lusia", SAMPLE);
     expect(output).toContain("{name.value}");
     expect(output).toContain('disabled={name.value === "" || {a:1}.a}');
     expect(output).toContain('class="a {name}"');
   });
 
   test("formats the script as TypeScript and keeps the section order", async () => {
-    const output = await formatFile("App.lucia", SAMPLE);
+    const output = await formatFile("App.lusia", SAMPLE);
     expect(output).toContain('const name = variable("Ada");');
     expect(output).toContain("</style>\n\n<script>");
     expect(output).toContain("</script>\n\n<p ");
   });
 
   test("keeps the style attribute", async () => {
-    expect(await formatFile("App.lucia", SAMPLE)).toContain("<style scoped>");
+    expect(await formatFile("App.lusia", SAMPLE)).toContain("<style scoped>");
   });
 });
 

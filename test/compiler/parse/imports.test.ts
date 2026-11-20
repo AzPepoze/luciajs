@@ -3,7 +3,7 @@ import { splitImports } from "@compiler/parse/imports.ts";
 import { parse } from "@compiler/parse/sections.ts";
 import { catchError } from "../catch-error.ts";
 
-const FILE = "Card.lucia";
+const FILE = "Card.lusia";
 
 function split(script: string) {
   return splitImports(parse(`<script>${script}</script>`, FILE).script, FILE);
@@ -12,50 +12,50 @@ function split(script: string) {
 describe("splitImports", () => {
   test("hoists import statements and keeps the rest in the body", () => {
     const { imports, body } = split(
-      '\nimport { variable } from "lucia";\nconst count = variable(0);\nimport a from "./a.ts";\n',
+      '\nimport { variable } from "lusia";\nconst count = variable(0);\nimport a from "./a.ts";\n',
     );
-    expect(imports).toBe('import { variable } from "lucia";\nimport a from "./a.ts";');
+    expect(imports).toBe('import { variable } from "lusia";\nimport a from "./a.ts";');
     expect(body).toContain("const count = variable(0);");
     expect(body).not.toContain("import");
   });
 
   test("a multi-line import is hoisted whole", () => {
     const { imports, body } = split(
-      '\nimport {\n  variable,\n  attach,\n} from "lucia";\nconst a = 1;\n',
+      '\nimport {\n  variable,\n  attach,\n} from "lusia";\nconst a = 1;\n',
     );
-    expect(imports).toBe('import {\n  variable,\n  attach,\n} from "lucia";');
+    expect(imports).toBe('import {\n  variable,\n  attach,\n} from "lusia";');
     expect(body).toContain("const a = 1;");
   });
 
-  test("default imports of .lucia files become component names", () => {
+  test("default imports of .lusia files become component names", () => {
     const { components } = split(
-      '\nimport Card from "./card.lucia";\nimport badge from "./badge.lucia";\n',
+      '\nimport Card from "./card.lusia";\nimport badge from "./badge.lusia";\n',
     );
     expect([...components]).toEqual(["Card", "badge"]);
   });
 
   test("a default import alongside named imports is a component", () => {
-    const { components } = split('\nimport a, { b } from "./a.lucia";\n');
+    const { components } = split('\nimport a, { b } from "./a.lusia";\n');
     expect([...components]).toEqual(["a"]);
   });
 
   test("default imports of other files are not components", () => {
     const { components } = split(
-      '\nimport variable from "./variable.ts";\nimport * as ns from "./ns.lucia";\n',
+      '\nimport variable from "./variable.ts";\nimport * as ns from "./ns.lusia";\n',
     );
     expect(components.size).toBe(0);
   });
 
-  test("named and side-effect imports of .lucia files are not components", () => {
+  test("named and side-effect imports of .lusia files are not components", () => {
     const { components } = split(
-      '\nimport { card } from "./card.lucia";\nimport "./side.lucia";\n',
+      '\nimport { card } from "./card.lusia";\nimport "./side.lusia";\n',
     );
     expect(components.size).toBe(0);
   });
 
   test("import type is ignored for components", () => {
     const { components } = split(
-      '\nimport type Props from "./props.lucia";\nimport type { Shape } from "./shape.lucia";\n',
+      '\nimport type Props from "./props.lusia";\nimport type { Shape } from "./shape.lusia";\n',
     );
     expect(components.size).toBe(0);
   });

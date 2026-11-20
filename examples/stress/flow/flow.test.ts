@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { attach, type Instance } from "lucia";
+import { attach, type Instance } from "lusia";
 import { createTarget } from "../cells.ts";
 import { on } from "./on.ts";
 import { SETTLE_MS } from "./main.ts";
-import Toggle from "./Toggle.lucia";
+import Toggle from "./Toggle.lusia";
 
 // Small enough to check behaviour quickly. The stress page measures with TOGGLES from main.ts.
 const TEST_TOGGLES = 200;

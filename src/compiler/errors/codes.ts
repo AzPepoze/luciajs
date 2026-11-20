@@ -1,4 +1,4 @@
-// L1xxx: compile errors in .lucia files. L2xxx: runtime checks on values the compiled code passes in.
+// L1xxx: compile errors in .lusia files. L2xxx: runtime checks on values the compiled code passes in.
 // L3xxx: bundler errors from Bun.build, such as a missing export or an unresolved import.
 // Messages and hints may use $name placeholders, filled from the values an error is raised with.
 export interface ErrorCode {
@@ -333,7 +333,7 @@ export const CODES = {
   },
   L2040: {
     message: "props() can only be called in a component's <script>",
-    hint: "Call props() at the top level of a .lucia <script>.",
+    hint: "Call props() at the top level of a .lusia <script>.",
   },
   L2041: {
     message: "EACH keys must be unique, but $key appears twice",
@@ -426,7 +426,7 @@ export const CODES = {
   },
   L3004: {
     message: "$message",
-    hint: "Fix lucia.config.json, then run the command again.",
+    hint: "Fix lusia.config.json, then run the command again.",
   },
 } as const satisfies Record<string, ErrorCode>;
 

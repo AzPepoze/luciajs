@@ -1,6 +1,6 @@
 import { afterAll, afterEach, describe, expect, test } from "bun:test";
-import type { Instance } from "lucia";
-import { swapComponent, swapStyle, type HotComponent } from "lucia/internal";
+import type { Instance } from "lusia";
+import { swapComponent, swapStyle, type HotComponent } from "lusia/internal";
 import { removeVersions, sourceFile, version } from "./versions.ts";
 
 declare global {
@@ -29,7 +29,7 @@ function clickButton(target: HTMLElement): void {
 
 const COUNTER = (label: string, extra = ""): string => `
 <script>
-import { variable } from "lucia";
+import { variable } from "lusia";
 const count = variable(0);
 ${extra}
 function bump() { count.value += 1; }
@@ -61,7 +61,7 @@ describe("hot swap keeps state", () => {
     const extra = `const total = variable(10);
 const doubled = variable.compute(() => count.value * 2);`;
     const next = `<script>
-import { variable } from "lucia";
+import { variable } from "lusia";
 const count = variable(0);
 ${extra}
 function bump() { count.value += 1; }
@@ -146,7 +146,7 @@ function bump() { count.value += 1; }
     );
     swapStyle(restyled.id, restyled.definition.css);
     expect(target.querySelector("button")).toBe(button);
-    const style = document.head.querySelector(`style[data-lucia="${restyled.id}"]`);
+    const style = document.head.querySelector(`style[data-lusia="${restyled.id}"]`);
     expect(style?.textContent).toContain("red");
   });
 
@@ -154,14 +154,14 @@ function bump() { count.value += 1; }
     await sourceFile(
       "Child",
       `<script>
-import { variable } from "lucia";
+import { variable } from "lusia";
 const ticks = variable(0);
 function tick() { ticks.value += 1; }
 </script>
 <i onclick={tick}>{ticks}</i>`,
     );
     const parent = (markup: string): string => `<script>
-import Child from "./Child.lucia";
+import Child from "./Child.lusia";
 </script>
 ${markup}`;
 
@@ -180,14 +180,14 @@ ${markup}`;
 
   test("CONTENT keeps the parent's children when the component is swapped", async () => {
     const card = (tag: string): string => `<script>
-import { props } from "lucia";
+import { props } from "lusia";
 const { title } = props({ title: "" });
 </script>
 <${tag} class="card">{title}<CONTENT /></${tag}>`;
     await sourceFile("SlotCard", card("section"));
     const parent = `<script>
-import Card from "./SlotCard.lucia";
-import { variable } from "lucia";
+import Card from "./SlotCard.lusia";
+import { variable } from "lusia";
 const count = variable(1);
 </script>
 <Card title="hi"><b class="kid">{count}</b></Card>`;

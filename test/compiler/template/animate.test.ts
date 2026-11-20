@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { ELEMENT_MARKER } from "lucia/markers";
+import { ELEMENT_MARKER } from "lusia/markers";
 import { compileTemplate } from "@compiler/template/scanner.ts";
 
-const FILE = "Card.lucia";
+const FILE = "Card.lusia";
 
 describe("animate attribute", () => {
   test("animate becomes the element's animate expression and its marker", () => {

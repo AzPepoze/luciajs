@@ -35,9 +35,9 @@ describe("unknown keyframes keys", () => {
 
   test("a dev location for the key is used instead of the attribute's", () => {
     const bad = { defaut: 1, ...frames } as unknown as Keyframes;
-    const keys = { defaut: "src/Card.lucia:3:9" };
-    const error = withWhere("src/Card.lucia:12:4", () => thrown(() => prepareTimeline(bad)), keys);
-    expect(error).toMatchObject({ file: "src/Card.lucia", line: 3, column: 9 });
+    const keys = { defaut: "src/Card.lusia:3:9" };
+    const error = withWhere("src/Card.lusia:12:4", () => thrown(() => prepareTimeline(bad)), keys);
+    expect(error).toMatchObject({ file: "src/Card.lusia", line: 3, column: 9 });
   });
 });
 

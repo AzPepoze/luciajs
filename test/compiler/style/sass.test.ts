@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { LuciaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors.ts";
 import { compileStyle, compileStyleResult, forgetStyles } from "@compiler/style/sass.ts";
 import { FILE, ID, SCOPED, ROOT, TREE } from "./fixtures.ts";
 
@@ -40,16 +40,16 @@ describe("compileStyle", () => {
     expect(out).toContain(`h1${TREE}`);
   });
 
-  test("SCSS syntax error throws LuciaError with a line inside the file", () => {
+  test("SCSS syntax error throws LusiaError with a line inside the file", () => {
     const style = { content: "\n.a {\n  color: red;\n", attrs: {}, line: 10, from: 0 };
     try {
       compileStyle(style, FILE, ID);
       throw new Error("expected compileStyle to throw");
     } catch (error) {
-      expect(error).toBeInstanceOf(LuciaError);
-      const lucia = error as LuciaError;
-      expect(lucia.line).toBeGreaterThanOrEqual(style.line);
-      expect(lucia.line).toBeLessThan(style.line + style.content.split("\n").length);
+      expect(error).toBeInstanceOf(LusiaError);
+      const lusia = error as LusiaError;
+      expect(lusia.line).toBeGreaterThanOrEqual(style.line);
+      expect(lusia.line).toBeLessThan(style.line + style.content.split("\n").length);
     }
   });
 });
@@ -65,8 +65,8 @@ describe("compileStyleResult cache", () => {
   };
 
   async function setup(): Promise<void> {
-    dir = await mkdtemp(join(tmpdir(), "lucia-sass-"));
-    file = join(dir, "Card.lucia");
+    dir = await mkdtemp(join(tmpdir(), "lusia-sass-"));
+    file = join(dir, "Card.lusia");
     await writeFile(join(dir, "_tokens.scss"), "$accent: red;\n");
   }
 

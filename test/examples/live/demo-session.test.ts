@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { createDemoSession } from "../../../docs/src/live/demo-session.ts";
 import type { LiveBundle } from "../../../docs/src/live/types.ts";
 
-const FILE = "src/Box.lucia";
+const FILE = "src/Box.lusia";
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

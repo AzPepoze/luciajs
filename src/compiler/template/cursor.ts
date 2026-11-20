@@ -1,4 +1,4 @@
-import { luciaError, type Values } from "../errors/create.ts";
+import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
 import { skipExpression } from "../utils/braces.ts";
 import { lineIndexAt, lineStarts } from "../utils/position.ts";
@@ -56,13 +56,13 @@ export class Cursor {
     return { code, ...this.locate(at) };
   }
 
-  /** The 1-based line and column of an index in the .lucia file. */
+  /** The 1-based line and column of an index in the .lusia file. */
   locate(at: number): { line: number; column: number } {
     const row = lineIndexAt(this.starts, at);
     return { line: this.startLine + row, column: at - this.starts[row]! + 1 };
   }
 
   fail(code: ErrorCodeName, values: Values = {}, at = this.pos): never {
-    throw luciaError(code, values, { file: this.file, ...this.locate(at) });
+    throw lusiaError(code, values, { file: this.file, ...this.locate(at) });
   }
 }

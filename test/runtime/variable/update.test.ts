@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { watch } from "@runtime/variable/graph.ts";
 import { variable } from "@runtime/variable/variable.ts";
-import Watch from "../dom/fixtures/Watch.lucia";
+import Watch from "../dom/fixtures/Watch.lusia";
 import { events } from "../dom/fixtures/log.ts";
 import { resetVariable, state } from "../dom/fixtures/state.ts";
 import { mount, resetMounts, unmount } from "../dom/fixtures/mount.ts";

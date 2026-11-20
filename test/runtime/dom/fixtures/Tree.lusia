@@ -1,0 +1,23 @@
+<script>
+import { props, variable } from "lusia";
+import Tree from "./Tree.lusia";
+
+const { node } = props({ node: { name: "", children: [] } });
+const open = variable(true);
+const children = variable.compute(() => node.value.children);
+
+function toggle() {
+  open.value = !open.value;
+}
+</script>
+
+<li class="tree-node">
+  <button class="toggle" onclick={toggle}>{node.value.name}</button>
+  <IF {open}>
+    <ul>
+      <EACH {children} as={child} key={child.name}>
+        <Tree node={child} />
+      </EACH>
+    </ul>
+  </IF>
+</li>

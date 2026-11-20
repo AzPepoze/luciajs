@@ -1,13 +1,13 @@
 import type { ErrorCodeName } from "./errors/codes.ts";
 
-export interface LuciaErrorDetails {
+export interface LusiaErrorDetails {
   code?: ErrorCodeName;
   hint?: string;
   length?: number;
 }
 
 /** A compile or runtime error. Runtime errors have no file, line or column unless the dev build passes one. */
-export class LuciaError extends Error {
+export class LusiaError extends Error {
   readonly code: ErrorCodeName | undefined;
   readonly hint: string | undefined;
   readonly file: string | undefined;
@@ -20,10 +20,10 @@ export class LuciaError extends Error {
     file?: string,
     line?: number,
     column?: number,
-    details: LuciaErrorDetails = {},
+    details: LusiaErrorDetails = {},
   ) {
     super(message);
-    this.name = "LuciaError";
+    this.name = "LusiaError";
     this.code = details.code;
     this.hint = details.hint;
     this.file = file;

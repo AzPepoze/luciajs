@@ -1,4 +1,4 @@
-import { variable } from "lucia";
+import { variable } from "lusia";
 
-// The IF in Toggle.lucia reads this variable.
+// The IF in Toggle.lusia reads this variable.
 export const on = variable(false);

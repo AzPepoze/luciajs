@@ -1,3 +1,3 @@
-import Greeting from "./Greeting.lucia";
+import Greeting from "./Greeting.lusia";
 
 Greeting(document.getElementById("app")!);

@@ -1,8 +1,8 @@
-import { attach } from "lucia";
+import { attach } from "lusia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
 import { on } from "./on.ts";
-import Toggle from "./Toggle.lucia";
+import Toggle from "./Toggle.lusia";
 
 export const TOGGLES = 1000;
 // Longer than the 20 ms OUT animation, so every leave has finished.

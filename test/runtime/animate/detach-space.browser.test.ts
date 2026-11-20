@@ -4,14 +4,14 @@ import { fileURLToPath } from "node:url";
 
 // A leave that closes its space needs real layout, so this runs in Chromium.
 const launch = await chromium
-  .launch({ executablePath: process.env.LUCIA_CHROMIUM || undefined })
+  .launch({ executablePath: process.env.LUSIA_CHROMIUM || undefined })
   .then((browser) => ({ browser, reason: "" }))
   .catch((error: Error) => ({ browser: null, reason: error.message.split("\n")[0] }));
 const browser: Browser | null = launch.browser;
 afterAll(() => browser?.close());
 
 const suite = browser ? describe : describe.skip;
-const SKIP_HINT = `set LUCIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
+const SKIP_HINT = `set LUSIA_CHROMIUM or run \`bunx playwright install chromium\` (${launch.reason})`;
 
 async function bundledRuntime(): Promise<string> {
   const entry = fileURLToPath(new URL("./fixtures/detach-entry.ts", import.meta.url));
@@ -36,16 +36,16 @@ async function sampleLeave(page: Page, more: string, axis: "top" | "left"): Prom
       const more = moreText === "" ? undefined : JSON.parse(moreText);
       const value = {
         style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-        when: (window as any).luciaWhen.DETACH,
+        when: (window as any).lusiaWhen.DETACH,
         duration: 400,
         ...(more ? { more } : {}),
       };
       const cleanups: Array<() => void> = [];
       const leaves: Array<() => Promise<void>> = [];
-      (window as any).luciaAnimate(gone, () => value, cleanups, leaves);
+      (window as any).lusiaAnimate(gone, () => value, cleanups, leaves);
       const tops: number[] = [];
       const sampling = setInterval(() => tops.push(after.getBoundingClientRect()[edge]), 16);
-      const done = (window as any).luciaLeaveThen(leaves, () => gone.remove());
+      const done = (window as any).lusiaLeaveThen(leaves, () => gone.remove());
       await done;
       clearInterval(sampling);
       tops.push(after.getBoundingClientRect()[edge]);
@@ -125,11 +125,11 @@ async function frameSamples(page: Page, edge: "top" | "left", extra = {}): Promi
       const leaves: Array<() => Promise<void>> = [];
       const value = {
         style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-        when: (window as any).luciaWhen.DETACH,
+        when: (window as any).lusiaWhen.DETACH,
         duration: 400,
         ...JSON.parse(extraText),
       };
-      (window as any).luciaAnimate(gone, () => value, [], leaves);
+      (window as any).lusiaAnimate(gone, () => value, [], leaves);
       const samples: number[] = [];
       let running = true;
       const sample = () => {
@@ -137,7 +137,7 @@ async function frameSamples(page: Page, edge: "top" | "left", extra = {}): Promi
         if (running) requestAnimationFrame(sample);
       };
       requestAnimationFrame(sample);
-      await (window as any).luciaLeaveThen(leaves, () => gone.remove());
+      await (window as any).lusiaLeaveThen(leaves, () => gone.remove());
       running = false;
       samples.push(after.getBoundingClientRect()[edgeName as "top" | "left"]);
       return samples;
@@ -167,17 +167,17 @@ suite("DETACH places a placeholder and lifts the element out of flow", () => {
       const mid = await page.evaluate(async () => {
         const gone = document.getElementById("gone")!;
         const leaves: Array<() => Promise<void>> = [];
-        (window as any).luciaAnimate(
+        (window as any).lusiaAnimate(
           gone,
           () => ({
             style: { 0: { rotate: "0deg" }, 1: { rotate: "180deg" } },
-            when: (window as any).luciaWhen.DETACH,
+            when: (window as any).lusiaWhen.DETACH,
             duration: 400,
           }),
           [],
           leaves,
         );
-        const done = (window as any).luciaLeaveThen(leaves, () => gone.remove());
+        const done = (window as any).lusiaLeaveThen(leaves, () => gone.remove());
         await new Promise((resolve) => setTimeout(resolve, 200));
         const snapshot = {
           width: gone.offsetWidth,
@@ -232,11 +232,11 @@ suite("DETACH places a placeholder and lifts the element out of flow", () => {
         const cleanups: Array<() => void> = [];
         const leaves: Array<() => Promise<void>> = [];
         const initial = after.getBoundingClientRect().top;
-        (window as any).luciaAnimate(
+        (window as any).lusiaAnimate(
           gone,
           () => ({
             style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
-            when: (window as any).luciaWhen.DETACH,
+            when: (window as any).lusiaWhen.DETACH,
             duration: 400,
           }),
           cleanups,

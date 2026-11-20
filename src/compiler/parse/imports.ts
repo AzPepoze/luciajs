@@ -1,19 +1,19 @@
-import { luciaError, type Values } from "../errors/create.ts";
+import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
 import { RESERVED_TAGS } from "../utils/reserved.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import type { Section } from "./sections.ts";
 
-/** A default import of a `.lucia` file: the tag name and the file it loads. */
-export interface LuciaImport {
+/** A default import of a `.lusia` file: the tag name and the file it loads. */
+export interface LusiaImport {
   name: string;
   specifier: string;
 }
 
 export interface ImportStatement {
   text: string;
-  /** Set when the statement is a default import of a `.lucia` file. */
-  lucia?: LuciaImport;
+  /** Set when the statement is a default import of a `.lusia` file. */
+  lusia?: LusiaImport;
 }
 
 export interface SplitScript {
@@ -23,7 +23,7 @@ export interface SplitScript {
   statements: ImportStatement[];
   /** The rest of the script, run once per instance. */
   body: string;
-  /** Default-import names of `.lucia` files, usable as tags in markup. */
+  /** Default-import names of `.lusia` files, usable as tags in markup. */
   components: Set<string>;
 }
 
@@ -31,8 +31,8 @@ const IMPORT_STATEMENT = /^[ \t]*import(?!\s*\()\s[^"']*?(["'])([^"'\n]+)\1[ \t]
 const EXPORT_STATEMENT = /^[ \t]*export\b/m;
 const DEFAULT_IMPORT = /^\s*import\s+(?!type\s)([A-Za-z_$][\w$]*)\s*(?:,|from\b)/;
 
-function defaultLuciaImport(statement: string, specifier: string): string | undefined {
-  if (!specifier.endsWith(".lucia")) return undefined;
+function defaultLusiaImport(statement: string, specifier: string): string | undefined {
+  if (!specifier.endsWith(".lusia")) return undefined;
   return DEFAULT_IMPORT.exec(statement)?.[1];
 }
 
@@ -45,7 +45,7 @@ function scriptError(
   values?: Values,
 ) {
   const line = script.line - 1 + lineAt(script.content, offset);
-  return luciaError(code, values, { file, line, column: columnAt(script.content, offset) });
+  return lusiaError(code, values, { file, line, column: columnAt(script.content, offset) });
 }
 
 function rejectExports(script: Section, file: string): void {
@@ -64,13 +64,13 @@ export function splitImports(section: Section | null, file: string): SplitScript
   const body = script.replace(
     IMPORT_STATEMENT,
     (statement, _quote, specifier: string, offset: number) => {
-      const name = defaultLuciaImport(statement, specifier);
+      const name = defaultLusiaImport(statement, specifier);
       if (name && RESERVED_TAGS.has(name))
         throw scriptError(section, offset, file, "L1004", { name });
       if (name) components.add(name);
       statements.push({
         text: statement.trim(),
-        lucia: name ? { name, specifier } : undefined,
+        lusia: name ? { name, specifier } : undefined,
       });
       return "";
     },

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import Slotted from "./fixtures/Slotted.lucia";
+import Slotted from "./fixtures/Slotted.lusia";
 import { click, host, mount, resetMounts, text } from "./fixtures/mount.ts";
 
 afterEach(resetMounts);

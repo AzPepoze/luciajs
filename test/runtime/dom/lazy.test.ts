@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { lazy, type Component } from "lucia";
+import { lazy, type Component } from "lusia";
 import { lazyComponent } from "@runtime/dom/lazy.ts";
 
-import Counter from "./fixtures/Counter.lucia";
-import Loading from "./fixtures/Loading.lucia";
+import Counter from "./fixtures/Counter.lusia";
+import Loading from "./fixtures/Loading.lusia";
 import { host, mount, resetMounts, text } from "./fixtures/mount.ts";
 
 afterEach(resetMounts);
@@ -105,7 +105,7 @@ describe("lazy", () => {
     expect(second.querySelector(".counter")).not.toBeNull();
   });
 
-  test("a failed load is reported as a LuciaError and the fallback stays", async () => {
+  test("a failed load is reported as a LusiaError and the fallback stays", async () => {
     const reported: unknown[] = [];
     const original = globalThis.reportError;
     globalThis.reportError = (error: unknown) => {
@@ -120,7 +120,7 @@ describe("lazy", () => {
       await flush();
 
       const [error] = reported as Error[];
-      expect(error?.name).toBe("LuciaError");
+      expect(error?.name).toBe("LusiaError");
       expect(error?.message).toBe("lazy component failed to load: no file");
       expect(el.querySelector(".loading")).not.toBeNull();
     } finally {

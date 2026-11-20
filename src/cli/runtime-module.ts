@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 
-export const RUNTIME_PATH = "/__lucia/runtime.js";
+export const RUNTIME_PATH = "/__lusia/runtime.js";
 
 const RUNTIME_ENTRY = fileURLToPath(new URL("../runtime/all.ts", import.meta.url));
 

@@ -1,7 +1,7 @@
 import type { ComputedVariable } from "./compute.ts";
 import type { Variable } from "./variable.ts";
 
-export const REACTIVE: unique symbol = Symbol("lucia.reactive");
+export const REACTIVE: unique symbol = Symbol("lusia.reactive");
 
 export type Reactive = Variable<unknown> | ComputedVariable<unknown>;
 

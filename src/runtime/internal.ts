@@ -1,4 +1,4 @@
-// Helpers used by compiled .lucia output; not part of the public API.
+// Helpers used by compiled .lusia output; not part of the public API.
 export { attr, bindText, insert, listen, toText } from "./dom/bindings.ts";
 export type { Binder, Cleanup } from "./dom/bindings.ts";
 export { bindComponent, defineComponent } from "./dom/component.ts";
@@ -18,7 +18,7 @@ export { bindFor } from "./dom/blocks/range.ts";
 export { animate } from "./animate/bind.ts";
 export { unwrap } from "./variable/reactive.ts";
 export { watch } from "./variable/graph.ts";
-// Dev builds only: hot swap for `lucia dev`.
+// Dev builds only: hot swap for `lusia dev`.
 export { hotComponent } from "./dom/hot/define.ts";
 export type { HotComponent } from "./dom/hot/define.ts";
 export { hotVariable } from "./dom/hot/variable.ts";
