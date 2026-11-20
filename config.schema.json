@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "lucia.config.json",
+  "description": "Settings for lucia build and lucia dev. Put the file in the app folder. CLI flags override it.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "outdir": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Output folder for lucia build. Default: dist"
+    },
+    "minify": {
+      "type": "boolean",
+      "description": "Minify the build. Default: true"
+    },
+    "routes": {
+      "type": "array",
+      "description": "Client routes that get their own index.html, such as /guide",
+      "items": {
+        "type": "string",
+        "description": "Starts with a slash and has no .."
+      }
+    },
+    "dev": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "description": "Dev server port. Default: 3000"
+        }
+      }
+    },
+    "lazy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": ["smart", "all", "off"],
+          "description": "Which imported components load later. Default: smart"
+        },
+        "prefetch": {
+          "enum": ["idle", "view", "none"],
+          "description": "When split components start to download. Default: idle"
+        }
+      }
+    }
+  }
+}

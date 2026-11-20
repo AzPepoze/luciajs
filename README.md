@@ -50,8 +50,9 @@ If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](docs/
 | [Events and bind](docs/events.md)    | `onclick={fn}`, two-way `bind` for form fields, `bind-element`                               |
 | [Flow](docs/flow.md)                 | `<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>` and `<FOR>`                                           |
 | [Lazy components](docs/lazy.md)      | `lazy()`: load a component only when it is first shown, with a fallback                      |
-| [Variable](docs/variable.md)               | State, derived values, `variable.autoRun` and shared variables                                    |
+| [Variable](docs/variable.md)         | State, derived values, `variable.autoRun` and shared variables                               |
 | [Animate](docs/animate.md)           | The `animate` attribute: keyframes, triggers, easings, presets and leave                     |
+| [Config](docs/config.md)             | `lucia.config.json`: output folder, routes, dev port and lazy settings                       |
 | [Development](docs/development.md)   | Commands, tests, repo layout                                                                 |
 | [Architecture](docs/architecture.md) | How the compiler and runtime work                                                            |
 | [Error codes](docs/errors.md)        | Error codes and how to fix them                                                              |
