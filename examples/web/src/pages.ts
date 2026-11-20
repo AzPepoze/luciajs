@@ -38,14 +38,40 @@ function mountReference(root: HTMLElement, signal: AbortSignal): void {
   initCopy(root, signal);
 }
 
+// The playground's code (compiler, editor, runner) loads only when this page is opened.
+function mountPlayground(root: HTMLElement, signal: AbortSignal): void {
+  const stage = root.querySelector<HTMLElement>("[data-preview]");
+  if (!stage) return;
+  void import("./playground/run.ts").then(({ mountPlayground: start }) => start(stage, signal));
+}
+
 export const pageSpecs: PageSpec[] = [
-  { path: "/", route: "home", title: "LuciaJS", component: Home, mount: mountHome },
-  { path: "/guide", route: "guide", title: "Guide · LuciaJS", component: Guide, mount: mountGuide },
+  {
+    path: "/",
+    route: "home",
+    title: "LuciaJS",
+    load: () => Promise.resolve(Home),
+    mount: mountHome,
+  },
+  {
+    path: "/guide",
+    route: "guide",
+    title: "Guide · LuciaJS",
+    load: () => Promise.resolve(Guide),
+    mount: mountGuide,
+  },
   {
     path: "/reference",
     route: "reference",
     title: "Reference · LuciaJS",
-    component: Reference,
+    load: () => Promise.resolve(Reference),
     mount: mountReference,
+  },
+  {
+    path: "/playground",
+    route: "playground",
+    title: "Playground · LuciaJS",
+    load: () => import("./pages/Playground.lucia").then((module) => module.default),
+    mount: mountPlayground,
   },
 ];
