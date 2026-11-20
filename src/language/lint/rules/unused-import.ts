@@ -1,9 +1,11 @@
-import { parseLusiaImports } from "../../imports.ts";
+import { parseLusiaImports, type LusiaImport } from "../../imports.ts";
 import type { LintFinding, LintFix, LintRule } from "../types.ts";
+
+const STATEMENT = /import\s+[\s\S]*?from\s*["'][^"'\n]+\.lusia["'];?/y;
 
 export const unusedImport: LintRule = ({ script, scriptOffset, markup }) =>
   parseLusiaImports(script)
-    .filter((item) => !isUsedAsTag(markup, item.name))
+    .filter((item) => !isUsed(script, markup, item))
     .map((item): LintFinding => ({
       ...unusedFinding(item.name, scriptOffset + item.index),
       fix: removalFix(script, scriptOffset, item.index),
@@ -13,9 +15,35 @@ function unusedFinding(name: string, offset: number): LintFinding {
   return {
     offset,
     code: "unused-import",
-    message: `"${name}" is imported but never used as a tag`,
+    message: `"${name}" is imported but never used`,
     severity: "warning",
   };
+}
+
+/** A component import is used as a tag or as a value in the script, such as `attach(Chip, el)`. */
+function isUsed(script: string, markup: string, item: LusiaImport): boolean {
+  if (isUsedAsTag(markup, item.name)) return true;
+  return isUsedInScript(script, item);
+}
+
+function isUsedInScript(script: string, item: LusiaImport): boolean {
+  const statement = statementAt(script, item.index);
+  const name = new RegExp(`\\b${escapeName(item.name)}\\b`, "g");
+  for (const match of script.matchAll(name)) {
+    const offset = match.index ?? 0;
+    if (offset < item.index || offset >= item.index + statement.length) return true;
+  }
+  return false;
+}
+
+/** The `import ... from "./x.lusia"` text that starts at `index`. */
+function statementAt(script: string, index: number): string {
+  STATEMENT.lastIndex = index;
+  return STATEMENT.exec(script)?.[0] ?? "";
+}
+
+function escapeName(name: string): string {
+  return name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /** Removes the whole line the import sits on, when it sits alone on that line. */

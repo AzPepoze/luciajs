@@ -24,7 +24,7 @@ describe("lint rules", () => {
       {
         line: 2,
         column: 1,
-        message: '"Badge" is imported but never used as a tag',
+        message: '"Badge" is imported but never used',
         severity: "warning",
         code: "unused-import",
         fix: { start: 9, end: 44, text: "" },
@@ -34,6 +34,15 @@ describe("lint rules", () => {
 
   test("a used component import is not flagged", () => {
     expect(codes(`${BADGE_IMPORT}<Badge label="Done" />`)).toEqual([]);
+  });
+
+  test("a component used as a value is not flagged", () => {
+    const source = `<script>
+import Badge from "./badge.lusia";
+import { attach } from "lusia";
+attach(Badge, document.body);
+</script>`;
+    expect(codes(source)).toEqual([]);
   });
 
   test("props-twice flags the second props() call", () => {
