@@ -1,10 +1,9 @@
 @use "theme" as *;
 
 // The topbar's search. Its box is the one that glides: closed it sits at the right of the bar,
-// open it is fixed at the top centre of the screen. A backdrop dims the page behind it.
+// open it is fixed in the top centre, below the top bar. A backdrop dims the page behind it.
 $search-width: 18rem;
 $search-open-width: 42rem;
-$search-top: 0.75rem;
 
 // The slot and the component's root pass their box through, so the search box is the flex item of the bar.
 #search-slot,
@@ -20,7 +19,7 @@ $search-top: 0.75rem;
 
   &.is-open {
     position: fixed;
-    top: $search-top;
+    top: max(13vh, 5rem);
     right: 0;
     left: 0;
     margin: 0 auto;
@@ -97,9 +96,8 @@ $search-top: 0.75rem;
   }
 }
 
-// The results card hangs below the box. It shows only while the box is open.
+// The results card hangs below the box. The component adds it only while the box is open.
 .search-panel {
-  display: none;
   position: absolute;
   top: calc(100% + 0.6rem);
   right: 0;
@@ -112,10 +110,6 @@ $search-top: 0.75rem;
   background: var(--card);
   box-shadow: var(--shadow);
   scrollbar-width: thin;
-
-  .search.is-open > & {
-    display: block;
-  }
 }
 
 .search-empty {
