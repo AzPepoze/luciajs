@@ -1,7 +1,7 @@
 import type { GenContext } from "./codegen-context.ts";
 import { elementBinder, getterObject, readExpression } from "./codegen-element.ts";
 import { eachBinder, forBinder, ifBinder } from "./codegen-blocks.ts";
-import type { Binding, ComponentBinding, TextBinding } from "./types.ts";
+import type { Binding, ComponentBinding, HtmlBinding, TextBinding } from "./types.ts";
 
 function textBinder({ expr }: TextBinding): string {
   return `(__node, __cleanups) => __bindText(__node, () => ${readExpression(expr)}, __cleanups)`;
@@ -17,10 +17,16 @@ function contentBinder(): string {
   return "(__node, __cleanups, __leaves) => __bindContent(__node, __host.content, __cleanups, __leaves)";
 }
 
+function htmlBinder({ expr }: HtmlBinding): string {
+  return `(__node, __cleanups) => __bindHtml(__node, () => ${readExpression(expr)}, __cleanups)`;
+}
+
 function binderOf(binding: Binding, ctx: GenContext): string {
   switch (binding.kind) {
     case "text":
       return textBinder(binding);
+    case "html":
+      return htmlBinder(binding);
     case "element":
       return elementBinder(binding, ctx);
     case "component":

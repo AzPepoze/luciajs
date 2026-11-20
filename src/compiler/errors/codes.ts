@@ -21,7 +21,7 @@ export const CODES = {
   },
   L1004: {
     message: "$name is a reserved tag name and cannot be a component",
-    hint: "Rename the component. IF, ELSEIF, ELSE, EACH, FOR and CONTENT are built in.",
+    hint: "Rename the component. IF, ELSEIF, ELSE, EACH, FOR, CONTENT and HTML are built in.",
   },
   L1005: { message: "$message", hint: "Check the Sass syntax in this <style> section." },
   L1006: { message: "unclosed <!-- comment", hint: "Add --> to close the comment." },
@@ -117,6 +117,10 @@ export const CODES = {
   L1036: {
     message: "<CONTENT> needs />",
     hint: "Write <CONTENT /> with no children. The children go between the component's tags.",
+  },
+  L1037: {
+    message: "<HTML> needs one {expression}",
+    hint: "Put one expression in braces between the tags, such as <HTML>{html}</HTML>.",
   },
   L2001: {
     message: "animate item needs a style",

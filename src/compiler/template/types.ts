@@ -61,6 +61,12 @@ export interface ContentBinding {
   kind: "content";
 }
 
+/** `<HTML>{expr}</HTML>`: the value is inserted as HTML, not as text. */
+export interface HtmlBinding {
+  kind: "html";
+  expr: Expr;
+}
+
 export interface IfBinding {
   kind: "if";
   branches: Branch[];
@@ -90,6 +96,7 @@ export type Binding =
   | ElementBinding
   | ComponentBinding
   | ContentBinding
+  | HtmlBinding
   | IfBinding
   | EachBinding
   | ForBinding;

@@ -6,4 +6,5 @@ export const RESERVED_TAGS: ReadonlySet<string> = new Set([
   "EACH",
   "FOR",
   "CONTENT",
+  "HTML",
 ]);

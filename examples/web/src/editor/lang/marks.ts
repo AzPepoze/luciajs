@@ -7,10 +7,18 @@ import { luciaHighlight } from "./highlight.ts";
 import { typescriptLanguage } from "./language.ts";
 
 // Group 1 is always the name, so the start is found from the match.
-const FLOW_NAME = /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT)(?=[\s/>])/g;
+const FLOW_NAME = /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML)(?=[\s/>])/g;
 const COMPONENT_NAME = /<\/?([A-Z][\w.]*)/g;
 const LUCIA_ATTRIBUTE = /(?<=\s)(on[a-z]+|animate|bind(?:-[\w-]+)?)(?=\s*=)/g;
-const FLOW_NAMES: ReadonlySet<string> = new Set(["IF", "ELSEIF", "ELSE", "EACH", "FOR", "CONTENT"]);
+const FLOW_NAMES: ReadonlySet<string> = new Set([
+  "IF",
+  "ELSEIF",
+  "ELSE",
+  "EACH",
+  "FOR",
+  "CONTENT",
+  "HTML",
+]);
 
 /** Decorations for the Lucia parts of a .lucia file that the HTML grammar does not know. */
 export function luciaMarkRanges(text: string): Range<Decoration>[] {

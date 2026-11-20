@@ -303,6 +303,21 @@ export const api: ApiEntry[] = [
     example: `<p>Hi {name}</p>\n<button disabled={isDone}>Save</button>`,
   },
   {
+    id: "html",
+    name: "<HTML>{expr}</HTML>",
+    kind: "markup",
+    group: "basics",
+    signature: "<HTML>{expression}</HTML>",
+    summary: "Inserts the expression's value as HTML, not as text.",
+    bullets: [
+      "Holds one {expression} and nothing else. Uppercase only: lowercase <html> is a normal tag.",
+      "Each update replaces its nodes.",
+      "Never pass untrusted input. The value runs as HTML, so a script or an onerror attribute can run code (XSS).",
+      "Lucia markup inside the value is not compiled. Only plain HTML is shown.",
+    ],
+    example: `<script>\nimport { variable } from "lucia";\n\nconst note = variable("<b>Bold</b> text");\n</script>\n\n<HTML>{note}</HTML>`,
+  },
+  {
     id: "script",
     name: "<script>",
     kind: "markup",

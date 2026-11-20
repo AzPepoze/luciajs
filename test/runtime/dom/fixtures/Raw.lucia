@@ -1,0 +1,20 @@
+<script>
+import { variable } from "lucia";
+
+const note = variable("<b>Bold</b> text");
+const next = variable<string | null>("<i>Italic</i>");
+
+function swap() {
+  note.value = next.value;
+}
+
+function clear() {
+  note.value = null;
+}
+</script>
+
+<div class="raw">
+  <HTML>{note}</HTML>
+</div>
+<button class="swap" onclick={swap}>Swap</button>
+<button class="clear" onclick={clear}>Clear</button>

@@ -1,6 +1,7 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "@runtime/markers.ts";
 import { blockCheck, componentCheck, elementCheck } from "./checks.ts";
 import { compileElement } from "./element.ts";
+import { readHtml, HTML_TAG } from "./html.ts";
 import { readAttributes, type AttrCheck } from "./attributes.ts";
 import { atBlockBoundary, blockOpenAt, failBoundary, readBlock } from "./blocks.ts";
 import { Cursor } from "./cursor.ts";
@@ -92,6 +93,7 @@ class TemplateScanner {
     }
     const name = c.readUntil(TAG_NAME_END);
     if (name === CONTENT_TAG) return this.addContent(start);
+    if (name === HTML_TAG) return this.addHtml(start);
     const isComponent = this.scope.components.has(name);
     const check: AttrCheck = isComponent ? componentCheck : elementCheck(name);
     const { attrs, selfClosing } = readAttributes(c, name, start, check);
@@ -106,6 +108,11 @@ class TemplateScanner {
     if (this.scope.contentUsed) c.fail("L1035", {}, start);
     this.scope.contentUsed = true;
     this.bindings.push({ kind: "content" });
+    this.html += `<!--${TEXT_MARKER}-->`;
+  }
+
+  private addHtml(start: number): void {
+    this.bindings.push({ kind: "html", expr: readHtml(this.cursor, start) });
     this.html += `<!--${TEXT_MARKER}-->`;
   }
 

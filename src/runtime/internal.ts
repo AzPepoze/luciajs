@@ -4,6 +4,7 @@ export type { Binder, Cleanup } from "./dom/bindings.ts";
 export { bindComponent, defineComponent } from "./dom/component.ts";
 export type { Host, Rendered } from "./dom/component.ts";
 export { bindContent } from "./dom/content.ts";
+export { bindHtml } from "./dom/html.ts";
 export type { Leave } from "./dom/leave.ts";
 export { createTemplate, instantiate, lazyTemplate } from "./dom/template.ts";
 export { bindInput } from "./dom/bind/input.ts";

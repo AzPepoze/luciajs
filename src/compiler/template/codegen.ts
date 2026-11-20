@@ -21,6 +21,7 @@ const RUNTIME_IMPORT = `import {
   bindEach as __bindEach,
   bindElement as __bindElement,
   bindFor as __bindFor,
+  bindHtml as __bindHtml,
   bindIf as __bindIf,
   bindInput as __bindInput,
   bindProp as __bindProp,

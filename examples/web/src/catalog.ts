@@ -1,6 +1,7 @@
 import { lazy, type Component } from "lucia";
 import type { ApiGroup } from "../../../reference/api.ts";
 const Attributes = lazy(() => import("./demos/basics/Attributes.lucia"));
+const Markdown = lazy(() => import("./demos/basics/Markdown.lucia"));
 const BindElement = lazy(() => import("./demos/basics/BindElement.lucia"));
 const BindFields = lazy(() => import("./demos/basics/BindFields.lucia"));
 const Events = lazy(() => import("./demos/basics/Events.lucia"));
@@ -13,6 +14,7 @@ const KeyframeDefault = lazy(() => import("./demos/motion/KeyframeDefault.lucia"
 const Presets = lazy(() => import("./demos/motion/Presets.lucia"));
 import bindElementSource from "./demos/basics/BindElement.lucia?raw";
 import bindFieldsSource from "./demos/basics/BindFields.lucia?raw";
+import markdownSource from "./demos/basics/Markdown.lucia?raw";
 import setupSource from "./demos/basics/Setup.lucia?raw";
 import eachSource from "./demos/flow/EachDemo.lucia?raw";
 import forSource from "./demos/flow/ForDemo.lucia?raw";
@@ -363,6 +365,18 @@ export const catalog: Record<string, CatalogEntry> = {
           { path: "src/demos/components/CommentThread.lucia", text: commentThreadSource },
           { path: "src/demos/components/Comment.lucia", text: commentSource },
         ],
+      },
+    ],
+  },
+  html: {
+    icon: "code",
+    demos: [
+      {
+        id: "html-markdown",
+        title: "Insert HTML",
+        caption: "Type text on the left. The preview is HTML from the escaped text.",
+        components: [Markdown],
+        sources: [{ path: "src/demos/basics/Markdown.lucia", text: markdownSource }],
       },
     ],
   },
