@@ -6,9 +6,7 @@ export interface ProtectedMarkup {
 }
 
 const QUOTES = new Set(["'", '"', "`"]);
-const PLACEHOLDER_PATTERN = /LUSIAEXPR(\d+)X/g;
-const ATTRIBUTE_PLACEHOLDER = /="LUSIAEXPR(\d+)X"/g;
-const BARE_ATTRIBUTE_PLACEHOLDER = /=LUSIAEXPR(\d+)X/g;
+const PLACEHOLDER = /^LUSIAEXPR(\d+)X/;
 
 const FLOW_OPEN = /<(?:IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NOLAZY)(?=[\s/>])/y;
 const FLOW_CLOSE = /<\/(?:IF|ELSEIF|ELSE|EACH|FOR|HTML|FALLBACK)\s*>/y;
@@ -24,7 +22,7 @@ export function protectExpressions(markup: string): ProtectedMarkup {
       text += markup.charAt(i);
       i++;
     } else {
-      text += placeholder(expressions.length);
+      text += placeholder(expressions.length, end + 1 - i);
       expressions.push(markup.slice(i, end + 1));
       i = end + 1;
     }
@@ -34,18 +32,43 @@ export function protectExpressions(markup: string): ProtectedMarkup {
 
 /** Puts the expressions back. A placeholder that the formatter quoted as a whole attribute value loses the quotes. */
 export function restoreExpressions(html: string, expressions: string[]): string {
-  const restored = html
-    .replace(
-      ATTRIBUTE_PLACEHOLDER,
-      (_match, index: string) => `=${expressionAt(expressions, index)}`,
-    )
-    .replace(
-      BARE_ATTRIBUTE_PLACEHOLDER,
-      (_match, index: string) => `=${expressionAt(expressions, index)}`,
-    );
-  return restored.replace(PLACEHOLDER_PATTERN, (_match, index: string) =>
-    expressionAt(expressions, index),
-  );
+  let text = "";
+  let index = 0;
+  while (index < html.length) {
+    const start = html.indexOf("LUSIAEXPR", index);
+    if (start === -1) {
+      text += html.slice(index);
+      break;
+    }
+    text += html.slice(index, start);
+    const match = PLACEHOLDER.exec(html.slice(start));
+    if (!match) {
+      text += html.charAt(start);
+      index = start + 1;
+      continue;
+    }
+    const expression = expressionAt(expressions, match[1] ?? "");
+    const end = skipPadding(html, start + match[0].length, expression, match[0].length);
+    if (text.endsWith('="')) {
+      text = `${text.slice(0, -2)}=${expression}`;
+      index = html.charAt(end) === '"' ? end + 1 : end;
+    } else if (text.endsWith("=")) {
+      text = `${text.slice(0, -1)}=${expression}`;
+      index = end;
+    } else {
+      text += expression;
+      index = end;
+    }
+  }
+  return text;
+}
+
+/** The padding a long expression's placeholder carries, as `protectExpressions` wrote it. */
+function skipPadding(html: string, end: number, expression: string, tokenLength: number): number {
+  const filler = expression.length - tokenLength - 1;
+  if (filler < 1) return end;
+  const padding = `${"~".repeat(filler)}Q`;
+  return html.startsWith(padding, end) ? end + padding.length : end;
 }
 
 /** The last index of the protected span that starts at `i` (an expression or a flow tag), or -1. */
@@ -95,8 +118,15 @@ export function expressionEnd(text: string, open: number): number {
   return -1;
 }
 
-function placeholder(index: number): string {
-  return `LUSIAEXPR${index}X`;
+/**
+ * The placeholder that stands in for the expression at `index`. A long expression gets a
+ * padding suffix of the same length, so the formatter wraps long attributes like it would
+ * wrap the real value.
+ */
+function placeholder(index: number, length: number): string {
+  const token = `LUSIAEXPR${index}X`;
+  if (length < token.length + 2) return token;
+  return `${token}${"~".repeat(length - token.length - 1)}Q`;
 }
 
 function expressionAt(expressions: string[], index: string): string {
