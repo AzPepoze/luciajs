@@ -1,5 +1,6 @@
 import { parseArgs } from "node:util";
-import { isRoute, readConfig } from "./config.ts";
+import type { LazySettings } from "@bun-plugin/children.ts";
+import { isRoute, readConfig, type LuciaConfig } from "./config.ts";
 
 export class UsageError extends Error {}
 
@@ -12,11 +13,14 @@ export type Command =
       minify: boolean;
       routes: string[];
       quiet: boolean;
+      lazy: LazySettings;
     }
-  | { name: "dev"; dir: string; port: number; quiet: boolean };
+  | { name: "dev"; dir: string; port: number; quiet: boolean; lazy: LazySettings };
 
 const DEFAULT_PORT = 3000;
 const DEFAULT_OUTDIR = "dist";
+const DEFAULT_LAZY_MODE = "smart";
+const DEFAULT_LAZY_PREFETCH = "idle";
 
 export function parseCommand(argv: string[], env: Record<string, string | undefined>): Command {
   const [name, ...rest] = argv;
@@ -48,6 +52,15 @@ function parseBuild(args: string[]): Command {
     minify: values["no-minify"] ? false : (config.minify ?? true),
     routes: values.routes === undefined ? (config.routes ?? []) : parseRoutes(values.routes),
     quiet: values.quiet ?? false,
+    lazy: lazyOf(config),
+  };
+}
+
+/** The lazy settings from the config file, with the defaults for what it leaves out. */
+function lazyOf(config: LuciaConfig): LazySettings {
+  return {
+    mode: config.lazy?.mode ?? DEFAULT_LAZY_MODE,
+    prefetch: config.lazy?.prefetch ?? DEFAULT_LAZY_PREFETCH,
   };
 }
 
@@ -81,6 +94,7 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
     dir,
     port: port === undefined ? (config.dev?.port ?? DEFAULT_PORT) : parsePort(port),
     quiet: values.quiet ?? false,
+    lazy: lazyOf(config),
   };
 }
 

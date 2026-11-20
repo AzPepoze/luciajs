@@ -53,24 +53,6 @@ describe("splitImports", () => {
     expect(components.size).toBe(0);
   });
 
-  test("a top-level const from lazy() is a component", () => {
-    const { components } = split(
-      '\nimport { lazy } from "lucia";\nconst Chart = lazy(() => import("./chart.lucia"));\n',
-    );
-    expect([...components]).toEqual(["Chart"]);
-  });
-
-  test("a lazy() call that is not a top-level const is not a component", () => {
-    const { components } = split(
-      '\nfunction make() {\n  const Chart = lazy(() => import("./chart.lucia"));\n}\n',
-    );
-    expect(components.size).toBe(0);
-  });
-
-  test("a lazy() component cannot use a reserved tag name", () => {
-    expect(() => split('\nconst IF = lazy(() => import("./x.lucia"));\n')).toThrow();
-  });
-
   test("import type is ignored for components", () => {
     const { components } = split(
       '\nimport type Props from "./props.lucia";\nimport type { Shape } from "./shape.lucia";\n',
@@ -94,6 +76,11 @@ describe("splitImports", () => {
   });
 
   test("a missing script gives empty parts", () => {
-    expect(splitImports(null, FILE)).toEqual({ imports: "", body: "", components: new Set() });
+    expect(splitImports(null, FILE)).toEqual({
+      imports: "",
+      statements: [],
+      body: "",
+      components: new Set(),
+    });
   });
 });

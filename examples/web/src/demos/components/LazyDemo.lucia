@@ -1,16 +1,8 @@
 <script>
-import { lazy, variable } from "lucia";
-import LazySpinner from "./LazySpinner.lucia";
+import { variable } from "lucia";
+import Chart from "./LazyChart.lucia";
 
 const shown = variable(false);
-
-// The wait stands in for a slow network, so the fallback is visible.
-function loadChart() {
-  const wait = new Promise((done) => setTimeout(done, 1500));
-  return wait.then(() => import("./LazyChart.lucia"));
-}
-
-const Chart = lazy(loadChart, { fallback: LazySpinner });
 
 function show() {
   shown.value = true;

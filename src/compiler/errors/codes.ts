@@ -408,6 +408,10 @@ export const CODES = {
     message: "$prop is read-only in this component",
     hint: "The parent can let it write back: pass it with bind-$prop={variable}.",
   },
+  L2059: {
+    message: "lazy() was removed",
+    hint: "Import the component normally. It loads later by itself. Put its loading view in a <FALLBACK> block in that file.",
+  },
   L3001: {
     message: '"$name" is not exported by "$module"',
     hint: "Check the name, or see reference/api.ts.",

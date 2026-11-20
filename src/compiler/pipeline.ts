@@ -1,4 +1,6 @@
 import { hash } from "./id.ts";
+import { importsWithSplits } from "./lazy/plan.ts";
+import type { LazyOptions } from "./lazy/options.ts";
 import { splitImports } from "./parse/imports.ts";
 import { parse, type Section } from "./parse/sections.ts";
 import { generate } from "./template/codegen.ts";
@@ -10,6 +12,8 @@ import { extractSourceMap } from "./sourcemap/extract.ts";
 export interface CompileOptions {
   /** Dev builds keep runtime error locations. Default false. */
   dev?: boolean;
+  /** Splits imported .lucia files into their own chunks. Off when absent. */
+  lazy?: LazyOptions;
 }
 
 export interface CompileResult {
@@ -34,6 +38,8 @@ export interface PipelineOptions {
   /** The file name written into the generated code. */
   displayFile: string;
   styles: StyleCompiler;
+  /** Splits imported .lucia files into their own chunks. Off when absent. */
+  lazy?: LazyOptions;
 }
 
 /** The shared compile steps. The Node build and the browser build differ only in the style step. */
@@ -53,7 +59,8 @@ export function compileParts(
     parsed.script?.attrs,
     parsed.markup,
   ]);
-  const { imports, body, components } = splitImports(parsed.script, file);
+  const { statements, body, components } = splitImports(parsed.script, file);
+  const imports = importsWithSplits(statements, parsed.markup, body, options.lazy);
   const template = compileTemplate(parsed.markup, file, parsed.markupLine, components);
   const generated = generate({
     imports,

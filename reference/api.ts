@@ -129,23 +129,6 @@ export const api: ApiEntry[] = [
     example: `const counter = attach(Counter, document.getElementById("slot")!);\ncounter.detach();`,
   },
   {
-    id: "lazy",
-    name: "lazy()",
-    kind: "function",
-    group: "components",
-    signature:
-      "lazy(load: () => Promise<{ default: Component }>, options?: { fallback?: Component }): Component",
-    summary: "Makes a component load only when it is first shown.",
-    bullets: [
-      'Pass a dynamic import, such as () => import("./Chart.lucia"). The bundler puts the component in its own chunk.',
-      "fallback is shown in its place until the component has loaded.",
-      "The loaded component is kept, so later shows do not load it again.",
-      "A failed load is reported as a LuciaError, and the fallback stays on the page.",
-      "Declare it at the top level of <script> as const Name = lazy(...). Then use <Name /> in the markup.",
-    ],
-    example: `<script>\nimport { lazy } from "lucia";\nimport Spinner from "./Spinner.lucia";\n\nconst Chart = lazy(() => import("./Chart.lucia"), { fallback: Spinner });\n</script>\n\n<Chart />`,
-  },
-  {
     id: "variable-type",
     name: "Variable",
     kind: "type",

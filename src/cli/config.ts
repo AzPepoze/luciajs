@@ -2,14 +2,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { luciaError } from "@compiler/errors/create.ts";
 import { LuciaError } from "@compiler/errors.ts";
+import { LAZY_MODES, LAZY_PREFETCH, type LazyMode, type LazyPrefetch } from "@compiler/lazy/options.ts";
 
 export const CONFIG_FILE = "lucia.config.json";
-
-export const LAZY_MODES = ["smart", "all", "off"] as const;
-export const LAZY_PREFETCH = ["idle", "view", "none"] as const;
-
-export type LazyMode = (typeof LAZY_MODES)[number];
-export type LazyPrefetch = (typeof LAZY_PREFETCH)[number];
 
 export interface LuciaConfig {
   outdir?: string;

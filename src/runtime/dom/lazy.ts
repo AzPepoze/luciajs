@@ -2,65 +2,101 @@ import type { Cleanup } from "./bindings.ts";
 import { componentFrom, type Component, type Host, type Place } from "./component.ts";
 import type { Leave } from "./leave.ts";
 import { runtimeError } from "../errors.ts";
+import { memoizeLoad, whenIdle, whenNear, type LazyLoad } from "./lazy-load.ts";
 
-export type LazyLoad = () => Promise<{ default: Component }>;
+export type { LazyLoad } from "./lazy-load.ts";
+export type LazyPrefetch = "idle" | "view" | "none";
 
-export interface LazyOptions {
-  /** Shown in place of the component until it has loaded. */
-  fallback?: Component;
+interface Loader {
+  fetch: () => Promise<Component>;
+  fallback: Component | undefined;
+  prefetch: LazyPrefetch;
+  remember: (component: Component) => void;
 }
 
 const noop: Cleanup = () => {};
 
 /**
- * Makes a component load only when it is first placed. `load` is a dynamic import, so the bundler
- * puts the component in its own chunk. The loaded component is kept for later placements.
+ * The compiler makes an imported component like this when it is split into its own file.
+ * `load` is a dynamic import. The fallback shows in its place until the file has loaded.
  */
-export function lazy(load: LazyLoad, options: LazyOptions = {}): Component {
+export function lazyComponent(
+  load: LazyLoad,
+  fallback: Component | undefined,
+  prefetch: LazyPrefetch,
+): Component {
+  const fetch = memoizeLoad(load);
   let loaded: Component | undefined;
+  const loader: Loader = {
+    fetch,
+    fallback,
+    prefetch,
+    remember: (component) => {
+      loaded = component;
+    },
+  };
+  if (prefetch === "idle") whenIdle(() => void fetch().catch(() => {}));
   const place: Place = (parent, anchor, host, leaves) => {
     if (loaded) return loaded.place(parent, anchor, host, leaves);
-    return placeLoading(load, options.fallback, parent, anchor, host, leaves, (component) => {
-      loaded = component;
-    });
+    return placeLoading(loader, parent, anchor, host, leaves);
   };
   return componentFrom(place);
 }
 
+/** Removed in favor of imports. Calling it tells the author what to do instead. */
+export function lazy(): never {
+  throw runtimeError("L2059");
+}
+
 function placeLoading(
-  load: LazyLoad,
-  fallback: Component | undefined,
+  loader: Loader,
   parent: Node,
   anchor: Node | null,
   host: Host,
   leaves: Leave[],
-  remember: (component: Component) => void,
 ): Cleanup {
   // The marker keeps the position while the fallback and then the component come and go.
   const marker = document.createComment("");
   parent.insertBefore(marker, anchor);
-  let removeFallback: Cleanup = fallback
-    ? fallback.place(parent, marker, { props: {}, bound: {} }, [])
+  let removeFallback: Cleanup = loader.fallback
+    ? loader.fallback.place(parent, marker, { props: {}, bound: {} }, [])
     : noop;
   let removeLoaded: Cleanup = noop;
   let detached = false;
+  let sentinel: Element | undefined;
+  let stopWatch: Cleanup = noop;
 
-  load().then(
-    (module) => {
-      remember(module.default);
-      if (detached) return;
-      removeFallback();
-      removeFallback = noop;
-      // The parent may have changed since placement: it can be a fragment that was already emptied.
-      removeLoaded = module.default.place(marker.parentNode!, marker, host, leaves);
-    },
-    (error: unknown) => {
-      reportError(runtimeError("L2057",{ message: messageOf(error) }));
-    },
-  );
+  const show = () => {
+    sentinel?.remove();
+    sentinel = undefined;
+    loader.fetch().then(
+      (component) => {
+        loader.remember(component);
+        if (detached) return;
+        removeFallback();
+        removeFallback = noop;
+        // The parent may have changed since placement: it can be a fragment that was already emptied.
+        removeLoaded = component.place(marker.parentNode!, marker, host, leaves);
+      },
+      (error: unknown) => {
+        reportError(runtimeError("L2057", { message: messageOf(error) }));
+      },
+    );
+  };
+
+  if (loader.prefetch === "view" && loader.fallback) {
+    // The fallback is in place, so its position is known. The import starts once it is near the screen.
+    sentinel = document.createElement("span");
+    parent.insertBefore(sentinel, marker);
+    stopWatch = whenNear(sentinel, show);
+  } else {
+    show();
+  }
 
   return () => {
     detached = true;
+    stopWatch();
+    sentinel?.remove();
     removeFallback();
     removeLoaded();
     marker.remove();

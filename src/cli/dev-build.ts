@@ -1,3 +1,4 @@
+import type { LazySettings } from "@bun-plugin/children.ts";
 import type { ModuleUpdate } from "@bun-plugin/update.ts";
 import { formatBuildFailure } from "./build-errors.ts";
 import { assetKey, bundleApp } from "./bundle.ts";
@@ -17,7 +18,7 @@ export type DevBuild =
   | { ok: true; assets: Assets; changes: ModuleUpdate[]; steps: Steps }
   | { ok: false; messages: string[] };
 
-export async function buildDev(dir: string): Promise<DevBuild> {
+export async function buildDev(dir: string, lazy: LazySettings): Promise<DevBuild> {
   const steps: Steps = {};
   const changes: ModuleUpdate[] = [];
   const start = now();
@@ -26,6 +27,7 @@ export async function buildDev(dir: string): Promise<DevBuild> {
     minify: false,
     dev: true,
     steps,
+    lazy,
     onUpdate: (update) => changes.push(update),
   });
   addBundleStep(steps, now() - start);

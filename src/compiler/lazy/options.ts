@@ -1,0 +1,20 @@
+export const LAZY_MODES = ["smart", "all", "off"] as const;
+export const LAZY_PREFETCH = ["idle", "view", "none"] as const;
+
+export type LazyMode = (typeof LAZY_MODES)[number];
+export type LazyPrefetch = (typeof LAZY_PREFETCH)[number];
+
+/** What the compiler needs to know about an imported .lucia file. */
+export interface ChildInfo {
+  /** The file has <NOLAZY />, so it is never split. */
+  nolazy: boolean;
+  /** The file has a <FALLBACK> block. */
+  fallback: boolean;
+}
+
+export interface LazyOptions {
+  mode: LazyMode;
+  prefetch: LazyPrefetch;
+  /** Reads the child file that a specifier points to, as the importer sees it. */
+  childOf: (specifier: string) => ChildInfo;
+}

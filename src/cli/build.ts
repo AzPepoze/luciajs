@@ -1,3 +1,4 @@
+import type { LazySettings } from "@bun-plugin/children.ts";
 import { mkdir, rm } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";
@@ -16,6 +17,7 @@ export interface BuildOptions {
   routes?: string[];
   /** Hides the step table. */
   quiet?: boolean;
+  lazy: LazySettings;
 }
 
 export async function runBuild(options: BuildOptions): Promise<number> {
@@ -32,7 +34,13 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const started = now();
   await rm(outdir, { recursive: true, force: true });
   const bundleStart = now();
-  const result = await bundleApp({ dir, minify: options.minify, dev: false, steps });
+  const result = await bundleApp({
+    dir,
+    minify: options.minify,
+    dev: false,
+    steps,
+    lazy: options.lazy,
+  });
   addBundleStep(steps, now() - bundleStart);
   if (!result.success) {
     process.stderr.write(`${formatBuildFailure(result.logs, colorEnabled())}\n`);
