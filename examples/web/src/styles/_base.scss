@@ -72,12 +72,13 @@ a {
   color: var(--selection-fg);
 }
 
+// Cartoon buttons: a thick outline and a hard shadow. Hover lifts, press sinks into the shadow.
 .button {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   padding: 0.7rem 1.3rem;
-  border: 2px solid var(--fg);
+  border: 3px solid var(--toon-line);
   border-radius: 999px;
   background: var(--card);
   color: var(--fg);
@@ -85,28 +86,31 @@ a {
   font-family: $font-display;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 4px 0 var(--line);
+  box-shadow: 4px 4px 0 var(--toon-line);
   transition:
-    transform 0.2s ease,
+    translate 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-position 0.6s ease,
     background-color 0.2s ease,
     color 0.2s ease;
 
   &:hover {
     color: var(--accent);
-    border-color: var(--accent);
-    transform: translateY(-2px) rotate(-1.5deg);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--toon-line);
   }
 
-  &.primary {
-    border-color: var(--fg);
-    background: var(--accent);
-    color: var(--on-accent);
-    box-shadow: 0 4px 0 var(--fg);
-
-    &:hover {
-      color: var(--on-accent);
-    }
+  &:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0 0 0 var(--toon-line);
   }
+}
+
+.github-mark {
+  flex: none;
+  width: 1.15rem;
+  height: 1.15rem;
 }
 
 .icon-button,
