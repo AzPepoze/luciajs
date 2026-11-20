@@ -1,3 +1,4 @@
+import type { Variable } from "../variable/variable.ts";
 import type { Cleanup } from "./bindings.ts";
 import { leaveThen, type Leave } from "./leave.ts";
 import { injectStyle } from "./styles.ts";
@@ -8,9 +9,13 @@ export type Props = Record<string, () => unknown>;
 /** The children a parent gave a component. `<CONTENT />` places them; they render in the parent's scope. */
 export type Slot = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
 
-/** What a parent hands a component: its props, and its children when it gave any. */
+/** A parent's writable variables, by prop name, for the props it binds with bind-<prop>. */
+export type Bound = Record<string, Variable<unknown>>;
+
+/** What a parent hands a component: its props, the variables it binds, and its children when it gave any. */
 export interface Host {
   props: Props;
+  bound: Bound;
   content?: Slot;
 }
 
@@ -34,12 +39,12 @@ export interface Component {
   readonly place: (parent: Node, anchor: Node | null, host: Host, leaves: Leave[]) => Cleanup;
 }
 
-let currentProps: Props | null = null;
+let currentHost: Host | null = null;
 let currentCleanups: Cleanup[] | null = null;
 
-export function currentComponentProps(): Props {
-  if (!currentProps) throw runtimeError("L2040");
-  return currentProps;
+export function currentComponentHost(): Host {
+  if (!currentHost) throw runtimeError("L2040");
+  return currentHost;
 }
 
 /** The cleanups of the component being rendered, or null outside a component's script. */
@@ -53,14 +58,14 @@ export function renderWith(
   cleanups: Cleanup[],
   leaves: Leave[],
 ): Rendered {
-  const previousProps = currentProps;
+  const previousHost = currentHost;
   const previousCleanups = currentCleanups;
-  currentProps = host.props;
+  currentHost = host;
   currentCleanups = cleanups;
   try {
     return render(cleanups, leaves, host);
   } finally {
-    currentProps = previousProps;
+    currentHost = previousHost;
     currentCleanups = previousCleanups;
   }
 }
@@ -76,7 +81,7 @@ export type Place = Component["place"];
 export function componentFrom(place: Place): Component {
   const component = (target: Element, props: Props = {}): Instance => {
     const leaves: Leave[] = [];
-    const remove = place(target, null, { props }, leaves);
+    const remove = place(target, null, { props, bound: {} }, leaves);
     return { root: target, detach: () => leaveThen(leaves, remove) };
   };
   return Object.assign(component, { place });
@@ -102,10 +107,11 @@ export function bindComponent(
   marker: Node,
   component: Component,
   props: Props,
+  bound: Bound,
   cleanups: Cleanup[],
   leaves: Leave[],
   content?: Slot,
 ): void {
-  cleanups.push(component.place(marker.parentNode!, marker, { props, content }, leaves));
+  cleanups.push(component.place(marker.parentNode!, marker, { props, bound, content }, leaves));
   (marker as ChildNode).remove();
 }

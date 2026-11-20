@@ -69,6 +69,7 @@ describe("events", () => {
         kind: "component",
         name: "badge",
         props: [{ name: "onclick", parts: [{ code: "f", line: 1, column: 17 }] }],
+        binds: [],
       },
     ]);
   });
@@ -123,9 +124,50 @@ describe("bind", () => {
     expect(() => compileTemplate("<input bind />", FILE)).toThrow("bind needs {variable}");
   });
 
-  test("bind on a component tag is an error", () => {
-    expect(() => compileTemplate("<badge bind={x} />", FILE, 1, new Set(["badge"]))).toThrow(
-      "bind works on elements only",
+  test("bind on a component tag is the value prop, written back to the variable", () => {
+    const { bindings } = compileTemplate("<badge bind={x} />", FILE, 1, new Set(["badge"]));
+    expect(bindings).toEqual([
+      {
+        kind: "component",
+        name: "badge",
+        props: [],
+        binds: [{ prop: "value", attr: "bind", expr: { code: "x", line: 1, column: 14 } }],
+      },
+    ]);
+  });
+
+  test("bind-<prop> on a component tag names the prop in camelCase", () => {
+    const { bindings } = compileTemplate(
+      "<badge bind-tone-name={x} />",
+      FILE,
+      1,
+      new Set(["badge"]),
+    );
+    expect(bindings).toEqual([
+      {
+        kind: "component",
+        name: "badge",
+        props: [],
+        binds: [
+          {
+            prop: "toneName",
+            attr: "bind-tone-name",
+            expr: { code: "x", line: 1, column: 24 },
+          },
+        ],
+      },
+    ]);
+  });
+
+  test("bind-element on a component tag is an error", () => {
+    expect(() =>
+      compileTemplate("<badge bind-element={x} />", FILE, 1, new Set(["badge"])),
+    ).toThrow("bind-element works on elements only");
+  });
+
+  test("bind on a component tag needs one {variable}", () => {
+    expect(() => compileTemplate("<badge bind />", FILE, 1, new Set(["badge"]))).toThrow(
+      "bind needs {variable}",
     );
   });
 });

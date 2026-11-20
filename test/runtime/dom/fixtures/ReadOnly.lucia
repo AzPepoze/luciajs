@@ -1,0 +1,18 @@
+<script>
+import { props, variable } from "lucia";
+
+const { label } = props({ label: "none" });
+const failure = variable("");
+
+function tryWrite() {
+  try {
+    label.value = "changed";
+  } catch (error) {
+    failure.value = (error as Error).message;
+  }
+}
+</script>
+
+<p class="label">{label}</p>
+<p class="failure">{failure}</p>
+<button class="write" onclick={tryWrite}>Write</button>

@@ -1,6 +1,7 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "@runtime/markers.ts";
 import { blockCheck, componentCheck, elementCheck } from "./checks.ts";
 import { compileElement } from "./element.ts";
+import { componentBindsOf, isBindName } from "./bind.ts";
 import { readHtml, HTML_TAG } from "./html.ts";
 import { readAttributes, type AttrCheck } from "./attributes.ts";
 import { atBlockBoundary, blockOpenAt, failBoundary, readBlock } from "./blocks.ts";
@@ -129,7 +130,12 @@ class TemplateScanner {
     selfClosing: boolean,
     start: number,
   ): void {
-    const binding: ComponentBinding = { kind: "component", name, props };
+    const binding: ComponentBinding = {
+      kind: "component",
+      name,
+      props: props.filter((attr) => !isBindName(attr.name)),
+      binds: componentBindsOf(props),
+    };
     if (!selfClosing) {
       const children = this.readChildren(name, start);
       if (children) binding.children = children;

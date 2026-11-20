@@ -29,9 +29,12 @@ export function elementCheck(tag: string): AttrCheck {
   };
 }
 
-/** Components pass `onX={fn}` as a prop, so only `bind` is refused. */
+/** Components pass `onX={fn}` as a prop, and `bind-<prop>={variable}` two ways. `bind-element` is for elements. */
 export const componentCheck: AttrCheck = (attr, _previous, fail) => {
-  if (isBindName(attr.name)) fail("L1023");
+  if (!isBindName(attr.name)) return;
+  if (!BIND_NAME.test(attr.name)) fail("L1014");
+  if (expressionOf(attr) === undefined) fail("L1015", { attr: attr.name });
+  if (attr.name === "bind-element") fail("L1023");
 };
 
 /** Control-flow tags accept only the attributes in `kinds`, each in the form its kind names. */

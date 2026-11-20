@@ -72,8 +72,8 @@ export const CODES = {
     hint: "Put a value in braces, such as $attr={value}.",
   },
   L1023: {
-    message: "bind works on elements only",
-    hint: "Pass the variable as a prop, such as value={name}, and bind inside the component.",
+    message: "bind-element works on elements only",
+    hint: "Use bind-element on an element inside the component, not on its tag.",
   },
   L1024: {
     message: "bind works on input, textarea and select",
@@ -350,6 +350,10 @@ export const CODES = {
   L2057: {
     message: "lazy component failed to load: $message",
     hint: "Check the import path, and that the file builds. The fallback stays on the page.",
+  },
+  L2058: {
+    message: "$prop is read-only in this component",
+    hint: "The parent can let it write back: pass it with bind-$prop={variable}.",
   },
   L3001: {
     message: '"$name" is not exported by "$module"',

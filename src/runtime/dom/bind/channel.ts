@@ -2,7 +2,7 @@ import { watch } from "../../variable/graph.ts";
 import { isReactive } from "../../variable/reactive.ts";
 import type { Variable } from "../../variable/variable.ts";
 import { listen, type Cleanup } from "../bindings.ts";
-import { runtimeError } from "../../errors.ts";
+import { runtimeError, withWhere } from "../../errors.ts";
 
 /** How one DOM property maps to a variable: the value in each direction, and the events that report changes. */
 export interface Channel {
@@ -16,6 +16,12 @@ export function assertWritable(target: unknown, attr: string): asserts target is
   const writable =
     isReactive(target) && Object.getOwnPropertyDescriptor(target, "value")?.set !== undefined;
   if (!writable) throw runtimeError("L2043", { attr });
+}
+
+/** The variable a component binds with bind-<prop>. Checked when the parent renders. */
+export function writableTarget(target: unknown, attr: string, where?: string): Variable<unknown> {
+  withWhere(where, () => assertWritable(target, attr));
+  return target as Variable<unknown>;
 }
 
 function readProp(el: HTMLElement, prop: string): unknown {

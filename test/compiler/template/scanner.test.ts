@@ -97,6 +97,7 @@ describe("compileTemplate component tags", () => {
           { name: "label", parts: ["New"] },
           { name: "flag", parts: [] },
         ],
+        binds: [],
       },
     ]);
   });
@@ -110,7 +111,12 @@ describe("compileTemplate component tags", () => {
     );
     expect(html).toBe(`<p>${TEXT}</p>`);
     expect(bindings).toEqual([
-      { kind: "component", name: "badge", props: [{ name: "label", parts: ["x"] }] },
+      {
+        kind: "component",
+        name: "badge",
+        props: [{ name: "label", parts: ["x"] }],
+        binds: [],
+      },
     ]);
   });
 
@@ -126,7 +132,7 @@ describe("compileTemplate component tags", () => {
 
   test("lowercase component name matches the import name", () => {
     const { bindings } = compileTemplate("<badge />", FILE, 1, new Set(["badge"]));
-    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [] }]);
+    expect(bindings).toEqual([{ kind: "component", name: "badge", props: [], binds: [] }]);
   });
 
   test("unknown tags stay plain HTML", () => {
@@ -142,6 +148,7 @@ describe("compileTemplate component tags", () => {
         kind: "component",
         name: "badge",
         props: [{ name: "label", parts: [{ code: "count", line: 1, column: 16 }, " new"] }],
+        binds: [],
       },
     ]);
   });

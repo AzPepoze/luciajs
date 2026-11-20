@@ -94,6 +94,7 @@ describe("animate attribute", () => {
         kind: "component",
         name: "badge",
         props: [{ name: "animate", parts: [{ code: "a", line: 1, column: 17 }] }],
+        binds: [],
       },
     ]);
   });

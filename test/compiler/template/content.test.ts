@@ -60,6 +60,7 @@ describe("component children", () => {
         kind: "component",
         name: "card",
         props: [],
+        binds: [],
         children: { html: "<p>hi</p>", bindings: [] },
       },
     ]);
@@ -76,7 +77,7 @@ describe("component children", () => {
 
   test("blank children are no children", () => {
     const { bindings } = compileTemplate("<card>\n  </card>", FILE, 1, COMPONENTS);
-    expect(bindings).toEqual([{ kind: "component", name: "card", props: [] }]);
+    expect(bindings).toEqual([{ kind: "component", name: "card", props: [], binds: [] }]);
   });
 
   test("a nested component keeps its own children", () => {

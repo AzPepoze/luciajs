@@ -1,5 +1,6 @@
-import type { GenContext } from "./codegen-context.ts";
-import { elementBinder, getterObject, readExpression } from "./codegen-element.ts";
+import { markedCode } from "../sourcemap/marker.ts";
+import { trailingArg, type GenContext } from "./codegen-context.ts";
+import { attrValue, elementBinder, readExpression } from "./codegen-element.ts";
 import { eachBinder, forBinder, ifBinder } from "./codegen-blocks.ts";
 import type { Binding, ComponentBinding, HtmlBinding, TextBinding } from "./types.ts";
 
@@ -7,10 +8,29 @@ function textBinder({ expr }: TextBinding): string {
   return `(__node, __cleanups) => __bindText(__node, () => ${readExpression(expr)}, __cleanups)`;
 }
 
+/** Props are getters. A bind also reads its variable, so the prop shows the value. */
+function propsObject({ props, binds }: ComponentBinding): string {
+  const entries = [
+    ...props.map(({ name, parts }) => `${JSON.stringify(name)}: () => ${attrValue(parts)}`),
+    ...binds.map(({ prop, expr }) => `${JSON.stringify(prop)}: () => ${readExpression(expr)}`),
+  ];
+  return `{ ${entries.join(", ")} }`;
+}
+
+/** The variables a component can write back to. Each one is checked as writable when it is bound. */
+function boundObject({ binds }: ComponentBinding, ctx: GenContext): string {
+  const entries = binds.map(({ prop, attr, expr }) => {
+    const at = trailingArg(ctx.whereOf(expr));
+    return `${JSON.stringify(prop)}: __writableTarget((${markedCode(expr)}), ${JSON.stringify(attr)}${at})`;
+  });
+  return `{ ${entries.join(", ")} }`;
+}
+
 /** The children, when given, are a slot: a render in the parent's scope that the component places with CONTENT. */
-function componentBinder({ name, props, children }: ComponentBinding, ctx: GenContext): string {
+function componentBinder(binding: ComponentBinding, ctx: GenContext): string {
+  const { name, children } = binding;
   const slot = children === undefined ? "" : `, ${ctx.body(children, "__cleanups, __leaves")}`;
-  return `(__node, __cleanups, __leaves) => __bindComponent(__node, ${name}, ${getterObject(props)}, __cleanups, __leaves${slot})`;
+  return `(__node, __cleanups, __leaves) => __bindComponent(__node, ${name}, ${propsObject(binding)}, ${boundObject(binding, ctx)}, __cleanups, __leaves${slot})`;
 }
 
 function contentBinder(): string {

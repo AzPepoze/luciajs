@@ -32,6 +32,7 @@ import commentThreadSource from "./demos/components/CommentThread.lucia?raw";
 import commentSource from "./demos/components/Comment.lucia?raw";
 const Props = lazy(() => import("./demos/components/Props.lucia"));
 const Children = lazy(() => import("./demos/components/Children.lucia"));
+const BindChild = lazy(() => import("./demos/components/BindChild.lucia"));
 const Batch = lazy(() => import("./demos/reactivity/Batch.lucia"));
 const Variable = lazy(() => import("./demos/reactivity/Variable.lucia"));
 const AutoRun = lazy(() => import("./demos/reactivity/AutoRun.lucia"));
@@ -52,6 +53,8 @@ import componentsSource from "./demos/components/Components.lucia?raw";
 import propsSource from "./demos/components/Props.lucia?raw";
 import childrenSource from "./demos/components/Children.lucia?raw";
 import cardSource from "./demos/components/Card.lucia?raw";
+import bindChildSource from "./demos/components/BindChild.lucia?raw";
+import fieldSource from "./demos/components/Field.lucia?raw";
 import attributesSource from "./demos/basics/Attributes.lucia?raw";
 import eventsSource from "./demos/basics/Events.lucia?raw";
 import textSource from "./demos/basics/Text.lucia?raw";
@@ -428,6 +431,16 @@ export const catalog: Record<string, CatalogEntry> = {
         caption: "A field and a variable stay in sync, in both directions.",
         components: [BindFields],
         sources: [{ path: "src/demos/basics/BindFields.lucia", text: bindFieldsSource }],
+      },
+      {
+        id: "bind-child",
+        title: "Bind a child's input",
+        caption: "The child's input writes to the parent's variable through bind-value.",
+        components: [BindChild],
+        sources: [
+          { path: "src/demos/components/BindChild.lucia", text: bindChildSource },
+          { path: "src/demos/components/Field.lucia", text: fieldSource },
+        ],
       },
     ],
   },
