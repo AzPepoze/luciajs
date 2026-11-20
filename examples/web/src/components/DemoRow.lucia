@@ -1,5 +1,5 @@
 <script>
-import { attach, props, variable, type Instance } from "lucia";
+import { attach, lazy, props, variable, type Instance } from "lucia";
 import type { Demo } from "../catalog.ts";
 import type { EditorFile } from "../editor/files.ts";
 import { createDemoSession } from "../live/demo-session.ts";
@@ -7,7 +7,8 @@ import { Preview, RunError } from "../live/preview.ts";
 import { loadRuntime } from "../live/runtime-source.ts";
 import type { LiveBundle, LiveError, LiveRun } from "../live/types.ts";
 import { guidePath, pageLink } from "../page-link.ts";
-import CodeEditor from "./CodeEditor.lucia";
+// The editor (CodeMirror) is large. It loads when the row nears the screen.
+const CodeEditor = lazy(() => import("./CodeEditor.lucia"));
 import CodePanel from "./CodePanel.lucia";
 import ErrorNote from "./ErrorNote.lucia";
 
@@ -15,7 +16,7 @@ const emptyDemo: Demo = { id: "", title: "", caption: "", components: [], source
 const { demo } = props({ demo: emptyDemo });
 const body = variable<Element | null>(null);
 const stage = variable<HTMLElement | null>(null);
-const lazy = variable<HTMLElement | null>(null);
+const codeSlot = variable<HTMLElement | null>(null);
 // The editor opens near the screen or on click. Until then the code is only shown.
 const near = variable(false);
 // True while the edited build is shown in place of the original demo.
@@ -33,21 +34,21 @@ const session = createDemoSession(sources, {
   restore: showOriginal,
 });
 
-// The demo mounts now. The editor is made once the demo is close to the screen.
+// The demo and its editor are made when the row nears the screen.
 function setup() {
-  mountOriginals();
   preview = new Preview(stage.peek()!, (error) => session.report(error), {
     sizeToContent: true,
   });
   const observer = new IntersectionObserver(
     (entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
+      mountOriginals();
       openEditor();
       observer.disconnect();
     },
     { rootMargin: "240px 0px" },
   );
-  observer.observe(lazy.peek()!);
+  observer.observe(codeSlot.peek()!);
   return () => {
     observer.disconnect();
     preview?.destroy();
@@ -127,7 +128,7 @@ function errorDetail(error: unknown): LiveError {
       />
     </IF>
     <ELSE>
-      <div class="lazy-code" bind-element={lazy} onclick={openEditor}>
+      <div class="lazy-code" bind-element={codeSlot} onclick={openEditor}>
         <CodePanel sources={demo.value.sources} />
       </div>
     </ELSE>

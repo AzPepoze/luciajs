@@ -28,6 +28,37 @@ afterAll(async () => {
   await rm(app, { recursive: true, force: true });
 });
 
+describe("lazy chunks", () => {
+  const SHARED_MARKER = "shared-chunk-marker-2c9";
+
+  test("each lazy module is its own chunk, and a shared module is in one chunk only", async () => {
+    const shared = await mkdtemp(join(tmpdir(), "lucia-shared-"));
+    await mkdir(join(shared, "node_modules"));
+    await symlink(REPO, join(shared, "node_modules", "lucia"), "dir");
+    await writeFile(
+      join(shared, "index.html"),
+      '<!doctype html><html><body><script type="module" src="./main.ts"></script></body></html>\n',
+    );
+    await writeFile(
+      join(shared, "main.ts"),
+      'import("./first.ts").then((m) => m.run());\nimport("./second.ts").then((m) => m.run());\n',
+    );
+    await writeFile(join(shared, "first.ts"), 'import { hi } from "./shared.ts";\nexport const run = () => hi("first");\n');
+    await writeFile(join(shared, "second.ts"), 'import { hi } from "./shared.ts";\nexport const run = () => hi("second");\n');
+    await writeFile(join(shared, "shared.ts"), `export const hi = (name: string) => "${SHARED_MARKER}" + name;\n`);
+
+    const result = await bundleApp({ dir: shared, minify: false, dev: false });
+    expect(result.success).toBe(true);
+    const texts = await Promise.all(
+      result.outputs.filter((output) => SCRIPT.test(output.path)).map((output) => output.text()),
+    );
+    expect(texts.filter((text) => text.includes(SHARED_MARKER))).toHaveLength(1);
+    expect(texts.filter((text) => text.includes('"first"'))).toHaveLength(1);
+    expect(texts.filter((text) => text.includes('"second"'))).toHaveLength(1);
+    await rm(shared, { recursive: true, force: true });
+  });
+});
+
 describe("splitting", () => {
   test("a dynamic import becomes a separate chunk file", async () => {
     const result = await bundleApp({ dir: app, minify: false, dev: false });

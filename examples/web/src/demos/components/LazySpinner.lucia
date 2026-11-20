@@ -1,0 +1,15 @@
+<p class="spinner-text">Loading the chart...</p>
+
+<style scoped>
+.spinner-text {
+  margin: 0;
+  color: var(--fg);
+  animation: pulse 900ms ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.4;
+  }
+}
+</style>

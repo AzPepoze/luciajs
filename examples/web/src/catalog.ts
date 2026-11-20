@@ -1,16 +1,16 @@
-import type { Component } from "lucia";
+import { lazy, type Component } from "lucia";
 import type { ApiGroup } from "../../../reference/api.ts";
-import Attributes from "./demos/basics/Attributes.lucia";
-import BindElement from "./demos/basics/BindElement.lucia";
-import BindFields from "./demos/basics/BindFields.lucia";
-import Events from "./demos/basics/Events.lucia";
-import Setup from "./demos/basics/Setup.lucia";
-import Text from "./demos/basics/Text.lucia";
-import EachDemo from "./demos/flow/EachDemo.lucia";
-import ForDemo from "./demos/flow/ForDemo.lucia";
-import IfDemo from "./demos/flow/IfDemo.lucia";
-import KeyframeDefault from "./demos/motion/KeyframeDefault.lucia";
-import Presets from "./demos/motion/Presets.lucia";
+const Attributes = lazy(() => import("./demos/basics/Attributes.lucia"));
+const BindElement = lazy(() => import("./demos/basics/BindElement.lucia"));
+const BindFields = lazy(() => import("./demos/basics/BindFields.lucia"));
+const Events = lazy(() => import("./demos/basics/Events.lucia"));
+const Setup = lazy(() => import("./demos/basics/Setup.lucia"));
+const Text = lazy(() => import("./demos/basics/Text.lucia"));
+const EachDemo = lazy(() => import("./demos/flow/EachDemo.lucia"));
+const ForDemo = lazy(() => import("./demos/flow/ForDemo.lucia"));
+const IfDemo = lazy(() => import("./demos/flow/IfDemo.lucia"));
+const KeyframeDefault = lazy(() => import("./demos/motion/KeyframeDefault.lucia"));
+const Presets = lazy(() => import("./demos/motion/Presets.lucia"));
 import bindElementSource from "./demos/basics/BindElement.lucia?raw";
 import bindFieldsSource from "./demos/basics/BindFields.lucia?raw";
 import setupSource from "./demos/basics/Setup.lucia?raw";
@@ -19,27 +19,31 @@ import forSource from "./demos/flow/ForDemo.lucia?raw";
 import ifSource from "./demos/flow/IfDemo.lucia?raw";
 import keyframeDefaultSource from "./demos/motion/KeyframeDefault.lucia?raw";
 import presetsSource from "./demos/motion/Presets.lucia?raw";
-import Attach from "./demos/components/Attach.lucia";
-import Components from "./demos/components/Components.lucia";
-import FileTree from "./demos/components/FileTree.lucia";
-import CommentThread from "./demos/components/CommentThread.lucia";
+const Attach = lazy(() => import("./demos/components/Attach.lucia"));
+const LazyDemo = lazy(() => import("./demos/components/LazyDemo.lucia"));
+const Components = lazy(() => import("./demos/components/Components.lucia"));
+const FileTree = lazy(() => import("./demos/components/FileTree.lucia"));
+const CommentThread = lazy(() => import("./demos/components/CommentThread.lucia"));
 import fileTreeSource from "./demos/components/FileTree.lucia?raw";
 import folderSource from "./demos/components/Folder.lucia?raw";
 import commentThreadSource from "./demos/components/CommentThread.lucia?raw";
 import commentSource from "./demos/components/Comment.lucia?raw";
-import Props from "./demos/components/Props.lucia";
-import Batch from "./demos/reactivity/Batch.lucia";
-import Variable from "./demos/reactivity/Variable.lucia";
-import AutoRun from "./demos/reactivity/AutoRun.lucia";
-import UpdateBefore from "./demos/reactivity/UpdateBefore.lucia";
-import Watch from "./demos/reactivity/Watch.lucia";
-import SharedReader from "./demos/reactivity/SharedReader.lucia";
-import SharedWriter from "./demos/reactivity/SharedWriter.lucia";
-import GlobalStyles from "./demos/styling/GlobalStyles.lucia";
-import Scss from "./demos/styling/Scss.lucia";
-import StyleParent from "./demos/styling/StyleParent.lucia";
+const Props = lazy(() => import("./demos/components/Props.lucia"));
+const Batch = lazy(() => import("./demos/reactivity/Batch.lucia"));
+const Variable = lazy(() => import("./demos/reactivity/Variable.lucia"));
+const AutoRun = lazy(() => import("./demos/reactivity/AutoRun.lucia"));
+const UpdateBefore = lazy(() => import("./demos/reactivity/UpdateBefore.lucia"));
+const Watch = lazy(() => import("./demos/reactivity/Watch.lucia"));
+const SharedReader = lazy(() => import("./demos/reactivity/SharedReader.lucia"));
+const SharedWriter = lazy(() => import("./demos/reactivity/SharedWriter.lucia"));
+const GlobalStyles = lazy(() => import("./demos/styling/GlobalStyles.lucia"));
+const Scss = lazy(() => import("./demos/styling/Scss.lucia"));
+const StyleParent = lazy(() => import("./demos/styling/StyleParent.lucia"));
 import attachSource from "./demos/components/Attach.lucia?raw";
 import attachChipSource from "./demos/components/Chip.lucia?raw";
+import lazyDemoSource from "./demos/components/LazyDemo.lucia?raw";
+import lazyChartSource from "./demos/components/LazyChart.lucia?raw";
+import lazySpinnerSource from "./demos/components/LazySpinner.lucia?raw";
 import badgeSource from "./demos/components/badge.lucia?raw";
 import componentsSource from "./demos/components/Components.lucia?raw";
 import propsSource from "./demos/components/Props.lucia?raw";
@@ -59,28 +63,28 @@ import scssSource from "./demos/styling/Scss.lucia?raw";
 import styleChildSource from "./demos/styling/StyleChild.lucia?raw";
 import styleParentSource from "./demos/styling/StyleParent.lucia?raw";
 import themeSource from "./styles/_theme.scss?raw";
-import Enter from "./demos/motion/Enter.lucia";
-import Easing from "./demos/motion/Easing.lucia";
-import Keys from "./demos/motion/Keys.lucia";
-import Reveal from "./demos/motion/Reveal.lucia";
-import Loops from "./demos/motion/Loops.lucia";
+const Enter = lazy(() => import("./demos/motion/Enter.lucia"));
+const Easing = lazy(() => import("./demos/motion/Easing.lucia"));
+const Keys = lazy(() => import("./demos/motion/Keys.lucia"));
+const Reveal = lazy(() => import("./demos/motion/Reveal.lucia"));
+const Loops = lazy(() => import("./demos/motion/Loops.lucia"));
 import enterSource from "./demos/motion/Enter.lucia?raw";
 import boxSource from "./demos/motion/Box.lucia?raw";
 import easingSource from "./demos/motion/Easing.lucia?raw";
-import LayoutCard from "./demos/motion/LayoutCard.lucia";
-import LayoutCorners from "./demos/motion/LayoutCorners.lucia";
-import LayoutList from "./demos/motion/LayoutList.lucia";
+const LayoutCard = lazy(() => import("./demos/motion/LayoutCard.lucia"));
+const LayoutCorners = lazy(() => import("./demos/motion/LayoutCorners.lucia"));
+const LayoutList = lazy(() => import("./demos/motion/LayoutList.lucia"));
 import layoutCardSource from "./demos/motion/LayoutCard.lucia?raw";
 import layoutCornersSource from "./demos/motion/LayoutCorners.lucia?raw";
 import layoutListSource from "./demos/motion/LayoutList.lucia?raw";
 import keysSource from "./demos/motion/Keys.lucia?raw";
 import revealSource from "./demos/motion/Reveal.lucia?raw";
 import loopsSource from "./demos/motion/Loops.lucia?raw";
-import Leave from "./demos/motion/Leave.lucia";
-import LeaveList from "./demos/motion/LeaveList.lucia";
-import Both from "./demos/motion/Both.lucia";
-import VariableTrigger from "./demos/motion/VariableTrigger.lucia";
-import Control from "./demos/motion/Control.lucia";
+const Leave = lazy(() => import("./demos/motion/Leave.lucia"));
+const LeaveList = lazy(() => import("./demos/motion/LeaveList.lucia"));
+const Both = lazy(() => import("./demos/motion/Both.lucia"));
+const VariableTrigger = lazy(() => import("./demos/motion/VariableTrigger.lucia"));
+const Control = lazy(() => import("./demos/motion/Control.lucia"));
 import leaveSource from "./demos/motion/Leave.lucia?raw";
 import leaveListSource from "./demos/motion/LeaveList.lucia?raw";
 import shrinkSource from "./demos/motion/Shrink.lucia?raw";
@@ -88,25 +92,25 @@ import bothSource from "./demos/motion/Both.lucia?raw";
 import popSource from "./demos/motion/Pop.lucia?raw";
 import variableTriggerSource from "./demos/motion/VariableTrigger.lucia?raw";
 import controlSource from "./demos/motion/Control.lucia?raw";
-import HoverDelay from "./demos/motion/HoverDelay.lucia";
-import FollowScroll from "./demos/motion/FollowScroll.lucia";
+const HoverDelay = lazy(() => import("./demos/motion/HoverDelay.lucia"));
+const FollowScroll = lazy(() => import("./demos/motion/FollowScroll.lucia"));
 import hoverDelaySource from "./demos/motion/HoverDelay.lucia?raw";
 import followScrollSource from "./demos/motion/FollowScroll.lucia?raw";
-import PinnedScroll from "./demos/motion/PinnedScroll.lucia";
-import HoverInOut from "./demos/motion/HoverInOut.lucia";
+const PinnedScroll = lazy(() => import("./demos/motion/PinnedScroll.lucia"));
+const HoverInOut = lazy(() => import("./demos/motion/HoverInOut.lucia"));
 import pinnedScrollSource from "./demos/motion/PinnedScroll.lucia?raw";
 import hoverInOutSource from "./demos/motion/HoverInOut.lucia?raw";
-import MidwayMode from "./demos/motion/MidwayMode.lucia";
+const MidwayMode = lazy(() => import("./demos/motion/MidwayMode.lucia"));
 import midwayModeSource from "./demos/motion/MidwayMode.lucia?raw";
-import ScrollDefault from "./demos/motion/ScrollDefault.lucia";
-import ScrollEnterCenter from "./demos/motion/ScrollEnterCenter.lucia";
-import ScrollCenterLeave from "./demos/motion/ScrollCenterLeave.lucia";
-import ScrollPresets from "./demos/motion/ScrollPresets.lucia";
-import ScrollTouchPoints from "./demos/motion/ScrollTouchPoints.lucia";
-import ScrollLines from "./demos/motion/ScrollLines.lucia";
-import ScrollTwo from "./demos/motion/ScrollTwo.lucia";
-import ScrollPartFollow from "./demos/motion/ScrollPartFollow.lucia";
-import ScrollEffects from "./demos/motion/ScrollEffects.lucia";
+const ScrollDefault = lazy(() => import("./demos/motion/ScrollDefault.lucia"));
+const ScrollEnterCenter = lazy(() => import("./demos/motion/ScrollEnterCenter.lucia"));
+const ScrollCenterLeave = lazy(() => import("./demos/motion/ScrollCenterLeave.lucia"));
+const ScrollPresets = lazy(() => import("./demos/motion/ScrollPresets.lucia"));
+const ScrollTouchPoints = lazy(() => import("./demos/motion/ScrollTouchPoints.lucia"));
+const ScrollLines = lazy(() => import("./demos/motion/ScrollLines.lucia"));
+const ScrollTwo = lazy(() => import("./demos/motion/ScrollTwo.lucia"));
+const ScrollPartFollow = lazy(() => import("./demos/motion/ScrollPartFollow.lucia"));
+const ScrollEffects = lazy(() => import("./demos/motion/ScrollEffects.lucia"));
 import scrollDefaultSource from "./demos/motion/ScrollDefault.lucia?raw";
 import scrollEnterCenterSource from "./demos/motion/ScrollEnterCenter.lucia?raw";
 import scrollCenterLeaveSource from "./demos/motion/ScrollCenterLeave.lucia?raw";
@@ -278,6 +282,22 @@ export const catalog: Record<string, CatalogEntry> = {
         sources: [
           { path: "src/demos/components/Props.lucia", text: propsSource },
           { path: "src/demos/components/badge.lucia", text: badgeSource },
+        ],
+      },
+    ],
+  },
+  lazy: {
+    icon: "hourglass_top",
+    demos: [
+      {
+        id: "lazy-chart",
+        title: "Lazy component",
+        caption: "The chart loads the first time it is shown. The fallback shows until it arrives.",
+        components: [LazyDemo],
+        sources: [
+          { path: "src/demos/components/LazyDemo.lucia", text: lazyDemoSource },
+          { path: "src/demos/components/LazyChart.lucia", text: lazyChartSource },
+          { path: "src/demos/components/LazySpinner.lucia", text: lazySpinnerSource },
         ],
       },
     ],
