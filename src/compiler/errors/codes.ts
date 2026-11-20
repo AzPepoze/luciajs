@@ -180,8 +180,8 @@ export const CODES = {
     hint: "Give out an object of keyframes.",
   },
   L2015: {
-    message: "animate more start and end cannot be used with follow",
-    hint: "Remove start and end. follow sets the progress.",
+    message: "animate more part cannot be used with start and end",
+    hint: "Use part alone, or start and end alone.",
   },
   L2016: {
     message:

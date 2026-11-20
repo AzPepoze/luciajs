@@ -69,11 +69,15 @@ export type More = ViewMore | HoverMore | ScrollMore | DetachMore;
 
 export type Part = [number, number];
 
-/** The checked scroll options. `follow` is a variable of the element that drives the progress. */
+/**
+ * The checked scroll options. `follow` is a variable of the element whose box is measured.
+ * `pinned` is true when `follow` has no start or end: the tall element is then pinned to the screen.
+ */
 export interface ScrollRead {
   range: ScrollRange;
   part: Part;
   follow: ComputedVariable<Element | null> | undefined;
+  pinned: boolean;
 }
 
 /** The `more` options of one item, checked for its trigger. Fields a trigger does not use keep their defaults. */
@@ -85,7 +89,12 @@ export interface ReadMore {
   detach: DetachRead;
 }
 
-const DEFAULT_SCROLL: ScrollRead = { range: DEFAULT_RANGE, part: [0, 1], follow: undefined };
+const DEFAULT_SCROLL: ScrollRead = {
+  range: DEFAULT_RANGE,
+  part: [0, 1],
+  follow: undefined,
+  pinned: false,
+};
 const DEFAULT_HOVER: HoverRead = { inDelay: 0, outDelay: 0, out: undefined };
 const DEFAULT_DETACH: DetachRead = { keepSpace: false };
 const DEFAULT_MORE: ReadMore = {
@@ -135,7 +144,8 @@ function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
     sameTouch(a.range.end, b.range.end) &&
     a.part[0] === b.part[0] &&
     a.part[1] === b.part[1] &&
-    a.follow === b.follow
+    a.follow === b.follow &&
+    a.pinned === b.pinned
   );
 }
 
@@ -180,14 +190,19 @@ function readMs(value: number | undefined, name: string, fallback = 0): number {
   return value;
 }
 
-/** With `follow` the element drives the progress, so start and end do not apply. */
+/**
+ * With `follow` the progress reads the followed element's box. Without start and end it is pinned
+ * to the screen; with them it runs like the item's own box. `part` does not combine with start and end.
+ */
 function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead {
   if (follow === undefined) {
-    return { range: readRange(start, end), part: readPart(part), follow: undefined };
+    return { range: readRange(start, end), part: readPart(part), follow: undefined, pinned: false };
   }
-  if (start !== undefined || end !== undefined) throw runtimeError("L2015");
   if (!isReactive(follow)) throw runtimeError("L2016");
-  return { range: DEFAULT_RANGE, part: readPart(part), follow };
+  const ranged = start !== undefined || end !== undefined;
+  if (ranged && part !== undefined) throw runtimeError("L2015");
+  const range = ranged ? readRange(start, end) : DEFAULT_RANGE;
+  return { range, part: readPart(part), follow, pinned: !ranged };
 }
 
 function readDetach({ keepSpace }: DetachMore): DetachRead {
