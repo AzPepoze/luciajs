@@ -3,6 +3,7 @@ import { attach, lazy, props, variable, type Instance } from "lucia";
 import type { Demo } from "../catalog.ts";
 import type { EditorFile } from "../editor/files.ts";
 import { createDemoSession } from "../live/demo-session.ts";
+import { createQueue } from "../live/queue.ts";
 import { Preview, RunError } from "../live/preview.ts";
 import { loadRuntime } from "../live/runtime-source.ts";
 import type { LiveBundle, LiveError, LiveRun } from "../live/types.ts";
@@ -11,6 +12,7 @@ import { guidePath, pageLink } from "../page-link.ts";
 const CodeEditor = lazy(() => import("./CodeEditor.lucia"));
 import CodePanel from "./CodePanel.lucia";
 import ErrorNote from "./ErrorNote.lucia";
+import ReloadButton from "./ReloadButton.lucia";
 
 const emptyDemo: Demo = { id: "", title: "", caption: "", components: [], sources: [] };
 const { demo } = props({ demo: emptyDemo });
@@ -28,6 +30,8 @@ const sources: EditorFile[] = demo.peek().sources.map((file) => ({
 const firstName = sources[0]?.name ?? "";
 let originals: Instance[] = [];
 let preview: Preview | undefined;
+// Mounts and removals run one at a time, so a fast second click never mixes two sets.
+const later = createQueue();
 
 const session = createDemoSession(sources, {
   show: showLive,
@@ -42,7 +46,7 @@ function setup() {
   const observer = new IntersectionObserver(
     (entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
-      mountOriginals();
+      remountOriginals();
       openEditor();
       observer.disconnect();
     },
@@ -63,7 +67,22 @@ function mountOriginals(): void {
   originals = demo.peek().components.map((component) => attach(component, body.peek()!));
 }
 
-// The original demo is live until the first edit that builds. Then the build replaces it.
+// Removes the mounted demo. Its leave animations play first.
+async function detachOriginals(): Promise<void> {
+  const old = originals;
+  originals = [];
+  await Promise.all(old.map((instance) => instance.detach()));
+}
+
+// Runs the demo again from scratch: the old instance leaves, then a fresh one attaches.
+function remountOriginals(): void {
+  later(async () => {
+    await detachOriginals();
+    if (!live.peek()) mountOriginals();
+  });
+}
+
+// The first edit that builds takes over from the original demo.
 async function showLive(bundle: LiveBundle): Promise<LiveRun> {
   try {
     await preview!.show({ ...bundle, runtime: await loadRuntime(), theme: themeName() });
@@ -71,9 +90,8 @@ async function showLive(bundle: LiveBundle): Promise<LiveRun> {
     return { ok: false, error: errorDetail(error) };
   }
   if (!live.peek()) {
-    for (const instance of originals) void instance.detach();
-    originals = [];
     live.value = true;
+    later(detachOriginals);
   }
   return { ok: true };
 }
@@ -82,7 +100,13 @@ function showOriginal(): void {
   if (!live.peek()) return;
   preview!.clear();
   live.value = false;
-  mountOriginals();
+  remountOriginals();
+}
+
+// An edited demo runs its edited code again. An original demo starts over.
+function reload(): void {
+  if (session.edited.peek()) session.rerun();
+  else remountOriginals();
 }
 
 function themeName(): string {
@@ -113,6 +137,7 @@ function errorDetail(error: unknown): LiveError {
     <div class="demo">
       <p class="demo-label">
         <span class="material-symbols-rounded" aria-hidden="true">science</span>Sandbox
+        <ReloadButton onReload={reload} />
       </p>
       <div class="demo-body" hidden={live.value} bind-element={body}></div>
       <div class="live-preview" hidden={!live.value} bind-element={stage}></div>

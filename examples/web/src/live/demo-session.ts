@@ -17,6 +17,8 @@ export interface DemoSession {
   edited: ComputedVariable<boolean>;
   error: ComputedVariable<LiveError | null>;
   edit(name: string, code: string): void;
+  /** Builds and shows the current files again now, without waiting for an edit. */
+  rerun(): void;
   reset(): void;
   /** Shows an error that happened after a build mounted. */
   report(error: LiveError): void;
@@ -60,6 +62,11 @@ export function createDemoSession(
     error.value = result.ok ? null : locateRuntimeError(result.error, files.peek());
   }
 
+  function rerun(): void {
+    clearTimeout(timer);
+    void rebuild();
+  }
+
   function reset(): void {
     clearTimeout(timer);
     latest++;
@@ -73,5 +80,5 @@ export function createDemoSession(
     error.value = locateRuntimeError(next, files.peek());
   }
 
-  return { files, edited, error, edit, reset, report };
+  return { files, edited, error, edit, rerun, reset, report };
 }
