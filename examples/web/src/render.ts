@@ -1,5 +1,6 @@
 import { api, type ApiEntry } from "../../../reference/api.ts";
 import { catalog, entryIcon, groupTitles, type Demo } from "./catalog.ts";
+import { guidePath, pageLink } from "./page-link.ts";
 
 const groupOrder: ApiEntry["group"][] = [
   "basics",
@@ -57,7 +58,7 @@ function navEntry(entry: ApiEntry): HTMLElement {
 
 function entryLink(entry: ApiEntry): HTMLAnchorElement {
   const link = document.createElement("a");
-  link.href = `#${entry.id}`;
+  link.href = pageLink(guidePath, entry.id);
   link.append(glyph(entryIcon(entry.id)), codeOrText(entry.name, "nav-label"));
   return link;
 }
@@ -72,7 +73,7 @@ function subNav(demos: Demo[]): HTMLElement {
 
 function subLink(demo: Demo): HTMLAnchorElement {
   const link = document.createElement("a");
-  link.href = `#${demo.id}`;
+  link.href = pageLink(guidePath, demo.id);
   link.textContent = demo.title;
   return link;
 }
