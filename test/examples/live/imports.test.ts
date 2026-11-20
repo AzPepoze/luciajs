@@ -47,4 +47,14 @@ describe("rootNames", () => {
     ];
     expect(rootNames(files)).toEqual(["src/A.lucia", "src/C.lucia"]);
   });
+
+  test("a file that imports itself is still a root", () => {
+    const files = [
+      { name: "src/Folder.lucia", code: `import Folder from "./Folder.lucia";` },
+      { name: "src/App.lucia", code: `import Folder from "./Folder.lucia";` },
+    ];
+    expect(rootNames(files)).toEqual(["src/App.lucia"]);
+    const alone = [{ name: "src/Folder.lucia", code: `import Folder from "./Folder.lucia";` }];
+    expect(rootNames(alone)).toEqual(["src/Folder.lucia"]);
+  });
 });

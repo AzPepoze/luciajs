@@ -477,6 +477,22 @@ export const api: ApiEntry[] = [
     example: `<script>\nimport Badge from "./badge.lucia";\n</script>\n\n<Badge label={mailLabel} tone="warn" />`,
   },
   {
+    id: "recursive-components",
+    name: "Recursive components",
+    kind: "markup",
+    group: "components",
+    signature: "<Folder item={child} /> inside Folder.lucia",
+    summary: "A component can import itself and place its own tag inside its markup.",
+    bullets: [
+      'Import the file in itself, with the same name as the tag: import Folder from "./Folder.lucia".',
+      "The recursion stops when the data ends, or when an IF hides the tag.",
+      "Give each EACH row a key from the data, such as a name or id. Keys must be unique among siblings.",
+      "There is no depth limit. Add one with a prop and an IF, as the comments demo does.",
+      "Each instance has its own state, so each folder keeps its own open flag.",
+    ],
+    example: `<script>\nimport { props, variable } from "lucia";\nimport Folder from "./Folder.lucia";\n\nconst { item } = props({ item: { name: "" } });\nconst open = variable(true);\nconst children = variable.compute(() => item.value.children ?? []);\n\nfunction toggle() {\n  open.value = !open.value;\n}\n</script>\n\n<li>\n  <IF {item.value.children}>\n    <button onclick={toggle}>{item.value.name}</button>\n    <IF {open}>\n      <ul>\n        <EACH {children} as={child} key={child.name}>\n          <Folder item={child} />\n        </EACH>\n      </ul>\n    </IF>\n  </IF>\n  <ELSE>\n    <span>{item.value.name}</span>\n  </ELSE>\n</li>`,
+  },
+  {
     id: "animate",
     name: "animate={...}",
     kind: "markup",

@@ -35,12 +35,13 @@ export function linkImports(code: string, fromName: string, names: ReadonlySet<s
   });
 }
 
-/** The .lucia files that no other file imports. These are the components to mount. */
+/** The .lucia files that no other file imports. A file importing itself does not count. */
 export function rootNames(files: readonly EditorFile[]): string[] {
   const imported = new Set<string>();
   for (const file of files) {
     for (const match of file.code.matchAll(RELATIVE_IMPORT)) {
-      imported.add(resolveName(file.name, match[3] ?? ""));
+      const target = resolveName(file.name, match[3] ?? "");
+      if (target !== file.name) imported.add(target);
     }
   }
   return files
