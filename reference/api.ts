@@ -623,17 +623,56 @@ export const api: ApiEntry[] = [
     ],
   },
   {
+    id: "scroll-at",
+    name: "SCROLL_AT",
+    kind: "value",
+    group: "motion",
+    signature:
+      "const SCROLL_AT: { readonly ENTER: ScrollAtMode; readonly CENTER: ScrollAtMode; readonly LEAVE: ScrollAtMode }",
+    summary: "Where the element meets the window, for the start and end of WHEN.SCROLL.",
+    bullets: [
+      "Use it as more: { start: SCROLL_AT.ENTER, end: SCROLL_AT.LEAVE }. The defaults are ENTER and LEAVE.",
+      "Or write { element, window } with EDGE values: element is the point on the element, window the point on the window.",
+      "{ element: EDGE.TOP, window: EDGE.BOTTOM } is the same as ENTER.",
+    ],
+    example: `import { WHEN, SCROLL_AT } from "lucia";\n\n<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } }}>...</div>`,
+    members: [
+      { name: "ENTER", summary: "The element's top meets the window's bottom. The default start." },
+      { name: "CENTER", summary: "The element's centre meets the window's centre." },
+      { name: "LEAVE", summary: "The element's bottom meets the window's top. The default end." },
+    ],
+  },
+  {
+    id: "edge",
+    name: "EDGE",
+    kind: "value",
+    group: "motion",
+    signature: "const EDGE: { readonly TOP: 0; readonly CENTER: 0.5; readonly BOTTOM: 1 }",
+    summary: "A point on an element or the window, for { element, window } in WHEN.SCROLL.",
+    bullets: [
+      "Each value is a fraction of the height: 0 is the top, 1 the bottom. A plain number from 0 to 1 works too.",
+      "Use it in an object: more: { start: { element: EDGE.TOP, window: EDGE.CENTER } }.",
+      "A plain number works too: { element: 0.25, window: 0.5 } is a quarter of the way down the element.",
+    ],
+    example: `<div animate={{ style: fadeOut, when: WHEN.SCROLL, more: { start: { element: EDGE.TOP, window: EDGE.CENTER } } }}>...</div>`,
+    members: [
+      { name: "TOP", summary: "The top edge, 0." },
+      { name: "CENTER", summary: "The middle, 0.5." },
+      { name: "BOTTOM", summary: "The bottom edge, 1." },
+    ],
+  },
+  {
     id: "animate-more",
     name: "more",
     kind: "type",
     group: "motion",
     signature:
-      "more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: number; end?: number; follow?: Store<Element | null>; part?: [number, number] }",
+      "more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Store<Element | null>; part?: [number, number] }",
     summary: "Options for the trigger an item uses. Each trigger accepts its own keys.",
     bullets: [
       'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
       "HOVER: inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
-      "SCROLL: start and end (lines from the bottom of the screen, default 0 and 1), or follow: a store of the tall element that drives it. part: [from, to] plays only that slice.",
+      "SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE), or follow: a store of the tall element that drives it. part: [from, to] plays only that slice.",
       "Any other trigger that sets more is an error.",
     ],
     example: `<div animate={{\n  style: fadeUp,\n  when: WHEN.VIEW,\n  more: { margin: "10%", amount: 0.5, reverse: true },\n}}>...</div>`,

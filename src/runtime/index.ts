@@ -12,6 +12,8 @@ export { WHEN } from "./animate/trigger.ts";
 export type { When } from "./animate/trigger.ts";
 export { MIDWAY, TURN } from "./animate/midway-modes.ts";
 export type { MidwayMode, TurnMode } from "./animate/midway-modes.ts";
+export { SCROLL_AT, EDGE } from "./animate/scroll-modes.ts";
+export type { ScrollAtMode } from "./animate/scroll-modes.ts";
 export { controller } from "./animate/controller.ts";
 export type { Controller } from "./animate/controller.ts";
 export type { Keyframe, KeyframeValue, Keyframes, Style } from "./animate/keyframes.ts";

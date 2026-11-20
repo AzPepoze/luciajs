@@ -2,6 +2,8 @@
 import {
   WHEN,
   EASE,
+  EDGE,
+  SCROLL_AT,
   setAnimateDefault,
   type AnimateItem,
   type Keyframes,
@@ -60,7 +62,11 @@ const hover: AnimateItem = {
   when: WHEN.HOVER,
   more: { outDelay: 50, out: { 0: { opacity: 1 }, 1: { opacity: 0 } } },
 };
-const scroll: AnimateItem = { style: keyframes, when: WHEN.SCROLL, more: { start: 0.2, end: 0.8 } };
+const scroll: AnimateItem = {
+  style: keyframes,
+  when: WHEN.SCROLL,
+  more: { start: SCROLL_AT.ENTER, end: { element: EDGE.BOTTOM, window: 0.2 } },
+};
 
 // @ts-expect-error: HOVER takes no margin
 const hoverMargin: AnimateItem = { style: keyframes, when: WHEN.HOVER, more: { margin: 10 } };

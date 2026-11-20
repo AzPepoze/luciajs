@@ -1,5 +1,6 @@
 import type { Group } from "./group.ts";
-import type { Part, ScrollRange, ScrollRead } from "./more.ts";
+import type { Part, ScrollRead } from "./more.ts";
+import type { ScrollRange, ScrollTouch } from "./scroll-touch.ts";
 import { unwrap, type ReadStore } from "../store/store.ts";
 import { watch } from "../store/graph.ts";
 
@@ -95,13 +96,20 @@ function followedProgress(el: Element | null): number {
   return progress;
 }
 
-/** 0 when the element's top is at the start line, 1 when it is at the end line, clamped. */
-export function scrollProgress(el: Element, { start, end }: ScrollRange): number {
-  const top = el.getBoundingClientRect().top;
-  const height = window.innerHeight;
-  const startY = height * (1 - start);
-  const endY = height * (1 - end);
-  return clamp01((startY - top) / (startY - endY));
+/** 0 when the element meets the window at `start`, 1 when it meets it at `end`. Linear, clamped. */
+export function scrollProgress(el: Element, range: ScrollRange): number {
+  const rect = el.getBoundingClientRect();
+  const viewport = window.innerHeight;
+  const startTop = topWhenTouching(range.start, viewport, rect.height);
+  const endTop = topWhenTouching(range.end, viewport, rect.height);
+  const span = startTop - endTop;
+  if (span === 0) return 0;
+  return clamp01((startTop - rect.top) / span);
+}
+
+/** The element's top edge at the moment its touch point meets the window's touch point. */
+function topWhenTouching(touch: ScrollTouch, viewport: number, height: number): number {
+  return touch.window * viewport - touch.element * height;
 }
 
 /**

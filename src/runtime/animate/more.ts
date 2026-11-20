@@ -10,6 +10,13 @@ import {
   type ViewSettings,
 } from "./view-options.ts";
 import { runtimeError } from "../errors.ts";
+import {
+  DEFAULT_RANGE,
+  readScrollAt,
+  sameTouch,
+  type ScrollAt,
+  type ScrollRange,
+} from "./scroll-touch.ts";
 
 /** The `more` options of WHEN.HOVER. Times are in ms. `out` replaces the play back for leaving. */
 export interface HoverMore {
@@ -31,20 +38,15 @@ export interface MoreBase {
   duration: number;
 }
 
-/** The `more` options of WHEN.SCROLL. Lines are fractions of the viewport height, from the bottom edge. */
+/** The `more` options of WHEN.SCROLL. `start` and `end` say where the element meets the window. */
 export interface ScrollMore {
-  start?: number;
-  end?: number;
+  start?: ScrollAt;
+  end?: ScrollAt;
   follow?: ReadStore<Element | null>;
   part?: [number, number];
 }
 
 export type More = ViewMore | HoverMore | ScrollMore;
-
-export interface ScrollRange {
-  start: number;
-  end: number;
-}
 
 export type Part = [number, number];
 
@@ -63,7 +65,7 @@ export interface ReadMore {
   scroll: ScrollRead;
 }
 
-const DEFAULT_SCROLL: ScrollRead = { range: { start: 0, end: 1 }, part: [0, 1], follow: undefined };
+const DEFAULT_SCROLL: ScrollRead = { range: DEFAULT_RANGE, part: [0, 1], follow: undefined };
 const DEFAULT_HOVER: HoverRead = { inDelay: 0, outDelay: 0, out: undefined };
 const DEFAULT_MORE: ReadMore = {
   view: DEFAULT_VIEW,
@@ -108,8 +110,8 @@ function sameHover(a: HoverRead, b: HoverRead): boolean {
 
 function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
   return (
-    a.range.start === b.range.start &&
-    a.range.end === b.range.end &&
+    sameTouch(a.range.start, b.range.start) &&
+    sameTouch(a.range.end, b.range.end) &&
     a.part[0] === b.part[0] &&
     a.part[1] === b.part[1] &&
     a.follow === b.follow
@@ -162,18 +164,20 @@ function readMs(value: number | undefined, name: string, fallback = 0): number {
 /** With `follow` the element drives the progress, so start and end do not apply. */
 function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead {
   if (follow === undefined) {
-    return { range: readRange(start ?? 0, end ?? 1), part: readPart(part), follow: undefined };
+    return { range: readRange(start, end), part: readPart(part), follow: undefined };
   }
   if (start !== undefined || end !== undefined) throw runtimeError("L2015");
   if (!isReactive(follow)) throw runtimeError("L2016");
-  return { range: DEFAULT_SCROLL.range, part: readPart(part), follow };
+  return { range: DEFAULT_RANGE, part: readPart(part), follow };
 }
 
-function readRange(start: number, end: number): ScrollRange {
-  if (!Number.isFinite(start) || !Number.isFinite(end))
-    throw runtimeError("L2017", { start: String(start), end: String(end) });
-  if (start === end) throw runtimeError("L2018");
-  return { start, end };
+function readRange(start: unknown, end: unknown): ScrollRange {
+  const range = {
+    start: start === undefined ? DEFAULT_RANGE.start : readScrollAt(start, "start"),
+    end: end === undefined ? DEFAULT_RANGE.end : readScrollAt(end, "end"),
+  };
+  if (sameTouch(range.start, range.end)) throw runtimeError("L2018");
+  return range;
 }
 
 /** The slice of the section's progress that this item plays. `[0, 1]` means the whole section. */
