@@ -6,12 +6,23 @@ export const editorTheme = EditorView.theme({
   ".cm-content": { caretColor: "var(--accent)", padding: "0.6rem 0" },
   "&.cm-focused": { outline: "none" },
   ".cm-gutters": { backgroundColor: "var(--code)", color: "var(--muted)", border: "none" },
+  // drawSelection draws the cursor as a border, so the cursor is styled here, not by caretColor.
+  ".cm-cursor, .cm-dropCursor": {
+    borderLeftWidth: "3px",
+    borderLeftColor: "var(--accent)",
+    marginLeft: "-1.5px",
+  },
   ".cm-activeLine": { backgroundColor: "var(--accent-soft)" },
   ".cm-activeLineGutter": { backgroundColor: "var(--accent-soft)", color: "var(--fg)" },
   ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
-    backgroundColor: "var(--lavender-soft)",
+    backgroundColor: "var(--select-soft)",
   },
-  ".cm-matchingBracket": { backgroundColor: "var(--lavender-soft)", color: "inherit" },
+  ".cm-matchingBracket": {
+    backgroundColor: "var(--accent-soft)",
+    outline: "1px solid var(--accent)",
+    borderRadius: "2px",
+    color: "inherit",
+  },
   ".cm-searchMatch": { backgroundColor: "var(--swipe)", outline: "none" },
   ".cm-searchMatch-selected": { backgroundColor: "var(--accent-soft)" },
   ".cm-panels": { backgroundColor: "var(--card)", color: "var(--fg)", borderColor: "var(--line)" },
