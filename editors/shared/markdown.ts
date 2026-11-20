@@ -1,11 +1,36 @@
 import type { ApiEntry, ApiMember } from "../../reference/api.ts";
+import { findApiById } from "./api-lookup.ts";
+import type { CompletionItemData } from "./completion-data.ts";
 import type { HoverResult } from "./hover.ts";
 import type { PropDef } from "./props.ts";
+import type { ScriptSymbol } from "./script/symbols.ts";
 
 export function hoverMarkdown(result: HoverResult): string {
   if (result.kind === "api") return apiMarkdown(result.entry);
   if (result.kind === "css") return cssMarkdown(result.name);
+  if (result.kind === "symbol") return symbolMarkdown(result.symbol, result.local);
+  if (result.kind === "markdown") return result.markdown;
   return componentMarkdown(result.name, result.props);
+}
+
+/** The docs panel for a completion item: its own documentation, or the API entry it points at. */
+export function completionMarkdown(item: CompletionItemData): string | undefined {
+  if (item.documentation !== undefined) return item.documentation;
+  if (item.entryId === undefined) return undefined;
+  const entry = findApiById(item.entryId);
+  return entry ? apiMarkdown(entry) : undefined;
+}
+
+function symbolMarkdown(symbol: ScriptSymbol, local: string): string {
+  const title =
+    local === symbol.name ? `**${symbol.name}**` : `**${symbol.name}** (imported as \`${local}\`)`;
+  return [
+    title,
+    "",
+    fence("ts", symbol.signature),
+    ...(symbol.doc === "" ? [] : [symbol.doc, ""]),
+    `From \`${symbol.specifier}\`.`,
+  ].join("\n");
 }
 
 function cssMarkdown(name: string): string {

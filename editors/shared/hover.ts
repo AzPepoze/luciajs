@@ -5,14 +5,22 @@ import { cssKeyAt, isInAnimate } from "./animate-fields.ts";
 import { enumOwnerAt } from "./enum-members.ts";
 import { findComponentImport } from "./imports.ts";
 import type { PropDef } from "./props.ts";
+import type { TextRange } from "./range.ts";
 import { regionAt } from "./regions.ts";
+import type { ScriptSymbol } from "./script/symbols.ts";
 import { openTagAt, tagNameAt, type OpenTag } from "./tag.ts";
 import { attributeNameAt, wordAt } from "./word.ts";
 
-export type HoverResult =
+export type HoverResult = (
   | { kind: "api"; entry: ApiEntry }
   | { kind: "component"; name: string; props: PropDef[] }
-  | { kind: "css"; name: string };
+  | { kind: "css"; name: string }
+  | { kind: "symbol"; symbol: ScriptSymbol; local: string }
+  | { kind: "markdown"; markdown: string }
+) & {
+  /** The document span the hover covers, when it is wider than the word under the cursor. */
+  range?: TextRange;
+};
 
 const STYLE_TOKENS: Array<[string, string]> = [
   ["@scoped", "scoped"],

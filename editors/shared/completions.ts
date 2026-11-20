@@ -18,6 +18,7 @@ import {
 import { enumMembersAt } from "./enum-members.ts";
 import { findComponentImport, scriptImports } from "./imports.ts";
 import type { PropDef } from "./props.ts";
+import type { TextRange } from "./range.ts";
 import { regionAt } from "./regions.ts";
 import { scriptSection, type Section } from "./sections.ts";
 import { isTagNameTyping, openTagAt } from "./tag.ts";
@@ -25,6 +26,8 @@ import { isTagNameTyping, openTagAt } from "./tag.ts";
 export interface CompletionResult extends CompletionItemData {
   /** Document offsets. */
   importEdit?: TextEdit;
+  /** The text the item replaces, when a language service returns one. */
+  range?: TextRange;
 }
 
 export type PropLookup = (componentName: string) => PropDef[];

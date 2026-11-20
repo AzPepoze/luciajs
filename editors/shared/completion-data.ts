@@ -12,6 +12,8 @@ export interface CompletionItemData {
   insertText: string;
   snippet: boolean;
   detail?: string;
+  /** Markdown from a JSDoc comment or a language service; shown in the docs popup. */
+  documentation?: string;
   /** The reference/api.ts entry id, for the docs popup. */
   entryId?: string;
 }

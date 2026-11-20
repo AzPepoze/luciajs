@@ -74,6 +74,15 @@ function flowTagEnd(markup: string, start: number): number {
   return -1;
 }
 
+/** Whether `offset` sits inside a `{...}` markup expression. */
+export function inExpressionAt(text: string, offset: number): boolean {
+  if (offset <= 0) return false;
+  const open = text.lastIndexOf("{", offset - 1);
+  if (open === -1) return false;
+  const end = expressionEnd(text, open);
+  return end === -1 || end >= offset;
+}
+
 /** The index of the `}` that closes the `{` at `open`, or -1. */
 export function expressionEnd(text: string, open: number): number {
   let depth = 0;
