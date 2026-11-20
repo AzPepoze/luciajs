@@ -86,16 +86,15 @@ suite("Playground page", () => {
   );
 
   test(
-    "shows one bar and the preview behind its tab",
+    "shows one bar, the split and the starter preview",
     async () => {
       const page = await openPlayground(DESKTOP);
       expect(await page.locator(".play-bar").count()).toBe(1);
       expect(await page.locator(".code-head").count()).toBe(0);
+      expect(await page.locator(".play-views").isVisible()).toBe(false);
       expect(await page.locator(".play-work > section").count()).toBe(2);
       expect(await page.locator(".play-editor .cm-editor").isVisible()).toBe(true);
-      expect(await page.locator(".play-preview").isVisible()).toBe(false);
-      await page.locator(".play-views").getByRole("button", { name: "Preview" }).click();
-      await page.locator(".play-preview").waitFor({ state: "visible" });
+      expect(await page.locator(".play-preview").isVisible()).toBe(true);
       const frame = page.frameLocator(SHOWN_FRAME);
       await frame.locator("h1").waitFor({ state: "visible", timeout: 15_000 });
       expect((await frame.locator("h1").textContent())?.trim()).toBe("Counter");
@@ -123,6 +122,18 @@ suite("Playground page", () => {
       await page.locator("#play-problems").waitFor({ state: "visible" });
       expect(await page.locator(".play-status").isVisible()).toBe(true);
       expect(await page.locator(".play-work #play-problems").count()).toBe(1);
+      await page.close();
+    },
+    TEST_TIMEOUT_MS,
+  );
+
+  test(
+    "keeps the split on a narrow desktop window",
+    async () => {
+      const page = await openPlayground({ width: 900, height: 800 });
+      expect(await page.locator(".play-views").isVisible()).toBe(false);
+      expect(await page.locator(".play-editor").isVisible()).toBe(true);
+      expect(await page.locator(".play-preview").isVisible()).toBe(true);
       await page.close();
     },
     TEST_TIMEOUT_MS,
