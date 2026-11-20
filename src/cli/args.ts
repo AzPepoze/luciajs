@@ -4,8 +4,15 @@ export class UsageError extends Error {}
 
 export type Command =
   | { name: "help" }
-  | { name: "build"; dir: string; outdir: string; minify: boolean; routes: string[] }
-  | { name: "dev"; dir: string; port: number };
+  | {
+      name: "build";
+      dir: string;
+      outdir: string;
+      minify: boolean;
+      routes: string[];
+      quiet: boolean;
+    }
+  | { name: "dev"; dir: string; port: number; quiet: boolean };
 
 const DEFAULT_PORT = 3000;
 const DEFAULT_OUTDIR = "dist";
@@ -27,6 +34,7 @@ function parseBuild(args: string[]): Command {
         outdir: { type: "string" },
         "no-minify": { type: "boolean" },
         routes: { type: "string" },
+        quiet: { type: "boolean" },
       },
     }),
   );
@@ -36,6 +44,7 @@ function parseBuild(args: string[]): Command {
     outdir: values.outdir ?? DEFAULT_OUTDIR,
     minify: !values["no-minify"],
     routes: parseRoutes(values.routes),
+    quiet: values.quiet ?? false,
   };
 }
 
@@ -58,7 +67,7 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
     parseArgs({
       args,
       allowPositionals: true,
-      options: { port: { type: "string" } },
+      options: { port: { type: "string" }, quiet: { type: "boolean" } },
     }),
   );
   const port = values.port ?? env.PORT;
@@ -66,6 +75,7 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
     name: "dev",
     dir: appDir(positionals),
     port: port === undefined ? DEFAULT_PORT : parsePort(port),
+    quiet: values.quiet ?? false,
   };
 }
 

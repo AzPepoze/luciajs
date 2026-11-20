@@ -58,7 +58,7 @@ describe("dev server client routes", () => {
     const script = `
       import { createDevServer } from "${DEV_SERVER}";
       const server = createDevServer({ dir: "/", port: 0 });
-      server.publish(new Map([["index.html", new Blob(["<p>root</p>"], { type: "text/html" })]]));
+      server.publish(new Map([["index.html", new Blob(["<p>root</p>"], { type: "text/html" })]]), { kind: "reload" });
       const page = await fetch(new URL("/guide/intro", server.url));
       const asset = await fetch(new URL("/missing.js", server.url));
       console.log(JSON.stringify({ page: [page.status, await page.text()], asset: asset.status }));

@@ -1,6 +1,9 @@
 import { describe, expect, test } from "bun:test";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { LuciaError } from "@compiler/errors.ts";
-import { compileStyle } from "@compiler/style/sass.ts";
+import { compileStyle, compileStyleResult, forgetStyles } from "@compiler/style/sass.ts";
 import { FILE, ID, SCOPED, ROOT, TREE } from "./fixtures.ts";
 
 describe("compileStyle", () => {
@@ -47,5 +50,44 @@ describe("compileStyle", () => {
       expect(lucia.line).toBeGreaterThanOrEqual(style.line);
       expect(lucia.line).toBeLessThan(style.line + style.content.split("\n").length);
     }
+  });
+});
+
+describe("compileStyleResult cache", () => {
+  let dir: string;
+  let file: string;
+  const style = { content: '@use "tokens";\n.a { color: tokens.$accent; }', attrs: {}, line: 1 };
+
+  async function setup(): Promise<void> {
+    dir = await mkdtemp(join(tmpdir(), "lucia-sass-"));
+    file = join(dir, "Card.lucia");
+    await writeFile(join(dir, "_tokens.scss"), "$accent: red;\n");
+  }
+
+  test("an unchanged style is a cache hit: no Sass time, same css", async () => {
+    await setup();
+    const first = compileStyleResult(style, file, ID, 0);
+    const second = compileStyleResult(style, file, ID, 0);
+    expect(first.deps.map((dep) => dep.path)).toEqual([join(dir, "_tokens.scss")]);
+    expect(second.sassMs).toBe(0);
+    expect(second.css).toBe(first.css);
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test("a changed Sass partial is a miss and gives the new css", async () => {
+    await setup();
+    compileStyleResult(style, file, ID, 0);
+    await writeFile(join(dir, "_tokens.scss"), "$accent: blue;\n");
+    expect(compileStyleResult(style, file, ID, 0).css).toContain("color: blue;");
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test("forgetStyles drops the file's entries", async () => {
+    await setup();
+    compileStyleResult(style, file, ID, 0);
+    forgetStyles(file);
+    compileStyleResult(style, file, ID, 0);
+    expect(compileStyleResult(style, file, ID, 0).sassMs).toBe(0);
+    await rm(dir, { recursive: true, force: true });
   });
 });

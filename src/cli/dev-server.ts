@@ -1,7 +1,10 @@
 import type { ServerWebSocket } from "bun";
-import { assetKey, type Assets } from "./dev-build.ts";
-import { RELOAD_PATH } from "./reload-client.ts";
+import { assetKey } from "./bundle.ts";
+import type { Assets } from "./dev-build.ts";
 import { publicFile } from "./public.ts";
+import { RELOAD_PATH } from "./reload-client.ts";
+import { now } from "./timings.ts";
+import type { Update } from "./update.ts";
 
 /** A GET for a path with no file extension is a client route, so it gets index.html (history-API routing). */
 export function isPageRoute(method: string, pathname: string): boolean {
@@ -11,20 +14,23 @@ export function isPageRoute(method: string, pathname: string): boolean {
 export interface DevServerOptions {
   dir: string;
   port: number;
+  /** Called with the time from a publish to the page's `ready` report. */
+  onReady?: (ms: number) => void;
 }
 
 export interface DevServer {
   readonly url: URL;
-  publish(assets: Assets): void;
+  publish(assets: Assets, update: Update): void;
   showError(message: string): void;
   stop(): void;
 }
 
 type Socket = ServerWebSocket<unknown>;
 
-export function createDevServer({ dir, port }: DevServerOptions): DevServer {
+export function createDevServer({ dir, port, onReady }: DevServerOptions): DevServer {
   let assets: Assets = new Map();
   let error: string | null = null;
+  let publishedAt: number | null = null;
   const sockets = new Set<Socket>();
 
   const server = Bun.serve({
@@ -45,7 +51,12 @@ export function createDevServer({ dir, port }: DevServerOptions): DevServer {
       close(socket) {
         sockets.delete(socket);
       },
-      message() {},
+      message(_socket, text) {
+        if (!isReadyReport(text) || publishedAt === null) return;
+        const ms = now() - publishedAt;
+        publishedAt = null;
+        onReady?.(ms);
+      },
     },
   });
 
@@ -67,10 +78,16 @@ export function createDevServer({ dir, port }: DevServerOptions): DevServer {
 
   return {
     url: new URL(`http://localhost:${server.port}/`),
-    publish(next) {
+    publish(next, update) {
       assets = next;
       error = null;
-      broadcast({ type: "reload" });
+      const messages =
+        update.kind === "reload"
+          ? [{ type: "reload" }]
+          : update.styles.map((style) => ({ type: "css", id: style.id, css: style.css }));
+      if (messages.length === 0) return;
+      for (const message of messages) broadcast(message);
+      if (sockets.size > 0) publishedAt = now();
     },
     showError(message) {
       error = message;
@@ -81,4 +98,12 @@ export function createDevServer({ dir, port }: DevServerOptions): DevServer {
       server.stop(true);
     },
   };
+}
+
+function isReadyReport(text: string | Buffer): boolean {
+  try {
+    return JSON.parse(String(text)).type === "ready";
+  } catch {
+    return false;
+  }
 }

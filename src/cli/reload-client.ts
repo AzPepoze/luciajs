@@ -1,13 +1,16 @@
 export const RELOAD_PATH = "/__lucia/reload";
 const ERROR_DOCS_URL = "https://github.com/AzPepoze/luciajs/blob/main/docs/errors.md";
 
-// Reloads the page on a new build, shows build errors as an overlay, and reconnects after a server restart.
+// Reloads the page on a new build, swaps changed component css in place, shows build errors
+// as an overlay, reports `ready` to the server, and reconnects after a server restart.
 const CLIENT_CODE = `
 (function () {
   var protocol = location.protocol === "https:" ? "wss://" : "ws://";
   var url = protocol + location.host + "${RELOAD_PATH}";
   var overlay = null;
   var reconnecting = false;
+  var loaded = false;
+  var socket = null;
 
   function appendLinked(node, text) {
     var parts = text.split(/(L[12]\\d{3})/);
@@ -34,14 +37,36 @@ const CLIENT_CODE = `
     appendLinked(overlay, "Build failed\\n\\n" + message);
   }
 
+  function sendReady() {
+    if (loaded && socket && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "ready" }));
+  }
+
+  function findStyle(id) {
+    var styles = document.querySelectorAll("style[data-lucia]");
+    for (var i = 0; i < styles.length; i++) {
+      if (styles[i].dataset.lucia === id) return styles[i];
+    }
+    return null;
+  }
+
+  // A component whose style is not in the page yet cannot be swapped, so the page reloads.
+  function swapStyle(message) {
+    var style = findStyle(message.id);
+    if (!style) return location.reload();
+    style.textContent = message.css;
+    sendReady();
+  }
+
   function connect() {
-    var socket = new WebSocket(url);
+    socket = new WebSocket(url);
     socket.onopen = function () {
       if (reconnecting) location.reload();
+      else sendReady();
     };
     socket.onmessage = function (event) {
       var message = JSON.parse(event.data);
       if (message.type === "reload") location.reload();
+      else if (message.type === "css") swapStyle(message);
       else showError(message.message);
     };
     socket.onclose = function () {
@@ -50,6 +75,10 @@ const CLIENT_CODE = `
     };
   }
 
+  window.addEventListener("load", function () {
+    loaded = true;
+    sendReady();
+  });
   connect();
 })();
 `;
