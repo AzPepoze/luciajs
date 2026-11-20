@@ -1,6 +1,8 @@
 <script>
-import { WHEN, EASE } from "lucia";
+import { props, WHEN, EASE } from "lucia";
 import { scrollHint } from "../motion.ts";
+import { scrollBetween } from "../motion/home-scroll.ts";
+import { glow } from "../motion/pointer.ts";
 import FeatureCounter from "./FeatureCounter.lucia";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -29,10 +31,12 @@ const swipeMotion = {
   delay: 200,
 };
 
-// The glows lift as the section scrolls past. The nearer layer moves faster.
-const scrolled = { when: WHEN.SCROLL, more: { start: 1, end: 2 } };
-const glowLift = { 0: { translate: "0px 0px" }, 1: { translate: "0px -15vh" } };
-const bgMotion = reduced ? [] : { ...scrolled, style: glowLift };
+const { follow } = props({ follow: null as HTMLElement | null });
+
+// The content drifts slower than the page, so it sits a layer above the backdrop.
+const contentDrift = reduced
+  ? []
+  : scrollBetween(follow, { translate: "0 0" }, { translate: "0 -6vh" }, [0.15, 0.4]);
 
 const badgeSnippet = '<badge label={mail} tone="warn" />';
 const helloSnippet = "<p>Hi {name}</p>";
@@ -46,8 +50,7 @@ const hintMotion = {
 </script>
 
 <section class="features" id="features">
-  <div class="features-bg" aria-hidden="true" animate={bgMotion}></div>
-  <div class="features-inner">
+  <div class="features-inner" animate={contentDrift}>
     <h2 class="section-title">
       <span class="swipe">
         <span class="swipe-bar" animate={swipeMotion}></span>Features
@@ -56,6 +59,7 @@ const hintMotion = {
     <div class="feature-grid">
       <article
         class="feature-card feature-card--wide"
+        onpointermove={glow}
         style="--tone: var(--pink)"
         animate={reveal}
       >
@@ -85,6 +89,7 @@ count.value++;</code></pre>
       </article>
       <article
         class="feature-card"
+        onpointermove={glow}
         style="--tone: var(--lavender)"
         animate={{ ...reveal, delay: 80 }}
       >
@@ -104,6 +109,7 @@ import {"{"} store {"}"} from "lucia";
       </article>
       <article
         class="feature-card"
+        onpointermove={glow}
         style="--tone: var(--mint)"
         animate={{ ...reveal, delay: 160 }}
       >
@@ -120,6 +126,7 @@ import {"{"} store {"}"} from "lucia";
       </article>
       <article
         class="feature-card"
+        onpointermove={glow}
         style="--tone: var(--sky)"
         animate={{ ...reveal, delay: 240 }}
       >
@@ -138,6 +145,7 @@ import {"{"} store {"}"} from "lucia";
       </article>
       <article
         class="feature-card"
+        onpointermove={glow}
         style="--tone: var(--lemon)"
         animate={{ ...reveal, delay: 320 }}
       >
@@ -157,6 +165,7 @@ bun dev</code></pre>
       </article>
       <article
         class="feature-card"
+        onpointermove={glow}
         style="--tone: var(--pink)"
         animate={{ ...reveal, delay: 400 }}
       >

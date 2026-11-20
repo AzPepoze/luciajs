@@ -1,0 +1,74 @@
+<script>
+import { store, WHEN, EASE } from "lucia";
+import Sparks from "./Sparks.lucia";
+import RevealTitle from "./RevealTitle.lucia";
+import { spawnSparks, type Spark } from "../motion/sparks.ts";
+import { pull, release } from "../motion/pointer.ts";
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const sparks = store<Spark[]>([]);
+const confettiTones = [
+  "var(--pink)",
+  "var(--lemon)",
+  "var(--mint)",
+  "var(--sky)",
+  "var(--lavender)",
+];
+
+const cardIn = {
+  style: {
+    0: { opacity: 0, translate: "0px 24px" },
+    1: [EASE.STYLE.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
+  },
+  when: WHEN.VIEW,
+  duration: 600,
+};
+const cardMotion = reduced ? [] : cardIn;
+
+// Confetti bursts from the pointer when it enters the card, and on a tap.
+function celebrate(event: PointerEvent): void {
+  if (reduced) return;
+  const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  spawnSparks(sparks, {
+    kind: "confetti",
+    tones: confettiTones,
+    count: 28,
+    x: event.clientX - box.left,
+    y: event.clientY - box.top,
+    spread: 260,
+    lift: 80,
+    duration: 1600,
+  });
+}
+</script>
+
+<section class="cta-section">
+  <div class="cta-card" onpointerenter={celebrate} animate={cardMotion}>
+    <div class="cta-sparks" aria-hidden="true">
+      <Sparks sparks={sparks} />
+    </div>
+    <RevealTitle text="Ready to play with it?" />
+    <p class="cta-text">Read the guide, then try every demo on the page.</p>
+    <div class="cta-actions">
+      <a
+        class="button primary magnetic"
+        href="/guide"
+        onpointermove={pull}
+        onpointerleave={release}
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">menu_book</span>
+        Read the guide
+      </a>
+      <a
+        class="button magnetic"
+        href="/reference"
+        onpointermove={pull}
+        onpointerleave={release}
+      >
+        <span class="material-symbols-rounded" aria-hidden="true">data_object</span>
+        Reference
+      </a>
+    </div>
+  </div>
+</section>

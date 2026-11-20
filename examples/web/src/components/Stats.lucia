@@ -1,0 +1,40 @@
+<script>
+import { store } from "lucia";
+import RevealTitle from "./RevealTitle.lucia";
+import { catalog } from "../catalog.ts";
+import { countUp } from "../motion/count.ts";
+
+// Real numbers from this site's own data: the API entries and the live demos.
+const demoCount = Object.values(catalog).flatMap((entry) => entry.demos ?? []).length;
+const entryCount = Object.keys(catalog).length;
+
+const stats = [
+  { value: store(0), target: entryCount, label: "API entries documented" },
+  { value: store(0), target: demoCount, label: "live demos" },
+];
+
+function setup(root: Element) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      for (const stat of stats) countUp(stat.value, stat.target);
+    },
+    { threshold: 0.5 },
+  );
+  observer.observe(root.querySelector(".stats")!);
+  return () => observer.disconnect();
+}
+</script>
+
+<section class="stats-section">
+  <RevealTitle text="Made with LuciaJS" />
+  <div class="stats">
+    <EACH {stats} as="{stat}">
+      <div class="stat">
+        <p class="stat-number">{stat.value}</p>
+        <p class="stat-label">{stat.label}</p>
+      </div>
+    </EACH>
+  </div>
+</section>
