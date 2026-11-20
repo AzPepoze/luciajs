@@ -5,7 +5,6 @@ import { scrollHint } from "../motion.ts";
 import { scrollBetween } from "../motion/home-scroll.ts";
 import { typingFrames } from "../motion/typing.ts";
 import { pull, release } from "../motion/pointer.ts";
-import HeroCounter from "./HeroCounter.lucia";
 import Mascot from "./Mascot.lucia";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -54,28 +53,19 @@ const ctaMotion = { style: ctaIn, when: WHEN.ATTACH, duration: 600, delay: 800 }
 const noteMotion = { style: fadeIn, when: WHEN.ATTACH, duration: 600, delay: 900 };
 
 // The text drifts up and fades over the first part of the page, as the hero scrolls away.
-const heroDrift = scrollBetween(
-  follow,
-  { opacity: 1, translate: "0 0" },
-  { opacity: 0.1, translate: "0 -14vh" },
-  [0, 0.18],
-);
+const heroDrift = reduced
+  ? []
+  : scrollBetween(
+      follow,
+      { opacity: 1, translate: "0 0" },
+      { opacity: 0.1, translate: "0 -14vh" },
+      [0, 0.18],
+    );
 
-// Floating badges bob at their own pace.
-const badgeBob = (delay: number) =>
-  reduced
-    ? []
-    : {
-        style: {
-          default: [EASE.STYLE.SINE, EASE.INOUT],
-          0: { translate: "0 0" },
-          1: { translate: "0 -10px" },
-        },
-        loop: true,
-        backAndForth: true,
-        duration: 2600,
-        delay,
-      };
+// The title moves faster than the rest of the hero, so the two separate as you scroll.
+const titleDrift = reduced
+  ? []
+  : scrollBetween(follow, { translate: "0 0" }, { translate: "0 -24vh" }, [0, 0.2]);
 
 const hintMotion = {
   style: scrollHint,
@@ -113,7 +103,7 @@ function setup() {
       <span class="eyebrow" animate={eyebrowMotion}>A Bun-native UI framework</span>
       <Mascot />
     </p>
-    <h1 class="hero-title" aria-label="LuciaJS">
+    <h1 class="hero-title" aria-label="LuciaJS" animate={titleDrift}>
       <EACH {letters} as="{letter}">
         <span class="letter" aria-hidden="true" animate={letter.motion}>
           {letter.char}
@@ -172,16 +162,11 @@ function setup() {
         GitHub
       </a>
     </div>
-    <HeroCounter />
     <p class="wip-note" animate={noteMotion}>
       LuciaJS is under active development and has no release yet.
       APIs and markup may change without notice.
     </p>
   </div>
-  <span class="float-badge b1" aria-hidden="true" animate={badgeBob(0)}>variable</span>
-  <span class="float-badge b2" aria-hidden="true" animate={badgeBob(400)}>EACH</span>
-  <span class="float-badge b3" aria-hidden="true" animate={badgeBob(800)}>animate</span>
-  <span class="float-badge b4" aria-hidden="true" animate={badgeBob(1200)}>bind</span>
   <a
     class="scroll-hint"
     href={pageLink(homePath, "features")}
