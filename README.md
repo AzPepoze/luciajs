@@ -55,3 +55,4 @@ If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](docs/
 | [Architecture](docs/architecture.md) | How the compiler and runtime work                                                            |
 | [Error codes](docs/errors.md)        | Error codes and how to fix them                                                              |
 | [Editor](docs/editor.md)             | The VS Code extension: highlighting and install                                              |
+| [Playground](docs/playground.md)     | Edit a `.lucia` file in the browser and see the preview update                               |

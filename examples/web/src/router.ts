@@ -1,12 +1,13 @@
 import { attach, type Component, type Instance } from "lucia";
 import { refreshTopbar } from "./topbar.ts";
 
-// A page: its path, its name for the topbar and the CSS route, its title, and the wiring that runs while it is attached.
+// A page: its path, its name for the topbar and the CSS route, its title, the component
+// (loaded when the page is first opened), and the wiring that runs while it is attached.
 export interface PageSpec {
   path: string;
   route: string;
   title: string;
-  component: Component;
+  load: () => Promise<Component>;
   mount: (root: HTMLElement, signal: AbortSignal) => void;
 }
 
@@ -60,13 +61,16 @@ async function show(path: string, hash: string, push: boolean): Promise<void> {
     scrollTo(hash);
     return;
   }
+  // The old page stays on screen until the new page's code has loaded.
+  const component = await spec.load();
+  if (id !== navigation) return;
   if (current) {
     current.controller.abort();
     await current.instance.detach();
   }
   if (id !== navigation) return;
   const controller = new AbortController();
-  const instance = attach(spec.component, outlet);
+  const instance = attach(component, outlet);
   current = { spec, instance, controller };
   spec.mount(outlet, controller.signal);
   document.title = spec.title;
