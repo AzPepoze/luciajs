@@ -3,7 +3,7 @@ import {
   findBrokenImports,
   linkImports,
   rootNames,
-} from "../../../examples/web/src/live/imports.ts";
+} from "../../../docs/src/live/imports.ts";
 
 const names = new Set(["App.lucia", "Card.lucia", "util.ts", "src/demos/x/Badge.lucia"]);
 

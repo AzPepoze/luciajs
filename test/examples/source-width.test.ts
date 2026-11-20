@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 
 const MAX_WIDTH = 90;
-const SOURCE_ROOTS = ["../../examples/web/src/demos/", "../../examples/web/src/components/"].map(
+const SOURCE_ROOTS = ["../../docs/src/demos/", "../../docs/src/components/"].map(
   (path) => new URL(path, import.meta.url),
 );
 

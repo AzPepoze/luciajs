@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { createQueue } from "../../../examples/web/src/live/queue.ts";
+import { createQueue } from "../../../docs/src/live/queue.ts";
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

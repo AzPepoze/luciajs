@@ -18,10 +18,10 @@ describe("parseCommand", () => {
 
   test("build reads its options", () => {
     expect(
-      parseCommand(["build", "examples/web", "--outdir", "out", "--no-minify"], NO_ENV),
+      parseCommand(["build", "app", "--outdir", "out", "--no-minify"], NO_ENV),
     ).toEqual({
       name: "build",
-      dir: "examples/web",
+      dir: "app",
       outdir: "out",
       minify: false,
       routes: [],

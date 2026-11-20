@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { catalog } from "../../../examples/web/src/catalog.ts";
-import { buildDemo } from "../../../examples/web/src/live/demo-build.ts";
+import { catalog } from "../../../docs/src/catalog.ts";
+import { buildDemo } from "../../../docs/src/live/demo-build.ts";
 
 const demos = Object.values(catalog).flatMap((entry) => entry.demos ?? []);
 
