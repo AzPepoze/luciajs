@@ -1,6 +1,6 @@
-import type { PropDef } from "./props.ts";
+import type { PropDef } from "@language/props.ts";
 import { apiKey, findApiById, importableApi, importKey } from "./api-lookup.ts";
-import type { LusiaImport } from "./imports.ts";
+import type { LusiaImport } from "@language/imports.ts";
 import type { ApiEntry } from "../../reference/api.ts";
 
 export type CompletionKind =

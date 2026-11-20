@@ -3,8 +3,14 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["bun"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "bun"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
@@ -12,11 +18,29 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "@runtime/*": ["./src/runtime/*"],
-      "@compiler/*": ["./src/compiler/*"],
-      "@bun-plugin/*": ["./src/bun-plugin/*"],
-      "@cli/*": ["./src/cli/*"]
+      "@runtime/*": [
+        "./src/runtime/*"
+      ],
+      "@compiler/*": [
+        "./src/compiler/*"
+      ],
+      "@bun-plugin/*": [
+        "./src/bun-plugin/*"
+      ],
+      "@cli/*": [
+        "./src/cli/*"
+      ],
+      "@language/*": [
+        "./src/language/*"
+      ]
     }
   },
-  "include": ["src", "test", "examples", "docs", "reference", "lusia.d.ts"]
+  "include": [
+    "src",
+    "test",
+    "examples",
+    "docs",
+    "reference",
+    "lusia.d.ts"
+  ]
 }

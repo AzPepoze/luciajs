@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { objectEntries } from "../../../editors/shared/object-literal.ts";
-import { parsePropDefs } from "../../../editors/shared/props.ts";
+import { objectEntries } from "@language/object-literal.ts";
+import { parsePropDefs } from "@language/props.ts";
 
 describe("object entries", () => {
   test("splits top-level entries and ignores commas in strings", () => {
