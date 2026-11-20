@@ -5,8 +5,6 @@ import Features from "../components/Features.lucia";
 import HomeBackground from "../components/HomeBackground.lucia";
 import ScrollProgress from "../components/ScrollProgress.lucia";
 import Sparks from "../components/Sparks.lucia";
-import Stats from "../components/Stats.lucia";
-import CallToAction from "../components/CallToAction.lucia";
 import { pageMotion } from "../motion/page.ts";
 import { trackCursor } from "../motion/cursor.ts";
 import { spawnSparks, type Spark } from "../motion/sparks.ts";
@@ -54,6 +52,4 @@ function setup() {
   </div>
   <Hero follow={homeEl} />
   <Features follow={homeEl} />
-  <Stats follow={homeEl} />
-  <CallToAction follow={homeEl} />
 </div>

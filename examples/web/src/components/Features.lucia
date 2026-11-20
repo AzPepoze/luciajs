@@ -1,6 +1,5 @@
 <script>
 import { props, EASE } from "lucia";
-import { scrollHint } from "../motion.ts";
 import { scrollBetween } from "../motion/home-scroll.ts";
 import { glow } from "../motion/pointer.ts";
 import FeatureCounter from "./FeatureCounter.lucia";
@@ -16,10 +15,10 @@ const bob = { style: bobbing, loop: true, backAndForth: true, duration: 3000 };
 
 const { follow } = props({ follow: null as HTMLElement | null });
 
-// The content drifts slower than the page, so it sits a layer above the backdrop.
+// The content rises into place as the page scrolls, then rests.
 const contentDrift = reduced
   ? []
-  : scrollBetween(follow, { translate: "0 0" }, { translate: "0 -6vh" }, [0.3, 0.75]);
+  : scrollBetween(follow, { translate: "0 6vh" }, { translate: "0 0" }, [0.3, 0.75]);
 
 // The title slides in from the left as the section arrives.
 const titleSlide = reduced
@@ -53,12 +52,6 @@ function cardMotion(index: number) {
 const badgeSnippet = '<badge label={mail} tone="warn" />';
 const helloSnippet = "<p>Hi {name}</p>";
 
-const hintMotion = {
-  style: scrollHint,
-  loop: true,
-  backAndForth: true,
-  duration: 1600,
-};
 </script>
 
 <section class="features" id="features">
@@ -194,12 +187,4 @@ bun dev</code></pre>
       </article>
     </div>
   </div>
-  <a
-    class="scroll-hint"
-    href="/guide"
-    aria-label="Scroll to the docs"
-    animate={hintMotion}
-  >
-    <span class="material-symbols-rounded" aria-hidden="true">keyboard_arrow_down</span>
-  </a>
 </section>
