@@ -31,6 +31,7 @@ const watched = new Set<Watched>();
 const sized = new Map<Element, number>();
 const probe: LayoutKey = { x: 0, y: 0, width: 0, height: 0 };
 const LISTEN_OPTIONS = { passive: true, capture: true };
+const LAYOUT_ATTRIBUTES = ["class", "hidden"];
 let scheduled = false;
 let mutations: MutationObserver | undefined;
 let sizes: ResizeObserver | undefined;
@@ -121,7 +122,13 @@ function startListening(): void {
   document.addEventListener("scroll", request, LISTEN_OPTIONS);
   window.addEventListener("resize", request, LISTEN_OPTIONS);
   mutations = new MutationObserver(request);
-  mutations.observe(document.documentElement, { subtree: true, childList: true, attributes: true });
+  // Inline styles are not watched: the engine writes them every frame, and each write would read the layout.
+  mutations.observe(document.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: LAYOUT_ATTRIBUTES,
+  });
   sizes = new ResizeObserver(request);
 }
 
