@@ -41,6 +41,11 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 - `animate` is designed. Its syntax follows [docs/animate.md](docs/animate.md): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
 - `examples/web` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches web's `Events` demo, so update both together.
 
+## Docs site structure
+
+- The Guide is a learning path: order groups, entries and sub-nav so a beginner meets each idea before anything that uses it, simplest first, advanced last.
+- The main agent may reorganize the Guide's groups, sub-groups and sub-nav freely whenever that is better for the reader, without asking. Keep each sub-nav list short; split long groups into named sub-groups.
+
 ## Project rules
 
 - Domain folders own framework logic (`parse/`, `style/`, `template/`, `variable/`, `dom/`).
