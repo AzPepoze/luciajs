@@ -44,9 +44,9 @@ If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](CONTR
 
 ## More
 
-- [Home](https://azpepoze.github.io/luciajs/)
-- [Guide](https://azpepoze.github.io/luciajs/guide)
-- [Reference](https://azpepoze.github.io/luciajs/reference)
-- [Playground](https://azpepoze.github.io/luciajs/playground)
-- [Errors](https://azpepoze.github.io/luciajs/errors)
+- [Home](https://azpepoze.github.io/lusia/)
+- [Guide](https://azpepoze.github.io/lusia/guide)
+- [Reference](https://azpepoze.github.io/lusia/reference)
+- [Playground](https://azpepoze.github.io/lusia/playground)
+- [Errors](https://azpepoze.github.io/lusia/errors)
 - [Development](CONTRIBUTING.md)

@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Lusia: a Bun-native UI framework with single-file `.lusia` components, variables and scoped SCSS.
 
 - Commands, tests and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md)
-- The site Guide (learning path, live demos and source): https://azpepoze.github.io/luciajs/guide
+- The site Guide (learning path, live demos and source): https://azpepoze.github.io/lusia/guide
 - The API table: [reference/api.ts](reference/api.ts)
 - The docs site source is in `docs/` (`index.html`, `src/`, `public/`). Its playground needs `scripts/playground-runtime.ts`, which `dev` and `build` run first.
 
@@ -35,8 +35,8 @@ Any `.lusia` syntax change (new tag, attribute, keyword or export) must update b
 - Reuse the words the API already uses. A new option for the same idea takes the same word, with a prefix for the variant: `duration` -> `outDuration`, `turnDuration`; `style`/`ease` -> `turnStyle`/`turnEase`. Never introduce a synonym (`time`, `length`, `curve`, `transition`) for an existing word.
 - The user designs the markup syntax. Do not invent new syntax, and do not borrow Svelte's (`{#if}`, `on:`, runes, `export let`).
 - Deferred until designed with the user: SSR, hydration.
-- Events (`onclick={fn}`), `bind-value` and the flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) are designed and implemented. Their syntax follows the site Guide's Events, bind-value and Flow sections (https://azpepoze.github.io/luciajs/guide). Change it only with the user.
-- `animate` is designed. Its syntax follows the site Guide's Animate section (https://azpepoze.github.io/luciajs/guide): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
+- Events (`onclick={fn}`), `bind-value` and the flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) are designed and implemented. Their syntax follows the site Guide's Events, bind-value and Flow sections (https://azpepoze.github.io/lusia/guide). Change it only with the user.
+- `animate` is designed. Its syntax follows the site Guide's Animate section (https://azpepoze.github.io/lusia/guide): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
 - `docs` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches the docs site's `Events` demo, so update both together.
 
 ## Docs site structure
