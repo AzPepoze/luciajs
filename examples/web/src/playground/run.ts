@@ -15,8 +15,8 @@ let runNumber = 0;
 /** Starts the live preview for the page. Stops when the signal aborts. */
 export function mountPlayground(stage: HTMLElement, signal: AbortSignal): void {
   if (signal.aborted) return;
-  preview = new Preview(stage, (message) => {
-    runtimeErrors.value = [{ message }];
+  preview = new Preview(stage, (error) => {
+    runtimeErrors.value = [error];
   });
   const stop = variable.autoRun(() => {
     saveFiles(files.value);

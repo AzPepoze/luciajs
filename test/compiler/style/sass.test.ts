@@ -12,6 +12,7 @@ describe("compileStyle", () => {
       content: "$c: red;\n.a { color: $c; &:hover { color: blue; } }",
       attrs: {},
       line: 1,
+      from: 0,
     };
     const out = compileStyle(style, FILE, ID);
     expect(out).toContain(`.a${TREE} {`);
@@ -21,26 +22,26 @@ describe("compileStyle", () => {
   });
 
   test("<style scoped> uses the scoped filter", () => {
-    const style = { content: ".a { color: red; }", attrs: { scoped: "" }, line: 1 };
+    const style = { content: ".a { color: red; }", attrs: { scoped: "" }, line: 1, from: 0 };
     expect(compileStyle(style, FILE, ID)).toContain(`.a${SCOPED} {`);
   });
 
   test("<style global> leaves selectors unscoped", () => {
-    const style = { content: "body { margin: 0; }", attrs: { global: "" }, line: 1 };
+    const style = { content: "body { margin: 0; }", attrs: { global: "" }, line: 1, from: 0 };
     const out = compileStyle(style, FILE, ID);
     expect(out).toContain("body {");
     expect(out).not.toContain(ROOT);
   });
 
   test('lang="css" skips the Sass compiler', () => {
-    const style = { content: "h1 { color: $c; }", attrs: { lang: "css" }, line: 1 };
+    const style = { content: "h1 { color: $c; }", attrs: { lang: "css" }, line: 1, from: 0 };
     const out = compileStyle(style, FILE, ID);
     expect(out).toContain("color: $c;");
     expect(out).toContain(`h1${TREE}`);
   });
 
   test("SCSS syntax error throws LuciaError with a line inside the file", () => {
-    const style = { content: "\n.a {\n  color: red;\n", attrs: {}, line: 10 };
+    const style = { content: "\n.a {\n  color: red;\n", attrs: {}, line: 10, from: 0 };
     try {
       compileStyle(style, FILE, ID);
       throw new Error("expected compileStyle to throw");
@@ -56,7 +57,12 @@ describe("compileStyle", () => {
 describe("compileStyleResult cache", () => {
   let dir: string;
   let file: string;
-  const style = { content: '@use "tokens";\n.a { color: tokens.$accent; }', attrs: {}, line: 1 };
+  const style = {
+    content: '@use "tokens";\n.a { color: tokens.$accent; }',
+    attrs: {},
+    line: 1,
+    from: 0,
+  };
 
   async function setup(): Promise<void> {
     dir = await mkdtemp(join(tmpdir(), "lucia-sass-"));

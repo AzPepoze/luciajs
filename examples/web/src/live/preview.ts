@@ -1,4 +1,4 @@
-import type { LiveBundle } from "./types.ts";
+import type { LiveBundle, LiveError } from "./types.ts";
 
 const FRAME_URL = "/playground/frame.html";
 const START_LIMIT_MS = 8000;
@@ -13,7 +13,17 @@ export interface RunPayload extends LiveBundle {
 interface FrameMessage {
   type: string;
   message?: string;
+  code?: string;
+  hint?: string;
   height?: number;
+}
+
+/** A run that failed in its frame. `detail` is what the error note shows. */
+export class RunError extends Error {
+  constructor(readonly detail: LiveError) {
+    super(detail.message);
+    this.name = "RunError";
+  }
 }
 
 interface Pending {
@@ -37,12 +47,12 @@ export class Preview {
   private shown: HTMLIFrameElement | undefined;
   private pending: Pending | undefined;
   private readonly stage: HTMLElement;
-  private readonly onRuntimeError: (message: string) => void;
+  private readonly onRuntimeError: (error: LiveError) => void;
   private readonly sizeToContent: boolean;
 
   constructor(
     stage: HTMLElement,
-    onRuntimeError: (message: string) => void,
+    onRuntimeError: (error: LiveError) => void,
     options: PreviewOptions = {},
   ) {
     this.stage = stage;
@@ -58,7 +68,7 @@ export class Preview {
     this.stage.append(frame);
     return new Promise((resolve, reject) => {
       const timer = window.setTimeout(
-        () => this.fail(frame, "The preview did not start."),
+        () => this.fail(frame, { message: "The preview did not start." }),
         START_LIMIT_MS,
       );
       this.pending = { frame, run, resolve, reject, timer };
@@ -93,14 +103,14 @@ export class Preview {
     } else if (message.type === "mounted") {
       this.promote(pending);
     } else if (message.type === "error") {
-      this.fail(pending.frame, message.message ?? "Unknown error");
+      this.fail(pending.frame, errorOf(message));
     } else if (message.type === "size") {
       this.resize(pending.frame, message);
     }
   }
 
   private onShown(frame: HTMLIFrameElement, message: FrameMessage): void {
-    if (message.type === "error") this.onRuntimeError(message.message ?? "Unknown error");
+    if (message.type === "error") this.onRuntimeError(errorOf(message));
     else if (message.type === "size") this.resize(frame, message);
   }
 
@@ -119,10 +129,10 @@ export class Preview {
     pending.resolve();
   }
 
-  private fail(frame: HTMLIFrameElement, message: string): void {
+  private fail(frame: HTMLIFrameElement, detail: LiveError): void {
     const pending = this.pending;
     if (!pending || pending.frame !== frame) return;
-    this.dropPending(new Error(message));
+    this.dropPending(new RunError(detail));
   }
 
   private dropPending(error: Error): void {
@@ -133,6 +143,10 @@ export class Preview {
     pending.frame.remove();
     pending.reject(error);
   }
+}
+
+function errorOf(message: FrameMessage): LiveError {
+  return { message: message.message ?? "Unknown error", code: message.code, hint: message.hint };
 }
 
 function createFrame(): HTMLIFrameElement {

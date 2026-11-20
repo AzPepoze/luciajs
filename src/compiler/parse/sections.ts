@@ -8,6 +8,8 @@ export interface Section {
   attrs: Record<string, string>;
   /** 1-based line where the content starts. */
   line: number;
+  /** Index in the source where the content starts. */
+  from: number;
 }
 
 export interface ParsedFile {
@@ -87,6 +89,7 @@ function toSection(source: string, section: SectionMatch): Section {
     content: source.slice(section.contentStart, section.contentEnd),
     attrs: parseAttrs(section.rawAttrs),
     line: lineAt(source, section.contentStart),
+    from: section.contentStart,
   };
 }
 

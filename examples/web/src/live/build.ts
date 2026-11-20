@@ -4,6 +4,7 @@ import {
   LuciaError,
   stripTypes,
 } from "@compiler/browser.ts";
+import { plainFrame } from "@compiler/errors/frame.ts";
 import type { EditorFile } from "../editor/files.ts";
 import { findBrokenImports, linkImports, rootNames } from "./imports.ts";
 import { scssImporter } from "./scss.ts";
@@ -39,7 +40,7 @@ export function buildLive(files: readonly EditorFile[], options: BuildOptions = 
       const code = compileFile(file, project);
       modules[file.name] = linkImports(code, file.name, names);
     } catch (error) {
-      errors.push(toLiveError(error, file.name));
+      errors.push(toLiveError(error, file.name, file.code));
     }
   }
   if (errors.length > 0) return { errors };
@@ -68,7 +69,7 @@ function brokenError(file: string, item: { specifier: string; line: number }): L
   };
 }
 
-function toLiveError(error: unknown, file: string): LiveError {
+function toLiveError(error: unknown, file: string, source: string): LiveError {
   if (error instanceof LuciaError) {
     return {
       message: error.message,
@@ -77,6 +78,7 @@ function toLiveError(error: unknown, file: string): LiveError {
       file,
       line: error.line,
       column: error.column,
+      frame: frameOf(error, source),
     };
   }
   const loc = syntaxLocation(error);
@@ -84,6 +86,11 @@ function toLiveError(error: unknown, file: string): LiveError {
     return { message: cleanSyntaxMessage(loc.message), file, line: loc.line, column: loc.column };
   }
   return { message: error instanceof Error ? error.message : String(error), file };
+}
+
+function frameOf(error: LuciaError, source: string): string | undefined {
+  if (error.line === undefined) return undefined;
+  return plainFrame(source, error.line, error.column, error.length);
 }
 
 // A .ts file's syntax error from sucrase carries its position in `loc`.

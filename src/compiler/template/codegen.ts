@@ -59,8 +59,10 @@ export function generate({
   id,
   file,
   dev,
+  source,
+  script,
 }: ComponentParts): string {
-  const ctx = new GenContext(id, { file, dev });
+  const ctx = new GenContext(id, { file, dev, source, script });
   const fragment = ctx.fragment(template);
   return [
     imports,

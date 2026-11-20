@@ -2,6 +2,7 @@ import { hash } from "./id.ts";
 import { splitImports } from "./parse/imports.ts";
 import { parse, type Section } from "./parse/sections.ts";
 import { generate } from "./template/codegen.ts";
+import { scriptRange } from "./template/animate-keys.ts";
 import { compileTemplate } from "./template/scanner.ts";
 import type { StyleResult } from "./style/sass.ts";
 import { extractSourceMap } from "./sourcemap/extract.ts";
@@ -63,6 +64,8 @@ export function compileParts(
     id,
     file: options.displayFile,
     dev: options.dev,
+    source,
+    script: scriptRange(parsed.script),
   });
   const { code, map } = extractSourceMap(generated, file, source);
   return { code, css, id, map, deps, sassMs, scriptAndMarkup };

@@ -1,6 +1,7 @@
 import { splitImports } from "../../../../src/compiler/parse/imports.ts";
 import { parse } from "../../../../src/compiler/parse/sections.ts";
 import { generate } from "../../../../src/compiler/template/codegen.ts";
+import { scriptRange } from "../../../../src/compiler/template/animate-keys.ts";
 import { compileTemplate } from "../../../../src/compiler/template/scanner.ts";
 
 /**
@@ -21,5 +22,7 @@ export function compileWithoutStyles(source: string, file: string): void {
     id: "editor",
     file,
     dev: false,
+    source,
+    script: scriptRange(parsed.script),
   });
 }

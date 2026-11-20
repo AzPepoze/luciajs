@@ -6,6 +6,8 @@ export interface LiveError {
   file?: string;
   line?: number;
   column?: number;
+  /** Plain text lines of the source around `line`, with a caret under the error. */
+  frame?: string;
 }
 
 /** What a build hands to the preview. Module names are file names. */

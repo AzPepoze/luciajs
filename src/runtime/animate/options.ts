@@ -8,6 +8,7 @@ import { readMidway, type MidwayOptions } from "./midway-options.ts";
 import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "./trigger.ts";
 import { readMore, type ReadMore } from "./more.ts";
 import { runtimeError } from "../errors.ts";
+import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 
 export interface Timing {
   duration: number;
@@ -30,6 +31,7 @@ export interface ItemOptions {
 export function readItem(item: AnimateItem): ItemOptions {
   rejectOldNames(item);
   rejectMovedReverse(item);
+  rejectUnknownKeys(item);
   const when = readWhen(item);
   rejectLoop(item, when);
   const duration = readMs(item.duration, animateDefault().duration, "duration");
@@ -111,6 +113,15 @@ function rejectLoop(item: AnimateItem, when: When | Source): void {
   if (!item.loop) return;
   if (when === WHEN.SCROLL) throw runtimeError("L2009");
   if (isLayoutWhen(when)) throw runtimeError("L2051");
+}
+
+/** Runs after the old names are rejected, so any key left that is not an item key is a typo. */
+function rejectUnknownKeys(item: AnimateItem): void {
+  for (const key of Object.keys(item)) {
+    if (!ITEM_KEYS.includes(key)) {
+      throw runtimeError("L2055", unknownKeyValues(key, ITEM_KEYS, SPELLING_HINT), key);
+    }
+  }
 }
 
 function rejectMovedReverse(item: AnimateItem): void {

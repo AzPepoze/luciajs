@@ -4,6 +4,7 @@ import type { HoverMore, ScrollMore } from "./more.ts";
 import type { AnimateMidway } from "./midway-options.ts";
 import { WHEN, type LayoutWhen, type Source } from "./trigger.ts";
 import type { ViewMore } from "./view-options.ts";
+import { hasItemKey } from "./keys.ts";
 
 interface ItemBase {
   style: Keyframes;
@@ -50,27 +51,6 @@ export type AnimateItem = PlainItem | LayoutItem | ViewItem | HoverItem | Scroll
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];
 
-const ITEM_KEYS = [
-  "style",
-  "when",
-  "once",
-  "more",
-  "midway",
-  "keep",
-  "control",
-  "duration",
-  "delay",
-  "loop",
-  "backAndForth",
-  "animation",
-  "active", // old names: listed so readItem can reject them with a clear error
-  "ease", // moved into the keyframes default: listed so readItem can reject it with a clear error
-  "curve",
-  "transition", // old names: listed so readItem can reject them with a clear error
-  "reverse", // moved into more: listed so readItem can reject it with a clear error
-  "alternate", // old name: listed so readItem can reject it with a clear error
-] as const;
-
 export function itemsOf(value: Animate): AnimateItem[] {
   const list = Array.isArray(value) ? value : [value];
   return list.map(toItem);
@@ -82,5 +62,5 @@ function toItem(value: Keyframes | AnimateItem): AnimateItem {
 
 /** Keyframes only have numeric keys and `default`, so any item key tells the two apart. */
 function isItem(value: Keyframes | AnimateItem): value is AnimateItem {
-  return ITEM_KEYS.some((key) => key in value);
+  return hasItemKey(Object.keys(value));
 }

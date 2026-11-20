@@ -11,6 +11,14 @@ import {
 } from "./view-options.ts";
 import { runtimeError } from "../errors.ts";
 import {
+  HOVER_KEYS,
+  keyList,
+  SCROLL_KEYS,
+  SPELLING_HINT,
+  unknownKeyValues,
+  VIEW_KEYS,
+} from "./keys.ts";
+import {
   DEFAULT_RANGE,
   readScrollAt,
   sameTouch,
@@ -74,10 +82,6 @@ const DEFAULT_MORE: ReadMore = {
   scroll: DEFAULT_SCROLL,
 };
 
-const VIEW_KEYS = ["margin", "amount", "reverse"];
-const HOVER_KEYS = ["inDelay", "outDelay", "out", "outDuration"];
-const SCROLL_KEYS = ["start", "end", "follow", "part"];
-
 export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
   if (more === undefined) return DEFAULT_MORE;
   if (when === WHEN.VIEW)
@@ -123,19 +127,17 @@ function whenName(when: When | Source): string {
 }
 
 /** Rejects a non-object or an unknown key, and returns the object typed as T. */
-function checkKeys<T extends object>(more: More, allowed: string[]): T {
+function checkKeys<T extends object>(more: More, allowed: readonly string[]): T {
   if (typeof more !== "object" || more === null) {
-    throw runtimeError("L2011", { keys: orList(allowed), value: String(more) });
+    throw runtimeError("L2011", { keys: keyList(allowed), value: String(more) });
   }
   for (const key of Object.keys(more)) {
-    if (!allowed.includes(key)) throw runtimeError("L2012", { key, keys: orList(allowed) });
+    if (!allowed.includes(key)) {
+      const values = unknownKeyValues(key, allowed, SPELLING_HINT);
+      throw runtimeError("L2012", values, key);
+    }
   }
   return more as T;
-}
-
-function orList(words: string[]): string {
-  if (words.length <= 1) return words.join("");
-  return `${words.slice(0, -1).join(", ")} or ${words[words.length - 1]}`;
 }
 
 function readHover(more: HoverMore, base: MoreBase): HoverRead {

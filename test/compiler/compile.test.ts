@@ -55,4 +55,17 @@ describe("compile dev option", () => {
     const call = /__animate\(.*, "([^"]+)"\);/.exec(code);
     expect(call?.[1]).toBe(`${WHERE}:4:15`);
   });
+
+  test("dev gives the location of a bad keyframes key in the script", () => {
+    const source =
+      "<script>\nconst fadeUp = { defaut: 1, 0: {}, 1: {} };\n</script>\n<div animate={fadeUp}>x</div>";
+    const { code } = compile(source, FILE, { dev: true });
+    expect(code).toContain(`{ "defaut": "${WHERE}:2:18" }`);
+  });
+
+  test("without dev no key locations are generated", () => {
+    const source =
+      "<script>\nconst fadeUp = { defaut: 1, 0: {}, 1: {} };\n</script>\n<div animate={fadeUp}>x</div>";
+    expect(compile(source, FILE).code).not.toContain('defaut": "');
+  });
 });

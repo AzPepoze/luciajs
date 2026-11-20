@@ -5,6 +5,7 @@ import { readDefault, readKey, type DefaultEasing, type PartialEasing } from "./
 import type { Ease } from "./modes.ts";
 import type { Segment, Timeline } from "./timeline.ts";
 import { runtimeError } from "../errors.ts";
+import { isKeyframesKey, KEYFRAMES_HINT, KEYFRAMES_NAME, unknownKeyValues } from "./keys.ts";
 
 /** The string style properties of the DOM, in camelCase (opacity, backgroundColor). Methods and non-string properties are left out. */
 type DomStyleKey = {
@@ -46,12 +47,22 @@ export function prepareTimeline(keyframes: Keyframes, probe?: HTMLElement): Time
 }
 
 function readStops(keyframes: Keyframes, fromKeyframes: PartialEasing): Stop[] {
+  checkKeyNames(keyframes);
   const stops = Object.keys(keyframes)
     .filter((key) => key !== "default")
     .map((key) => toStop(Number(key), keyframes[Number(key)]!, fromKeyframes))
     .sort((a, b) => a.at - b.at);
   checkStops(stops);
   return stops;
+}
+
+function checkKeyNames(keyframes: Keyframes): void {
+  for (const key of Object.keys(keyframes)) {
+    if (!isKeyframesKey(key)) {
+      const values = unknownKeyValues(key, [KEYFRAMES_NAME], KEYFRAMES_HINT);
+      throw runtimeError("L2054", values, key);
+    }
+  }
 }
 
 function toStop(at: number, value: KeyframeValue, fromKeyframes: PartialEasing): Stop {
