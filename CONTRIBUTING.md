@@ -24,7 +24,11 @@ Lusia is a Bun-native UI framework built from single-file `.lusia` components, v
 
 Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
 
-The `lusia` command builds and serves an app folder. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its two commands are `lusia build [dir]` and `lusia dev [dir]`; a `lusia.config.json` sets the same options and flags win over it.
+The `lusia` command builds and serves an app folder, and formats and lints its `.lusia` files. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its commands are `lusia build [dir]`, `lusia dev [dir]`, `lusia format [path...]` and `lusia lint [path...]`; a `lusia.config.json` sets the same options and flags win over it.
+
+`lusia format` writes Prettier-formatted files, `--check` lists the files that would change and exits 1, and section content is formatted as TypeScript, SCSS or CSS and markup as HTML through the same formatter the editor uses. `lusia lint` compiles each file, prints the compile errors and the lint findings, and exits 1 on errors or too many warnings (`--max-warnings`); `--fix` applies the safe fixes, such as removing an unused import. `lint.rules` in `lusia.config.json` sets each rule to `"off"`, `"warn"` or `"error"`, and `<!-- lusia-lint-disable[-next-line] rule -->` turns a rule off for the rest of the file or for the next line.
+
+The lint rules are the ones the VS Code extension shows: `unused-import`, `props-twice`, `unknown-prop`, `empty-expression`, `style-attribute`, `animate-keyframes`, `animate-key`, `scroll-numeric-line`, `flow-chain` and `bind-target`.
 
 ## Repo layout
 
