@@ -52,6 +52,13 @@ export interface ComponentBinding {
   kind: "component";
   name: string;
   props: AttrBinding[];
+  /** The markup between the component's tags, compiled in the parent's scope. Missing when blank. */
+  children?: Template;
+}
+
+/** `<CONTENT />`: where a component renders the children its parent gave it. */
+export interface ContentBinding {
+  kind: "content";
 }
 
 export interface IfBinding {
@@ -79,4 +86,10 @@ export interface ForBinding {
 }
 
 export type Binding =
-  TextBinding | ElementBinding | ComponentBinding | IfBinding | EachBinding | ForBinding;
+  | TextBinding
+  | ElementBinding
+  | ComponentBinding
+  | ContentBinding
+  | IfBinding
+  | EachBinding
+  | ForBinding;

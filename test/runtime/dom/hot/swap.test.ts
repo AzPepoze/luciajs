@@ -177,4 +177,26 @@ ${markup}`;
     expect(target.querySelector("i")!.textContent).toBe("2");
     expect(target.querySelector("i")).not.toBe(child);
   });
+
+  test("CONTENT keeps the parent's children when the component is swapped", async () => {
+    const card = (tag: string): string => `<script>
+import { props } from "lucia";
+const { title } = props({ title: "" });
+</script>
+<${tag} class="card">{title}<CONTENT /></${tag}>`;
+    await sourceFile("SlotCard", card("section"));
+    const parent = `<script>
+import Card from "./SlotCard.lucia";
+import { variable } from "lucia";
+const count = variable(1);
+</script>
+<Card title="hi"><b class="kid">{count}</b></Card>`;
+
+    const target = mount(await version("SlotParent", parent));
+    expect(target.querySelector("section > b.kid")!.textContent).toBe("1");
+
+    swapComponent(await version("SlotCard", card("article")));
+    expect(target.querySelector("article > b.kid")!.textContent).toBe("1");
+    expect(target.querySelector("section")).toBeNull();
+  });
 });

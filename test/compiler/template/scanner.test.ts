@@ -114,15 +114,14 @@ describe("compileTemplate component tags", () => {
     ]);
   });
 
-  test("child content between open and close is an error", () => {
+  test("a component without its close tag is an error at the open tag", () => {
     const error = catchError(() =>
-      compileTemplate("<p>\n  <badge>hi</badge></p>", FILE, 1, COMPONENTS),
+      compileTemplate("<p>\n  <badge>hi</badge></p>\n<badge>", FILE, 1, COMPONENTS),
     );
     expect(error.code).toBe("L1009");
-    expect(error.message).toBe("<badge> cannot have child content yet");
-    expect(error.hint).toBe("Write <badge /> with nothing between the tags.");
-    expect(error.line).toBe(2);
-    expect(error.column).toBe(3);
+    expect(error.message).toBe("<badge> needs a closing </badge>");
+    expect(error.line).toBe(3);
+    expect(error.column).toBe(1);
   });
 
   test("lowercase component name matches the import name", () => {

@@ -17,6 +17,7 @@ const RUNTIME_IMPORT = `import {
   animate as __animate,
   attr as __attr,
   bindComponent as __bindComponent,
+  bindContent as __bindContent,
   bindEach as __bindEach,
   bindElement as __bindElement,
   bindFor as __bindFor,
@@ -31,6 +32,7 @@ const RUNTIME_IMPORT = `import {
   toText as __toText,
   unwrap as __unwrap,
   type Cleanup as __Cleanup,
+  type Host as __Host,
   type Leave as __Leave,
   type Rendered as __Rendered,
 } from "lucia/internal";`;
@@ -42,7 +44,7 @@ const HOT_IMPORT = `import {
 } from "lucia/internal";`;
 
 function renderFunction(body: string, bodyLine: number, fragment: string): string {
-  return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[]): __Rendered {
+  return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): __Rendered {
 ${markLines(body, bodyLine)}
   const __fragment = ${fragment};
   return { fragment: __fragment, setup: typeof setup === "function" ? setup : undefined };

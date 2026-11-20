@@ -29,6 +29,7 @@ import folderSource from "./demos/components/Folder.lucia?raw";
 import commentThreadSource from "./demos/components/CommentThread.lucia?raw";
 import commentSource from "./demos/components/Comment.lucia?raw";
 const Props = lazy(() => import("./demos/components/Props.lucia"));
+const Children = lazy(() => import("./demos/components/Children.lucia"));
 const Batch = lazy(() => import("./demos/reactivity/Batch.lucia"));
 const Variable = lazy(() => import("./demos/reactivity/Variable.lucia"));
 const AutoRun = lazy(() => import("./demos/reactivity/AutoRun.lucia"));
@@ -47,6 +48,8 @@ import lazySpinnerSource from "./demos/components/LazySpinner.lucia?raw";
 import badgeSource from "./demos/components/badge.lucia?raw";
 import componentsSource from "./demos/components/Components.lucia?raw";
 import propsSource from "./demos/components/Props.lucia?raw";
+import childrenSource from "./demos/components/Children.lucia?raw";
+import cardSource from "./demos/components/Card.lucia?raw";
 import attributesSource from "./demos/basics/Attributes.lucia?raw";
 import eventsSource from "./demos/basics/Events.lucia?raw";
 import textSource from "./demos/basics/Text.lucia?raw";
@@ -359,6 +362,21 @@ export const catalog: Record<string, CatalogEntry> = {
         sources: [
           { path: "src/demos/components/CommentThread.lucia", text: commentThreadSource },
           { path: "src/demos/components/Comment.lucia", text: commentSource },
+        ],
+      },
+    ],
+  },
+  content: {
+    icon: "view_agenda",
+    demos: [
+      {
+        id: "content-children",
+        title: "Children and CONTENT",
+        caption: "Markup between a component's tags shows where its CONTENT is.",
+        components: [Children],
+        sources: [
+          { path: "src/demos/components/Children.lucia", text: childrenSource },
+          { path: "src/demos/components/Card.lucia", text: cardSource },
         ],
       },
     ],

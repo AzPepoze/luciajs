@@ -5,6 +5,15 @@ import { runtimeError } from "../errors.ts";
 
 export type Props = Record<string, () => unknown>;
 
+/** The children a parent gave a component. `<CONTENT />` places them; they render in the parent's scope. */
+export type Slot = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
+
+/** What a parent hands a component: its props, and its children when it gave any. */
+export interface Host {
+  props: Props;
+  content?: Slot;
+}
+
 export type SetupHook = (root: ParentNode) => unknown;
 
 export interface Rendered {
@@ -12,7 +21,7 @@ export interface Rendered {
   setup?: SetupHook;
 }
 
-export type Render = (cleanups: Cleanup[], leaves: Leave[]) => Rendered;
+export type Render = (cleanups: Cleanup[], leaves: Leave[], host: Host) => Rendered;
 
 export interface Instance {
   root: Element;
@@ -22,7 +31,7 @@ export interface Instance {
 
 export interface Component {
   (target: Element, props?: Props): Instance;
-  readonly place: (parent: Node, anchor: Node | null, props: Props, leaves: Leave[]) => Cleanup;
+  readonly place: (parent: Node, anchor: Node | null, host: Host, leaves: Leave[]) => Cleanup;
 }
 
 let currentProps: Props | null = null;
@@ -40,16 +49,16 @@ export function currentComponentCleanups(): Cleanup[] | null {
 
 export function renderWith(
   render: Render,
-  props: Props,
+  host: Host,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): Rendered {
   const previousProps = currentProps;
   const previousCleanups = currentCleanups;
-  currentProps = props;
+  currentProps = host.props;
   currentCleanups = cleanups;
   try {
-    return render(cleanups, leaves);
+    return render(cleanups, leaves, host);
   } finally {
     currentProps = previousProps;
     currentCleanups = previousCleanups;
@@ -67,17 +76,17 @@ export type Place = Component["place"];
 export function componentFrom(place: Place): Component {
   const component = (target: Element, props: Props = {}): Instance => {
     const leaves: Leave[] = [];
-    const remove = place(target, null, props, leaves);
+    const remove = place(target, null, { props }, leaves);
     return { root: target, detach: () => leaveThen(leaves, remove) };
   };
   return Object.assign(component, { place });
 }
 
 export function defineComponent(id: string, css: string, render: Render): Component {
-  return componentFrom((parent, anchor, props, leaves) => {
+  return componentFrom((parent, anchor, host, leaves) => {
     injectStyle(id, css);
     const cleanups: Cleanup[] = [];
-    const { fragment, setup } = renderWith(render, props, cleanups, leaves);
+    const { fragment, setup } = renderWith(render, host, cleanups, leaves);
     const nodes = [...fragment.childNodes];
     parent.insertBefore(fragment, anchor);
     runSetup(setup, parent, cleanups);
@@ -95,7 +104,8 @@ export function bindComponent(
   props: Props,
   cleanups: Cleanup[],
   leaves: Leave[],
+  content?: Slot,
 ): void {
-  cleanups.push(component.place(marker.parentNode!, marker, props, leaves));
+  cleanups.push(component.place(marker.parentNode!, marker, { props, content }, leaves));
   (marker as ChildNode).remove();
 }
