@@ -157,7 +157,7 @@ export const CODES = {
   },
   L2012: {
     message: 'more has an unknown key "$key", use $keys',
-    hint: "Check the spelling of the key.",
+    hint: "$tip",
   },
   L2013: {
     message: "animate more outDuration needs out",
@@ -322,6 +322,18 @@ export const CODES = {
   L2053: {
     message: "a computed variable cannot be set",
     hint: "Set the variables it reads, or use variable(...) for a value you can set.",
+  },
+  L2054: {
+    message: "unknown keyframes key '$key'. Keys are numbers from 0 to 1 or 'default'",
+    hint: "$tip",
+  },
+  L2055: {
+    message: "unknown animate key '$key'",
+    hint: "$tip",
+  },
+  L2056: {
+    message: "animate more keepSpace must be true or false, got $value",
+    hint: "Use true to keep the space, or false to let it close.",
   },
   L3001: {
     message: '"$name" is not exported by "$module"',

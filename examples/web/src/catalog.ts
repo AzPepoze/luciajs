@@ -77,10 +77,12 @@ import keysSource from "./demos/motion/Keys.lucia?raw";
 import revealSource from "./demos/motion/Reveal.lucia?raw";
 import loopsSource from "./demos/motion/Loops.lucia?raw";
 import Leave from "./demos/motion/Leave.lucia";
+import LeaveList from "./demos/motion/LeaveList.lucia";
 import Both from "./demos/motion/Both.lucia";
 import VariableTrigger from "./demos/motion/VariableTrigger.lucia";
 import Control from "./demos/motion/Control.lucia";
 import leaveSource from "./demos/motion/Leave.lucia?raw";
+import leaveListSource from "./demos/motion/LeaveList.lucia?raw";
 import shrinkSource from "./demos/motion/Shrink.lucia?raw";
 import bothSource from "./demos/motion/Both.lucia?raw";
 import popSource from "./demos/motion/Pop.lucia?raw";
@@ -513,6 +515,14 @@ export const catalog: Record<string, CatalogEntry> = {
           { path: "src/demos/motion/Leave.lucia", text: leaveSource },
           { path: "src/demos/motion/Shrink.lucia", text: shrinkSource },
         ],
+      },
+      {
+        id: "animate-leave-space",
+        title: "Leave closes the space",
+        caption:
+          "A removed row shrinks while it leaves, so the rows below slide up. Turn keepSpace on to keep the gap until the row is gone.",
+        components: [LeaveList],
+        sources: [{ path: "src/demos/motion/LeaveList.lucia", text: leaveListSource }],
       },
       {
         id: "animate-both",

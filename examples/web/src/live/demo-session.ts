@@ -1,6 +1,7 @@
 import { variable, type ComputedVariable } from "lucia";
 import type { EditorFile } from "../editor/files.ts";
 import type { LiveBundle, LiveError, LiveRun } from "./types.ts";
+import { locateRuntimeError } from "./locate-error.ts";
 
 const EDIT_DELAY_MS = 300;
 
@@ -56,7 +57,7 @@ export function createDemoSession(
     }
     const result = await options.show(build.bundle);
     if (run !== latest) return;
-    error.value = result.ok ? null : result.error;
+    error.value = result.ok ? null : locateRuntimeError(result.error, files.peek());
   }
 
   function reset(): void {
@@ -69,7 +70,7 @@ export function createDemoSession(
   }
 
   function report(next: LiveError): void {
-    error.value = next;
+    error.value = locateRuntimeError(next, files.peek());
   }
 
   return { files, edited, error, edit, reset, report };

@@ -1,5 +1,7 @@
 import { formatWhere } from "../errors/where.ts";
+import { lineAt, columnAt, lineStarts } from "../utils/position.ts";
 import { bindersOf } from "./codegen-binders.ts";
+import { unknownKeysAt, type ScriptRange } from "./animate-keys.ts";
 import type { Expr, Template } from "./types.ts";
 
 export interface GenOptions {
@@ -7,12 +9,16 @@ export interface GenOptions {
   file: string;
   /** Dev builds pass each runtime check its location. */
   dev: boolean;
+  /** The whole .lucia file, and where its script sits in it. Dev builds use them to find keys. */
+  source: string;
+  script: ScriptRange;
 }
 
 /** Module-level declarations and names for one generated module. */
 export class GenContext {
   readonly declarations: string[] = [];
   private count = 0;
+  private lines: number[] | undefined;
 
   constructor(
     readonly id: string,
@@ -23,6 +29,25 @@ export class GenContext {
   whereOf(expr: Expr | undefined): string | undefined {
     if (!this.options.dev || !expr) return undefined;
     return JSON.stringify(formatWhere(this.options.file, expr.line, expr.column));
+  }
+
+  /** An object literal of the dev locations of keys the runtime would reject in an animate value, or undefined. */
+  animateKeyWheres(expr: Expr): string | undefined {
+    if (!this.options.dev) return undefined;
+    const { source, script } = this.options;
+    const starts = (this.lines ??= lineStarts(source));
+    const start = starts[expr.line - 1]! + expr.column - 1;
+    const unknown = unknownKeysAt(source, start, script);
+    if (unknown.length === 0) return undefined;
+    const entries = unknown.map(({ key, offset }) => {
+      const where = formatWhere(
+        this.options.file,
+        lineAt(source, offset),
+        columnAt(source, offset),
+      );
+      return `${JSON.stringify(key)}: ${JSON.stringify(where)}`;
+    });
+    return `{ ${entries.join(", ")} }`;
   }
 
   /** Declares a lazily parsed template for `html` and returns its name. */

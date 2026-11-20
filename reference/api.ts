@@ -564,7 +564,11 @@ export const api: ApiEntry[] = [
     example: `import { WHEN } from "lucia";\n\n<section animate={{ style: fadeUp, when: WHEN.VIEW }}>...</section>`,
     members: [
       { name: "ATTACH", summary: "Plays 0 to 1 once when attached. The default." },
-      { name: "DETACH", summary: "Plays its own keyframes on detach. Detach waits for it." },
+      {
+        name: "DETACH",
+        summary:
+          "Plays its own keyframes on detach. Detach waits for it, and closes the space the element holds unless more.keepSpace is set.",
+      },
       {
         name: "VIEW",
         summary: "Plays when at least 15% is visible. Once unless more.reverse is set.",
@@ -718,12 +722,13 @@ export const api: ApiEntry[] = [
     kind: "type",
     group: "motion",
     signature:
-      "more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] }",
+      "more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] } | { keepSpace?: boolean }",
     summary: "Options for the trigger an item uses. Each trigger accepts its own keys.",
     bullets: [
       'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
       "HOVER: inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
       "SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE), or follow: a variable of the tall element that drives it. part: [from, to] plays only that slice.",
+      "DETACH: keepSpace (default false). true keeps the space the element holds until it is removed; false closes that space with the leave.",
       "Any other trigger that sets more is an error.",
     ],
     example: `<div animate={{\n  style: fadeUp,\n  when: WHEN.VIEW,\n  more: { margin: "10%", amount: 0.5, reverse: true },\n}}>...</div>`,

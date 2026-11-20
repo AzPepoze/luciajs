@@ -11,6 +11,15 @@ import {
 } from "./view-options.ts";
 import { runtimeError } from "../errors.ts";
 import {
+  DETACH_KEYS,
+  HOVER_KEYS,
+  keyList,
+  SCROLL_KEYS,
+  SPELLING_HINT,
+  unknownKeyValues,
+  VIEW_KEYS,
+} from "./keys.ts";
+import {
   DEFAULT_RANGE,
   readScrollAt,
   sameTouch,
@@ -33,6 +42,16 @@ export interface HoverRead {
   out: { keyframes: Keyframes; duration: number } | undefined;
 }
 
+/** The `more` options of WHEN.DETACH. `keepSpace` keeps the space the element holds until it is removed. */
+export interface DetachMore {
+  keepSpace?: boolean;
+}
+
+/** The checked DETACH options. Without `keepSpace` the leave also closes the element's space. */
+export interface DetachRead {
+  keepSpace: boolean;
+}
+
 /** The item's own timing, used as the defaults for `more`. */
 export interface MoreBase {
   duration: number;
@@ -46,7 +65,7 @@ export interface ScrollMore {
   part?: [number, number];
 }
 
-export type More = ViewMore | HoverMore | ScrollMore;
+export type More = ViewMore | HoverMore | ScrollMore | DetachMore;
 
 export type Part = [number, number];
 
@@ -63,20 +82,19 @@ export interface ReadMore {
   reverse: boolean;
   hover: HoverRead;
   scroll: ScrollRead;
+  detach: DetachRead;
 }
 
 const DEFAULT_SCROLL: ScrollRead = { range: DEFAULT_RANGE, part: [0, 1], follow: undefined };
 const DEFAULT_HOVER: HoverRead = { inDelay: 0, outDelay: 0, out: undefined };
+const DEFAULT_DETACH: DetachRead = { keepSpace: false };
 const DEFAULT_MORE: ReadMore = {
   view: DEFAULT_VIEW,
   reverse: false,
   hover: DEFAULT_HOVER,
   scroll: DEFAULT_SCROLL,
+  detach: DEFAULT_DETACH,
 };
-
-const VIEW_KEYS = ["margin", "amount", "reverse"];
-const HOVER_KEYS = ["inDelay", "outDelay", "out", "outDuration"];
-const SCROLL_KEYS = ["start", "end", "follow", "part"];
 
 export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
   if (more === undefined) return DEFAULT_MORE;
@@ -86,6 +104,8 @@ export function readMore(when: When | Source, more: More | undefined, base: More
     return { ...DEFAULT_MORE, hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
   if (when === WHEN.SCROLL)
     return { ...DEFAULT_MORE, scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
+  if (when === WHEN.DETACH)
+    return { ...DEFAULT_MORE, detach: readDetach(checkKeys<DetachMore>(more, DETACH_KEYS)) };
   throw runtimeError("L2010", { when: whenName(when) });
 }
 
@@ -95,7 +115,8 @@ export function sameMore(a: ReadMore, b: ReadMore): boolean {
     sameView(a.view, b.view) &&
     a.reverse === b.reverse &&
     sameHover(a.hover, b.hover) &&
-    sameScroll(a.scroll, b.scroll)
+    sameScroll(a.scroll, b.scroll) &&
+    a.detach.keepSpace === b.detach.keepSpace
   );
 }
 
@@ -123,19 +144,17 @@ function whenName(when: When | Source): string {
 }
 
 /** Rejects a non-object or an unknown key, and returns the object typed as T. */
-function checkKeys<T extends object>(more: More, allowed: string[]): T {
+function checkKeys<T extends object>(more: More, allowed: readonly string[]): T {
   if (typeof more !== "object" || more === null) {
-    throw runtimeError("L2011", { keys: orList(allowed), value: String(more) });
+    throw runtimeError("L2011", { keys: keyList(allowed), value: String(more) });
   }
   for (const key of Object.keys(more)) {
-    if (!allowed.includes(key)) throw runtimeError("L2012", { key, keys: orList(allowed) });
+    if (!allowed.includes(key)) {
+      const values = unknownKeyValues(key, allowed, SPELLING_HINT);
+      throw runtimeError("L2012", values, key);
+    }
   }
   return more as T;
-}
-
-function orList(words: string[]): string {
-  if (words.length <= 1) return words.join("");
-  return `${words.slice(0, -1).join(", ")} or ${words[words.length - 1]}`;
 }
 
 function readHover(more: HoverMore, base: MoreBase): HoverRead {
@@ -169,6 +188,12 @@ function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead {
   if (start !== undefined || end !== undefined) throw runtimeError("L2015");
   if (!isReactive(follow)) throw runtimeError("L2016");
   return { range: DEFAULT_RANGE, part: readPart(part), follow };
+}
+
+function readDetach({ keepSpace }: DetachMore): DetachRead {
+  if (keepSpace === undefined) return DEFAULT_DETACH;
+  if (typeof keepSpace !== "boolean") throw runtimeError("L2056", { value: String(keepSpace) });
+  return { keepSpace };
 }
 
 function readRange(start: unknown, end: unknown): ScrollRange {

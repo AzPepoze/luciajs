@@ -10,7 +10,8 @@
   }
 
   function report(error) {
-    post({ type: "error", message: error && error.message ? error.message : String(error) });
+    var message = error && error.message ? error.message : String(error);
+    post({ type: "error", message: message, code: error && error.code, hint: error && error.hint });
   }
 
   function blobUrl(code) {

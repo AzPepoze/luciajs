@@ -3,9 +3,9 @@ import { attach, props, variable, type Instance } from "lucia";
 import type { Demo } from "../catalog.ts";
 import type { EditorFile } from "../editor/files.ts";
 import { createDemoSession } from "../live/demo-session.ts";
-import { Preview } from "../live/preview.ts";
+import { Preview, RunError } from "../live/preview.ts";
 import { loadRuntime } from "../live/runtime-source.ts";
-import type { LiveBundle, LiveRun } from "../live/types.ts";
+import type { LiveBundle, LiveError, LiveRun } from "../live/types.ts";
 import { guidePath, pageLink } from "../page-link.ts";
 import CodeEditor from "./CodeEditor.lucia";
 import CodePanel from "./CodePanel.lucia";
@@ -36,7 +36,7 @@ const session = createDemoSession(sources, {
 // The demo mounts now. The editor is made once the demo is close to the screen.
 function setup() {
   mountOriginals();
-  preview = new Preview(stage.peek()!, (message) => session.report({ message }), {
+  preview = new Preview(stage.peek()!, (error) => session.report(error), {
     sizeToContent: true,
   });
   const observer = new IntersectionObserver(
@@ -67,7 +67,7 @@ async function showLive(bundle: LiveBundle): Promise<LiveRun> {
   try {
     await preview!.show({ ...bundle, runtime: await loadRuntime(), theme: themeName() });
   } catch (error) {
-    return { ok: false, error: { message: messageOf(error) } };
+    return { ok: false, error: errorDetail(error) };
   }
   if (!live.peek()) {
     for (const instance of originals) void instance.detach();
@@ -88,8 +88,9 @@ function themeName(): string {
   return document.documentElement.dataset.theme ?? "light";
 }
 
-function messageOf(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
+function errorDetail(error: unknown): LiveError {
+  if (error instanceof RunError) return error.detail;
+  return { message: error instanceof Error ? error.message : String(error) };
 }
 </script>
 

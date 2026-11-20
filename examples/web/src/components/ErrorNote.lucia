@@ -27,6 +27,9 @@ function placeOf(next: LiveError | null): string {
       <IF {error.value?.file !== undefined}>
         <p class="live-error-place">{placeOf(error.value)}</p>
       </IF>
+      <IF {error.value?.frame !== undefined}>
+        <pre class="live-error-frame">{error.value?.frame}</pre>
+      </IF>
     </div>
   </IF>
 </div>

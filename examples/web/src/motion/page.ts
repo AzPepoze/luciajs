@@ -16,5 +16,5 @@ const pageInKeys = {
 };
 
 export const pageIn = { style: pageInKeys, when: WHEN.ATTACH, duration: 450, keep: false };
-export const pageOut = { style: pageOutKeys, when: WHEN.DETACH, duration: 250 };
+export const pageOut = { style: pageOutKeys, when: WHEN.DETACH, duration: 250, more: { keepSpace: true } };
 export const pageMotion = [pageIn, pageOut];

@@ -43,8 +43,10 @@ function bindCall(bind: BindBinding, ctx: GenContext): string {
 }
 
 function animateCall(expr: Expr, ctx: GenContext): string {
-  const at = trailingArg(ctx.whereOf(expr));
-  return `__animate(__node as HTMLElement, () => (${markedCode(expr)}), __cleanups, __leaves${at});`;
+  const at = ctx.whereOf(expr);
+  const keys = ctx.animateKeyWheres(expr);
+  const locations = keys === undefined ? trailingArg(at) : `, ${at ?? "undefined"}, ${keys}`;
+  return `__animate(__node as HTMLElement, () => (${markedCode(expr)}), __cleanups, __leaves${locations});`;
 }
 
 /** An object of getters, one per attribute: `{ "title": () => ... }`. */

@@ -7,7 +7,7 @@ import { Player } from "./player.ts";
 import { ownTimelines } from "./timeline.ts";
 import { WHEN } from "./trigger.ts";
 import { bindTrigger, groupSlots, type Slot } from "./triggers.ts";
-import { runtimeError, withWhere } from "../errors.ts";
+import { runtimeError, withWhere, type KeyWheres } from "../errors.ts";
 
 /** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from variables. */
 export function animate(
@@ -16,10 +16,11 @@ export function animate(
   cleanups: Cleanup[],
   leaves: Leave[],
   where?: string,
+  keys?: KeyWheres,
 ): void {
-  const first = withWhere(where, () => itemsOf(readValue()).map(readItem));
+  const first = withWhere(where, () => itemsOf(readValue()).map(readItem), keys);
   const players = first.map(() => new Player(el.style));
-  const reload = (): void => withWhere(where, () => loadTimelines(el, readValue, players));
+  const reload = (): void => withWhere(where, () => loadTimelines(el, readValue, players), keys);
   reload();
   const slots = groupSlots(first, players, reload);
   for (const slot of startOrder(slots)) slot.group.show(0);
