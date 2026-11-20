@@ -30,7 +30,7 @@ describe("onclick", () => {
     const el = host();
     mount(Writes, el);
     let runs = 0;
-    const stop = variable.onUpdate(function countRuns() {
+    const stop = variable.autoRun(function countRuns() {
       runs++;
       state.from.value;
       state.to.value;

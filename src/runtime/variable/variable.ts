@@ -2,7 +2,7 @@ import { currentComponentCleanups } from "../dom/component.ts";
 import { compute } from "./compute.ts";
 import { batch, propagate, queueWatcher, track, untrack, type Source } from "./graph.ts";
 import { REACTIVE } from "./reactive.ts";
-import { onUpdate, runsAtStart, watchVariables } from "./update.ts";
+import { autoRun, runsAtStart, watchVariables } from "./update.ts";
 
 export interface UpdateOptions {
   /** Run once right away, with `before` undefined. Default true. */
@@ -70,9 +70,9 @@ function createVariable<T>(initial: T): Variable<T> {
   };
 }
 
-/** `variable(value)` makes a variable. `variable.compute(fn)` derives a computed one. `variable.onUpdate(fn)` runs fn on update. */
+/** `variable(value)` makes a variable. `variable.compute(fn)` derives a computed one. `variable.autoRun(fn)` runs fn now and on each update it reads. */
 export const variable = Object.assign(createVariable, {
   compute,
-  onUpdate,
+  autoRun,
   watch: watchVariables,
 });

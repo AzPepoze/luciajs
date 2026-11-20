@@ -23,24 +23,24 @@ const status = variable("");
 let session: EditorSession | undefined;
 
 // An active file set by the parent takes effect; tabs change the selection after that.
-variable.onUpdate(() => {
+variable.autoRun(() => {
   selected.value = active.value;
 });
 
 // Variables are read before the optional call, so they stay tracked until it loads.
-variable.onUpdate(() => {
+variable.autoRun(() => {
   const list = files.value;
   const name = selected.value;
   session?.show(list, name);
 });
 
-variable.onUpdate(() => {
+variable.autoRun(() => {
   const isReadOnly = readOnly.value;
   session?.setReadOnly(isReadOnly);
 });
 
 // A new jump object moves the cursor, even to the place it was last at.
-variable.onUpdate(() => {
+variable.autoRun(() => {
   const target = jump.value;
   if (!target) return;
   selected.value = target.file;

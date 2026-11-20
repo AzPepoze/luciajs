@@ -38,9 +38,9 @@ describe("wrapSignature", () => {
 
   test("keeps commas inside nested brackets and arrows", () => {
     const long =
-      "variable.onUpdate(fn: (a: number, b: number) => void, extra: Record<string, unknown>): void";
+      "variable.autoRun(fn: (a: number, b: number) => void, extra: Record<string, unknown>): void";
     expect(wrapSignature(long)).toBe(
-      "variable.onUpdate(\n  fn: (a: number, b: number) => void,\n  extra: Record<string, unknown>\n): void",
+      "variable.autoRun(\n  fn: (a: number, b: number) => void,\n  extra: Record<string, unknown>\n): void",
     );
   });
 

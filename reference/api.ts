@@ -51,11 +51,11 @@ export const api: ApiEntry[] = [
     example: `const double = variable.compute(() => count.value * 2);`,
   },
   {
-    id: "variable-on-update",
-    name: "variable.onUpdate()",
+    id: "variable-auto-run",
+    name: "variable.autoRun()",
     kind: "function",
     group: "reactivity",
-    signature: "variable.onUpdate(fn: () => void): () => void",
+    signature: "variable.autoRun(fn: () => void): () => void",
     summary: "Runs fn now, then again when a variable or computed variable it read updates.",
     bullets: [
       "Runs fn once right away, then only when a value it read updates.",
@@ -63,7 +63,7 @@ export const api: ApiEntry[] = [
       "Returns a stop function.",
       "Inside a component's <script>, it stops when the component is removed.",
     ],
-    example: `import { variable } from "lucia";\n\nconst count = variable(0);\n\nfunction logCount() {\n  console.log("count is", count.value);\n}\n\nconst stop = variable.onUpdate(logCount);\ncount.value++; // logs again\nstop();`,
+    example: `import { variable } from "lucia";\n\nconst count = variable(0);\n\nfunction logCount() {\n  console.log("count is", count.value);\n}\n\nconst stop = variable.autoRun(logCount);\ncount.value++; // logs again\nstop();`,
   },
   {
     id: "variable-watch",
@@ -83,7 +83,7 @@ export const api: ApiEntry[] = [
   },
   {
     id: "variable-instance-on-update",
-    name: "variable.onUpdate() on one variable",
+    name: "count.onUpdate() on one variable",
     kind: "function",
     group: "reactivity",
     signature:

@@ -24,7 +24,7 @@ import Components from "./demos/components/Components.lucia";
 import Props from "./demos/components/Props.lucia";
 import Batch from "./demos/reactivity/Batch.lucia";
 import Variable from "./demos/reactivity/Variable.lucia";
-import OnUpdate from "./demos/reactivity/OnUpdate.lucia";
+import AutoRun from "./demos/reactivity/AutoRun.lucia";
 import UpdateBefore from "./demos/reactivity/UpdateBefore.lucia";
 import Watch from "./demos/reactivity/Watch.lucia";
 import SharedReader from "./demos/reactivity/SharedReader.lucia";
@@ -42,7 +42,7 @@ import eventsSource from "./demos/basics/Events.lucia?raw";
 import textSource from "./demos/basics/Text.lucia?raw";
 import batchSource from "./demos/reactivity/Batch.lucia?raw";
 import variableDemoSource from "./demos/reactivity/Variable.lucia?raw";
-import onUpdateSource from "./demos/reactivity/OnUpdate.lucia?raw";
+import autoRunSource from "./demos/reactivity/AutoRun.lucia?raw";
 import updateBeforeSource from "./demos/reactivity/UpdateBefore.lucia?raw";
 import watchSource from "./demos/reactivity/Watch.lucia?raw";
 import sharedReaderSource from "./demos/reactivity/SharedReader.lucia?raw";
@@ -192,15 +192,15 @@ export const catalog: Record<string, CatalogEntry> = {
     ],
   },
   "variable-compute": { icon: "calculate" },
-  "variable-on-update": {
+  "variable-auto-run": {
     icon: "sync",
     demos: [
       {
-        id: "variable-on-update-peek",
+        id: "variable-auto-run-peek",
         title: "Peek",
         caption: "peek() reads a variable without subscribing to it.",
-        components: [OnUpdate],
-        sources: [{ path: "src/demos/reactivity/OnUpdate.lucia", text: onUpdateSource }],
+        components: [AutoRun],
+        sources: [{ path: "src/demos/reactivity/AutoRun.lucia", text: autoRunSource }],
       },
     ],
   },

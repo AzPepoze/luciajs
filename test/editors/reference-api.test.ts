@@ -34,7 +34,7 @@ describe("reference api table", () => {
     for (const id of [
       "variable",
       "variable-compute",
-      "variable-on-update",
+      "variable-auto-run",
       "props",
       "attach",
       "variable-type",

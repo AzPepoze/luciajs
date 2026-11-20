@@ -8,7 +8,7 @@ export function runsAtStart(options?: UpdateOptions): boolean {
 }
 
 /** Runs fn now, then again when a variable it read updates. Stops with the component, if inside one. */
-export function onUpdate(fn: () => void): () => void {
+export function autoRun(fn: () => void): () => void {
   const stop = watch(() => batch(fn));
   currentComponentCleanups()?.push(stop);
   return stop;
