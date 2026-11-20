@@ -1,6 +1,5 @@
-import { createRequire } from "node:module";
+import * as sass from "sass";
 import { readFileSync } from "node:fs";
-import type * as sass from "sass";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { lusiaError } from "../errors/create.ts";
@@ -34,14 +33,6 @@ interface SassEntry {
 
 // File -> style index -> entry. A new edit overwrites its own slot, so the cache stays bounded.
 const sassCache = new Map<string, SassEntry[]>();
-const require = createRequire(import.meta.url);
-let sassModule: typeof sass | undefined;
-
-// Sass is large, so a process that only checks plain CSS never loads it.
-function sassRuntime(): typeof sass {
-  sassModule ??= require("sass") as typeof sass;
-  return sassModule;
-}
 
 export function compileStyle(style: Section, file: string, id: string, index = 0): string {
   return compileStyleResult(style, file, id, index).css;
@@ -107,10 +98,7 @@ function storeEntry(file: string, index: number, entry: SassEntry): void {
 
 function runSass(style: Section, file: string): sass.CompileResult {
   try {
-    return sassRuntime().compileString(style.content, {
-      loadPaths: [dirname(file)],
-      style: "expanded",
-    });
+    return sass.compileString(style.content, { loadPaths: [dirname(file)], style: "expanded" });
   } catch (error) {
     const sassError = error as sass.Exception;
     const span = sassError.span;
