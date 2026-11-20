@@ -205,8 +205,8 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
-  "store-type": { icon: "category" },
-  "read-store-type": { icon: "category" },
+  "store-type": { icon: "data_object" },
+  "read-store-type": { icon: "data_object" },
   component: { icon: "extension" },
   instance: { icon: "memory" },
   "props-type": { icon: "category" },
@@ -491,4 +491,24 @@ export const catalog: Record<string, CatalogEntry> = {
   scoped: { icon: "segment" },
   global: { icon: "language" },
   "inline-global": { icon: "filter_center_focus" },
+  elseif: { icon: "call_split" },
+  else: { icon: "fork_right" },
+  "bind-prop": { icon: "swap_horiz" },
+  ease: { icon: "show_chart" },
+  when: { icon: "schedule" },
+  "set-animate-default": { icon: "tune" },
+  controller: { icon: "play_circle" },
+  midway: { icon: "alt_route" },
+  turn: { icon: "u_turn_left" },
+  "animate-more": { icon: "more_horiz" },
+  "animate-type": { icon: "movie" },
+  "keyframes-type": { icon: "timeline" },
+  interpolate: { icon: "linear_scale" },
 };
+
+// Every api entry needs an icon. A missing one throws, so the catalog test catches it at once.
+export function entryIcon(id: string): string {
+  const entry = catalog[id];
+  if (!entry) throw new Error(`No catalog icon for api entry "${id}"`);
+  return entry.icon;
+}

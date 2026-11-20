@@ -1,6 +1,6 @@
 <script>
 import { api, type ApiGroup } from "../../../../reference/api.ts";
-import { catalog, groupTitles } from "../catalog.ts";
+import { entryIcon, groupTitles } from "../catalog.ts";
 import RefCard from "../components/RefCard.lucia";
 import RefIndex from "../components/RefIndex.lucia";
 import { pageMotion } from "../motion/page.ts";
@@ -17,7 +17,7 @@ const groups = groupEntries(api, groupOrder).map(({ group, entries }) => ({
   links: entries.map((entry) => ({
     id: entry.id,
     name: entry.name,
-    icon: catalog[entry.id]?.icon ?? "chevron_right",
+    icon: entryIcon(entry.id),
   })),
 }));
 const kinds = kindsOf(api);
