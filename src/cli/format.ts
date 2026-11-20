@@ -1,8 +1,7 @@
 import { relative } from "node:path";
-import { formatLusia } from "@language/format.ts";
 import { ANSI, colorEnabled, paint } from "./color.ts";
 import { collectFiles } from "./files.ts";
-import { partsFor } from "./format-parts.ts";
+import { formatFiles } from "./format-pool.ts";
 
 export interface FormatOptions {
   paths: string[];
@@ -16,16 +15,14 @@ export async function runFormat(options: FormatOptions): Promise<number> {
   const color = colorEnabled();
   const changed: string[] = [];
   const errors: string[] = [];
-  for (const file of files) {
-    try {
-      const source = await Bun.file(file).text();
-      const formatted = await formatLusia(source, await partsFor(file));
-      if (formatted === source) continue;
-      if (!options.check) await Bun.write(file, formatted);
-      changed.push(display(file));
-    } catch (error) {
-      errors.push(`${display(file)}: ${messageOf(error)}`);
+  for (const result of await formatFiles(files)) {
+    if (result.error !== undefined) {
+      errors.push(`${display(result.file)}: ${result.error}`);
+      continue;
     }
+    if (result.changed !== true) continue;
+    if (!options.check) await Bun.write(result.file, result.formatted ?? "");
+    changed.push(display(result.file));
   }
   report(options, files.length, changed, errors, color);
   return errors.length > 0 || (options.check && changed.length > 0) ? 1 : 0;
@@ -45,15 +42,19 @@ function report(
   if (options.check) {
     for (const path of changed)
       process.stdout.write(`${color ? paint(path, ANSI.yellow) : path}\n`);
-    if (!options.quiet) process.stdout.write(`${summary(count, changed.length)}\n`);
+    if (!options.quiet)
+      process.stdout.write(`${summary(count, changed.length)}\n`);
     return;
   }
-  if (!options.quiet) process.stdout.write(`${writtenSummary(count, changed.length)}\n`);
+  if (!options.quiet)
+    process.stdout.write(`${writtenSummary(count, changed.length)}\n`);
 }
 
 function summary(count: number, changed: number): string {
   if (changed === 0) {
-    return count === 1 ? "The file is formatted." : `All ${count} files are formatted.`;
+    return count === 1
+      ? "The file is formatted."
+      : `All ${count} files are formatted.`;
   }
   return `${changed} of ${count} ${plural(count)} would be reformatted.`;
 }
@@ -69,8 +70,4 @@ function plural(count: number): string {
 
 function display(file: string): string {
   return relative(process.cwd(), file) || file;
-}
-
-function messageOf(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
 }

@@ -35,7 +35,11 @@ function testFolder(): string {
   return join(workRoot, `case-${caseIndex++}`);
 }
 
-async function writeLusia(dir: string, name: string, text: string): Promise<string> {
+async function writeLusia(
+  dir: string,
+  name: string,
+  text: string,
+): Promise<string> {
   const file = join(dir, name);
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, text);
@@ -44,7 +48,9 @@ async function writeLusia(dir: string, name: string, text: string): Promise<stri
 
 function captureStdout(): () => string {
   const chunks: string[] = [];
-  const spy = spyOn(process.stdout, "write").mockImplementation(((chunk: string | Uint8Array) => {
+  const spy = spyOn(process.stdout, "write").mockImplementation(((
+    chunk: string | Uint8Array,
+  ) => {
     chunks.push(String(chunk));
     return true;
   }) as unknown as typeof process.stdout.write);
@@ -56,7 +62,9 @@ function captureStdout(): () => string {
 
 function captureStderr(): () => string {
   const chunks: string[] = [];
-  const spy = spyOn(process.stderr, "write").mockImplementation(((chunk: string | Uint8Array) => {
+  const spy = spyOn(process.stderr, "write").mockImplementation(((
+    chunk: string | Uint8Array,
+  ) => {
     chunks.push(String(chunk));
     return true;
   }) as unknown as typeof process.stderr.write);
@@ -70,13 +78,19 @@ describe("runFormat", () => {
   test("formats a file in place, matching the shared formatter", async () => {
     const dir = testFolder();
     const file = await writeLusia(dir, "Card.lusia", UNFORMATTED);
-    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(0);
+    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
+      0,
+    );
 
     const formatted = await readFile(file, "utf8");
     expect(formatted).toContain('const name = variable("Ada");');
     expect(formatted).toContain(".card {");
-    expect(await formatLusia(UNFORMATTED, await partsFor(file))).toBe(formatted);
-    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(0);
+    expect(await formatLusia(UNFORMATTED, await partsFor(file))).toBe(
+      formatted,
+    );
+    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
+      0,
+    );
     expect(await readFile(file, "utf8")).toBe(formatted);
   });
 
@@ -106,22 +120,53 @@ describe("runFormat", () => {
     const dir = testFolder();
     await writeLusia(dir, "Card.lusia", UNFORMATTED);
     const quiet = captureStdout();
-    expect(await runFormat({ paths: [dir], check: false, quiet: true })).toBe(0);
+    expect(await runFormat({ paths: [dir], check: false, quiet: true })).toBe(
+      0,
+    );
     expect(quiet()).toBe("");
 
     await writeLusia(dir, "Card.lusia", UNFORMATTED);
     const loud = captureStdout();
-    expect(await runFormat({ paths: [dir], check: false, quiet: false })).toBe(0);
+    expect(await runFormat({ paths: [dir], check: false, quiet: false })).toBe(
+      0,
+    );
     expect(loud()).toBe("Formatted 1 of 1 file.\n");
+  });
+
+  test("formats a large set through the worker pool", async () => {
+    const dir = testFolder();
+    const files: string[] = [];
+    for (let index = 0; index < 220; index++) {
+      files.push(await writeLusia(dir, `Card${index}.lusia`, UNFORMATTED));
+    }
+    const report = captureStdout();
+    expect(await runFormat({ paths: [dir], check: true, quiet: true })).toBe(1);
+    expect(report().split("\n").filter(Boolean)).toHaveLength(220);
+    for (const file of files)
+      expect(await readFile(file, "utf8")).toBe(UNFORMATTED);
+
+    expect(await runFormat({ paths: [dir], check: false, quiet: true })).toBe(
+      0,
+    );
+    for (const file of files)
+      expect(await readFile(file, "utf8")).toContain(".card {");
   });
 
   test("reports a file that cannot be formatted and exits 1", async () => {
     const dir = testFolder();
-    const file = await writeLusia(dir, "Broken.lusia", "<script>\nconst a = ;\n</script>\n");
+    const file = await writeLusia(
+      dir,
+      "Broken.lusia",
+      "<script>\nconst a = ;\n</script>\n",
+    );
     const errors = captureStderr();
-    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(1);
+    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
+      1,
+    );
     expect(errors()).toContain("Broken.lusia");
-    expect(await readFile(file, "utf8")).toBe("<script>\nconst a = ;\n</script>\n");
+    expect(await readFile(file, "utf8")).toBe(
+      "<script>\nconst a = ;\n</script>\n",
+    );
   });
 });
 
@@ -134,10 +179,16 @@ describe("collectFiles", () => {
     await writeLusia(dir, "dist/Skip.lusia", "");
     await writeLusia(dir, ".worktrees/Skip.lusia", "");
     await writeLusia(dir, "notes.txt", "");
-    const names = (files: string[]): string[] => files.map((file) => relative(dir, file));
+    const names = (files: string[]): string[] =>
+      files.map((file) => relative(dir, file));
 
-    expect(names(await collectFiles([dir]))).toEqual(["App.lusia", "components/Card.lusia"]);
-    expect(names(await collectFiles([`${dir}/*.lusia`]))).toEqual(["App.lusia"]);
+    expect(names(await collectFiles([dir]))).toEqual([
+      "App.lusia",
+      "components/Card.lusia",
+    ]);
+    expect(names(await collectFiles([`${dir}/*.lusia`]))).toEqual([
+      "App.lusia",
+    ]);
     expect(names(await collectFiles([`${dir}/**/*.lusia`]))).toEqual([
       "App.lusia",
       "components/Card.lusia",
@@ -150,6 +201,8 @@ describe("collectFiles", () => {
   });
 
   test("a missing path is a usage error", async () => {
-    await expect(collectFiles([join(testFolder(), "missing.lusia")])).rejects.toThrow(UsageError);
+    await expect(
+      collectFiles([join(testFolder(), "missing.lusia")]),
+    ).rejects.toThrow(UsageError);
   });
 });
