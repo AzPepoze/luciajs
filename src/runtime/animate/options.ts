@@ -5,7 +5,7 @@ import type { Keyframes } from "./keyframes.ts";
 import type { LoopSpec } from "./passes.ts";
 import { animateDefault } from "./defaults.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
-import { WHEN, isWhen, type When, type Source } from "./trigger.ts";
+import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "./trigger.ts";
 import { readMore, type ReadMore } from "./more.ts";
 import { runtimeError } from "../errors.ts";
 
@@ -31,11 +31,11 @@ export function readItem(item: AnimateItem): ItemOptions {
   rejectOldNames(item);
   rejectMovedReverse(item);
   const when = readWhen(item);
-  rejectScrollLoop(item, when);
+  rejectLoop(item, when);
   const duration = readMs(item.duration, animateDefault().duration, "duration");
   const more = readMore(when, item.more, { duration });
   return {
-    keyframes: readKeyframes(item),
+    keyframes: readKeyframes(item, when),
     timing: {
       duration,
       delay: readMs(item.delay, 0, "delay"),
@@ -50,9 +50,29 @@ export function readItem(item: AnimateItem): ItemOptions {
   };
 }
 
-function readKeyframes(item: AnimateItem): Keyframes {
-  if (!item.style) throw runtimeError("L2001");
+/** The keyframes of a layout item with no style. It has no props, so only the glide and the timing run. */
+const NO_STYLE: Keyframes = { 0: {}, 1: {} };
+
+/** The styles the glide writes. A layout item cannot animate them, or its keyframes would fight the glide. */
+const GLIDE_PROPS = ["translate", "scale"];
+
+function readKeyframes(item: AnimateItem, when: When | Source): Keyframes {
+  if (!item.style) {
+    if (isLayoutWhen(when)) return NO_STYLE;
+    throw runtimeError("L2001");
+  }
+  if (isLayoutWhen(when)) rejectGlideStyles(item.style);
   return item.style;
+}
+
+function rejectGlideStyles(keyframes: Keyframes): void {
+  for (const [key, value] of Object.entries(keyframes)) {
+    if (key === "default") continue;
+    const style = (Array.isArray(value) ? value[value.length - 1] : value) as Record<string, unknown>;
+    for (const name of GLIDE_PROPS) {
+      if (name in style) throw runtimeError("L2052", { name });
+    }
+  }
 }
 
 /** A removed member such as WHEN.IN is undefined, so a `when` key with no value means an old name. */
@@ -83,9 +103,11 @@ function rejectOldNames(item: AnimateItem): void {
   if ("alternate" in item) throw runtimeError("L2007");
 }
 
-/** A scroll-linked item follows the page position, so it has no time to loop over. */
-function rejectScrollLoop(item: AnimateItem, when: When | Source): void {
-  if (when === WHEN.SCROLL && item.loop) throw runtimeError("L2009");
+/** A scroll-linked item follows the page position, and a glide plays once per change, so neither loops. */
+function rejectLoop(item: AnimateItem, when: When | Source): void {
+  if (!item.loop) return;
+  if (when === WHEN.SCROLL) throw runtimeError("L2009");
+  if (isLayoutWhen(when)) throw runtimeError("L2051");
 }
 
 function rejectMovedReverse(item: AnimateItem): void {

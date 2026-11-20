@@ -77,7 +77,7 @@ describe("reference api table", () => {
       const entry = api.find((item) => item.name === name);
       expect(entry?.kind, name).toBe("value");
       expect(entry?.members?.length ?? 0, name).toBeGreaterThan(0);
-      for (const member of entry?.members ?? []) expect(member.name, name).toMatch(/^[A-Z]+$/);
+      for (const member of entry?.members ?? []) expect(member.name, name).toMatch(/^[A-Z_]+$/);
     }
   });
 
