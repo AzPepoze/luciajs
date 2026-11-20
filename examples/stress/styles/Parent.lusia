@@ -1,11 +1,11 @@
 <script>
-import { attach, type Instance } from "lusia";
+import { attach, setup, type Instance } from "lusia";
 import Child from "./Child.lusia";
 
-function setup(root: Element) {
+setup((root: Element) => {
   const child: Instance = attach(Child, root.querySelector(".slot")!);
   return () => child.detach();
-}
+});
 </script>
 
 <div class="parent">
