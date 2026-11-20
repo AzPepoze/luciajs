@@ -28,6 +28,8 @@ export interface Slot {
   glide: GlideSpec | undefined;
   /** Set for a DETACH item that closes its space. Each such item has its own slot. */
   shrink: ShrinkSpec | undefined;
+  /** True when a player in the group loops, so the group pauses off screen. */
+  loops: boolean;
   group: Group;
 }
 
@@ -38,21 +40,29 @@ interface Bucket {
   more: ReadMore;
   glide: GlideSpec | undefined;
   shrink: ShrinkSpec | undefined;
+  loops: boolean;
   players: Player[];
 }
 
 export function groupSlots(items: ItemOptions[], players: Player[], refresh: () => void): Slot[] {
   const buckets: Bucket[] = [];
-  items.forEach((item, i) => bucketFor(buckets, item).players.push(players[i]!));
-  return buckets.map(({ when, once, control, more, glide, shrink, players: members }) => ({
+  items.forEach((item, i) => addToBucket(buckets, item, players[i]!));
+  return buckets.map(({ when, once, control, more, glide, shrink, loops, players: members }) => ({
     when,
     once,
     control,
     more,
     glide,
     shrink,
+    loops,
     group: new Group(members, refresh),
   }));
+}
+
+function addToBucket(buckets: Bucket[], item: ItemOptions, player: Player): void {
+  const bucket = bucketFor(buckets, item);
+  bucket.players.push(player);
+  if (item.timing.loop !== undefined) bucket.loops = true;
 }
 
 function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
@@ -66,7 +76,7 @@ function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
             b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
         );
   if (found) return found;
-  const bucket: Bucket = { when, once, control, more, glide, shrink, players: [] };
+  const bucket: Bucket = { when, once, control, more, glide, shrink, loops: false, players: [] };
   buckets.push(bucket);
   return bucket;
 }
@@ -85,10 +95,11 @@ function glideSpecOf(item: ItemOptions): GlideSpec | undefined {
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
 export function bindTrigger(
   el: HTMLElement,
-  { when, once, more, glide, shrink, group }: Slot,
+  { when, once, more, glide, shrink, loops, group }: Slot,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
+  if (loops) cleanups.push(pauseOffScreen(el, group));
   if (isReactive(when)) bindSource(when, group, once, cleanups);
   else if (when === WHEN.ATTACH) attachTrigger(group);
   else if (when === WHEN.DETACH) leaves.push(detachLeave(el, group, shrink));
@@ -96,6 +107,14 @@ export function bindTrigger(
   else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
   else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);
   else if (glide) cleanups.push(watchLayout(el, glide, once, () => void group.forward()));
+}
+
+// Loops start a little before they reach the screen, so they are running when it arrives.
+const PAUSE_VIEW: ViewSettings = { rootMargin: "200px 0px", amount: 0 };
+
+/** Looping items stop writing styles while their element is off screen. */
+function pauseOffScreen(el: Element, group: Group): () => void {
+  return watchView(el, PAUSE_VIEW, (inView) => group.setOffScreen(!inView));
 }
 
 /** A hot swap shows the end state at once, so the element does not play its entrance again. */

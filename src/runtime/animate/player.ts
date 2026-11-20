@@ -36,6 +36,8 @@ export class Player implements Playable {
   private queued: Queued | undefined;
   /** Set when a play reached its end, so `keep: false` can clear the styles once the turn is done. */
   private ended = false;
+  /** Set by the element's view. Only a looping play pauses on it. */
+  private offScreen = false;
   private timeline!: Timeline;
   private timing!: Timing;
 
@@ -94,7 +96,13 @@ export class Player implements Playable {
     finish?.();
   }
 
+  /** A looping play that is off screen writes nothing. Its clock keeps running, so it catches up when shown. */
+  setOffScreen(offScreen: boolean): void {
+    this.offScreen = offScreen;
+  }
+
   step(now: number): boolean {
+    if (this.offScreen && this.timing.loop !== undefined) return false;
     if (this.passes && now >= this.clock) this.moveTo(now);
     this.present(now);
     if (this.isBusy()) return false;

@@ -12,6 +12,10 @@ export class Group implements Member {
     for (const player of this.players) player.show(progress);
   }
 
+  setOffScreen(offScreen: boolean): void {
+    for (const player of this.players) player.setOffScreen(offScreen);
+  }
+
   seek(progress: number): void {
     for (const player of this.players) player.seek(progress);
   }
