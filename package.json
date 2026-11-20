@@ -16,11 +16,11 @@
     "dev": "bun scripts/playground-runtime.ts && bun src/cli/index.ts dev docs",
     "dev:stress": "bun src/cli/index.ts dev examples/stress",
     "build": "bun scripts/playground-runtime.ts && bun src/cli/index.ts build docs",
-    "test": "bun test",
+    "test": "bun test --parallel=6",
     "format": "bun fmt",
     "format:check": "bun fmt --check",
     "typecheck": "tsc --noEmit",
-    "check": "tsc --noEmit && bun test && bun run build && cd editors/vscode && bun run build"
+    "check": "tsc --noEmit && bun run test && bun run build && cd editors/vscode && bun run build"
   },
   "dependencies": {
     "@codemirror/autocomplete": "6.20.4",

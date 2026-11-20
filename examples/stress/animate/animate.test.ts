@@ -2,9 +2,11 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lucia";
 import { createTarget } from "../cells.ts";
 import Tile from "./Tile.lucia";
-import { attachTiles, DURATION, TILES, wait } from "./main.ts";
+import { attachTiles, DURATION, wait } from "./main.ts";
 
 const LEAVE_MARGIN_MS = 200;
+// Small enough to check behaviour quickly. The stress page measures with TILES from main.ts.
+const TEST_TILES = 200;
 
 let targets: HTMLElement[] = [];
 
@@ -42,10 +44,10 @@ describe("animate on many elements", () => {
     expect(performance.now() - start).toBeGreaterThanOrEqual(DURATION - LEAVE_MARGIN_MS);
   });
 
-  test(`attaches and removes ${TILES} tiles`, async () => {
+  test(`attaches and removes ${TEST_TILES} tiles`, async () => {
     const target = newTarget();
-    const instances = attachTiles(target, TILES);
-    expect(target.querySelectorAll("li").length).toBe(TILES);
+    const instances = attachTiles(target, TEST_TILES);
+    expect(target.querySelectorAll("li").length).toBe(TEST_TILES);
 
     await Promise.all(instances.map((instance) => instance.detach()));
     expect(target.childNodes.length).toBe(0);

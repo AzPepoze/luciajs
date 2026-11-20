@@ -2,8 +2,11 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lucia";
 import { createTarget } from "../cells.ts";
 import { on } from "./on.ts";
-import { SETTLE_MS, TOGGLES } from "./main.ts";
+import { SETTLE_MS } from "./main.ts";
 import Toggle from "./Toggle.lucia";
+
+// Small enough to check behaviour quickly. The stress page measures with TOGGLES from main.ts.
+const TEST_TOGGLES = 200;
 
 let instance: Instance | null = null;
 let target: HTMLElement | null = null;
@@ -38,9 +41,9 @@ describe("IF with many toggles", () => {
     expect(root.querySelectorAll(".badge").length).toBe(0);
   });
 
-  test(`toggling ${TOGGLES} times leaves no badge once the leaves finish`, async () => {
+  test(`toggling ${TEST_TOGGLES} times leaves no badge once the leaves finish`, async () => {
     const root = mount();
-    for (let i = 0; i < TOGGLES; i++) on.value = !on.value;
+    for (let i = 0; i < TEST_TOGGLES; i++) on.value = !on.value;
     expect(on.value).toBe(false);
 
     await wait(SETTLE_MS);

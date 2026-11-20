@@ -10,7 +10,7 @@ LuciaJS is a Bun-native UI framework built from single-file `.lucia` components,
 | Web example (port 3000) | `bun run dev` |
 | Stress example (port 3000) | `bun run dev:stress` |
 | Build the web example (writes `dist/`) | `bun run build` |
-| All tests | `bun test` |
+| All tests | `bun run test` (parallel, 6 workers) |
 | One test file | `bun test test/compiler/style/modes.test.ts` |
 | Tests by name | `bun test -t "diamond"` |
 | Typecheck | `bun run typecheck` |
