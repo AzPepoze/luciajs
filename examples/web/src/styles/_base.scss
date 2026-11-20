@@ -66,6 +66,12 @@ a {
   -webkit-font-smoothing: antialiased;
 }
 
+// Covers page text and code blocks alike.
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
+}
+
 .button {
   display: inline-flex;
   align-items: center;

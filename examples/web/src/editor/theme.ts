@@ -8,8 +8,8 @@ export const editorTheme = EditorView.theme({
   ".cm-gutters": { backgroundColor: "var(--code)", color: "var(--muted)", border: "none" },
   ".cm-activeLine": { backgroundColor: "var(--accent-soft)" },
   ".cm-activeLineGutter": { backgroundColor: "var(--accent-soft)", color: "var(--fg)" },
-  ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
-    backgroundColor: "var(--lavender-soft)",
+  "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, & > .cm-scroller > .cm-selectionLayer .cm-selectionBackground": {
+    backgroundColor: "var(--selection-bg)",
   },
   ".cm-matchingBracket": { backgroundColor: "var(--lavender-soft)", color: "inherit" },
   ".cm-searchMatch": { backgroundColor: "var(--swipe)", outline: "none" },
