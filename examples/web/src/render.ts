@@ -27,6 +27,7 @@ function navGroup(group: ApiEntry["group"], entries: ApiEntry[]): HTMLElement {
   const { label, icon } = groupTitles[group];
   const wrapper = element("div", "nav-group");
   wrapper.dataset.group = group;
+  wrapper.style.setProperty("--group", groupTitles[group].color);
   const title = element("button", "nav-title");
   title.type = "button";
   title.setAttribute("aria-expanded", "true");

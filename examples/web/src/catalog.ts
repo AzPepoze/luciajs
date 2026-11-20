@@ -101,13 +101,14 @@ export interface CatalogEntry {
   demos?: Demo[];
 }
 
-export const groupTitles: Record<ApiGroup, { label: string; icon: string }> = {
-  basics: { label: "Basics", icon: "school" },
-  reactivity: { label: "Reactivity", icon: "bolt" },
-  flow: { label: "Flow", icon: "alt_route" },
-  components: { label: "Components", icon: "widgets" },
-  styling: { label: "Styling", icon: "palette" },
-  motion: { label: "Motion", icon: "animation" },
+// Each group has its own pastel colour. The sidebar tints the group header with it.
+export const groupTitles: Record<ApiGroup, { label: string; icon: string; color: string }> = {
+  basics: { label: "Basics", icon: "school", color: "var(--pink)" },
+  reactivity: { label: "Reactivity", icon: "bolt", color: "var(--lavender)" },
+  flow: { label: "Flow", icon: "alt_route", color: "var(--lemon)" },
+  components: { label: "Components", icon: "widgets", color: "var(--mint)" },
+  styling: { label: "Styling", icon: "palette", color: "var(--sky)" },
+  motion: { label: "Motion", icon: "animation", color: "var(--peach)" },
 };
 
 // Keyed by the api entry id. Entries without a demo show no live card.

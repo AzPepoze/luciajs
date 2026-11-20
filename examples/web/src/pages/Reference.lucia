@@ -1,51 +1,68 @@
 <script>
-import { api } from "../../../../reference/api.ts";
-import { groupTitles } from "../catalog.ts";
-import CodeBlock from "../components/CodeBlock.lucia";
+import { api, type ApiGroup } from "../../../../reference/api.ts";
+import { catalog, groupTitles } from "../catalog.ts";
+import RefCard from "../components/RefCard.lucia";
+import RefIndex from "../components/RefIndex.lucia";
 import { pageMotion } from "../motion/page.ts";
+import { groupEntries, kindsOf } from "../reference-model.ts";
 
-// Every entry, types included, grouped in the Guide's order. Each name links to its Guide section.
-const groups = Object.entries(groupTitles)
-  .map(([group, title]) => ({
-    group,
-    label: title.label,
-    rows: api
-      .filter((entry) => entry.group === group)
-      .map((entry) => ({ ...entry, members: entry.members ?? [] })),
-  }))
-  .filter((group) => group.rows.length > 0);
+// The index and the cards read the same groups, so their order always matches the Guide's.
+const groupOrder = Object.keys(groupTitles) as ApiGroup[];
+const groups = groupEntries(api, groupOrder).map(({ group, entries }) => ({
+  group,
+  label: groupTitles[group].label,
+  icon: groupTitles[group].icon,
+  color: groupTitles[group].color,
+  entries,
+  links: entries.map((entry) => ({
+    id: entry.id,
+    name: entry.name,
+    icon: catalog[entry.id]?.icon ?? "chevron_right",
+  })),
+}));
+const kinds = kindsOf(api);
 </script>
 
-<div class="page-root reference" animate={pageMotion}>
-  <h1 class="ref-page-title">Reference</h1>
-  <EACH {groups} as={group}>
-    <section class="ref-group" data-ref-group>
-      <h2 class="ref-title">{group.label}</h2>
-      <table class="ref-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Kind</th>
-            <th>Signature</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          <EACH {group.rows} as={row}>
-            <tr data-ref-row>
-              <td><a class="ref-name" href={"/guide#" + row.id}><code>{row.name}</code></a></td>
-              <td><span class="kind" data-kind={row.kind}>{row.kind}</span></td>
-              <td><CodeBlock text={row.signature} language="typescript" className="sig" /></td>
-              <td>
-                {row.summary}
-                <EACH {row.members} as={member}>
-                  <code class="member">{member.name}</code>
-                </EACH>
-              </td>
-            </tr>
-          </EACH>
-        </tbody>
-      </table>
-    </section>
-  </EACH>
+<div class="page-root docs reference">
+  <aside class="sidebar" id="sidebar" aria-label="Reference">
+    <span class="nav-indicator" aria-hidden="true"></span>
+    <RefIndex groups={groups} />
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+  <main class="content" animate={pageMotion}>
+    <h1 class="ref-page-title">Reference</h1>
+    <div class="ref-tools">
+      <label class="ref-search">
+        <span class="material-symbols-rounded" aria-hidden="true">search</span>
+        <input
+          id="ref-filter"
+          type="search"
+          placeholder="Filter the reference  ( / )"
+          aria-label="Filter the reference"
+          autocomplete="off"
+        />
+      </label>
+      <div class="ref-kinds" role="group" aria-label="Filter by kind">
+        <EACH {kinds} as={kind}>
+          <button class="chip kind-chip" type="button" data-kind={kind} data-ref-kind={kind} aria-pressed="false">
+            {kind}
+          </button>
+        </EACH>
+      </div>
+    </div>
+
+    <div class="ref-empty" data-ref-empty hidden>
+      <p>Nothing matches your filter.</p>
+      <button class="ref-clear" type="button" data-ref-clear>Clear filters</button>
+    </div>
+
+    <EACH {groups} as={group}>
+      <section class="ref-group" data-ref-section data-group={group.group} style={"--group: " + group.color}>
+        <h2 class="ref-group-title">{group.label}</h2>
+        <EACH {group.entries} as={entry}>
+          <RefCard entry={entry} />
+        </EACH>
+      </section>
+    </EACH>
+  </main>
 </div>

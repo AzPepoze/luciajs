@@ -41,26 +41,13 @@
   margin-top: 0.5rem;
 }
 
-// Each group has its own pastel guide line. The entries hang from it like a tree.
-.nav-group[data-group="basics"] {
-  --group: var(--pink);
-}
-.nav-group[data-group="reactivity"] {
-  --group: var(--lavender);
-}
-.nav-group[data-group="components"] {
-  --group: var(--mint);
-}
-.nav-group[data-group="styling"] {
-  --group: var(--sky);
-}
-
+// Each group sets --group inline (from catalog.ts). Its header is tinted with that colour.
 .nav-links {
   display: grid;
   gap: 0.1rem;
   margin: 0.1rem 0 0.5rem 1rem;
   padding-left: 0.6rem;
-  border-left: 2px solid var(--group);
+  border-left: 2px solid var(--line);
 }
 
 .nav-title {
@@ -69,11 +56,11 @@
   justify-content: space-between;
   width: 100%;
   margin: 1.25rem 0 0.25rem;
-  padding: 0.3rem 0.6rem;
+  padding: 0.45rem 0.7rem;
   border: 0;
-  border-radius: 6px;
-  background: none;
-  color: var(--muted);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--group) 22%, transparent);
+  color: var(--fg);
   font: inherit;
   font-size: 0.72rem;
   font-weight: 700;
@@ -86,6 +73,11 @@
     display: flex;
     align-items: center;
     gap: 0.45rem;
+  }
+
+  // The pastel icon is darkened a little, so it stays readable on the tint.
+  .group-name .material-symbols-rounded {
+    color: color-mix(in srgb, var(--group) 70%, var(--fg));
   }
 
   .material-symbols-rounded {
@@ -158,7 +150,7 @@
   display: grid;
   grid-template-rows: 0fr;
   margin: 0.1rem 0 0.3rem 1rem;
-  border-left: 2px solid var(--group);
+  border-left: 2px solid var(--line);
   opacity: 0;
   visibility: hidden;
   transition:

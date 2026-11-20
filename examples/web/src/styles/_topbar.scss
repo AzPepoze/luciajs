@@ -75,6 +75,10 @@
     font-size: 0.95rem;
     text-decoration: none;
 
+    &[aria-current="page"] {
+      color: var(--accent);
+    }
+
     &:hover {
       background: var(--card);
       color: var(--fg);
@@ -136,7 +140,10 @@
   }
 
   .main-menu {
-    display: none;
+    order: 4;
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
   }
 
   .search {

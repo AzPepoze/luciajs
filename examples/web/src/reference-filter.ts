@@ -1,0 +1,94 @@
+import { matchesFilter } from "./reference-model.ts";
+import { refreshScrollSpy } from "./scroll-spy.ts";
+
+// Filters the Reference cards and the index by text and kind. The topbar search drives the same filter.
+export function initReferenceFilter(root: HTMLElement, signal: AbortSignal): void {
+  const filter = root.querySelector<HTMLInputElement>("#ref-filter")!;
+  const topbarSearch = document.querySelector<HTMLInputElement>("#search")!;
+  const picked = new Set<string>();
+  const cards = [...root.querySelectorAll<HTMLElement>("[data-ref-entry]")];
+  const sections = [...root.querySelectorAll<HTMLElement>("[data-ref-section]")];
+  const indexGroups = [...root.querySelectorAll<HTMLElement>("[data-index-group]")];
+  const indexLinks = new Map(
+    [...root.querySelectorAll<HTMLElement>("[data-ref-link]")].map((link) => [
+      link.dataset.refLink!,
+      link,
+    ]),
+  );
+  const kindButtons = [...root.querySelectorAll<HTMLButtonElement>("[data-ref-kind]")];
+  const empty = root.querySelector<HTMLElement>("[data-ref-empty]")!;
+
+  function apply(): void {
+    const shownByGroup = new Map<string, number>();
+    let shownTotal = 0;
+    for (const card of cards) {
+      const shown = matchesFilter(
+        { kind: card.dataset.kind!, search: card.dataset.search! },
+        filter.value,
+        picked,
+      );
+      card.hidden = !shown;
+      indexLinks.get(card.id)!.hidden = !shown;
+      const group = card.dataset.group!;
+      shownByGroup.set(group, (shownByGroup.get(group) ?? 0) + Number(shown));
+      shownTotal += Number(shown);
+    }
+    for (const section of sections) section.hidden = !shownByGroup.get(section.dataset.group!);
+    for (const group of indexGroups) group.hidden = !shownByGroup.get(group.dataset.indexGroup!);
+    empty.hidden = shownTotal > 0;
+    refreshScrollSpy();
+  }
+
+  function setKind(button: HTMLButtonElement): void {
+    const kind = button.dataset.refKind!;
+    const on = !picked.has(kind);
+    if (on) picked.add(kind);
+    else picked.delete(kind);
+    button.setAttribute("aria-pressed", String(on));
+    apply();
+  }
+
+  function clearFilters(): void {
+    filter.value = "";
+    topbarSearch.value = "";
+    picked.clear();
+    for (const button of kindButtons) button.setAttribute("aria-pressed", "false");
+    apply();
+  }
+
+  filter.value = topbarSearch.value;
+  filter.addEventListener(
+    "input",
+    () => {
+      topbarSearch.value = filter.value;
+      apply();
+    },
+    { signal },
+  );
+  topbarSearch.addEventListener(
+    "input",
+    () => {
+      filter.value = topbarSearch.value;
+      apply();
+    },
+    { signal },
+  );
+  for (const button of kindButtons) {
+    button.addEventListener("click", () => setKind(button), { signal });
+  }
+  root.querySelector("[data-ref-clear]")?.addEventListener("click", clearFilters, { signal });
+  document.addEventListener("keydown", (event) => focusOnSlash(event, filter), { signal });
+  apply();
+}
+
+// "/" moves the cursor to the filter, unless the user is already typing somewhere.
+function focusOnSlash(event: KeyboardEvent, filter: HTMLInputElement): void {
+  if (event.key !== "/" || isTyping(event.target)) return;
+  event.preventDefault();
+  filter.focus();
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
+}

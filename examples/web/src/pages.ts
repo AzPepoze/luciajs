@@ -3,7 +3,7 @@ import { initCopy } from "./copy.ts";
 import { initDrawer } from "./drawer.ts";
 import { initFeatures } from "./features.ts";
 import { initGroupToggles } from "./nav-group.ts";
-import { initReferenceSearch } from "./reference-search.ts";
+import { initReferenceFilter } from "./reference-filter.ts";
 import { initScrollSpy } from "./scroll-spy.ts";
 import { initSearch } from "./search.ts";
 import { initSidebarFollow } from "./sidebar-follow.ts";
@@ -18,7 +18,7 @@ function mountGuide(root: HTMLElement, signal: AbortSignal): void {
   initSearch(signal);
   initGroupToggles(signal);
   initSidebarFollow(signal);
-  initScrollSpy(signal);
+  initScrollSpy(signal, { sections: ".doc-section", demos: ".demo-block" });
   initDrawer(signal);
   initCopy(root, signal);
 }
@@ -28,8 +28,14 @@ function mountHome(root: HTMLElement, signal: AbortSignal): void {
   initCopy(root, signal);
 }
 
+// The Reference shares the Guide's sidebar, drawer and scroll-spy. Its cards are the spy targets.
 function mountReference(root: HTMLElement, signal: AbortSignal): void {
-  initReferenceSearch(root, signal);
+  initSidebarFollow(signal);
+  initScrollSpy(signal, { sections: "[data-ref-entry]" });
+  initDrawer(signal);
+  initGroupToggles(signal);
+  initReferenceFilter(root, signal);
+  initCopy(root, signal);
 }
 
 export const pageSpecs: PageSpec[] = [

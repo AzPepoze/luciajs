@@ -239,6 +239,26 @@
   }
 }
 
+// The colour of each kind. Keyword chips and the Reference page's kind badges and toggles share it.
+@mixin kind-colors {
+  &[data-kind="function"] {
+    background: color-mix(in srgb, var(--pink) 35%, transparent);
+  }
+  &[data-kind="value"] {
+    background: color-mix(in srgb, var(--mint) 40%, transparent);
+  }
+  &[data-kind="markup"] {
+    background: color-mix(in srgb, var(--sky) 40%, transparent);
+  }
+  &[data-kind="expression"],
+  &[data-kind="style"] {
+    background: color-mix(in srgb, var(--lavender) 35%, transparent);
+  }
+  &[data-kind="type"] {
+    background: color-mix(in srgb, var(--lemon) 35%, transparent);
+  }
+}
+
 // Keyword chips in the docs text. The colour says what the keyword names. A chip that links has an underline.
 .chip {
   display: inline-block;
@@ -252,18 +272,7 @@
   font-variant-ligatures: none;
   text-decoration: none;
 
-  &[data-kind="function"] {
-    background: color-mix(in srgb, var(--pink) 35%, transparent);
-  }
-  &[data-kind="value"] {
-    background: color-mix(in srgb, var(--mint) 40%, transparent);
-  }
-  &[data-kind="markup"] {
-    background: color-mix(in srgb, var(--sky) 40%, transparent);
-  }
-  &[data-kind="expression"] {
-    background: color-mix(in srgb, var(--lavender) 35%, transparent);
-  }
+  @include kind-colors;
 
   &:is(a) {
     color: inherit;
@@ -274,4 +283,9 @@
   &:is(a):hover {
     text-decoration-style: solid;
   }
+}
+
+.anchor-target {
+  display: block;
+  scroll-margin-top: 5.5rem;
 }

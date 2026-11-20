@@ -3,6 +3,12 @@ import { keepInView } from "./sidebar-follow.ts";
 // Px from the top of the viewport where a section or demo becomes current. Below the scroll margin, so a clicked target is current.
 const SPY_LINE_PX = 200;
 
+// The CSS selectors of the page's section and demo targets. Each target's id matches a sidebar link's href.
+export interface SpyTargets {
+  sections: string;
+  demos?: string;
+}
+
 let indicator: HTMLElement;
 let linksById = new Map<string, HTMLAnchorElement[]>();
 let activeLinks: HTMLAnchorElement[] = [];
@@ -11,13 +17,13 @@ let demos: HTMLElement[] = [];
 let currentKey = "";
 let frame = 0;
 
-// Runs while the Guide page is attached. The signal removes every listener and pending frame.
-export function initScrollSpy(signal: AbortSignal): void {
+// Runs while a page with a #sidebar is attached. The signal removes every listener and pending frame.
+export function initScrollSpy(signal: AbortSignal, targets: SpyTargets): void {
   indicator = document.querySelector<HTMLElement>(".nav-indicator")!;
   const sidebar = document.querySelector<HTMLElement>("#sidebar")!;
-  linksById = groupLinksById();
-  sections = [...document.querySelectorAll<HTMLElement>(".doc-section")];
-  demos = [...document.querySelectorAll<HTMLElement>(".demo-block")];
+  linksById = groupLinksById(sidebar);
+  sections = queryAll(targets.sections);
+  demos = targets.demos ? queryAll(targets.demos) : [];
   window.addEventListener("scroll", () => scheduleUpdate(signal), { passive: true, signal });
   window.addEventListener("resize", () => scheduleUpdate(signal), { signal });
   sidebar.addEventListener("transitionend", () => placeIndicator(activeLinks.at(-1)), { signal });
@@ -28,6 +34,15 @@ export function initScrollSpy(signal: AbortSignal): void {
     activeLinks = [];
   });
   update();
+}
+
+// Call after targets are shown or hidden, so the current link follows the change without a scroll.
+export function refreshScrollSpy(): void {
+  update();
+}
+
+function queryAll(selector: string): HTMLElement[] {
+  return [...document.querySelectorAll<HTMLElement>(selector)];
 }
 
 function scheduleUpdate(signal: AbortSignal): void {
@@ -44,24 +59,29 @@ function update(): void {
   activate(section, demo && section?.contains(demo) ? demo : undefined);
 }
 
-// The last target whose top is above the line. Targets are in document order, so the scan stops early.
+// The last visible target whose top is above the line. Targets are in document order, so the scan stops early.
 function currentTarget(targets: HTMLElement[]): HTMLElement | undefined {
-  if (atPageBottom()) return targets.at(-1);
+  if (atPageBottom()) return lastVisible(targets);
   let current: HTMLElement | undefined;
   for (const target of targets) {
+    if (target.hidden) continue;
     if (target.getBoundingClientRect().top > SPY_LINE_PX) break;
     current = target;
   }
   return current;
 }
 
+function lastVisible(targets: HTMLElement[]): HTMLElement | undefined {
+  return targets.findLast((target) => !target.hidden);
+}
+
 function atPageBottom(): boolean {
   return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
 }
 
-function groupLinksById(): Map<string, HTMLAnchorElement[]> {
+function groupLinksById(sidebar: HTMLElement): Map<string, HTMLAnchorElement[]> {
   const map = new Map<string, HTMLAnchorElement[]>();
-  for (const link of document.querySelectorAll<HTMLAnchorElement>(".sidebar a")) {
+  for (const link of sidebar.querySelectorAll<HTMLAnchorElement>("a")) {
     const id = link.getAttribute("href")!.slice(1);
     map.set(id, [...(map.get(id) ?? []), link]);
   }
