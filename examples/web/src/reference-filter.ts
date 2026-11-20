@@ -1,10 +1,9 @@
 import { matchesFilter } from "./reference-model.ts";
 import { refreshScrollSpy } from "./scroll-spy.ts";
 
-// Filters the Reference cards and the index by text and kind. The topbar search drives the same filter.
+// Filters the Reference cards and the index by text and kind.
 export function initReferenceFilter(root: HTMLElement, signal: AbortSignal): void {
   const filter = root.querySelector<HTMLInputElement>("#ref-filter")!;
-  const topbarSearch = document.querySelector<HTMLInputElement>("#search")!;
   const picked = new Set<string>();
   const cards = [...root.querySelectorAll<HTMLElement>("[data-ref-entry]")];
   const sections = [...root.querySelectorAll<HTMLElement>("[data-ref-section]")];
@@ -50,45 +49,15 @@ export function initReferenceFilter(root: HTMLElement, signal: AbortSignal): voi
 
   function clearFilters(): void {
     filter.value = "";
-    topbarSearch.value = "";
     picked.clear();
     for (const button of kindButtons) button.setAttribute("aria-pressed", "false");
     apply();
   }
 
-  filter.value = topbarSearch.value;
-  filter.addEventListener(
-    "input",
-    () => {
-      topbarSearch.value = filter.value;
-      apply();
-    },
-    { signal },
-  );
-  topbarSearch.addEventListener(
-    "input",
-    () => {
-      filter.value = topbarSearch.value;
-      apply();
-    },
-    { signal },
-  );
+  filter.addEventListener("input", apply, { signal });
   for (const button of kindButtons) {
     button.addEventListener("click", () => setKind(button), { signal });
   }
   root.querySelector("[data-ref-clear]")?.addEventListener("click", clearFilters, { signal });
-  document.addEventListener("keydown", (event) => focusOnSlash(event, filter), { signal });
   apply();
-}
-
-// "/" moves the cursor to the filter, unless the user is already typing somewhere.
-function focusOnSlash(event: KeyboardEvent, filter: HTMLInputElement): void {
-  if (event.key !== "/" || isTyping(event.target)) return;
-  event.preventDefault();
-  filter.focus();
-}
-
-function isTyping(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  return target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
 }

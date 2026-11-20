@@ -37,7 +37,7 @@ const kinds = kindsOf(api);
         <input
           id="ref-filter"
           type="search"
-          placeholder="Filter the reference  ( / )"
+          placeholder="Filter the reference"
           aria-label="Filter the reference"
           autocomplete="off"
         />
