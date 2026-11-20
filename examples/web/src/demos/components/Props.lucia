@@ -1,10 +1,10 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import badge from "./badge.lucia";
 
-const warn = store(false);
-const tone = store.from(() => (warn.value ? "warn" : "info"));
-const label = store.from(() => `Tone is ${tone.value}`);
+const warn = variable(false);
+const tone = variable.compute(() => (warn.value ? "warn" : "info"));
+const label = variable.compute(() => `Tone is ${tone.value}`);
 
 function toggleTone() {
   warn.value = !warn.value;

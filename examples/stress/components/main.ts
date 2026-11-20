@@ -1,7 +1,7 @@
 import type { Instance } from "lucia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
-import { rowValue } from "../store.ts";
+import { rowValue } from "../variable.ts";
 import { attachTables, detachTables, PARENTS, ROWS_PER_TABLE } from "./tables.ts";
 
 const ROWS = PARENTS * ROWS_PER_TABLE;

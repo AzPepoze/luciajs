@@ -1,12 +1,12 @@
-import { store } from "lucia";
+import { variable } from "lucia";
 
 export interface Row {
   id: number;
   label: string;
 }
 
-// The list reads this store. Scenarios replace it to create, reorder, keep and remove rows.
-export const rows = store<Row[]>([]);
+// The list reads this variable. Scenarios replace it to create, reorder, keep and remove rows.
+export const rows = variable<Row[]>([]);
 
 export function makeRows(count: number, from = 0): Row[] {
   return Array.from({ length: count }, (_, offset) => ({

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lucia";
-import { resetStore } from "../store.ts";
+import { resetVariable } from "../variable.ts";
 import Edge from "./Edge.lucia";
 
 let target: HTMLElement;
@@ -15,7 +15,7 @@ beforeEach(() => {
 afterEach(() => {
   instance.detach();
   target.remove();
-  resetStore();
+  resetVariable();
 });
 
 function textOf(id: string): string {

@@ -1,6 +1,6 @@
 import { attachCells, createTarget, detachCells } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
-import { count } from "../store.ts";
+import { count } from "../variable.ts";
 
 const CELLS = 2000;
 const WRITES = 1000;

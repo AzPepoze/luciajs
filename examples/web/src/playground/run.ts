@@ -1,4 +1,4 @@
-import { store } from "lucia";
+import { variable } from "lucia";
 import { ENTRY_FILE } from "./names.ts";
 import { Preview } from "../live/preview.ts";
 import { loadRuntime } from "../live/runtime-source.ts";
@@ -18,7 +18,7 @@ export function mountPlayground(stage: HTMLElement, signal: AbortSignal): void {
   preview = new Preview(stage, (message) => {
     runtimeErrors.value = [{ message }];
   });
-  const stop = store.onUpdate(() => {
+  const stop = variable.onUpdate(() => {
     saveFiles(files.value);
     if (autoRun.value) scheduleRun();
   });

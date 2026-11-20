@@ -1,5 +1,5 @@
 <script>
-import { base, diamond } from "../store.ts";
+import { base, diamond } from "../variable.ts";
 
 const nothing = null;
 const undef = undefined;

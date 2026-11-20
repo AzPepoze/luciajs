@@ -1,8 +1,8 @@
 <script>
-import { WHEN, store } from "lucia";
+import { WHEN, variable } from "lucia";
 
 // Each row glides to its new place when the list reorders.
-const names = store(["Ada", "Grace", "Linus", "Ken"]);
+const names = variable(["Ada", "Grace", "Linus", "Ken"]);
 const glide = { when: WHEN.MOVE, duration: 400 };
 
 function moveFirstToEnd() {

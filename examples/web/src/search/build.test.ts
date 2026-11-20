@@ -39,7 +39,7 @@ describe("search index", () => {
     );
   });
 
-  test("stores lower-case copies for matching", () => {
+  test("variables lower-case copies for matching", () => {
     for (const entry of index) {
       expect(entry.title.lower).toBe(entry.title.text.toLowerCase());
     }

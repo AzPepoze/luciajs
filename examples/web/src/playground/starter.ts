@@ -2,12 +2,12 @@ import { ENTRY_FILE } from "./names.ts";
 import type { PlayFile } from "./types.ts";
 
 const STARTER_APP = `<script>
-import { store, PRESET, WHEN } from "lucia";
+import { variable, PRESET, WHEN } from "lucia";
 
-const count = store(0);
-const items = store<string[]>(["Apples", "Pears"]);
-const draft = store("");
-const label = store.from(() => (count.value > 4 ? "Lots of clicks" : "Keep clicking"));
+const count = variable(0);
+const items = variable<string[]>(["Apples", "Pears"]);
+const draft = variable("");
+const label = variable.compute(() => (count.value > 4 ? "Lots of clicks" : "Keep clicking"));
 
 // Each row slides up when it appears in the list.
 const rowMotion = { style: PRESET.SLIDE_UP, when: WHEN.ATTACH, duration: 300 };

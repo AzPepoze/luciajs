@@ -20,7 +20,7 @@ export function saveRecent(list: string[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   } catch {
-    // The history is a convenience. A full or blocked store just means it is not kept.
+    // The history is a convenience. A full or blocked variable just means it is not kept.
   }
 }
 

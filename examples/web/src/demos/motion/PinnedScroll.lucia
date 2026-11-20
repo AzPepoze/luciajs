@@ -1,8 +1,8 @@
 <script>
-import { WHEN, EASE, store } from "lucia";
+import { WHEN, EASE, variable } from "lucia";
 
 // The tall element drives the progress. The box stays on screen while it scrolls past.
-const pinDemo = store<Element | null>(null);
+const pinDemo = variable<Element | null>(null);
 
 const grow = {
   0: { scale: "0.4" },

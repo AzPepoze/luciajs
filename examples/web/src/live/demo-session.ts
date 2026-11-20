@@ -1,4 +1,4 @@
-import { store, type ReadStore } from "lucia";
+import { variable, type ComputedVariable } from "lucia";
 import type { EditorFile } from "../editor/files.ts";
 import type { LiveBundle, LiveError, LiveRun } from "./types.ts";
 
@@ -12,9 +12,9 @@ export interface DemoSessionOptions {
 }
 
 export interface DemoSession {
-  files: ReadStore<EditorFile[]>;
-  edited: ReadStore<boolean>;
-  error: ReadStore<LiveError | null>;
+  files: ComputedVariable<EditorFile[]>;
+  edited: ComputedVariable<boolean>;
+  error: ComputedVariable<LiveError | null>;
   edit(name: string, code: string): void;
   reset(): void;
   /** Shows an error that happened after a build mounted. */
@@ -26,9 +26,9 @@ export function createDemoSession(
   originals: EditorFile[],
   options: DemoSessionOptions,
 ): DemoSession {
-  const files = store(originals);
-  const edited = store(false);
-  const error = store<LiveError | null>(null);
+  const files = variable(originals);
+  const edited = variable(false);
+  const error = variable<LiveError | null>(null);
   let timer: ReturnType<typeof setTimeout> | undefined;
   // Each run takes a number. A run that finishes after a newer one has started is dropped.
   let latest = 0;

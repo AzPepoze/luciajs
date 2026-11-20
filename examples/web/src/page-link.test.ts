@@ -3,8 +3,8 @@ import { guidePath, normalizePath, pageLink, referencePath } from "./page-link.t
 
 describe("pageLink", () => {
   test("writes the page path in front of the hash", () => {
-    expect(pageLink(guidePath, "store-from")).toBe("/guide#store-from");
-    expect(pageLink(referencePath, "store-from")).toBe("/reference#store-from");
+    expect(pageLink(guidePath, "variable-compute")).toBe("/guide#variable-compute");
+    expect(pageLink(referencePath, "variable-compute")).toBe("/reference#variable-compute");
   });
 });
 

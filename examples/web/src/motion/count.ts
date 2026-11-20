@@ -1,7 +1,7 @@
-import type { Store } from "lucia";
+import type { Variable } from "lucia";
 
 // Counts a number up to its target with an ease-out curve. Reduced motion jumps to the end.
-export function countUp(value: Store<number>, target: number, duration = 1200): void {
+export function countUp(value: Variable<number>, target: number, duration = 1200): void {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
     value.value = target;
     return;

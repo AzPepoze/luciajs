@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import type { Instance } from "lucia";
 import { createTarget } from "../cells.ts";
-import { resetStore, rowValue } from "../store.ts";
+import { resetVariable, rowValue } from "../variable.ts";
 import { attachTables, detachTables, PARENTS, ROWS_PER_TABLE } from "./tables.ts";
 
 const ROWS = PARENTS * ROWS_PER_TABLE;
@@ -14,7 +14,7 @@ afterEach(() => {
   instances = [];
   for (const target of targets) target.remove();
   targets = [];
-  resetStore();
+  resetVariable();
 });
 
 function newTarget(): HTMLElement {
@@ -37,7 +37,7 @@ describe("components", () => {
     expect(tables[0]!.querySelector(".row span")!.textContent).toBe("row 0");
   });
 
-  test("one store write updates every row's prop", () => {
+  test("one variable write updates every row's prop", () => {
     const target = newTarget();
     instances = attachTables(target, PARENTS);
 

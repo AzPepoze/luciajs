@@ -1,11 +1,11 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
 const limit = 5;
-const count = store(0);
-const name = store("");
-const done = store.from(() => count.value >= limit);
-const greeting = store.from(() => name.value.trim() || "stranger");
+const count = variable(0);
+const name = variable("");
+const done = variable.compute(() => count.value >= limit);
+const greeting = variable.compute(() => name.value.trim() || "stranger");
 
 function addOne() {
   count.value++;

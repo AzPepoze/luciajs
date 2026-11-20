@@ -1,10 +1,10 @@
 <script>
-import { WHEN, EASE, store } from "lucia";
+import { WHEN, EASE, variable } from "lucia";
 import { watchPinned } from "./scroll-readout.ts";
 
 // The tall lane drives every effect. The effects move the cards, not the lane.
-const lane = store(null);
-const page = store(null);
+const lane = variable(null);
+const page = variable(null);
 
 const barGrow = {
   0: { scale: "0 1" },

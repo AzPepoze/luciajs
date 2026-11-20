@@ -1,9 +1,9 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const name = store("Ada");
-const count = store(3);
-const greeting = store.from(() => `Hello, ${name.value}!`);
+const name = variable("Ada");
+const count = variable(3);
+const greeting = variable.compute(() => `Hello, ${name.value}!`);
 const limit = 10;
 const raw = "<b>not bold</b>";
 const nothing = null;
@@ -18,7 +18,7 @@ function addOne() {
 </script>
 
 <div class="text-demo">
-  <p>Store: {name}</p>
+  <p>Variable: {name}</p>
   <p>Expression with .value: {count.value * 2}</p>
   <p>Derived: {greeting}</p>
   <p>Plain const, never changes: {limit}</p>

@@ -17,7 +17,7 @@ export interface Group {
   rows: Row[];
 }
 
-export const suggestedTerms = ["store", "animate", "EACH", "bind", "playground"];
+export const suggestedTerms = ["variable", "animate", "EACH", "bind", "playground"];
 
 const TITLE_WEIGHT = 3;
 const SUMMARY_WEIGHT = 1.5;
@@ -60,7 +60,15 @@ function suggestionGroup(): Group {
 }
 
 function termRow(term: string, icon: string): Row {
-  return { index: 0, icon, title: [{ text: term, hit: false }], summary: [], section: "", href: NO_HREF, term };
+  return {
+    index: 0,
+    icon,
+    title: [{ text: term, hit: false }],
+    summary: [],
+    section: "",
+    href: NO_HREF,
+    term,
+  };
 }
 
 function searchGroups(index: SearchEntry[], terms: string[]): Group[] {
@@ -80,7 +88,7 @@ function searchGroups(index: SearchEntry[], terms: string[]): Group[] {
     .filter((group) => group.rows.length > 0);
 }
 
-// A shorter title ranks higher when the scores tie, so "store()" comes before "store.from()".
+// A shorter title ranks higher when the scores tie, so "variable()" comes before "variable.compute()".
 function byScoreThenShortTitle(a: Scored, b: Scored): number {
   return b.score - a.score || a.entry.title.text.length - b.entry.title.text.length;
 }

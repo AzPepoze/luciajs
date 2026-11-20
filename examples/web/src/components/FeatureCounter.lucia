@@ -1,8 +1,8 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const count = store(0);
-const doubled = store.from(() => count.value * 2);
+const count = variable(0);
+const doubled = variable.compute(() => count.value * 2);
 
 function addOne() {
   count.value++;

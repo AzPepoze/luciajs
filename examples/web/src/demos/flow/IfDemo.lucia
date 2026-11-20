@@ -1,7 +1,7 @@
 <script>
-import { WHEN, PRESET, store } from "lucia";
+import { WHEN, PRESET, variable } from "lucia";
 
-const mode = store("out");
+const mode = variable("out");
 
 // A branch slides in when it appears and fades out when another branch replaces it.
 const fadeOut = {

@@ -1,5 +1,5 @@
 <script>
-import { props, store } from "lucia";
+import { props, variable } from "lucia";
 import { highlightInto } from "../highlight/highlight.ts";
 
 const { text, language, className } = props({
@@ -7,7 +7,7 @@ const { text, language, className } = props({
   language: "none",
   className: "",
 });
-const code = store<HTMLElement | null>(null);
+const code = variable<HTMLElement | null>(null);
 
 // The text never changes after mount, so it is highlighted once.
 function setup() {

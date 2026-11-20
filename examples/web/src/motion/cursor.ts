@@ -1,4 +1,4 @@
-import type { Store } from "lucia";
+import type { Variable } from "lucia";
 import { spawnSparks, type Spark } from "./sparks.ts";
 
 const TRAIL_GAP_MS = 45;
@@ -6,7 +6,7 @@ const trailTones = ["var(--pink)", "var(--lavender)", "var(--lemon)", "var(--min
 const petalTones = ["var(--pink)", "var(--lavender)"];
 
 // A sparkle trail on mouse pointers, and a petal burst on every press (touch included).
-export function trackCursor(sparks: Store<Spark[]>): () => void {
+export function trackCursor(sparks: Variable<Spark[]>): () => void {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return () => {};
 
   const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;

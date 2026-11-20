@@ -1,11 +1,11 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const on = store(false);
-const locked = store.from(() => !on.value);
-const note = store.from(() => (on.value ? "Saved" : null));
-const flag = store.from(() => on.value);
-const tone = store.from(() => (on.value ? "on" : null));
+const on = variable(false);
+const locked = variable.compute(() => !on.value);
+const note = variable.compute(() => (on.value ? "Saved" : null));
+const flag = variable.compute(() => on.value);
+const tone = variable.compute(() => (on.value ? "on" : null));
 
 function toggleOn() {
   on.value = !on.value;

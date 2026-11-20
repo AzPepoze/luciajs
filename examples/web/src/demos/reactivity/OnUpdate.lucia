@@ -1,10 +1,10 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const count = store(0);
-const detailsOn = store(false);
-const message = store("");
-const updates = store(0);
+const count = variable(0);
+const detailsOn = variable(false);
+const message = variable("");
+const updates = variable(0);
 
 // peek() reads without tracking, so this counter does not re-run the function.
 function showCount() {
@@ -24,7 +24,7 @@ function toggleDetails() {
   detailsOn.value = !detailsOn.value;
 }
 
-store.onUpdate(showCount);
+variable.onUpdate(showCount);
 </script>
 
 <div class="on-update-demo">

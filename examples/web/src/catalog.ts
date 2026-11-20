@@ -23,8 +23,10 @@ import Attach from "./demos/components/Attach.lucia";
 import Components from "./demos/components/Components.lucia";
 import Props from "./demos/components/Props.lucia";
 import Batch from "./demos/reactivity/Batch.lucia";
-import Store from "./demos/reactivity/Store.lucia";
+import Variable from "./demos/reactivity/Variable.lucia";
 import OnUpdate from "./demos/reactivity/OnUpdate.lucia";
+import UpdateBefore from "./demos/reactivity/UpdateBefore.lucia";
+import Watch from "./demos/reactivity/Watch.lucia";
 import SharedReader from "./demos/reactivity/SharedReader.lucia";
 import SharedWriter from "./demos/reactivity/SharedWriter.lucia";
 import GlobalStyles from "./demos/styling/GlobalStyles.lucia";
@@ -39,11 +41,13 @@ import attributesSource from "./demos/basics/Attributes.lucia?raw";
 import eventsSource from "./demos/basics/Events.lucia?raw";
 import textSource from "./demos/basics/Text.lucia?raw";
 import batchSource from "./demos/reactivity/Batch.lucia?raw";
-import storeDemoSource from "./demos/reactivity/Store.lucia?raw";
+import variableDemoSource from "./demos/reactivity/Variable.lucia?raw";
 import onUpdateSource from "./demos/reactivity/OnUpdate.lucia?raw";
+import updateBeforeSource from "./demos/reactivity/UpdateBefore.lucia?raw";
+import watchSource from "./demos/reactivity/Watch.lucia?raw";
 import sharedReaderSource from "./demos/reactivity/SharedReader.lucia?raw";
 import sharedWriterSource from "./demos/reactivity/SharedWriter.lucia?raw";
-import storeSource from "./store.ts?raw";
+import variableSource from "./variable.ts?raw";
 import globalStylesSource from "./demos/styling/GlobalStyles.lucia?raw";
 import scssSource from "./demos/styling/Scss.lucia?raw";
 import styleChildSource from "./demos/styling/StyleChild.lucia?raw";
@@ -68,13 +72,13 @@ import revealSource from "./demos/motion/Reveal.lucia?raw";
 import loopsSource from "./demos/motion/Loops.lucia?raw";
 import Leave from "./demos/motion/Leave.lucia";
 import Both from "./demos/motion/Both.lucia";
-import StoreTrigger from "./demos/motion/StoreTrigger.lucia";
+import VariableTrigger from "./demos/motion/VariableTrigger.lucia";
 import Control from "./demos/motion/Control.lucia";
 import leaveSource from "./demos/motion/Leave.lucia?raw";
 import shrinkSource from "./demos/motion/Shrink.lucia?raw";
 import bothSource from "./demos/motion/Both.lucia?raw";
 import popSource from "./demos/motion/Pop.lucia?raw";
-import storeTriggerSource from "./demos/motion/StoreTrigger.lucia?raw";
+import variableTriggerSource from "./demos/motion/VariableTrigger.lucia?raw";
 import controlSource from "./demos/motion/Control.lucia?raw";
 import HoverDelay from "./demos/motion/HoverDelay.lucia";
 import FollowScroll from "./demos/motion/FollowScroll.lucia";
@@ -144,7 +148,7 @@ export const catalog: Record<string, CatalogEntry> = {
       {
         id: "expr-text",
         title: "Text",
-        caption: "Curly braces put a store or an expression into the text.",
+        caption: "Curly braces put a variable or an expression into the text.",
         components: [Text],
         sources: [{ path: "src/demos/basics/Text.lucia", text: textSource }],
       },
@@ -157,46 +161,71 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
-  store: {
+  variable: {
     icon: "data_object",
     demos: [
       {
-        id: "store-derived",
-        title: "Derived store",
-        caption: "A derived store updates when the stores it reads change.",
-        components: [Store],
-        sources: [{ path: "src/demos/reactivity/Store.lucia", text: storeDemoSource }],
+        id: "variable-derived",
+        title: "Derived variable",
+        caption: "A derived variable updates when the variables it reads update.",
+        components: [Variable],
+        sources: [{ path: "src/demos/reactivity/Variable.lucia", text: variableDemoSource }],
       },
       {
-        id: "store-batch",
+        id: "variable-batch",
         title: "Batch",
         caption: "Several writes in one handler update the page once per click.",
         components: [Batch],
         sources: [{ path: "src/demos/reactivity/Batch.lucia", text: batchSource }],
       },
       {
-        id: "store-shared",
-        title: "Shared store",
-        caption: "One component writes a store in store.ts, and another reads it.",
+        id: "variable-shared",
+        title: "Shared variable",
+        caption: "One component writes a variable in variable.ts, and another reads it.",
         components: [SharedWriter, SharedReader],
         sources: [
-          { path: "src/store.ts", text: storeSource },
+          { path: "src/variable.ts", text: variableSource },
           { path: "src/demos/reactivity/SharedWriter.lucia", text: sharedWriterSource },
           { path: "src/demos/reactivity/SharedReader.lucia", text: sharedReaderSource },
         ],
       },
     ],
   },
-  "store-from": { icon: "calculate" },
-  "store-on-update": {
+  "variable-compute": { icon: "calculate" },
+  "variable-on-update": {
     icon: "sync",
     demos: [
       {
-        id: "store-on-update-peek",
+        id: "variable-on-update-peek",
         title: "Peek",
-        caption: "peek() reads a store without subscribing to it.",
+        caption: "peek() reads a variable without subscribing to it.",
         components: [OnUpdate],
         sources: [{ path: "src/demos/reactivity/OnUpdate.lucia", text: onUpdateSource }],
+      },
+    ],
+  },
+  "variable-watch": {
+    icon: "visibility",
+    demos: [
+      {
+        id: "variable-watch-listed",
+        title: "Watch",
+        caption: "variable.watch runs only when a listed variable updates.",
+        components: [Watch],
+        sources: [{ path: "src/demos/reactivity/Watch.lucia", text: watchSource }],
+      },
+    ],
+  },
+  "variable-instance-on-update": {
+    icon: "sync_alt",
+    demos: [
+      {
+        id: "variable-instance-on-update-before",
+        title: "Before and now",
+        caption:
+          "count.onUpdate gets the new and the old value. get() and set() read and write it.",
+        components: [UpdateBefore],
+        sources: [{ path: "src/demos/reactivity/UpdateBefore.lucia", text: updateBeforeSource }],
       },
     ],
   },
@@ -206,7 +235,7 @@ export const catalog: Record<string, CatalogEntry> = {
       {
         id: "props-tone",
         title: "Props",
-        caption: "Pass values to a child as attributes. Each prop is a store.",
+        caption: "Pass values to a child as attributes. Each prop is a variable.",
         components: [Props],
         sources: [
           { path: "src/demos/components/Props.lucia", text: propsSource },
@@ -230,8 +259,8 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
-  "store-type": { icon: "data_object" },
-  "read-store-type": { icon: "data_object" },
+  "variable-type": { icon: "data_object" },
+  "computed-variable-type": { icon: "data_object" },
   component: { icon: "extension" },
   instance: { icon: "memory" },
   "props-type": { icon: "category" },
@@ -281,7 +310,7 @@ export const catalog: Record<string, CatalogEntry> = {
       {
         id: "bind-fields",
         title: "Two-way bind",
-        caption: "A field and a store stay in sync, in both directions.",
+        caption: "A field and a variable stay in sync, in both directions.",
         components: [BindFields],
         sources: [{ path: "src/demos/basics/BindFields.lucia", text: bindFieldsSource }],
       },
@@ -293,7 +322,7 @@ export const catalog: Record<string, CatalogEntry> = {
       {
         id: "bind-element-ref",
         title: "Element reference",
-        caption: "bind-element stores the real DOM element. It is cleared on unmount.",
+        caption: "bind-element variables the real DOM element. It is cleared on unmount.",
         components: [BindElement],
         sources: [{ path: "src/demos/basics/BindElement.lucia", text: bindElementSource }],
       },
@@ -435,11 +464,11 @@ export const catalog: Record<string, CatalogEntry> = {
         ],
       },
       {
-        id: "animate-store",
-        title: "Store as trigger",
-        caption: "A store plays the animation forward when true, and back when false.",
-        components: [StoreTrigger],
-        sources: [{ path: "src/demos/motion/StoreTrigger.lucia", text: storeTriggerSource }],
+        id: "animate-variable",
+        title: "Variable as trigger",
+        caption: "A variable plays the animation forward when true, and back when false.",
+        components: [VariableTrigger],
+        sources: [{ path: "src/demos/motion/VariableTrigger.lucia", text: variableTriggerSource }],
       },
       {
         id: "animate-control",

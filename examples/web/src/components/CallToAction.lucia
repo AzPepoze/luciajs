@@ -1,5 +1,5 @@
 <script>
-import { store, WHEN, EASE } from "lucia";
+import { variable, WHEN, EASE } from "lucia";
 import Sparks from "./Sparks.lucia";
 import RevealTitle from "./RevealTitle.lucia";
 import { spawnSparks, type Spark } from "../motion/sparks.ts";
@@ -7,7 +7,7 @@ import { pull, release } from "../motion/pointer.ts";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const sparks = store<Spark[]>([]);
+const sparks = variable<Spark[]>([]);
 const confettiTones = [
   "var(--pink)",
   "var(--lemon)",

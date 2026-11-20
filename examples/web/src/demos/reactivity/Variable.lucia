@@ -1,11 +1,16 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const width = store(4);
-const height = store(3);
-const area = store.from(() => width.value * height.value);
-const fill = store.from(() => Math.min(area.value * 4, 100));
-const size = store.from(() => (area.value > 12 ? "Large" : "Small"));
+const width = variable(4);
+const height = variable(3);
+// area uses a named function. fill uses a short inline arrow.
+function areaOf() {
+  return width.value * height.value;
+}
+
+const area = variable.compute(areaOf);
+const fill = variable.compute(() => Math.min(area.value * 4, 100));
+const size = variable.compute(() => (area.value > 12 ? "Large" : "Small"));
 
 function makeWider() {
   width.value++;
@@ -21,10 +26,10 @@ function resetSize() {
 }
 </script>
 
-<div class="stores-demo">
+<div class="variables-demo">
   <p>Width {width}, height {height}</p>
-  <p>Area, a derived store of both: {area}</p>
-  <p>Size, a derived store of the area: {size}</p>
+  <p>Area, a derived variable of both: {area}</p>
+  <p>Size, a derived variable of the area: {size}</p>
   <div class="bar"><span style="width: {fill}%"></span></div>
   <div class="actions">
     <button onclick={makeWider} type="button">Wider</button>
@@ -36,7 +41,7 @@ function resetSize() {
 <style>
 @use "../../styles/demo" as demo;
 
-.stores-demo {
+.variables-demo {
   display: grid;
   gap: 0.5rem;
   color: var(--fg);

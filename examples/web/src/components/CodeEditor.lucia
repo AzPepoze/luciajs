@@ -1,5 +1,5 @@
 <script>
-import { props, store } from "lucia";
+import { props, variable } from "lucia";
 import type { EditorFile, EditorJump } from "../editor/files.ts";
 import type { EditorSession } from "../editor/session.ts";
 
@@ -14,33 +14,33 @@ const { files, active, readOnly, edited, onChange, onSelect, onReset, jump } = p
   jump: null as EditorJump | null,
 });
 
-const selected = store("");
-const host = store<HTMLElement | null>(null);
-const multiple = store.from(() => files.value.length > 1);
-const copied = store(false);
-const copyIcon = store.from(() => (copied.value ? "check" : "content_copy"));
-const status = store("");
+const selected = variable("");
+const host = variable<HTMLElement | null>(null);
+const multiple = variable.compute(() => files.value.length > 1);
+const copied = variable(false);
+const copyIcon = variable.compute(() => (copied.value ? "check" : "content_copy"));
+const status = variable("");
 let session: EditorSession | undefined;
 
 // An active file set by the parent takes effect; tabs change the selection after that.
-store.onUpdate(() => {
+variable.onUpdate(() => {
   selected.value = active.value;
 });
 
-// Stores are read before the optional call, so they stay tracked before the editor loads.
-store.onUpdate(() => {
+// Variables are read before the optional call, so they stay tracked until it loads.
+variable.onUpdate(() => {
   const list = files.value;
   const name = selected.value;
   session?.show(list, name);
 });
 
-store.onUpdate(() => {
+variable.onUpdate(() => {
   const isReadOnly = readOnly.value;
   session?.setReadOnly(isReadOnly);
 });
 
 // A new jump object moves the cursor, even to the place it was last at.
-store.onUpdate(() => {
+variable.onUpdate(() => {
   const target = jump.value;
   if (!target) return;
   selected.value = target.file;

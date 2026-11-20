@@ -1,8 +1,8 @@
 <script>
-import { WHEN, EASE, store } from "lucia";
+import { WHEN, EASE, variable } from "lucia";
 
 // The tall section drives three steps. Each step plays in its own slice of the section.
-const section = store(null);
+const section = variable(null);
 
 // Each step fades in, holds, and fades out again within its own slice.
 const stepPulse = {

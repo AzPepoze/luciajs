@@ -1,8 +1,8 @@
 <script>
-import { attach, store, type Instance } from "lucia";
+import { attach, variable, type Instance } from "lucia";
 import Child from "./StyleChild.lucia";
 
-const slot = store<Element | null>(null);
+const slot = variable<Element | null>(null);
 
 // Mounts the child once the slot exists. Its return value detaches the child.
 function setup() {

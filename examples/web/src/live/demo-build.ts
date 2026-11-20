@@ -3,7 +3,7 @@ import type { EditorFile } from "../editor/files.ts";
 import themeScss from "../styles/_theme.scss?raw";
 import demoScss from "../styles/_demo.scss?raw";
 import themeTs from "../theme.ts?raw";
-import storeTs from "../store.ts?raw";
+import variableTs from "../variable.ts?raw";
 import scrollReadoutTs from "../demos/motion/scroll-readout.ts?raw";
 import { buildLive, type BuildResult } from "./build.ts";
 import { rootNames } from "./imports.ts";
@@ -14,7 +14,7 @@ const sharedFiles: EditorFile[] = [
   { name: "src/styles/_theme.scss", code: themeScss },
   { name: "src/styles/_demo.scss", code: demoScss },
   { name: "src/theme.ts", code: themeTs },
-  { name: "src/store.ts", code: storeTs },
+  { name: "src/variable.ts", code: variableTs },
   { name: "src/demos/motion/scroll-readout.ts", code: scrollReadoutTs },
 ];
 

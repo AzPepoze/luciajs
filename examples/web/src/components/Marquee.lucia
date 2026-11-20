@@ -4,7 +4,7 @@ import { EASE } from "lucia";
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const words = [
-  "Stores",
+  "Variables",
   "Single-file .lucia",
   "Scoped SCSS",
   "animate",

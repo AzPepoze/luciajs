@@ -1,4 +1,4 @@
-import { EASE, type AnimateItem, type Keyframes, type Store } from "lucia";
+import { EASE, type AnimateItem, type Keyframes, type Variable } from "lucia";
 
 export type SparkKind = "petal" | "star" | "confetti";
 
@@ -56,13 +56,13 @@ function makeSpark(options: SparkOptions): Spark {
   };
 }
 
-function removeSparks(sparks: Store<Spark[]>, created: Spark[]): void {
+function removeSparks(sparks: Variable<Spark[]>, created: Spark[]): void {
   const gone = new Set(created);
   sparks.value = sparks.value.filter((spark) => !gone.has(spark));
 }
 
 // Each spark plays its flight once, then is removed from the list.
-export function spawnSparks(sparks: Store<Spark[]>, options: SparkOptions): void {
+export function spawnSparks(sparks: Variable<Spark[]>, options: SparkOptions): void {
   const created = Array.from({ length: options.count }, () => makeSpark(options));
   sparks.value = [...sparks.value, ...created];
   setTimeout(() => removeSparks(sparks, created), options.duration + 50);
