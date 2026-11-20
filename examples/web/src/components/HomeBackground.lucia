@@ -11,14 +11,6 @@ function layer(from: Style, to: Style) {
   return reduced ? [] : scrollBetween(follow, from, to);
 }
 
-const pinkBlob = layer(
-  { opacity: 1, translate: "0 0" },
-  { opacity: 0.15, translate: "0 -10vh" },
-);
-const lavenderBlob = layer(
-  { opacity: 0.15, translate: "0 0" },
-  { opacity: 1, translate: "0 -20vh" },
-);
 const rays = layer(
   { translate: "0 0", rotate: "0deg" },
   { translate: "0 -15vh", rotate: "30deg" },
@@ -71,8 +63,6 @@ const stormPetals = [
 </script>
 
 <div class="home-bg" aria-hidden="true">
-  <span class="bg-blob pink" animate={pinkBlob}></span>
-  <span class="bg-blob lavender" animate={lavenderBlob}></span>
   <span class="bg-rays" animate={rays}></span>
   <span class="bg-dots" animate={dots}></span>
   <span class="bg-kanji" animate={kanji}>ルシア</span>
