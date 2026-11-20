@@ -11,12 +11,12 @@ export interface AnimateDefault {
 }
 
 /** What `setAnimateDefault` accepts. `ease` merges per part; `duration` replaces the value. */
-export interface AnimateDefaultChange {
+export interface AnimateDefaultUpdate {
   ease?: DefaultEasing;
   duration?: number;
 }
 
-const CHANGE_KEYS = ["ease", "duration"];
+const UPDATE_KEYS = ["ease", "duration"];
 
 let current: AnimateDefault = { easeStyle: EASE.STYLE.QUART, ease: EASE.INOUT, duration: 300 };
 
@@ -24,16 +24,16 @@ export function animateDefault(): AnimateDefault {
   return current;
 }
 
-/** Changes the engine default for the whole app. It is read at each play, so a change applies to every play after it. */
-export function setAnimateDefault(change: AnimateDefaultChange): void {
-  for (const key of Object.keys(change)) {
-    if (!CHANGE_KEYS.includes(key)) throw runtimeError("L2030", { key });
+/** Updates the engine default for the whole app. It is read at each play, so an update applies to every play after it. */
+export function setAnimateDefault(update: AnimateDefaultUpdate): void {
+  for (const key of Object.keys(update)) {
+    if (!UPDATE_KEYS.includes(key)) throw runtimeError("L2030", { key });
   }
-  const ease = readDefault(change.ease);
+  const ease = readDefault(update.ease);
   current = {
     easeStyle: ease.easeStyle ?? current.easeStyle,
     ease: ease.ease ?? current.ease,
-    duration: change.duration === undefined ? current.duration : readDuration(change.duration),
+    duration: update.duration === undefined ? current.duration : readDuration(update.duration),
   };
 }
 

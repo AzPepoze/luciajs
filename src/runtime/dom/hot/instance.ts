@@ -1,4 +1,4 @@
-import type { Store } from "../../store/store.ts";
+import type { Variable } from "../../variable/variable.ts";
 import type { Cleanup } from "../bindings.ts";
 import type { Props, Render } from "../component.ts";
 import type { Leave } from "../leave.ts";
@@ -25,8 +25,8 @@ export interface HotInstance {
   start: Text;
   end: Text;
   cleanups: Cleanup[];
-  stores: Map<string, Store<unknown>>;
-  /** Values to hand to the stores of the next render, set by a hot swap. */
+  variables: Map<string, Variable<unknown>>;
+  /** Values to hand to the variables of the next render, set by a hot swap. */
   restore: Restore | null;
   alive: boolean;
 }
@@ -43,7 +43,7 @@ export function createInstance(id: string, props: Props, parentLeaves: Leave[]):
     start: document.createTextNode(""),
     end: document.createTextNode(""),
     cleanups: [],
-    stores: new Map(),
+    variables: new Map(),
     restore: takeRestore(id),
     alive: true,
   };
@@ -94,7 +94,7 @@ function adopt(instance: HotInstance, rendering: Rendering): void {
   instance.start = rendering.start;
   instance.end = rendering.end;
   instance.cleanups = rendering.cleanups;
-  instance.stores = rendering.stores;
+  instance.variables = rendering.variables;
 }
 
 function forgetInstance(instance: HotInstance): void {

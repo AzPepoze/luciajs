@@ -45,7 +45,10 @@ export const CODES = {
     message: "bind-<property> needs a property name",
     hint: "Write the property after the dash, such as bind-value.",
   },
-  L1015: { message: "$attr needs {store}", hint: "Put a store in braces, such as $attr={name}." },
+  L1015: {
+    message: "$attr needs {variable}",
+    hint: "Put a variable in braces, such as $attr={name}.",
+  },
   L1016: {
     message: "$attr needs one {handler}",
     hint: "Put one function in braces, such as onclick={increment}.",
@@ -70,7 +73,7 @@ export const CODES = {
   },
   L1023: {
     message: "bind works on elements only",
-    hint: "Pass the store as a prop, such as value={name}, and bind inside the component.",
+    hint: "Pass the variable as a prop, such as value={name}, and bind inside the component.",
   },
   L1024: {
     message: "bind works on input, textarea and select",
@@ -113,8 +116,8 @@ export const CODES = {
   },
   L2002: {
     message:
-      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a store",
-    hint: "Pass one of the WHEN values, or a store.",
+      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a variable",
+    hint: "Pass one of the WHEN values, or a variable.",
   },
   L2003: {
     message: "animate $name must be a time in ms, got $value",
@@ -170,8 +173,8 @@ export const CODES = {
   },
   L2016: {
     message:
-      "animate more follow must be a store that holds an element, such as one set by bind-element",
-    hint: "Use a store that bind-element writes to.",
+      "animate more follow must be a variable that holds an element, such as one set by bind-element",
+    hint: "Use a variable that bind-element writes to.",
   },
   L2017: {
     message: "animate more $name must be SCROLL_AT or { element, window }, got $value",
@@ -279,8 +282,8 @@ export const CODES = {
     hint: "Use a step such as 1, or -1 to count down.",
   },
   L2043: {
-    message: "$attr needs a writable store",
-    hint: "Bind to a store made with store(), not to a computed value.",
+    message: "$attr needs a writable variable",
+    hint: "Bind to a variable made with variable(), not to a computed value.",
   },
   L2044: {
     message: "ACTIVE.IN and ACTIVE.OUT were renamed to ACTIVE.ATTACH and ACTIVE.DETACH",
@@ -315,6 +318,10 @@ export const CODES = {
   L2052: {
     message: "$name is set by the glide and cannot be in style",
     hint: "Remove $name from style. Use transform for other moves.",
+  },
+  L2053: {
+    message: "a computed variable cannot be set",
+    hint: "Set the variables it reads, or use variable(...) for a value you can set.",
   },
   L3001: {
     message: '"$name" is not exported by "$module"',

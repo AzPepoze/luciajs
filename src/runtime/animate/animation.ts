@@ -17,7 +17,7 @@ interface ItemBase {
   backAndForth?: boolean;
 }
 
-/** A trigger with no options: ATTACH (the default), DETACH, MANUAL, or a store. */
+/** A trigger with no options: ATTACH (the default), DETACH, MANUAL, or a variable. */
 interface PlainItem extends ItemBase {
   when?: typeof WHEN.ATTACH | typeof WHEN.DETACH | typeof WHEN.MANUAL | Source;
   more?: never;

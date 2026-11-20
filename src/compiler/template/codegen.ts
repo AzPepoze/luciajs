@@ -1,4 +1,4 @@
-import { hotStores } from "../hot/stores.ts";
+import { hotVariables } from "../hot/variables.ts";
 import { markLines } from "../sourcemap/marker.ts";
 import { GenContext, type GenOptions } from "./codegen-context.ts";
 import type { Template } from "./types.ts";
@@ -38,7 +38,7 @@ const RUNTIME_IMPORT = `import {
 // Dev builds only: the hot registry that lets `lucia dev` swap a component in place.
 const HOT_IMPORT = `import {
   hotComponent as __hotComponent,
-  hotStore as __hotStore,
+  hotVariable as __hotVariable,
 } from "lucia/internal";`;
 
 function renderFunction(body: string, bodyLine: number, fragment: string): string {
@@ -68,7 +68,7 @@ export function generate({
     ...(dev ? [HOT_IMPORT] : []),
     `const __css = ${JSON.stringify(css)};`,
     ...ctx.declarations,
-    renderFunction(dev ? hotStores(body) : body, bodyLine, fragment),
+    renderFunction(dev ? hotVariables(body) : body, bodyLine, fragment),
     exportLine(id, dev),
   ].join("\n");
 }

@@ -1,9 +1,9 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import { events } from "./log.ts";
 import { state } from "./state.ts";
 
-store.onUpdate(function recordCount() {
+variable.onUpdate(function recordCount() {
   events.push(`count ${state.count.value}`);
 });
 </script>

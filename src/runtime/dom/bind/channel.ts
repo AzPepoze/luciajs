@@ -1,9 +1,10 @@
-import { watch } from "../../store/graph.ts";
-import { isReactive, type Store } from "../../store/store.ts";
+import { watch } from "../../variable/graph.ts";
+import { isReactive } from "../../variable/reactive.ts";
+import type { Variable } from "../../variable/variable.ts";
 import { listen, type Cleanup } from "../bindings.ts";
 import { runtimeError } from "../../errors.ts";
 
-/** How one DOM property maps to a store: the value in each direction, and the events that report changes. */
+/** How one DOM property maps to a variable: the value in each direction, and the events that report changes. */
 export interface Channel {
   prop: string;
   events: string[];
@@ -11,7 +12,7 @@ export interface Channel {
   fromDom(el: HTMLElement): unknown;
 }
 
-export function assertWritable(target: unknown, attr: string): asserts target is Store<unknown> {
+export function assertWritable(target: unknown, attr: string): asserts target is Variable<unknown> {
   const writable =
     isReactive(target) && Object.getOwnPropertyDescriptor(target, "value")?.set !== undefined;
   if (!writable) throw runtimeError("L2043", { attr });
@@ -25,7 +26,7 @@ function writeProp(el: HTMLElement, prop: string, value: unknown): void {
   (el as unknown as Record<string, unknown>)[prop] = value;
 }
 
-/** Store to DOM in a watch, DOM to store on the channel's events. Equal values are never written twice. */
+/** Variable to DOM in a watch, DOM to variable on the channel's events. Equal values are never written twice. */
 export function bindChannel(
   el: HTMLElement,
   target: unknown,
@@ -34,16 +35,16 @@ export function bindChannel(
   cleanups: Cleanup[],
 ): void {
   assertWritable(target, attr);
-  const store = target;
+  const variable = target;
   cleanups.push(
     watch(() => {
-      const next = channel.toDom(store.value);
+      const next = channel.toDom(variable.value);
       if (!Object.is(readProp(el, channel.prop), next)) writeProp(el, channel.prop, next);
     }),
   );
   const pull = (): void => {
     const next = channel.fromDom(el);
-    if (!Object.is(next, store.peek())) store.value = next;
+    if (!Object.is(next, variable.peek())) variable.value = next;
   };
   for (const type of channel.events) listen(el, type, pull, cleanups);
 }

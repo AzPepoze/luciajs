@@ -7,8 +7,8 @@ import { lucia } from "@bun-plugin/index.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
 const ACTIVE_IMPORT = `<script>
-import { store, ACTIVE } from "lucia";
-const count = store(1);
+import { variable, ACTIVE } from "lucia";
+const count = variable(1);
 console.log(ACTIVE, count);
 </script>
 <p>{count}</p>
@@ -57,12 +57,23 @@ describe("formatBuildFailure", () => {
     );
     const text = formatBuildFailure(logs, false);
     expect(text).toContain(
-      `${displayPath(logs[0]!.position!.file)}:2:17 - error L3001: "ACTIVE" is not exported by "lucia"`,
+      `${displayPath(logs[0]!.position!.file)}:2:20 - error L3001: "ACTIVE" is not exported by "lucia"`,
     );
-    expect(text).toContain('2 | import { store, ACTIVE } from "lucia";');
-    expect(text).toContain("  | " + " ".repeat(16) + "^~~~~");
+    expect(text).toContain('2 | import { variable, ACTIVE } from "lucia";');
+    expect(text).toContain("  | " + " ".repeat(19) + "^~~~~~");
     expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
     expect(text).toContain("Build failed: 1 error");
+  });
+
+  test("an import of the old store name points to variable", async () => {
+    const logs = await failingLogs(
+      "store",
+      { "src/index.ts": 'import { store } from "lucia";\nconsole.log(store);\n' },
+      "src/index.ts",
+    );
+    const text = formatBuildFailure(logs, false);
+    expect(text).toContain('error L3001: "store" is not exported by "lucia"');
+    expect(text).toContain("hint: store was renamed to variable.");
   });
 
   test("a missing relative file gets L3002 at the importing line", async () => {
@@ -80,12 +91,12 @@ describe("formatBuildFailure", () => {
   test("a misspelled export suggests the closest real export", async () => {
     const logs = await failingLogs(
       "typo",
-      { "src/index.ts": 'import { stor } from "lucia";\nconsole.log(stor);\n' },
+      { "src/index.ts": 'import { variabl } from "lucia";\nconsole.log(variabl);\n' },
       "src/index.ts",
     );
     const text = formatBuildFailure(logs, false);
-    expect(text).toContain('error L3001: "stor" is not exported by "lucia"');
-    expect(text).toContain('hint: Did you mean "store"?');
+    expect(text).toContain('error L3001: "variabl" is not exported by "lucia"');
+    expect(text).toContain('hint: Did you mean "variable"?');
   });
 
   test("a compile error from the plugin is printed once, as it was formatted", async () => {
@@ -102,7 +113,7 @@ describe("formatBuildFailure", () => {
   test("no ANSI colors when color is off", async () => {
     const logs = await failingLogs(
       "plain",
-      { "src/index.ts": 'import { stor } from "lucia";\nconsole.log(stor);\n' },
+      { "src/index.ts": 'import { variabl } from "lucia";\nconsole.log(variabl);\n' },
       "src/index.ts",
     );
     expect(formatBuildFailure(logs, false)).not.toContain("\x1b[");

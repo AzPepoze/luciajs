@@ -1,4 +1,5 @@
-import type { ReadStore, Store } from "../store/store.ts";
+import type { ComputedVariable } from "../variable/compute.ts";
+import type { Variable } from "../variable/variable.ts";
 
 const ATTACH: unique symbol = Symbol("ATTACH");
 const DETACH: unique symbol = Symbol("DETACH");
@@ -27,8 +28,8 @@ export type When = (typeof WHEN)[keyof typeof WHEN];
 /** The triggers that glide the element when its layout box changes. */
 export type LayoutWhen = typeof WHEN.MOVE | typeof WHEN.RESIZE | typeof WHEN.MOVE_OR_RESIZE;
 
-/** A store or read store: truthy plays forward, falsy plays back. */
-export type Source = Store<unknown> | ReadStore<unknown>;
+/** A variable or computed variable: truthy plays forward, falsy plays back. */
+export type Source = Variable<unknown> | ComputedVariable<unknown>;
 
 const WHENS: ReadonlySet<unknown> = new Set<unknown>(Object.values(WHEN));
 

@@ -1,30 +1,30 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { watch } from "@runtime/store/graph.ts";
-import { store } from "@runtime/store/store.ts";
+import { watch } from "@runtime/variable/graph.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import Watch from "../dom/fixtures/Watch.lucia";
 import { events } from "../dom/fixtures/log.ts";
-import { resetStore, state } from "../dom/fixtures/state.ts";
+import { resetVariable, state } from "../dom/fixtures/state.ts";
 import { mount, resetMounts, unmount } from "../dom/fixtures/mount.ts";
 
-beforeEach(resetStore);
+beforeEach(resetVariable);
 afterEach(resetMounts);
 
-describe("store.onUpdate", () => {
+describe("variable.onUpdate", () => {
   test("runs once right away", () => {
-    const count = store(0);
+    const count = variable(0);
     let runs = 0;
-    store.onUpdate(function countRuns() {
+    variable.onUpdate(function countRuns() {
       runs++;
       count.value;
     });
     expect(runs).toBe(1);
   });
 
-  test("runs again only when a store it read changes", () => {
-    const read = store(0);
-    const unrelated = store(0);
+  test("runs again only when a variable it read changes", () => {
+    const read = variable(0);
+    const unrelated = variable(0);
     let runs = 0;
-    store.onUpdate(function readOne() {
+    variable.onUpdate(function readOne() {
       runs++;
       read.value;
     });
@@ -36,11 +36,11 @@ describe("store.onUpdate", () => {
     expect(runs).toBe(2);
   });
 
-  test("reruns when a read store it read changes", () => {
-    const base = store(1);
-    const doubled = store.from(() => base.value * 2);
+  test("reruns when a read variable it read changes", () => {
+    const base = variable(1);
+    const doubled = variable.compute(() => base.value * 2);
     const seen: number[] = [];
-    store.onUpdate(function recordDoubled() {
+    variable.onUpdate(function recordDoubled() {
       seen.push(doubled.value);
     });
 
@@ -49,11 +49,11 @@ describe("store.onUpdate", () => {
   });
 
   test("re-tracks reads on each run, so a branch not taken is not read", () => {
-    const useA = store(true);
-    const a = store("a");
-    const b = store("b");
+    const useA = variable(true);
+    const a = variable("a");
+    const b = variable("b");
     let runs = 0;
-    store.onUpdate(function pickOne() {
+    variable.onUpdate(function pickOne() {
       runs++;
       return useA.value ? a.value : b.value;
     });
@@ -69,9 +69,9 @@ describe("store.onUpdate", () => {
   });
 
   test("stop function ends the updates", () => {
-    const count = store(0);
+    const count = variable(0);
     let runs = 0;
-    const stop = store.onUpdate(function countRuns() {
+    const stop = variable.onUpdate(function countRuns() {
       runs++;
       count.value;
     });
@@ -82,11 +82,11 @@ describe("store.onUpdate", () => {
   });
 
   test("writes made by its function reach a dependent watcher once", () => {
-    const trigger = store(0);
-    const first = store(0);
-    const second = store(0);
-    const third = store(0);
-    store.onUpdate(function writeThree() {
+    const trigger = variable(0);
+    const first = variable(0);
+    const second = variable(0);
+    const third = variable(0);
+    variable.onUpdate(function writeThree() {
       const next = trigger.value;
       first.value = next;
       second.value = next;

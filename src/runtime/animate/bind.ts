@@ -8,7 +8,7 @@ import { ownTimelines } from "./timeline.ts";
 import { bindTrigger, groupSlots } from "./triggers.ts";
 import { runtimeError, withWhere } from "../errors.ts";
 
-/** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from stores. */
+/** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from variables. */
 export function animate(
   el: HTMLElement,
   readValue: () => Animate,

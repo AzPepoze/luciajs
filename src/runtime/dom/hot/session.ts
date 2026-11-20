@@ -1,6 +1,6 @@
 export type Restore = Map<string, unknown>;
 
-/** The stores of one instance, by variable name, taken before a swap. */
+/** The variables of one instance, by variable name, taken before a swap. */
 export interface Snapshot {
   id: string;
   values: Restore;

@@ -77,8 +77,8 @@ const viewOutDelay: AnimateItem = { style: keyframes, when: WHEN.VIEW, more: { o
 // @ts-expect-error: an item with no trigger takes no more
 const plainMore: AnimateItem = { style: keyframes, more: { margin: 10 } };
 
-// @ts-expect-error: a store as when takes no more
-const storeMore: AnimateItem = { style: keyframes, when: WHEN.ATTACH, more: { reverse: true } };
+// @ts-expect-error: a variable as when takes no more
+const variableMore: AnimateItem = { style: keyframes, when: WHEN.ATTACH, more: { reverse: true } };
 
 // @ts-expect-error: reverse moved into more
 const topReverse: AnimateItem = { style: keyframes, when: WHEN.VIEW, reverse: true };
@@ -98,7 +98,7 @@ export {
   hoverMargin,
   itemEase,
   plainMore,
-  storeMore,
+  variableMore,
   topReverse,
   unknownCss,
   kebabCss,

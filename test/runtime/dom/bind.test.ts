@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { bindElement } from "@runtime/dom/bind/element.ts";
 import { bindInput } from "@runtime/dom/bind/input.ts";
 import { bindProp } from "@runtime/dom/bind/property.ts";
-import { watch } from "@runtime/store/graph.ts";
-import { store } from "@runtime/store/store.ts";
+import { watch } from "@runtime/variable/graph.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import Clicks from "./fixtures/Clicks.lucia";
 import Fields from "./fixtures/Fields.lucia";
 import Writes from "./fixtures/Writes.lucia";
-import { resetStore, state } from "./fixtures/state.ts";
+import { resetVariable, state } from "./fixtures/state.ts";
 import { click, host, mount, resetMounts, text, unmount } from "./fixtures/mount.ts";
 
-beforeEach(resetStore);
+beforeEach(resetVariable);
 afterEach(resetMounts);
 
 function field(root: ParentNode, selector: string): HTMLInputElement {
@@ -26,11 +26,11 @@ describe("onclick", () => {
     expect(text(el, ".bump")).toBe("2");
   });
 
-  test("a handler that writes three stores runs a dependent watcher once", () => {
+  test("a handler that writes three variables runs a dependent watcher once", () => {
     const el = host();
     mount(Writes, el);
     let runs = 0;
-    const stop = store.onUpdate(function countRuns() {
+    const stop = variable.onUpdate(function countRuns() {
       runs++;
       state.from.value;
       state.to.value;
@@ -52,7 +52,7 @@ describe("onclick", () => {
 });
 
 describe("bind on form controls", () => {
-  test("a text input reads the store and writes it back on input", () => {
+  test("a text input reads the variable and writes it back on input", () => {
     const el = host();
     mount(Fields, el);
     const input = field(el, ".text");
@@ -68,8 +68,8 @@ describe("bind on form controls", () => {
   });
 
   test("a write from a bound input runs each dependent watcher once", () => {
-    const text = store("a");
-    const upper = store.from(() => text.value.toUpperCase());
+    const text = variable("a");
+    const upper = variable.compute(() => text.value.toUpperCase());
     const input = document.createElement("input");
     const cleanups: Array<() => void> = [];
     bindInput(input, text, cleanups);
@@ -118,7 +118,7 @@ describe("bind on form controls", () => {
     // happy-dom cannot remove a select, so this element is never attached or removed.
     const select = document.createElement("select");
     select.innerHTML = '<option value="a">A</option><option value="b">B</option>';
-    const choice = store("a");
+    const choice = variable("a");
     const cleanups: Array<() => void> = [];
     bindInput(select, choice, cleanups);
     expect(select.value).toBe("a");
@@ -153,30 +153,30 @@ describe("bind on form controls", () => {
 });
 
 describe("bind runtime rules", () => {
-  test("a read store is not writable", () => {
+  test("a computed variables is not writable", () => {
     const cleanups: Array<() => void> = [];
     const input = document.createElement("input");
     expect(() =>
       bindInput(
         input,
-        store.from(() => "x"),
+        variable.compute(() => "x"),
         cleanups,
       ),
-    ).toThrow("bind needs a writable store");
+    ).toThrow("bind needs a writable variable");
     expect(() => bindProp(input, "value", 5, cleanups)).toThrow(
-      "bind-value needs a writable store",
+      "bind-value needs a writable variable",
     );
     expect(() =>
       bindElement(
         input,
-        store.from(() => null),
+        variable.compute(() => null),
         cleanups,
       ),
-    ).toThrow("bind-element needs a writable store");
+    ).toThrow("bind-element needs a writable variable");
   });
 
   test("an equal value is not written back to the DOM", () => {
-    const value = store("a");
+    const value = variable("a");
     const input = document.createElement("input");
     const cleanups: Array<() => void> = [];
     bindInput(input, value, cleanups);

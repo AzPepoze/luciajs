@@ -1,5 +1,5 @@
-import { untrack, watch } from "../../store/graph.ts";
-import { store, type Store } from "../../store/store.ts";
+import { untrack, watch } from "../../variable/graph.ts";
+import { variable, type Variable } from "../../variable/variable.ts";
 import { runtimeError, withWhere } from "../../errors.ts";
 import type { Cleanup } from "../bindings.ts";
 import type { Leave } from "../leave.ts";
@@ -8,7 +8,7 @@ import { Outlet } from "./outlet.ts";
 
 export type RowRender = (
   item: unknown,
-  index: Store<number> | undefined,
+  index: Variable<number> | undefined,
   cleanups: Cleanup[],
   leaves: Leave[],
 ) => DocumentFragment;
@@ -18,7 +18,7 @@ export interface EachSpec {
   render: RowRender;
   /** Defaults to the item itself. The key sees the index as a number. */
   key?: (item: unknown, index: number) => unknown;
-  /** Whether the rows need a live index store. */
+  /** Whether the rows need a live index variable. */
   indexed: boolean;
   where?: string;
 }
@@ -26,7 +26,7 @@ export interface EachSpec {
 interface Row extends Mount {
   item: unknown;
   key: unknown;
-  index: Store<number> | undefined;
+  index: Variable<number> | undefined;
 }
 
 export function listOf(value: unknown): readonly unknown[] {
@@ -106,20 +106,20 @@ class EachBlock {
   private create(item: unknown, key: unknown, index: number, anchor: Node): Row {
     const cleanups: Cleanup[] = [];
     const leaves: Leave[] = [];
-    const indexStore = this.spec.indexed ? store(index) : undefined;
-    const fragment = this.spec.render(item, indexStore, cleanups, leaves);
+    const indexVariable = this.spec.indexed ? variable(index) : undefined;
+    const fragment = this.spec.render(item, indexVariable, cleanups, leaves);
     const row: Row = {
       ...mountBefore(anchor, fragment, cleanups, leaves),
       item,
       key,
-      index: indexStore,
+      index: indexVariable,
     };
     this.outlet.track(row);
     return row;
   }
 }
 
-/** Renders one row per item. The list is read in a watch, so a new array or store value reconciles the rows. */
+/** Renders one row per item. The list is read in a watch, so a new array or variable value reconciles the rows. */
 export function bindEach(
   marker: Comment,
   spec: EachSpec,

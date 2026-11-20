@@ -7,7 +7,7 @@ import { definitionOf, liveInstances, setDefinition } from "./registry.ts";
 
 /**
  * Re-renders every mounted instance of a changed component in place. Each instance keeps its position,
- * its props and the values of its stores, by name. If a render throws, the old instance stays and the
+ * its props and the values of its variables, by name. If a render throws, the old instance stays and the
  * error passes on; instances that were already swapped keep the new code.
  */
 export function swapComponent(component: HotComponent): void {
@@ -51,6 +51,6 @@ function snapshotTree(instance: HotInstance, out: Snapshot[] = []): Snapshot[] {
 
 function valuesOf(instance: HotInstance): Restore {
   const values: Restore = new Map();
-  for (const [name, store] of instance.stores) values.set(name, store.peek());
+  for (const [name, variable] of instance.variables) values.set(name, variable.peek());
   return values;
 }

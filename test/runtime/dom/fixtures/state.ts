@@ -1,4 +1,4 @@
-import { store } from "lucia";
+import { variable } from "lucia";
 
 export interface Item {
   id: number;
@@ -7,23 +7,23 @@ export interface Item {
 
 /** Shared by the block and bind fixtures. Tests reset it in beforeEach. */
 export const state = {
-  count: store(0),
-  text: store("hi"),
-  checked: store(false),
-  number: store<number | null>(3),
-  choice: store("a"),
-  disabled: store(false),
-  ref: store<Element | null>(null),
-  mode: store("a"),
-  items: store<Item[]>([]),
-  picked: store<number | null>(null),
-  from: store(0),
-  to: store(3),
-  step: store(1),
-  groups: store<{ name: string; open: boolean; items: string[] }[]>([]),
+  count: variable(0),
+  text: variable("hi"),
+  checked: variable(false),
+  number: variable<number | null>(3),
+  choice: variable("a"),
+  disabled: variable(false),
+  ref: variable<Element | null>(null),
+  mode: variable("a"),
+  items: variable<Item[]>([]),
+  picked: variable<number | null>(null),
+  from: variable(0),
+  to: variable(3),
+  step: variable(1),
+  groups: variable<{ name: string; open: boolean; items: string[] }[]>([]),
 };
 
-export function resetStore(): void {
+export function resetVariable(): void {
   state.count.value = 0;
   state.text.value = "hi";
   state.checked.value = false;

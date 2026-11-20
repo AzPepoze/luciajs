@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { rangeOf } from "@runtime/dom/blocks/range.ts";
 import Ranges from "./fixtures/Ranges.lucia";
-import { resetStore, state } from "./fixtures/state.ts";
+import { resetVariable, state } from "./fixtures/state.ts";
 import { host, mount, resetMounts } from "./fixtures/mount.ts";
 
-beforeEach(resetStore);
+beforeEach(resetVariable);
 afterEach(resetMounts);
 
 function numbers(root: ParentNode): string[] {

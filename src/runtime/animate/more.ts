@@ -1,5 +1,5 @@
-import { isReactive } from "../store/store.ts";
-import type { ReadStore } from "../store/store.ts";
+import { isReactive } from "../variable/reactive.ts";
+import type { ComputedVariable } from "../variable/compute.ts";
 import type { Keyframes } from "./keyframes.ts";
 import { WHEN, isWhen, type When, type Source } from "./trigger.ts";
 import {
@@ -42,7 +42,7 @@ export interface MoreBase {
 export interface ScrollMore {
   start?: ScrollAt;
   end?: ScrollAt;
-  follow?: ReadStore<Element | null>;
+  follow?: ComputedVariable<Element | null>;
   part?: [number, number];
 }
 
@@ -50,11 +50,11 @@ export type More = ViewMore | HoverMore | ScrollMore;
 
 export type Part = [number, number];
 
-/** The checked scroll options. `follow` is a store of the element that drives the progress. */
+/** The checked scroll options. `follow` is a variable of the element that drives the progress. */
 export interface ScrollRead {
   range: ScrollRange;
   part: Part;
-  follow: ReadStore<Element | null> | undefined;
+  follow: ComputedVariable<Element | null> | undefined;
 }
 
 /** The `more` options of one item, checked for its trigger. Fields a trigger does not use keep their defaults. */
@@ -119,7 +119,7 @@ function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
 }
 
 function whenName(when: When | Source): string {
-  return isWhen(when) ? `WHEN.${String(when.description)}` : "a store";
+  return isWhen(when) ? `WHEN.${String(when.description)}` : "a variable";
 }
 
 /** Rejects a non-object or an unknown key, and returns the object typed as T. */

@@ -1,4 +1,4 @@
-import { untrack, watch } from "../../store/graph.ts";
+import { untrack, watch } from "../../variable/graph.ts";
 import type { Cleanup } from "../bindings.ts";
 import type { Leave } from "../leave.ts";
 import { Outlet } from "./outlet.ts";

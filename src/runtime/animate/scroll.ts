@@ -1,8 +1,9 @@
 import type { Group } from "./group.ts";
 import type { Part, ScrollRead } from "./more.ts";
 import type { ScrollRange, ScrollTouch } from "./scroll-touch.ts";
-import { unwrap, type ReadStore } from "../store/store.ts";
-import { watch } from "../store/graph.ts";
+import { unwrap } from "../variable/reactive.ts";
+import type { ComputedVariable } from "../variable/compute.ts";
+import { watch } from "../variable/graph.ts";
 
 interface Tracked {
   el: Element;
@@ -30,14 +31,14 @@ export function watchScroll(el: Element, group: Group, scroll: ScrollRead): () =
     last: NaN,
     next: NaN,
   };
-  if (scroll.follow) target.stopFollow = followStore(target, scroll.follow);
+  if (scroll.follow) target.stopFollow = followVariable(target, scroll.follow);
   tracked.add(target);
   if (tracked.size === 1) startListening();
   schedule();
   return () => unwatch(target);
 }
 
-function followStore(target: Tracked, follow: ReadStore<Element | null>): () => void {
+function followVariable(target: Tracked, follow: ComputedVariable<Element | null>): () => void {
   return watch(() => {
     target.followed = unwrap(follow) as Element | null;
     schedule();

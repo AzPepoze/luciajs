@@ -1,8 +1,8 @@
 import { listen, type Cleanup } from "../dom/bindings.ts";
 import { isSwapping } from "../dom/hot/session.ts";
 import type { Leave } from "../dom/leave.ts";
-import { untrack, watch } from "../store/graph.ts";
-import { isReactive, unwrap } from "../store/store.ts";
+import { untrack, watch } from "../variable/graph.ts";
+import { isReactive, unwrap } from "../variable/reactive.ts";
 import type { Controller } from "./controller.ts";
 import { Group } from "./group.ts";
 import type { ItemOptions } from "./options.ts";

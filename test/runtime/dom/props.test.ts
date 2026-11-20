@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { props } from "@runtime/dom/props.ts";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import Badge from "./fixtures/badge.lucia";
 import Shelf from "./fixtures/Shelf.lucia";
 import { host, mount, resetMounts, text } from "./fixtures/mount.ts";
@@ -52,7 +52,7 @@ describe("props()", () => {
   });
 
   test("a passed value stays reactive", () => {
-    const label = store("A");
+    const label = variable("A");
     const el = host();
     mount(Badge, el, { label: () => label.value });
 

@@ -4,7 +4,7 @@ import type { AnimateItem } from "@runtime/animate/animation.ts";
 import type { Keyframes } from "@runtime/animate/keyframes.ts";
 import { EASE } from "@runtime/animate/modes.ts";
 import { WHEN } from "@runtime/animate/trigger.ts";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
@@ -193,15 +193,15 @@ describe("WHEN.MANUAL", () => {
   });
 });
 
-describe("a store or store.from value as when", () => {
+describe("a variable or variable.compute value as when", () => {
   test("the first value is applied without animating", () => {
-    const on = store(true);
+    const on = variable(true);
     const { opacity } = mount({ when: on });
     expect(opacity()).toBe(1);
   });
 
   test("a later truthy value plays forward and a falsy value plays back from the current progress", () => {
-    const on = store(false);
+    const on = variable(false);
     const { opacity } = mount({ when: on });
     expect(opacity()).toBe(0);
     on.value = true;
@@ -212,9 +212,9 @@ describe("a store or store.from value as when", () => {
     expect(opacity()).toBeCloseTo(0.25, 1);
   });
 
-  test("a store.from value works the same way", () => {
-    const count = store(0);
-    const big = store.from(() => count.value > 5);
+  test("a variable.compute value works the same way", () => {
+    const count = variable(0);
+    const big = variable.compute(() => count.value > 5);
     const { opacity } = mount({ when: big });
     count.value = 9;
     advance(100);
@@ -222,7 +222,7 @@ describe("a store or store.from value as when", () => {
   });
 
   test("once plays forward only the first time a truthy value arrives", () => {
-    const on = store(false);
+    const on = variable(false);
     const { opacity } = mount({ when: on, once: true });
     on.value = true;
     advance(100);
