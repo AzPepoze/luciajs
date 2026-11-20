@@ -73,7 +73,15 @@ describe("splitting", () => {
 
   test("lucia build writes the lazy chunk next to the entry", async () => {
     const outdir = await mkdtemp(join(tmpdir(), "lucia-bundle-out-"));
-    expect(await runBuild({ dir: app, outdir, minify: true, quiet: true })).toBe(0);
+    expect(
+      await runBuild({
+        dir: app,
+        outdir,
+        minify: true,
+        quiet: true,
+        lazy: { mode: "smart", prefetch: "idle" },
+      }),
+    ).toBe(0);
     const files = await readdir(outdir);
     const scripts = files.filter((file) => SCRIPT.test(file));
     expect(scripts).toHaveLength(2);
@@ -83,7 +91,7 @@ describe("splitting", () => {
   });
 
   test("dev builds serve the lazy chunk as its own asset", async () => {
-    const result = await buildDev(app);
+    const result = await buildDev(app, { mode: "smart", prefetch: "idle" });
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     const scripts = [...result.assets.entries()].filter(

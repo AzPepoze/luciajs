@@ -12,6 +12,7 @@ describe("parseCommand", () => {
       minify: true,
       routes: [],
       quiet: false,
+      lazy: { mode: "smart", prefetch: "idle" },
     });
   });
 
@@ -25,6 +26,7 @@ describe("parseCommand", () => {
       minify: false,
       routes: [],
       quiet: false,
+      lazy: { mode: "smart", prefetch: "idle" },
     });
   });
 
@@ -39,18 +41,21 @@ describe("parseCommand", () => {
       dir: ".",
       port: 3000,
       quiet: false,
+      lazy: { mode: "smart", prefetch: "idle" },
     });
     expect(parseCommand(["dev"], { PORT: "3100" })).toEqual({
       name: "dev",
       dir: ".",
       port: 3100,
       quiet: false,
+      lazy: { mode: "smart", prefetch: "idle" },
     });
     expect(parseCommand(["dev", "--port", "3196"], { PORT: "3100" })).toEqual({
       name: "dev",
       dir: ".",
       port: 3196,
       quiet: false,
+      lazy: { mode: "smart", prefetch: "idle" },
     });
   });
 
