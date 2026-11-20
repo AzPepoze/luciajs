@@ -67,6 +67,8 @@ export const guidePlan: GuideGroup[] = [
       "attach",
       "setup",
       "lazy",
+      "fallback",
+      "nolazy",
       "recursive-components",
       "html",
       "component",

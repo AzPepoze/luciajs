@@ -389,6 +389,12 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
+  fallback: {
+    icon: "hourglass_empty",
+  },
+  nolazy: {
+    icon: "push_pin",
+  },
   setup: {
     icon: "touch_app",
     demos: [

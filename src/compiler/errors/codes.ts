@@ -149,6 +149,26 @@ export const CODES = {
     message: "<HTML> needs one {expression}",
     hint: "Put one expression in braces between the tags, such as <HTML>{html}</HTML>.",
   },
+  L1038: {
+    message: "<$tag> must be at the top level of the file",
+    hint: "Move it out of the other elements, to the top level of the markup.",
+  },
+  L1039: {
+    message: "<FALLBACK> can only be used once",
+    hint: "Keep one <FALLBACK> block, and move its content into it.",
+  },
+  L1040: {
+    message: "<NOLAZY /> can only be used once",
+    hint: "Remove the extra <NOLAZY /> from this file.",
+  },
+  L1041: {
+    message: "<NOLAZY /> takes no children",
+    hint: "Write it as <NOLAZY /> with no content between the tags.",
+  },
+  L1042: {
+    message: "$what is not allowed in <FALLBACK>",
+    hint: "<FALLBACK> shows before the script runs, so use plain elements and text only.",
+  },
   L2001: {
     message: "animate item needs a style",
     hint: "Add style to the item, such as { style: fadeIn }.",
