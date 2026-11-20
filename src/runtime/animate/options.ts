@@ -7,6 +7,7 @@ import { animateDefault } from "./defaults.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
 import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "./trigger.ts";
 import { readMore, type ReadMore } from "./more.ts";
+import type { ShrinkSpec } from "./shrink-space.ts";
 import { runtimeError } from "../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 
@@ -26,6 +27,8 @@ export interface ItemOptions {
   once: boolean;
   control: Controller | undefined;
   more: ReadMore;
+  /** Set for a DETACH item that closes the space it holds. Undefined with `keepSpace`. */
+  shrink: ShrinkSpec | undefined;
 }
 
 export function readItem(item: AnimateItem): ItemOptions {
@@ -36,20 +39,34 @@ export function readItem(item: AnimateItem): ItemOptions {
   rejectLoop(item, when);
   const duration = readMs(item.duration, animateDefault().duration, "duration");
   const more = readMore(when, item.more, { duration });
+  const keyframes = readKeyframes(item, when);
+  const timing = {
+    duration,
+    delay: readMs(item.delay, 0, "delay"),
+    loop: readLoop(item.loop, item.backAndForth),
+    keep: item.keep !== false,
+    midway: readMidway(item.midway),
+  };
   return {
-    keyframes: readKeyframes(item, when),
-    timing: {
-      duration,
-      delay: readMs(item.delay, 0, "delay"),
-      loop: readLoop(item.loop, item.backAndForth),
-      keep: item.keep !== false,
-      midway: readMidway(item.midway),
-    },
+    keyframes,
+    timing,
+    shrink: readShrink(when, more, keyframes, timing),
     when,
     once: item.once ?? (when === WHEN.VIEW && !more.reverse),
     control: item.control,
     more,
   };
+}
+
+/** A DETACH item closes its space unless `keepSpace` is set. */
+function readShrink(
+  when: When | Source,
+  more: ReadMore,
+  keyframes: Keyframes,
+  timing: Timing,
+): ShrinkSpec | undefined {
+  if (when !== WHEN.DETACH || more.detach.keepSpace) return undefined;
+  return { duration: timing.duration, delay: timing.delay, keyframes };
 }
 
 /** The keyframes of a layout item with no style. It has no props, so only the glide and the timing run. */

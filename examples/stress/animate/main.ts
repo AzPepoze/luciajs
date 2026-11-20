@@ -2,13 +2,14 @@ import { attach, type Instance } from "lucia";
 import { createTarget } from "../cells.ts";
 import { formatMs, timed, type Result } from "../report.ts";
 import Tile from "./Tile.lucia";
+import KeepTile from "./KeepTile.lucia";
 
 export const TILES = 2000;
 export const DURATION = 300;
 
-export function attachTiles(target: Element, total: number): Instance[] {
+export function attachTiles(target: Element, total: number, component = Tile): Instance[] {
   const instances: Instance[] = [];
-  for (let i = 0; i < total; i++) instances.push(attach(Tile, target));
+  for (let i = 0; i < total; i++) instances.push(attach(component, target));
   return instances;
 }
 
@@ -33,10 +34,18 @@ export async function run(): Promise<Result[]> {
   const leaveMs = performance.now() - leaveStart;
   const left = target.childNodes.length;
   target.remove();
+  const keepTarget = createTarget("ul");
+  const keepInstances = attachTiles(keepTarget, TILES, KeepTile);
+  await wait(DURATION + 100);
+  const keepLeaveStart = performance.now();
+  await Promise.all(keepInstances.map((instance) => instance.detach()));
+  const keepLeaveMs = performance.now() - keepLeaveStart;
+  keepTarget.remove();
   return [
     { name: `Attach ${TILES} tiles, 3 animations each`, value: formatMs(attachMs) },
     { name: `Enter finished (opacity 1), of ${TILES}`, value: String(atEnd) },
     { name: `Leave ${TILES} tiles (waits for animation)`, value: formatMs(leaveMs) },
     { name: "Nodes left after leave", value: String(left) },
+    { name: `Leave ${TILES} tiles with keepSpace (no space closes)`, value: formatMs(keepLeaveMs) },
   ];
 }

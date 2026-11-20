@@ -1,6 +1,6 @@
 import type { Controller } from "./controller.ts";
 import type { Keyframes } from "./keyframes.ts";
-import type { HoverMore, ScrollMore } from "./more.ts";
+import type { DetachMore, HoverMore, ScrollMore } from "./more.ts";
 import type { AnimateMidway } from "./midway-options.ts";
 import { WHEN, type LayoutWhen, type Source } from "./trigger.ts";
 import type { ViewMore } from "./view-options.ts";
@@ -18,10 +18,15 @@ interface ItemBase {
   backAndForth?: boolean;
 }
 
-/** A trigger with no options: ATTACH (the default), DETACH, MANUAL, or a variable. */
+/** A trigger with no options: ATTACH (the default), MANUAL, or a variable. */
 interface PlainItem extends ItemBase {
-  when?: typeof WHEN.ATTACH | typeof WHEN.DETACH | typeof WHEN.MANUAL | Source;
+  when?: typeof WHEN.ATTACH | typeof WHEN.MANUAL | Source;
   more?: never;
+}
+
+interface DetachItem extends ItemBase {
+  when: typeof WHEN.DETACH;
+  more?: DetachMore;
 }
 
 /** A layout trigger glides the element. Its style is optional: the glide runs without it. */
@@ -47,7 +52,7 @@ interface ScrollItem extends ItemBase {
 }
 
 /** One animation on an element. `more` is typed by its trigger. Only `style` is required. */
-export type AnimateItem = PlainItem | LayoutItem | ViewItem | HoverItem | ScrollItem;
+export type AnimateItem = PlainItem | DetachItem | LayoutItem | ViewItem | HoverItem | ScrollItem;
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];
 

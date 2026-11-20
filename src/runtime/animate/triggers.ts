@@ -14,6 +14,7 @@ import { watchScroll } from "./scroll.ts";
 import { watchView } from "./view.ts";
 import { bindHover } from "./hover.ts";
 import { watchLayout } from "./layout.ts";
+import { detachLeave, type ShrinkSpec } from "./shrink-space.ts";
 import { layoutModeOf } from "./layout-mode.ts";
 import type { GlideSpec } from "./layout-glide.ts";
 
@@ -25,6 +26,8 @@ export interface Slot {
   more: ReadMore;
   /** Set for the layout triggers, which glide the element. Each layout item has its own slot. */
   glide: GlideSpec | undefined;
+  /** Set for a DETACH item that closes its space. Each such item has its own slot. */
+  shrink: ShrinkSpec | undefined;
   group: Group;
 }
 
@@ -34,33 +37,36 @@ interface Bucket {
   control: Controller | undefined;
   more: ReadMore;
   glide: GlideSpec | undefined;
+  shrink: ShrinkSpec | undefined;
   players: Player[];
 }
 
 export function groupSlots(items: ItemOptions[], players: Player[], refresh: () => void): Slot[] {
   const buckets: Bucket[] = [];
   items.forEach((item, i) => bucketFor(buckets, item).players.push(players[i]!));
-  return buckets.map(({ when, once, control, more, glide, players: members }) => ({
+  return buckets.map(({ when, once, control, more, glide, shrink, players: members }) => ({
     when,
     once,
     control,
     more,
     glide,
+    shrink,
     group: new Group(members, refresh),
   }));
 }
 
 function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
-  const { when, once, control, more } = item;
+  const { when, once, control, more, shrink } = item;
   const glide = glideSpecOf(item);
-  const found = glide
-    ? undefined
-    : buckets.find(
-        (b) =>
-          b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
-      );
+  const found =
+    glide || shrink
+      ? undefined
+      : buckets.find(
+          (b) =>
+            b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
+        );
   if (found) return found;
-  const bucket: Bucket = { when, once, control, more, glide, players: [] };
+  const bucket: Bucket = { when, once, control, more, glide, shrink, players: [] };
   buckets.push(bucket);
   return bucket;
 }
@@ -79,13 +85,13 @@ function glideSpecOf(item: ItemOptions): GlideSpec | undefined {
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
 export function bindTrigger(
   el: HTMLElement,
-  { when, once, more, glide, group }: Slot,
+  { when, once, more, glide, shrink, group }: Slot,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
   if (isReactive(when)) bindSource(when, group, once, cleanups);
   else if (when === WHEN.ATTACH) attachTrigger(group);
-  else if (when === WHEN.DETACH) leaves.push(() => group.forward());
+  else if (when === WHEN.DETACH) leaves.push(detachLeave(el, group, shrink));
   else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
   else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
   else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);

@@ -3,6 +3,7 @@ import { prepareTimeline, type Keyframes } from "@runtime/animate/keyframes.ts";
 import { readItem } from "@runtime/animate/options.ts";
 import { withWhere } from "@runtime/errors.ts";
 import { EASE } from "@runtime/animate/modes.ts";
+import { WHEN } from "@runtime/animate/trigger.ts";
 
 const { QUART } = EASE.STYLE;
 const frames = { 0: { opacity: 0 }, 1: { opacity: 1 } };
@@ -50,5 +51,34 @@ describe("unknown animate item keys", () => {
 
   test("a valid item gives no error", () => {
     expect(() => readItem({ style: frames, duration: 400 })).not.toThrow();
+  });
+});
+
+describe("DETACH more keepSpace", () => {
+  const detach = (more: unknown) => ({ style: frames, when: WHEN.DETACH, more }) as never;
+
+  test("keepSpace must be true or false", () => {
+    const error = thrown(() => readItem(detach({ keepSpace: "yes" })));
+    expect(error.code).toBe("L2056");
+    expect(error.message).toBe("animate more keepSpace must be true or false, got yes");
+  });
+
+  test("a misspelled keepSpace names the right key", () => {
+    expect(thrown(() => readItem(detach({ keepSpce: true }))).hint).toBe(
+      "did you mean 'keepSpace'?",
+    );
+  });
+
+  test("without keepSpace a DETACH item closes its space", () => {
+    expect(readItem(detach(undefined)).shrink).toEqual({
+      duration: 300,
+      delay: 0,
+      keyframes: frames,
+    });
+  });
+
+  test("keepSpace: true keeps the space, so there is nothing to close", () => {
+    expect(readItem(detach({ keepSpace: true })).shrink).toBeUndefined();
+    expect(readItem(detach({ keepSpace: true })).more.detach).toEqual({ keepSpace: true });
   });
 });
