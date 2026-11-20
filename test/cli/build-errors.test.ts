@@ -1,0 +1,111 @@
+import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join, relative } from "node:path";
+import { formatBuildFailure, type BuildLog } from "@cli/build-errors.ts";
+import { lucia } from "@bun-plugin/index.ts";
+
+const REPO = new URL("../../", import.meta.url).pathname;
+const ACTIVE_IMPORT = `<script>
+import { store, ACTIVE } from "lucia";
+const count = store(1);
+console.log(ACTIVE, count);
+</script>
+<p>{count}</p>
+`;
+
+let workRoot: string;
+
+beforeAll(async () => {
+  workRoot = await mkdtemp(join(tmpdir(), "lucia-build-errors-"));
+  await mkdir(join(workRoot, "node_modules"));
+  await symlink(REPO, join(workRoot, "node_modules", "lucia"), "dir");
+});
+
+afterAll(async () => {
+  await rm(workRoot, { recursive: true, force: true });
+});
+
+/** Runs a real Bun.build on one entry file in a fresh folder and returns its failure logs. */
+async function failingLogs(
+  name: string,
+  files: Record<string, string>,
+  entry: string,
+): Promise<BuildLog[]> {
+  const dir = await mkdtemp(join(workRoot, `${name}-`));
+  await mkdir(join(dir, "src"));
+  for (const [path, text] of Object.entries(files)) await writeFile(join(dir, path), text);
+  const result = await Bun.build({
+    entrypoints: [join(dir, entry)],
+    throw: false,
+    plugins: [lucia({ dev: false })],
+  });
+  expect(result.success).toBe(false);
+  return result.logs;
+}
+
+function displayPath(path: string): string {
+  return relative(process.cwd(), path);
+}
+
+describe("formatBuildFailure", () => {
+  test("a .lucia import of a renamed export gets a location, a caret and a rename hint", async () => {
+    const logs = await failingLogs(
+      "active",
+      { "src/Card.lucia": ACTIVE_IMPORT, "src/index.ts": 'import "./Card.lucia";\n' },
+      "src/index.ts",
+    );
+    const text = formatBuildFailure(logs, false);
+    expect(text).toContain(
+      `${displayPath(logs[0]!.position!.file)}:2:17 - error L3001: "ACTIVE" is not exported by "lucia"`,
+    );
+    expect(text).toContain('2 | import { store, ACTIVE } from "lucia";');
+    expect(text).toContain("  | " + " ".repeat(16) + "^~~~~");
+    expect(text).toContain("hint: ACTIVE was renamed to WHEN.");
+    expect(text).toContain("Build failed: 1 error");
+  });
+
+  test("a missing relative file gets L3002 at the importing line", async () => {
+    const logs = await failingLogs(
+      "missing",
+      { "src/index.ts": 'import { x } from "./nope.ts";\nconsole.log(x);\n' },
+      "src/index.ts",
+    );
+    const text = formatBuildFailure(logs, false);
+    expect(text).toContain(`${displayPath(logs[0]!.position!.file)}:1:`);
+    expect(text).toContain('error L3002: cannot resolve "./nope.ts"');
+    expect(text).toContain('1 | import { x } from "./nope.ts";');
+  });
+
+  test("a misspelled export suggests the closest real export", async () => {
+    const logs = await failingLogs(
+      "typo",
+      { "src/index.ts": 'import { stor } from "lucia";\nconsole.log(stor);\n' },
+      "src/index.ts",
+    );
+    const text = formatBuildFailure(logs, false);
+    expect(text).toContain('error L3001: "stor" is not exported by "lucia"');
+    expect(text).toContain('hint: Did you mean "store"?');
+  });
+
+  test("a compile error from the plugin is printed once, as it was formatted", async () => {
+    const logs = await failingLogs(
+      "compile",
+      { "src/Bad.lucia": "<p>{}</p>\n", "src/index.ts": 'import "./Bad.lucia";\n' },
+      "src/index.ts",
+    );
+    const text = formatBuildFailure(logs, false);
+    expect(text).toContain("error L1011: empty {}");
+    expect(text).not.toContain("L3003");
+  });
+
+  test("no ANSI colors when color is off", async () => {
+    const logs = await failingLogs(
+      "plain",
+      { "src/index.ts": 'import { stor } from "lucia";\nconsole.log(stor);\n' },
+      "src/index.ts",
+    );
+    expect(formatBuildFailure(logs, false)).not.toContain("\x1b[");
+    expect(formatBuildFailure(logs, true)).toContain("\x1b[");
+  });
+});

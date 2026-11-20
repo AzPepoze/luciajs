@@ -17,6 +17,10 @@ export function withWhere<T>(at: string | undefined, read: () => T): T {
   }
 }
 
+/** In a dev build the location is also added to the message, so the browser console shows it. */
 export function runtimeError(code: ErrorCodeName, values?: Values): LuciaError {
-  return luciaError(code, values, where === undefined ? undefined : parseWhere(where));
+  if (where === undefined) return luciaError(code, values);
+  const error = luciaError(code, values, parseWhere(where));
+  error.message = `${error.message} (${where})`;
+  return error;
 }

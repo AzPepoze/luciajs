@@ -6,20 +6,19 @@ describe("runtime errors", () => {
     const error = runtimeError("L2042");
     expect(error.code).toBe("L2042");
     expect(error.hint).toBe("Use a step such as 1, or -1 to count down.");
+    expect(error.message).toBe("FOR needs a step that is not 0");
     expect(error.file).toBeUndefined();
     expect(error.line).toBeUndefined();
   });
 
-  test("take file, line and column from the location in scope", () => {
+  test("take file, line and column from the location in scope, and end the message with it", () => {
     const error = withWhere("src/Card.lucia:24:8", () => runtimeError("L2042"));
     expect(error).toMatchObject({ file: "src/Card.lucia", line: 24, column: 8, code: "L2042" });
+    expect(error.message).toBe("FOR needs a step that is not 0 (src/Card.lucia:24:8)");
   });
 
   test("the location ends with the scope and keeps colons in the file name", () => {
-    withWhere("C:/app/Card.lucia:1:2", () => undefined);
     expect(runtimeError("L2042").file).toBeUndefined();
-    expect(withWhere("C:/app/Card.lucia:1:2", () => runtimeError("L2042")).file).toBe(
-      "C:/app/Card.lucia",
-    );
+    expect(withWhere("C:/app/Card.lucia:1:2", () => runtimeError("L2042")).file).toBe("C:/app/Card.lucia");
   });
 });

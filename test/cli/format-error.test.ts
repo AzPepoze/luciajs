@@ -37,6 +37,29 @@ describe("formatError", () => {
     expect(colored.replace(/\x1b\[[0-9;]*m/g, "")).toBe(formatError(sample(), SOURCE, false));
   });
 
+  test("drops the dev runtime suffix from the message, since the location is already printed", () => {
+    const error = new LuciaError(
+      "FOR needs a step that is not 0 (src/Card.lucia:24:8)",
+      "src/Card.lucia",
+      24,
+      8,
+      {
+        code: "L2042",
+        hint: "Use a step such as 1, or -1 to count down.",
+      },
+    );
+    expect(formatError(error, undefined, false)).toBe(
+      "src/Card.lucia:24:8 - error L2042: FOR needs a step that is not 0\n\nhint: Use a step such as 1, or -1 to count down.",
+    );
+  });
+
+  test("keeps a message whose parenthesis is not the location", () => {
+    const error = new LuciaError("step (see docs)", "src/Card.lucia", 2, 1, { code: "L2042" });
+    expect(formatError(error, undefined, false)).toBe(
+      "src/Card.lucia:2:1 - error L2042: step (see docs)",
+    );
+  });
+
   test("a runtime error with no location prints the code and hint only", () => {
     const error = new LuciaError(
       "animate duration must be a time in ms, got -1",

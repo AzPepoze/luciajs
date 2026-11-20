@@ -1,4 +1,5 @@
 // L1xxx: compile errors in .lucia files. L2xxx: runtime checks on values the compiled code passes in.
+// L3xxx: bundler errors from Bun.build, such as a missing export or an unresolved import.
 // Messages and hints may use $name placeholders, filled from the values an error is raised with.
 export interface ErrorCode {
   message: string;
@@ -289,6 +290,9 @@ export const CODES = {
     hint: "Write style: keyframes instead of animation: keyframes.",
   },
   L2046: { message: "active was renamed to when", hint: "Write when: instead of active:." },
+  L3001: { message: "\"$name\" is not exported by \"$module\"", hint: "Check the name, or see reference/api.ts." },
+  L3002: { message: "cannot resolve \"$name\"", hint: "Check the spelling of the path or package name, and that the file exists." },
+  L3003: { message: "$message", hint: "Fix the code on this line, then build again." },
 } as const satisfies Record<string, ErrorCode>;
 
 export type ErrorCodeName = keyof typeof CODES;

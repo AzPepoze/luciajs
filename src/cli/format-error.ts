@@ -18,10 +18,17 @@ type Painter = (text: string, code: string) => string;
 
 function headline(error: LuciaError, paintWith: Painter): string {
   const code = error.code ? ` ${error.code}` : "";
-  const message = `${paintWith("error", ANSI.red)}${paintWith(code, ANSI.red)}: ${error.message}`;
+  const message = `${paintWith("error", ANSI.red)}${paintWith(code, ANSI.red)}: ${messageText(error)}`;
   if (error.file === undefined || error.line === undefined) return message;
   const place = `${paintWith(displayPath(error.file), ANSI.cyan)}:${paintWith(`${error.line}:${error.column ?? 1}`, ANSI.yellow)}`;
   return `${place} - ${message}`;
+}
+
+/** A dev runtime error ends its message with its location. The headline already shows it, so it is removed here. */
+function messageText(error: LuciaError): string {
+  if (error.file === undefined || error.line === undefined) return error.message;
+  const suffix = ` (${error.file}:${error.line}:${error.column ?? 1})`;
+  return error.message.endsWith(suffix) ? error.message.slice(0, -suffix.length) : error.message;
 }
 
 function displayPath(file: string): string {
