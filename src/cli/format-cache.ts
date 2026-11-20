@@ -1,12 +1,6 @@
 import { createHash } from "node:crypto";
 import { createRequire } from "node:module";
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  renameSync,
-  writeFileSync,
-} from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import type { Options } from "prettier";
@@ -37,12 +31,7 @@ interface CacheFile {
  */
 export interface FormatCache {
   decide(file: string, source: string, config: Options): CacheDecision;
-  record(
-    file: string,
-    source: string,
-    formatted: string,
-    config: Options,
-  ): void;
+  record(file: string, source: string, formatted: string, config: Options): void;
   save(): void;
 }
 
@@ -55,8 +44,7 @@ export function openFormatCache(cwd: string): FormatCache | undefined {
   return {
     decide(file, source, config) {
       const entry = files.get(file);
-      if (entry === undefined || entry.config !== configHash(config))
-        return "unknown";
+      if (entry === undefined || entry.config !== configHash(config)) return "unknown";
       const content = hash(source);
       if (content === entry.formatted) return "clean";
       if (content === entry.source) return "changed";
@@ -117,8 +105,7 @@ function saveEntries(
   seen: Set<string>,
 ): void {
   try {
-    const kept =
-      files.size > MAX_ENTRIES ? keptEntries(files, seen) : [...files];
+    const kept = files.size > MAX_ENTRIES ? keptEntries(files, seen) : [...files];
     const data: CacheFile = { tool, files: Object.fromEntries(kept) };
     mkdirSync(dirname(path), { recursive: true });
     const temporary = `${path}.${process.pid}.tmp`;
@@ -129,10 +116,7 @@ function saveEntries(
   }
 }
 
-function keptEntries(
-  files: Map<string, Entry>,
-  seen: Set<string>,
-): Array<[string, Entry]> {
+function keptEntries(files: Map<string, Entry>, seen: Set<string>): Array<[string, Entry]> {
   return [...files].filter(([file]) => seen.has(file));
 }
 

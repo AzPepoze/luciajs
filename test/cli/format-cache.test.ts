@@ -36,9 +36,7 @@ describe("openFormatCache", () => {
     cache.record(file, UNFORMATTED, FORMATTED, CONFIG);
     expect(cache.decide(file, UNFORMATTED, CONFIG)).toBe("changed");
     expect(cache.decide(file, FORMATTED, CONFIG)).toBe("clean");
-    expect(cache.decide(file, `${UNFORMATTED}<p>x</p>`, CONFIG)).toBe(
-      "unknown",
-    );
+    expect(cache.decide(file, `${UNFORMATTED}<p>x</p>`, CONFIG)).toBe("unknown");
   });
 
   test("a different Prettier config makes the entry unknown", async () => {
@@ -65,10 +63,7 @@ describe("openFormatCache", () => {
     const dir = await folder();
     const file = join(dir, "Card.lusia");
     await mkdir(join(dir, "node_modules/.cache/lusia"), { recursive: true });
-    await writeFile(
-      join(dir, "node_modules/.cache/lusia/format.json"),
-      "not json",
-    );
+    await writeFile(join(dir, "node_modules/.cache/lusia/format.json"), "not json");
     const cache = openFormatCache(dir)!;
     expect(cache.decide(file, FORMATTED, CONFIG)).toBe("unknown");
   });

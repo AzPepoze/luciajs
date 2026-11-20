@@ -104,7 +104,12 @@ class TemplateScanner {
 
   private addContent(start: number): void {
     const c = this.cursor;
-    const { selfClosing } = readAttributes(c, CONTENT_TAG, start, blockCheck(CONTENT_TAG, new Map()));
+    const { selfClosing } = readAttributes(
+      c,
+      CONTENT_TAG,
+      start,
+      blockCheck(CONTENT_TAG, new Map()),
+    );
     if (!selfClosing) c.fail("L1036", {}, start);
     if (this.scope.contentUsed) c.fail("L1035", {}, start);
     this.scope.contentUsed = true;

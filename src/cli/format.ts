@@ -19,8 +19,7 @@ export async function runFormat(options: FormatOptions): Promise<number> {
   const color = colorEnabled();
   const changed: string[] = [];
   const errors: string[] = [];
-  const cache =
-    options.cache === false ? undefined : openFormatCache(process.cwd());
+  const cache = options.cache === false ? undefined : openFormatCache(process.cwd());
   for (const file of files) {
     try {
       await formatOne(file, options, cache, changed);
@@ -68,19 +67,15 @@ function report(
   if (options.check) {
     for (const path of changed)
       process.stdout.write(`${color ? paint(path, ANSI.yellow) : path}\n`);
-    if (!options.quiet)
-      process.stdout.write(`${summary(count, changed.length)}\n`);
+    if (!options.quiet) process.stdout.write(`${summary(count, changed.length)}\n`);
     return;
   }
-  if (!options.quiet)
-    process.stdout.write(`${writtenSummary(count, changed.length)}\n`);
+  if (!options.quiet) process.stdout.write(`${writtenSummary(count, changed.length)}\n`);
 }
 
 function summary(count: number, changed: number): string {
   if (changed === 0) {
-    return count === 1
-      ? "The file is formatted."
-      : `All ${count} files are formatted.`;
+    return count === 1 ? "The file is formatted." : `All ${count} files are formatted.`;
   }
   return `${changed} of ${count} ${plural(count)} would be reformatted.`;
 }

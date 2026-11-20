@@ -81,12 +81,7 @@ describe("component children", () => {
   });
 
   test("a nested component keeps its own children", () => {
-    const { bindings } = compileTemplate(
-      "<card><card><b>x</b></card></card>",
-      FILE,
-      1,
-      COMPONENTS,
-    );
+    const { bindings } = compileTemplate("<card><card><b>x</b></card></card>", FILE, 1, COMPONENTS);
     expect(bindings[0]).toMatchObject({
       children: { bindings: [{ kind: "component", name: "card", children: { html: "<b>x</b>" } }] },
     });

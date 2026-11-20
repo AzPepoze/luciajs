@@ -46,13 +46,9 @@ const DEFAULT_OUTDIR = "dist";
 const DEFAULT_LAZY_MODE = "smart";
 const DEFAULT_LAZY_PREFETCH = "idle";
 
-export function parseCommand(
-  argv: string[],
-  env: Record<string, string | undefined>,
-): Command {
+export function parseCommand(argv: string[], env: Record<string, string | undefined>): Command {
   const [name, ...rest] = argv;
-  if (!name || name === "help" || name === "--help" || name === "-h")
-    return { name: "help" };
+  if (!name || name === "help" || name === "--help" || name === "-h") return { name: "help" };
   if (name === "build") return parseBuild(rest);
   if (name === "dev") return parseDev(rest, env);
   if (name === "format") return parseFormat(rest);
@@ -80,21 +76,14 @@ function parseBuild(args: string[]): Command {
     dir,
     outdir: outdirOf(dir, values.outdir, config),
     minify: values["no-minify"] ? false : (config.minify ?? true),
-    routes:
-      values.routes === undefined
-        ? (config.routes ?? [])
-        : parseRoutes(values.routes),
+    routes: values.routes === undefined ? (config.routes ?? []) : parseRoutes(values.routes),
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
   };
 }
 
 /** The flag follows the current folder; the file and the default follow the app folder. */
-function outdirOf(
-  dir: string,
-  flag: string | undefined,
-  config: LusiaConfig,
-): string {
+function outdirOf(dir: string, flag: string | undefined, config: LusiaConfig): string {
   if (flag !== undefined) return resolve(flag);
   return resolve(dir, config.outdir ?? DEFAULT_OUTDIR);
 }
@@ -116,17 +105,12 @@ export function parseRoutes(value: string | undefined): string[] {
     .filter(Boolean);
   for (const route of routes) {
     if (!isRoute(route))
-      throw new UsageError(
-        `invalid route "${route}", use a path such as /guide`,
-      );
+      throw new UsageError(`invalid route "${route}", use a path such as /guide`);
   }
   return routes;
 }
 
-function parseDev(
-  args: string[],
-  env: Record<string, string | undefined>,
-): Command {
+function parseDev(args: string[], env: Record<string, string | undefined>): Command {
   const { values, positionals } = withUsageErrors(() =>
     parseArgs({
       args,
@@ -140,8 +124,7 @@ function parseDev(
   return {
     name: "dev",
     dir,
-    port:
-      port === undefined ? (config.dev?.port ?? DEFAULT_PORT) : parsePort(port),
+    port: port === undefined ? (config.dev?.port ?? DEFAULT_PORT) : parsePort(port),
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
   };
@@ -207,9 +190,7 @@ function pathsOf(positionals: string[]): string[] {
 function parseMaxWarnings(value: string | undefined): number {
   if (value === undefined) return Number.POSITIVE_INFINITY;
   if (!/^\d+$/.test(value))
-    throw new UsageError(
-      `invalid max warnings "${value}", use a whole number from 0`,
-    );
+    throw new UsageError(`invalid max warnings "${value}", use a whole number from 0`);
   return Number(value);
 }
 
@@ -217,9 +198,7 @@ function withUsageErrors<T>(parse: () => T): T {
   try {
     return parse();
   } catch (error) {
-    throw new UsageError(
-      error instanceof Error ? error.message : String(error),
-    );
+    throw new UsageError(error instanceof Error ? error.message : String(error));
   }
 }
 

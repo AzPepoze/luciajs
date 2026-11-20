@@ -154,7 +154,8 @@ suite("DETACH places a placeholder and lifts the element out of flow", () => {
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(96, 0);
-      for (let i = 1; i < tops.length; i++) expect(tops[i]!).toBeLessThanOrEqual(tops[i - 1]! + 0.01);
+      for (let i = 1; i < tops.length; i++)
+        expect(tops[i]!).toBeLessThanOrEqual(tops[i - 1]! + 0.01);
       expect(tops[tops.length - 2]! - last).toBeLessThan(2);
     } finally {
       await page.close();
@@ -268,4 +269,3 @@ suite("DETACH places a placeholder and lifts the element out of flow", () => {
     }
   });
 });
-

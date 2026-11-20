@@ -18,9 +18,7 @@ describe("parseCommand", () => {
   });
 
   test("build reads its options", () => {
-    expect(
-      parseCommand(["build", "app", "--outdir", "out", "--no-minify"], NO_ENV),
-    ).toEqual({
+    expect(parseCommand(["build", "app", "--outdir", "out", "--no-minify"], NO_ENV)).toEqual({
       name: "build",
       dir: "app",
       outdir: resolve("out"),
@@ -72,18 +70,15 @@ describe("parseCommand", () => {
       quiet: false,
       cache: true,
     });
-    expect(
-      parseCommand(
-        ["format", "src", "app/**/*.lusia", "--check", "--quiet"],
-        NO_ENV,
-      ),
-    ).toEqual({
-      name: "format",
-      paths: ["src", "app/**/*.lusia"],
-      check: true,
-      quiet: true,
-      cache: true,
-    });
+    expect(parseCommand(["format", "src", "app/**/*.lusia", "--check", "--quiet"], NO_ENV)).toEqual(
+      {
+        name: "format",
+        paths: ["src", "app/**/*.lusia"],
+        check: true,
+        quiet: true,
+        cache: true,
+      },
+    );
   });
 
   test("format can turn the content cache off", () => {
@@ -106,10 +101,7 @@ describe("parseCommand", () => {
       rules: undefined,
     });
     expect(
-      parseCommand(
-        ["lint", "src", "--fix", "--max-warnings", "0", "--quiet"],
-        NO_ENV,
-      ),
+      parseCommand(["lint", "src", "--fix", "--max-warnings", "0", "--quiet"], NO_ENV),
     ).toEqual({
       name: "lint",
       paths: ["src"],
@@ -126,25 +118,13 @@ describe("parseCommand", () => {
   });
 
   test("bad options raise a usage error", () => {
-    expect(() => parseCommand(["build", "--bogus"], NO_ENV)).toThrow(
-      UsageError,
-    );
-    expect(() => parseCommand(["dev", "--port", "70000"], NO_ENV)).toThrow(
-      UsageError,
-    );
+    expect(() => parseCommand(["build", "--bogus"], NO_ENV)).toThrow(UsageError);
+    expect(() => parseCommand(["dev", "--port", "70000"], NO_ENV)).toThrow(UsageError);
     expect(() => parseCommand(["build", "a", "b"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["format", "--bogus"], NO_ENV)).toThrow(
-      UsageError,
-    );
+    expect(() => parseCommand(["format", "--bogus"], NO_ENV)).toThrow(UsageError);
     expect(() => parseCommand(["lint", "--bogus"], NO_ENV)).toThrow(UsageError);
-    expect(() =>
-      parseCommand(["lint", "--max-warnings", "-1"], NO_ENV),
-    ).toThrow(UsageError);
-    expect(() =>
-      parseCommand(["lint", "--max-warnings", "1.5"], NO_ENV),
-    ).toThrow(UsageError);
-    expect(() => parseCommand(["lint", "--max-warnings"], NO_ENV)).toThrow(
-      UsageError,
-    );
+    expect(() => parseCommand(["lint", "--max-warnings", "-1"], NO_ENV)).toThrow(UsageError);
+    expect(() => parseCommand(["lint", "--max-warnings", "1.5"], NO_ENV)).toThrow(UsageError);
+    expect(() => parseCommand(["lint", "--max-warnings"], NO_ENV)).toThrow(UsageError);
   });
 });

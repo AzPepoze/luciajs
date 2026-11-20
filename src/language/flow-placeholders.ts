@@ -111,8 +111,7 @@ export function restoreFlowTags(html: string, tags: FlowTag[]): string {
       text += tagOf(tags, Number(marker[1]));
     } else if (DIV_CLOSE.test(tag)) {
       const placeholder = stack.pop();
-      text +=
-        placeholder === undefined ? tag : `</${typeOf(tags, placeholder)}>`;
+      text += placeholder === undefined ? tag : `</${typeOf(tags, placeholder)}>`;
     } else {
       if (/^<div(?=[\s>])/i.test(tag)) stack.push(undefined);
       text += tag;

@@ -105,13 +105,7 @@ function formatNumber(value: number, rounded: boolean): string {
   return String(rounded ? Math.round(value) : value);
 }
 
-function numberAt(
-  from: number,
-  to: number,
-  plan: NumberPlan,
-  rounded: boolean,
-  t: number,
-): string {
+function numberAt(from: number, to: number, plan: NumberPlan, rounded: boolean, t: number): string {
   if (plan.fromUnit === plan.toUnit)
     return formatNumber(from + (to - from) * t, rounded) + plan.fromUnit;
   return `calc(${from * (1 - t)}${plan.fromUnit} + ${to * t}${plan.toUnit})`;
