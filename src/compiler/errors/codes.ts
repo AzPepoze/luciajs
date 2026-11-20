@@ -173,12 +173,12 @@ export const CODES = {
     hint: "Use a store that bind-element writes to.",
   },
   L2017: {
-    message: "animate more start and end must be numbers, got $start and $end",
-    hint: "Use numbers, such as start: 1 and end: 0.2.",
+    message: "animate more $name must be SCROLL_AT or { element, window }, got $value",
+    hint: "Use a SCROLL_AT member, such as SCROLL_AT.ENTER, or { element: EDGE.TOP, window: EDGE.BOTTOM }.",
   },
   L2018: {
-    message: "animate more start and end must be different lines",
-    hint: "Use two different numbers for start and end.",
+    message: "animate more start and end must be different moments",
+    hint: "Use two different SCROLL_AT members, or two different points.",
   },
   L2019: {
     message: "animate more part must be [from, to] with 0 <= from < to <= 1, got $value",
@@ -290,8 +290,31 @@ export const CODES = {
     hint: "Write style: keyframes instead of animation: keyframes.",
   },
   L2046: { message: "active was renamed to when", hint: "Write when: instead of active:." },
-  L3001: { message: "\"$name\" is not exported by \"$module\"", hint: "Check the name, or see reference/api.ts." },
-  L3002: { message: "cannot resolve \"$name\"", hint: "Check the spelling of the path or package name, and that the file exists." },
+  L2047: {
+    message: "animate more $name is a number, which is no longer used",
+    hint: "Write $name: SCROLL_AT.ENTER, or $name: { element: EDGE.TOP, window: EDGE.BOTTOM }.",
+  },
+  L2048: {
+    message:
+      "animate more $name must be EDGE.TOP, EDGE.CENTER, EDGE.BOTTOM or a number from 0 to 1, got $value",
+    hint: "Use an EDGE member, such as EDGE.CENTER, or a number from 0 to 1.",
+  },
+  L2049: {
+    message: 'animate more $name has an unknown key "$key", use element or window',
+    hint: "Check the spelling of the key.",
+  },
+  L2050: {
+    message: "animate more $name needs both element and window",
+    hint: "Write { element: EDGE.TOP, window: EDGE.BOTTOM }.",
+  },
+  L3001: {
+    message: '"$name" is not exported by "$module"',
+    hint: "Check the name, or see reference/api.ts.",
+  },
+  L3002: {
+    message: 'cannot resolve "$name"',
+    hint: "Check the spelling of the path or package name, and that the file exists.",
+  },
   L3003: { message: "$message", hint: "Fix the code on this line, then build again." },
 } as const satisfies Record<string, ErrorCode>;
 

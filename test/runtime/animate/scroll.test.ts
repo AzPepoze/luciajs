@@ -9,6 +9,8 @@ const readBase = { duration: 300 };
 const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
   readWith(when, more, readBase);
 import { WHEN } from "@runtime/animate/trigger.ts";
+import { EDGE, SCROLL_AT } from "@runtime/animate/scroll-modes.ts";
+import type { ScrollAt } from "@runtime/animate/scroll-touch.ts";
 import { store } from "@runtime/store/store.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
@@ -16,6 +18,7 @@ import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
 useFakeClock();
 
 const VIEWPORT_HEIGHT = 1000;
+const ELEMENT_HEIGHT = 100;
 const fade: Keyframes = {
   0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
   1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
@@ -30,7 +33,7 @@ afterEach(() => setReducedMotion(false));
 function mount(item: Omit<AnimateItem, "style"> = {}, top = VIEWPORT_HEIGHT) {
   const el = document.createElement("div");
   let position = top;
-  el.getBoundingClientRect = () => ({ top: position }) as DOMRect;
+  el.getBoundingClientRect = () => ({ top: position, height: ELEMENT_HEIGHT }) as DOMRect;
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
   animate(el, () => ({ style: fade, when: WHEN.SCROLL, ...item }) as AnimateItem, cleanups, leaves);
@@ -49,12 +52,12 @@ function mount(item: Omit<AnimateItem, "style"> = {}, top = VIEWPORT_HEIGHT) {
 }
 
 describe("WHEN.SCROLL progress", () => {
-  test("is 0 when the top is at the bottom edge and 1 at the top edge", () => {
+  test("defaults ENTER to LEAVE: 0 when the top meets the window bottom, 1 when the bottom meets the window top", () => {
     const { opacity, scrollTo } = mount();
     expect(opacity()).toBe(0);
-    scrollTo(500);
+    scrollTo(450);
     expect(opacity()).toBeCloseTo(0.5);
-    scrollTo(0);
+    scrollTo(-100);
     expect(opacity()).toBe(1);
   });
 
@@ -65,8 +68,10 @@ describe("WHEN.SCROLL progress", () => {
     expect(opacity()).toBe(1);
   });
 
-  test("custom start and end lines map the progress", () => {
-    const { opacity, scrollTo } = mount({ more: { start: 0.2, end: 0.8 } }, 900);
+  test("custom window lines map the progress", () => {
+    const start = { element: EDGE.TOP, window: 0.8 };
+    const end = { element: EDGE.TOP, window: 0.2 };
+    const { opacity, scrollTo } = mount({ more: { start, end } }, 900);
     expect(opacity()).toBe(0);
     scrollTo(800);
     expect(opacity()).toBe(0);
@@ -78,10 +83,60 @@ describe("WHEN.SCROLL progress", () => {
 
   test("ignores time: no frames are needed beyond the scroll", () => {
     const { opacity, scrollTo } = mount();
-    scrollTo(0);
+    scrollTo(-100);
     expect(opacity()).toBe(1);
     scrollTo(1000);
     expect(opacity()).toBe(0);
+  });
+});
+
+describe("WHEN.SCROLL SCROLL_AT and EDGE", () => {
+  test("CENTER: 0 when the element's centre meets the window centre", () => {
+    const { opacity, scrollTo } = mount(
+      { more: { start: SCROLL_AT.CENTER, end: SCROLL_AT.LEAVE } },
+      450,
+    );
+    expect(opacity()).toBe(0);
+    scrollTo(175);
+    expect(opacity()).toBeCloseTo(0.5);
+    scrollTo(-100);
+    expect(opacity()).toBe(1);
+  });
+
+  test("an { element, window } object takes its points from EDGE", () => {
+    const start = { element: EDGE.TOP, window: EDGE.CENTER };
+    const { opacity, scrollTo } = mount({ more: { start, end: SCROLL_AT.LEAVE } }, 500);
+    expect(opacity()).toBe(0);
+    scrollTo(200);
+    expect(opacity()).toBeCloseTo(0.5);
+  });
+
+  test("start and end cannot be the same moment", () => {
+    expect(() => readMore(WHEN.SCROLL, { start: SCROLL_AT.ENTER, end: SCROLL_AT.ENTER })).toThrow(
+      "start and end must be different moments",
+    );
+  });
+
+  test("a number is rejected with the new form", () => {
+    expect(() => readMore(WHEN.SCROLL, { start: 0.2 } as never)).toThrow("start is a number");
+  });
+
+  test("an object needs both element and window", () => {
+    expect(() => readMore(WHEN.SCROLL, { start: { element: EDGE.TOP } } as never)).toThrow(
+      "start needs both element and window",
+    );
+  });
+
+  test("an unknown object key is rejected", () => {
+    expect(() =>
+      readMore(WHEN.SCROLL, { end: { element: EDGE.TOP, window: 0, top: 1 } } as never),
+    ).toThrow('end has an unknown key "top"');
+  });
+
+  test("an edge outside 0 to 1 is rejected", () => {
+    expect(() => readMore(WHEN.SCROLL, { start: { element: 1.5, window: 0 } } as never)).toThrow(
+      "start.element must be EDGE.TOP",
+    );
   });
 });
 
@@ -108,7 +163,7 @@ describe("WHEN.SCROLL shared listener", () => {
 describe("WHEN.SCROLL cleanup and reduced motion", () => {
   test("after cleanup, scrolling no longer moves the item", () => {
     const { cleanups, opacity, scrollTo } = mount();
-    scrollTo(0);
+    scrollTo(-100);
     expect(opacity()).toBe(1);
     for (const cleanup of cleanups) cleanup();
     scrollTo(1000);
@@ -136,18 +191,6 @@ describe("WHEN.SCROLL errors", () => {
     ).toThrow("loop does not work with WHEN.SCROLL");
   });
 
-  test("start and end must differ", () => {
-    expect(() => readMore(WHEN.SCROLL, { start: 0.5, end: 0.5 })).toThrow(
-      "start and end must be different lines",
-    );
-  });
-
-  test("start and end must be numbers", () => {
-    expect(() => readMore(WHEN.SCROLL, { start: Number.NaN })).toThrow(
-      "start and end must be numbers",
-    );
-  });
-
   test("keys other than start and end are rejected", () => {
     expect(() => readMore(WHEN.SCROLL, { outDelay: 10 } as never)).toThrow(
       'more has an unknown key "outDelay", use start, end, follow or part',
@@ -164,7 +207,7 @@ function box(top: number, height: number) {
 }
 
 /** Mounts a follow item. The item's own element is not used for progress. */
-function mountFollow(more: { part?: [number, number]; start?: number; end?: number } = {}) {
+function mountFollow(more: { part?: [number, number]; start?: ScrollAt; end?: ScrollAt } = {}) {
   const el = document.createElement("div");
   const follow = store<Element | null>(null);
   const cleanups: Array<() => void> = [];
@@ -266,7 +309,9 @@ describe("WHEN.SCROLL follow", () => {
   });
 
   test("start and end with follow is an error", () => {
-    expect(() => mountFollow({ start: 0.2 })).toThrow("start and end cannot be used with follow");
+    expect(() => mountFollow({ start: SCROLL_AT.ENTER })).toThrow(
+      "start and end cannot be used with follow",
+    );
   });
 
   test("follow must be a store", () => {

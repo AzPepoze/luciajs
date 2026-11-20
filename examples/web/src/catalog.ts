@@ -80,6 +80,25 @@ import pinnedScrollSource from "./demos/motion/PinnedScroll.lucia?raw";
 import hoverInOutSource from "./demos/motion/HoverInOut.lucia?raw";
 import MidwayMode from "./demos/motion/MidwayMode.lucia";
 import midwayModeSource from "./demos/motion/MidwayMode.lucia?raw";
+import ScrollDefault from "./demos/motion/ScrollDefault.lucia";
+import ScrollEnterCenter from "./demos/motion/ScrollEnterCenter.lucia";
+import ScrollCenterLeave from "./demos/motion/ScrollCenterLeave.lucia";
+import ScrollPresets from "./demos/motion/ScrollPresets.lucia";
+import ScrollTouchPoints from "./demos/motion/ScrollTouchPoints.lucia";
+import ScrollLines from "./demos/motion/ScrollLines.lucia";
+import ScrollTwo from "./demos/motion/ScrollTwo.lucia";
+import ScrollPartFollow from "./demos/motion/ScrollPartFollow.lucia";
+import ScrollEffects from "./demos/motion/ScrollEffects.lucia";
+import scrollDefaultSource from "./demos/motion/ScrollDefault.lucia?raw";
+import scrollEnterCenterSource from "./demos/motion/ScrollEnterCenter.lucia?raw";
+import scrollCenterLeaveSource from "./demos/motion/ScrollCenterLeave.lucia?raw";
+import scrollPresetsSource from "./demos/motion/ScrollPresets.lucia?raw";
+import scrollTouchPointsSource from "./demos/motion/ScrollTouchPoints.lucia?raw";
+import scrollLinesSource from "./demos/motion/ScrollLines.lucia?raw";
+import scrollTwoSource from "./demos/motion/ScrollTwo.lucia?raw";
+import scrollPartFollowSource from "./demos/motion/ScrollPartFollow.lucia?raw";
+import scrollEffectsSource from "./demos/motion/ScrollEffects.lucia?raw";
+import scrollReadoutSource from "./demos/motion/scroll-readout.ts?raw";
 
 // A source file shown in a code panel. The text is imported at build time.
 export interface SourceFile {
@@ -488,6 +507,96 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
+  "scroll-at": {
+    icon: "vertical_align_center",
+    demos: [
+      {
+        id: "scroll-default",
+        title: "Default: ENTER to LEAVE",
+        caption: "With no start or end, the card fades in for the whole time it is on screen.",
+        components: [ScrollDefault],
+        sources: [
+          { path: "src/demos/motion/ScrollDefault.lucia", text: scrollDefaultSource },
+          { path: "src/demos/motion/scroll-readout.ts", text: scrollReadoutSource },
+        ],
+      },
+      {
+        id: "scroll-enter-center",
+        title: "ENTER to CENTER",
+        caption: "The card finishes when it reaches the middle of the screen.",
+        components: [ScrollEnterCenter],
+        sources: [
+          { path: "src/demos/motion/ScrollEnterCenter.lucia", text: scrollEnterCenterSource },
+        ],
+      },
+      {
+        id: "scroll-center-leave",
+        title: "CENTER to LEAVE",
+        caption: "The card fades out as it leaves the top of the screen.",
+        components: [ScrollCenterLeave],
+        sources: [
+          { path: "src/demos/motion/ScrollCenterLeave.lucia", text: scrollCenterLeaveSource },
+        ],
+      },
+      {
+        id: "scroll-presets",
+        title: "Presets side by side",
+        caption: "Four presets play side by side in one lane. The readout shows its progress.",
+        components: [ScrollPresets],
+        sources: [{ path: "src/demos/motion/ScrollPresets.lucia", text: scrollPresetsSource }],
+      },
+      {
+        id: "scroll-lines",
+        title: "Start and end lines",
+        caption: "The lines light up when the card's lines meet the screen's lines.",
+        components: [ScrollLines],
+        sources: [{ path: "src/demos/motion/ScrollLines.lucia", text: scrollLinesSource }],
+      },
+      {
+        id: "scroll-two-items",
+        title: "Two items on one card",
+        caption: "One item fades in, another blurs out. They set different properties.",
+        components: [ScrollTwo],
+        sources: [{ path: "src/demos/motion/ScrollTwo.lucia", text: scrollTwoSource }],
+      },
+    ],
+  },
+  edge: {
+    icon: "grid_on",
+    demos: [
+      {
+        id: "scroll-touch-points",
+        title: "Object with EDGE or numbers",
+        caption: "{ element, window } takes EDGE members or numbers from 0 to 1.",
+        components: [ScrollTouchPoints],
+        sources: [
+          { path: "src/demos/motion/ScrollTouchPoints.lucia", text: scrollTouchPointsSource },
+        ],
+      },
+    ],
+  },
+  when: {
+    icon: "schedule",
+    demos: [
+      {
+        id: "scroll-part-follow",
+        title: "Steps with part and follow",
+        caption: "A pinned scene plays three steps, one slice of the section each.",
+        components: [ScrollPartFollow],
+        sources: [
+          { path: "src/demos/motion/ScrollPartFollow.lucia", text: scrollPartFollowSource },
+        ],
+      },
+      {
+        id: "scroll-effects",
+        title: "Progress bar, parallax and colour",
+        caption:
+          "A page bar, two speeds of layer, and a card that turns, grows and changes colour.",
+        components: [ScrollEffects],
+        sources: [{ path: "src/demos/motion/ScrollEffects.lucia", text: scrollEffectsSource }],
+      },
+    ],
+  },
   scoped: { icon: "segment" },
   global: { icon: "language" },
   "inline-global": { icon: "filter_center_focus" },
@@ -495,7 +604,6 @@ export const catalog: Record<string, CatalogEntry> = {
   else: { icon: "fork_right" },
   "bind-prop": { icon: "swap_horiz" },
   ease: { icon: "show_chart" },
-  when: { icon: "schedule" },
   "set-animate-default": { icon: "tune" },
   controller: { icon: "play_circle" },
   midway: { icon: "alt_route" },
