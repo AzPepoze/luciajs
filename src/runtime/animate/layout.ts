@@ -3,7 +3,7 @@ import { layoutChanged, type LayoutKey } from "./layout-mode.ts";
 import {
   clearGlide,
   newGlide,
-  readOrigin,
+  showLayoutSize,
   startGlide,
   stepGlide,
   type Glide,
@@ -53,8 +53,7 @@ export function watchLayout(
     spent: false,
     onChange,
   };
-  measureKey(el, item.key);
-  measureRect(el, item.rect);
+  measureBox(el, item.key, item.rect);
   copyBox(item.glide.view, item.rect);
   watched.add(item);
   observeSize(item);
@@ -78,16 +77,16 @@ function frame(): void {
 
 function readItem(item: Watched): void {
   const { el, glide, rect } = item;
-  measureRect(el, rect);
-  measureKey(el, probe);
+  // The glide owns width and height; the write phase puts its size back this frame.
+  if (glide.active && glide.spec.mode.size) showLayoutSize(glide, el);
+  measureBox(el, probe, rect);
   const changed = !item.spent && layoutChanged(glide.spec.mode, item.key, probe);
   copyKey(item.key, probe);
   if (changed) item.pending = true;
   if (!changed && !glide.active) return;
-  readOrigin(el, probe.width, probe.height, glide.origin);
-  layoutPlace(rect, glide.current, glide.origin, glide.to);
-  glide.to.width = probe.width;
-  glide.to.height = probe.height;
+  layoutPlace(rect, glide.writtenSlide, glide.to);
+  glide.to.width = rect.width;
+  glide.to.height = rect.height;
 }
 
 function writeItem(item: Watched, now: number): void {
@@ -95,7 +94,7 @@ function writeItem(item: Watched, now: number): void {
   if (item.pending) {
     item.pending = false;
     if (prefersReducedMotion()) clearGlide(glide, el);
-    else startGlide(glide, now);
+    else startGlide(glide, el, now);
     if (item.once) item.spent = true;
     item.onChange();
   }
@@ -168,20 +167,17 @@ function unobserveOne(target: Element): void {
   sizes?.unobserve(target);
 }
 
-function measureRect(el: HTMLElement, out: Box): void {
-  const rect = el.getBoundingClientRect();
-  out.left = rect.left;
-  out.top = rect.top;
-  out.width = rect.width;
-  out.height = rect.height;
-}
-
-/** The offsets ignore transforms and scrolling, so only a real change in the layout moves them. */
-function measureKey(el: HTMLElement, out: LayoutKey): void {
-  out.x = el.offsetLeft;
-  out.y = el.offsetTop;
-  out.width = el.offsetWidth;
-  out.height = el.offsetHeight;
+/** Reads the layout box once. The offsets ignore transforms, so only a real layout change moves the key. */
+function measureBox(el: HTMLElement, key: LayoutKey, rect: Box): void {
+  const box = el.getBoundingClientRect();
+  key.x = el.offsetLeft;
+  key.y = el.offsetTop;
+  key.width = el.offsetWidth;
+  key.height = el.offsetHeight;
+  rect.left = box.left;
+  rect.top = box.top;
+  rect.width = box.width;
+  rect.height = box.height;
 }
 
 function copyKey(to: LayoutKey, from: LayoutKey): void {

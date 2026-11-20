@@ -4,17 +4,20 @@ import { readDefault, type DefaultEasing } from "./keyform.ts";
 import { EASE, type Ease } from "./modes.ts";
 import {
   copyBox,
+  cssHeight,
+  cssWidth,
   glideBox,
   newBox,
-  newTransform,
-  transformFor,
+  newSlide,
+  readEdges,
+  slideFor,
   type Box,
-  type Origin,
-  type Transform,
+  type Edges,
+  type Slide,
 } from "./layout-box.ts";
 import type { LayoutMode } from "./layout-mode.ts";
 
-/** What a layout trigger needs to glide: its mode and the timing and easing from the item. */
+/** The timing and easing a layout trigger needs for its glide. */
 export interface GlideSpec {
   mode: LayoutMode;
   duration: number;
@@ -23,7 +26,7 @@ export interface GlideSpec {
   easing: DefaultEasing | undefined;
 }
 
-/** One element's glide. `view` is the visual box as the last frame showed it. */
+/** One element's glide. `view` is the visual box the last frame showed. */
 export interface Glide {
   spec: GlideSpec;
   active: boolean;
@@ -33,10 +36,14 @@ export interface Glide {
   view: Box;
   from: Box;
   to: Box;
-  origin: Origin;
-  /** The transform last written to the element. Identity when no glide runs. */
-  current: Transform;
   visual: Box;
+  /** The translate last written to the element. */
+  writtenSlide: Slide;
+  /** Padding and border from when the size glide started. */
+  edges: Edges;
+  /** The inline size before the glide took over, restored when it ends. */
+  baseWidth: string;
+  baseHeight: string;
 }
 
 export function newGlide(spec: GlideSpec): Glide {
@@ -49,24 +56,30 @@ export function newGlide(spec: GlideSpec): Glide {
     view: newBox(),
     from: newBox(),
     to: newBox(),
-    origin: { x: 0, y: 0 },
-    current: newTransform(),
     visual: newBox(),
+    writtenSlide: newSlide(),
+    edges: { x: 0, y: 0, borderBox: true },
+    baseWidth: "",
+    baseHeight: "",
   };
 }
 
-/** Starts a glide from the visual box the element showed last. The easing is read here, so the engine default is current. */
-export function startGlide(glide: Glide, now: number): void {
+/** Starts from the last visual box. Easing is read here so engine defaults are current. */
+export function startGlide(glide: Glide, el: HTMLElement, now: number): void {
   const easing = readDefault(glide.spec.easing);
   const engine = animateDefault();
   glide.easeStyle = easing.easeStyle ?? engine.easeStyle;
   glide.ease = easing.ease ?? engine.ease;
+  if (glide.spec.mode.size) {
+    if (!glide.active) rememberBaseSize(glide, el);
+    readEdges(el, glide.edges);
+  }
   copyBox(glide.from, glide.view);
   glide.begin = now;
   glide.active = true;
 }
 
-/** Writes the glide at `now`. Returns false once it has ended, and then removes the transform it wrote. */
+/** Writes this frame's glide. Returns false once it ends and the element is back on its layout box. */
 export function stepGlide(glide: Glide, el: HTMLElement, now: number): boolean {
   const { duration, delay, mode } = glide.spec;
   const elapsed = now - glide.begin - delay;
@@ -77,32 +90,43 @@ export function stepGlide(glide: Glide, el: HTMLElement, now: number): boolean {
   }
   const eased = glide.ease(glide.easeStyle, progress);
   glideBox(glide.from, glide.to, eased, mode, glide.visual);
-  transformFor(glide.visual, glide.to, glide.origin, glide.current);
-  el.style.setProperty("translate", `${glide.current.x}px ${glide.current.y}px`);
-  if (mode.size) el.style.setProperty("scale", `${glide.current.sx} ${glide.current.sy}`);
+  if (mode.place) writeSlide(glide, el);
+  if (mode.size) writeSize(glide, el);
   return true;
 }
 
-/** Removes the glide's transform, so the element sits at its layout box again. */
+/** Drops the written size and translate so the element sits on its layout box again. */
 export function clearGlide(glide: Glide, el: HTMLElement): void {
   glide.active = false;
-  glide.current.x = 0;
-  glide.current.y = 0;
-  glide.current.sx = 1;
-  glide.current.sy = 1;
+  glide.writtenSlide.x = 0;
+  glide.writtenSlide.y = 0;
   el.style.removeProperty("translate");
-  if (glide.spec.mode.size) el.style.removeProperty("scale");
+  if (glide.spec.mode.size) showLayoutSize(glide, el);
 }
 
-/** Reads the transform origin in px. A percentage is taken of the box size. Falls back to the centre. */
-export function readOrigin(el: HTMLElement, width: number, height: number, out: Origin): void {
-  const [x = "", y = ""] = getComputedStyle(el).transformOrigin.split(" ");
-  out.x = originPart(x, width);
-  out.y = originPart(y, height);
+/** Reveals the layout size for one read, so the watcher never measures the glide's own write. */
+export function showLayoutSize(glide: Glide, el: HTMLElement): void {
+  setInline(el, "width", glide.baseWidth);
+  setInline(el, "height", glide.baseHeight);
 }
 
-function originPart(text: string, size: number): number {
-  const value = parseFloat(text);
-  if (Number.isNaN(value)) return size / 2;
-  return text.endsWith("%") ? (value * size) / 100 : value;
+function writeSlide(glide: Glide, el: HTMLElement): void {
+  slideFor(glide.visual, glide.to, glide.writtenSlide);
+  el.style.setProperty("translate", `${glide.writtenSlide.x}px ${glide.writtenSlide.y}px`);
+}
+
+/** The element's own size follows the glide, so its text, borders and children keep their shape. */
+function writeSize(glide: Glide, el: HTMLElement): void {
+  el.style.setProperty("width", `${cssWidth(glide.edges, glide.visual.width)}px`);
+  el.style.setProperty("height", `${cssHeight(glide.edges, glide.visual.height)}px`);
+}
+
+function rememberBaseSize(glide: Glide, el: HTMLElement): void {
+  glide.baseWidth = el.style.getPropertyValue("width");
+  glide.baseHeight = el.style.getPropertyValue("height");
+}
+
+function setInline(el: HTMLElement, property: "width" | "height", value: string): void {
+  if (value === "") el.style.removeProperty(property);
+  else el.style.setProperty(property, value);
 }
