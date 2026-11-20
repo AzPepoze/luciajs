@@ -31,7 +31,8 @@ function isUsedInScript(script: string, item: LusiaImport): boolean {
   const name = new RegExp(`\\b${escapeName(item.name)}\\b`, "g");
   for (const match of script.matchAll(name)) {
     const offset = match.index ?? 0;
-    if (offset < item.index || offset >= item.index + statement.length) return true;
+    if (offset < item.index || offset >= item.index + statement.length)
+      return true;
   }
   return false;
 }
@@ -47,7 +48,11 @@ function escapeName(name: string): string {
 }
 
 /** Removes the whole line the import sits on, when it sits alone on that line. */
-function removalFix(script: string, scriptOffset: number, index: number): LintFix | undefined {
+function removalFix(
+  script: string,
+  scriptOffset: number,
+  index: number,
+): LintFix | undefined {
   const start = script.lastIndexOf("\n", index - 1) + 1;
   const end = script.indexOf("\n", index);
   const line = script.slice(start, end === -1 ? script.length : end);

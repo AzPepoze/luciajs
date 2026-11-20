@@ -7,7 +7,8 @@ import { parsePropDefs, type PropDef } from "@language/props.ts";
 
 const BADGE = join(import.meta.dir, "../editors/fixtures/lint/badge.lusia");
 const BADGE_PROPS = parsePropDefs(readFileSync(BADGE, "utf8"));
-const BADGE_IMPORT = '<script>\nimport Badge from "./badge.lusia";\n</script>\n';
+const BADGE_IMPORT =
+  '<script>\nimport Badge from "./badge.lusia";\n</script>\n';
 
 function childProps(name: string): PropDef[] | undefined {
   return name === "Badge" ? BADGE_PROPS : undefined;
@@ -49,25 +50,33 @@ attach(Badge, document.body);
     const source =
       '<script>\nimport { props } from "lusia";\nprops({ a: 1 });\nprops({ b: 2 });\n</script>';
     const issues = lintLusia(source, childProps);
-    expect(issues.map((issue) => [issue.code, issue.line])).toEqual([["props-twice", 4]]);
+    expect(issues.map((issue) => [issue.code, issue.line])).toEqual([
+      ["props-twice", 4],
+    ]);
   });
 
   test("unknown-prop flags an attribute the child does not declare", () => {
-    const issues = lintLusia(`${BADGE_IMPORT}<p>x</p>\n<Badge label="x" size="2" />`, childProps);
-    expect(issues.map((issue) => [issue.code, issue.line])).toEqual([["unknown-prop", 5]]);
+    const issues = lintLusia(
+      `${BADGE_IMPORT}<p>x</p>\n<Badge label="x" size="2" />`,
+      childProps,
+    );
+    expect(issues.map((issue) => [issue.code, issue.line])).toEqual([
+      ["unknown-prop", 5],
+    ]);
     expect(issues[0]?.message).toContain('"size"');
   });
 
   test("unknown-prop skips a component whose file cannot be read", () => {
-    const source = '<script>\nimport Ghost from "./ghost.lusia";\n</script>\n<Ghost size="2" />';
+    const source =
+      '<script>\nimport Ghost from "./ghost.lusia";\n</script>\n<Ghost size="2" />';
     expect(codes(source)).toEqual([]);
   });
 
   test("empty-expression flags {} in markup", () => {
     const issues = lintLusia("<p>{ }</p>", childProps);
-    expect(issues.map((issue) => [issue.code, issue.line, issue.column])).toEqual([
-      ["empty-expression", 1, 4],
-    ]);
+    expect(
+      issues.map((issue) => [issue.code, issue.line, issue.column]),
+    ).toEqual([["empty-expression", 1, 4]]);
   });
 
   test("braces in the script are not markup", () => {
@@ -124,21 +133,27 @@ attach(Badge, document.body);
   });
 
   test("animate-key flags a typo of an item key", () => {
-    expect(codes("<div animate={{ style: fade, durtion: 400 }}>x</div>")).toEqual(["animate-key"]);
+    expect(
+      codes("<div animate={{ style: fade, durtion: 400 }}>x</div>"),
+    ).toEqual(["animate-key"]);
   });
 
   test("animate-keyframes skips a component tag, whose animate is a prop", () => {
-    expect(codes(`${BADGE_IMPORT}<Badge animate="x" />`)).not.toContain("animate-keyframes");
+    expect(codes(`${BADGE_IMPORT}<Badge animate="x" />`)).not.toContain(
+      "animate-keyframes",
+    );
   });
 });
 
 describe("flow and bind-value lint rules", () => {
   test("flow-chain flags an ELSE with no IF before it", () => {
     const issues = lintLusia("<p>x</p>\n<ELSE>\n<p>y</p>\n</ELSE>", childProps);
-    expect(issues.map((issue) => [issue.code, issue.severity, issue.line])).toEqual([
-      ["flow-chain", "error", 2],
-    ]);
-    expect(issues[0]?.message).toBe("<ELSE> must come right after </IF> or </ELSEIF>");
+    expect(
+      issues.map((issue) => [issue.code, issue.severity, issue.line]),
+    ).toEqual([["flow-chain", "error", 2]]);
+    expect(issues[0]?.message).toBe(
+      "<ELSE> must come right after </IF> or </ELSEIF>",
+    );
   });
 
   test("flow-chain passes ELSEIF and ELSE right after a branch", () => {
@@ -147,12 +162,16 @@ describe("flow and bind-value lint rules", () => {
   });
 
   test("flow-chain flags an ELSE after other markup", () => {
-    expect(codes("<IF {a}>\n</IF>\n<p>gap</p>\n<ELSE>\n</ELSE>")).toEqual(["flow-chain"]);
+    expect(codes("<IF {a}>\n</IF>\n<p>gap</p>\n<ELSE>\n</ELSE>")).toEqual([
+      "flow-chain",
+    ]);
   });
 
   test("bind-target flags bind-value on a plain tag that is not a form control", () => {
     const issues = lintLusia("<p bind-value={name}>x</p>", childProps);
-    expect(issues.map((issue) => [issue.code, issue.severity])).toEqual([["bind-target", "error"]]);
+    expect(issues.map((issue) => [issue.code, issue.severity])).toEqual([
+      ["bind-target", "error"],
+    ]);
     expect(issues[0]?.message).toBe(
       "bind-value works on input, textarea and select; use bind-<property>",
     );
@@ -167,37 +186,47 @@ describe("flow and bind-value lint rules", () => {
   });
 
   test("bind-target passes bind-value on a component tag, which writes back to the variable", () => {
-    expect(codes(`${BADGE_IMPORT}<Badge bind-value={name} />`)).not.toContain("bind-target");
+    expect(codes(`${BADGE_IMPORT}<Badge bind-value={name} />`)).not.toContain(
+      "bind-target",
+    );
   });
 
   test("bind-target flags bind-element on a component tag", () => {
-    const issues = lintLusia(`${BADGE_IMPORT}<Badge bind-element={el} />`, childProps);
+    const issues = lintLusia(
+      `${BADGE_IMPORT}<Badge bind-element={el} />`,
+      childProps,
+    );
     expect(issues.find((issue) => issue.code === "bind-target")?.message).toBe(
       "bind-element works on elements only",
     );
   });
 
   test("unknown-prop reads bind-<prop> as the prop it binds", () => {
-    const issues = lintLusia(`${BADGE_IMPORT}<Badge bind-tone={mode} />`, childProps);
+    const issues = lintLusia(
+      `${BADGE_IMPORT}<Badge bind-tone={mode} />`,
+      childProps,
+    );
     expect(issues.map((issue) => [issue.code, issue.line])).toEqual([]);
   });
 
   test("bind-target passes bind-<prop> and bind-element on any tag", () => {
-    expect(codes("<p bind-element={el} bind-text-content={x}>y</p>")).toEqual([]);
+    expect(codes("<p bind-element={el} bind-text-content={x}>y</p>")).toEqual(
+      [],
+    );
   });
 
   test("scroll-numeric-line flags a numeric start or end in a file that uses WHEN.SCROLL", () => {
     const source =
       "<div animate={{ when: WHEN.SCROLL, more: { start: 0.2, end: SCROLL_AT.LEAVE } }}>";
-    expect(lintLusia(source, childProps).map((issue) => [issue.code, issue.column])).toEqual([
-      ["scroll-numeric-line", 44],
-    ]);
+    expect(
+      lintLusia(source, childProps).map((issue) => [issue.code, issue.column]),
+    ).toEqual([["scroll-numeric-line", 44]]);
   });
 
   test("scroll-numeric-line ignores files without WHEN.SCROLL", () => {
-    expect(codes("<div animate={{ when: WHEN.VIEW, more: { start: 0.2 } }}>")).not.toContain(
-      "scroll-numeric-line",
-    );
+    expect(
+      codes("<div animate={{ when: WHEN.VIEW, more: { start: 0.2 } }}>"),
+    ).not.toContain("scroll-numeric-line");
   });
 });
 
@@ -208,21 +237,27 @@ describe("lint options", () => {
     });
     expect(issues.map((issue) => issue.severity)).toEqual(["warning"]);
     expect(
-      lintLusia("<p>{ }</p>", childProps, { rules: { "empty-expression": "error" } }).map(
-        (issue) => issue.severity,
-      ),
+      lintLusia("<p>{ }</p>", childProps, {
+        rules: { "empty-expression": "error" },
+      }).map((issue) => issue.severity),
     ).toEqual(["error"]);
   });
 
   test("off skips the rule", () => {
-    expect(codes('<div animate="fade">x</div>', { rules: { "animate-keyframes": "off" } })).toEqual(
-      [],
-    );
-    expect(codes(`${BADGE_IMPORT}<p>hi</p>`, { rules: { "unused-import": "off" } })).toEqual([]);
+    expect(
+      codes('<div animate="fade">x</div>', {
+        rules: { "animate-keyframes": "off" },
+      }),
+    ).toEqual([]);
+    expect(
+      codes(`${BADGE_IMPORT}<p>hi</p>`, { rules: { "unused-import": "off" } }),
+    ).toEqual([]);
   });
 
   test("an empty settings object keeps the defaults", () => {
-    expect(codes('<div animate="fade">x</div>', { rules: {} })).toEqual(["animate-keyframes"]);
+    expect(codes('<div animate="fade">x</div>', { rules: {} })).toEqual([
+      "animate-keyframes",
+    ]);
   });
 });
 
@@ -230,16 +265,20 @@ describe("lint disable comments", () => {
   test("disable-next-line hides the finding on the next line only", () => {
     const source =
       "<p>{ }</p>\n<!-- lusia-lint-disable-next-line empty-expression -->\n<p>{ }</p>\n";
-    expect(lintLusia(source, childProps).map((issue) => issue.line)).toEqual([1]);
+    expect(lintLusia(source, childProps).map((issue) => issue.line)).toEqual([
+      1,
+    ]);
   });
 
   test("disable hides the rest of the file", () => {
-    const source = "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<p>{ }</p>\n";
+    const source =
+      "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<p>{ }</p>\n";
     expect(lintLusia(source, childProps)).toEqual([]);
   });
 
   test("a disable comment names only its rules", () => {
-    const source = "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<ELSE>\n</ELSE>\n";
+    const source =
+      "<!-- lusia-lint-disable empty-expression -->\n<p>{ }</p>\n<ELSE>\n</ELSE>\n";
     expect(codes(source)).toEqual(["flow-chain"]);
   });
 
@@ -250,7 +289,9 @@ describe("lint disable comments", () => {
 
   test("disableComments: false ignores the comments", () => {
     const source = "<!-- lusia-lint-disable -->\n<p>{ }</p>\n";
-    expect(codes(source, { disableComments: false })).toEqual(["empty-expression"]);
+    expect(codes(source, { disableComments: false })).toEqual([
+      "empty-expression",
+    ]);
   });
 });
 
