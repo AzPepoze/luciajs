@@ -1,5 +1,7 @@
 import { parseArgs } from "node:util";
+import { existsSync, statSync } from "node:fs";
 import type { LazySettings } from "@bun-plugin/children.ts";
+import type { LintRuleSettings } from "@language/lint.ts";
 import { isRoute, readConfig, type LusiaConfig } from "./config.ts";
 
 export class UsageError extends Error {}
@@ -15,7 +17,16 @@ export type Command =
       quiet: boolean;
       lazy: LazySettings;
     }
-  | { name: "dev"; dir: string; port: number; quiet: boolean; lazy: LazySettings };
+  | { name: "dev"; dir: string; port: number; quiet: boolean; lazy: LazySettings }
+  | { name: "format"; paths: string[]; check: boolean; quiet: boolean }
+  | {
+      name: "lint";
+      paths: string[];
+      fix: boolean;
+      maxWarnings: number;
+      quiet: boolean;
+      rules: LintRuleSettings | undefined;
+    };
 
 const DEFAULT_PORT = 3000;
 const DEFAULT_OUTDIR = "dist";
@@ -27,6 +38,8 @@ export function parseCommand(argv: string[], env: Record<string, string | undefi
   if (!name || name === "help" || name === "--help" || name === "-h") return { name: "help" };
   if (name === "build") return parseBuild(rest);
   if (name === "dev") return parseDev(rest, env);
+  if (name === "format") return parseFormat(rest);
+  if (name === "lint") return parseLint(rest);
   throw new UsageError(`unknown command "${name}"`);
 }
 
@@ -96,6 +109,65 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
   };
+}
+
+function parseFormat(args: string[]): Command {
+  const { values, positionals } = withUsageErrors(() =>
+    parseArgs({
+      args,
+      allowPositionals: true,
+      options: { check: { type: "boolean" }, quiet: { type: "boolean" } },
+    }),
+  );
+  return {
+    name: "format",
+    paths: pathsOf(positionals),
+    check: values.check ?? false,
+    quiet: values.quiet ?? false,
+  };
+}
+
+function parseLint(args: string[]): Command {
+  const { values, positionals } = withUsageErrors(() =>
+    parseArgs({
+      args,
+      allowPositionals: true,
+      options: {
+        fix: { type: "boolean" },
+        "max-warnings": { type: "string" },
+        quiet: { type: "boolean" },
+      },
+    }),
+  );
+  const config = readConfig(configDir(positionals));
+  return {
+    name: "lint",
+    paths: pathsOf(positionals),
+    fix: values.fix ?? false,
+    maxWarnings: parseMaxWarnings(values["max-warnings"]),
+    quiet: values.quiet ?? false,
+    rules: config.lint?.rules,
+  };
+}
+
+/** The config file lives in the app folder, so a path that is a folder names it. */
+function configDir(paths: string[]): string {
+  return paths.find(isFolder) ?? ".";
+}
+
+function isFolder(path: string): boolean {
+  return existsSync(path) && statSync(path).isDirectory();
+}
+
+function pathsOf(positionals: string[]): string[] {
+  return positionals.length === 0 ? ["."] : positionals;
+}
+
+function parseMaxWarnings(value: string | undefined): number {
+  if (value === undefined) return Number.POSITIVE_INFINITY;
+  if (!/^\d+$/.test(value))
+    throw new UsageError(`invalid max warnings "${value}", use a whole number from 0`);
+  return Number(value);
 }
 
 function withUsageErrors<T>(parse: () => T): T {

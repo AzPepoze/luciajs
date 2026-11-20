@@ -26,6 +26,7 @@ describe("readConfig", () => {
           routes: ["/guide"],
           dev: { port: 4000 },
           lazy: { mode: "all", prefetch: "view" },
+          lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
         }),
       ),
     );
@@ -35,6 +36,7 @@ describe("readConfig", () => {
       routes: ["/guide"],
       dev: { port: 4000 },
       lazy: { mode: "all", prefetch: "view" },
+      lint: { rules: { "unused-import": "off", "unknown-prop": "error" } },
     });
   });
 });
@@ -43,7 +45,7 @@ describe("parseConfig errors", () => {
   test.each([
     [
       '{ "outdr": "x" }',
-      'unknown key "outdr", allowed: $schema, outdir, minify, routes, dev, lazy',
+      'unknown key "outdr", allowed: $schema, outdir, minify, routes, dev, lazy, lint',
     ],
     ['{ "lazy": { "mode": "some" } }', '"lazy.mode" must be one of: smart, all, off'],
     ['{ "lazy": { "prefetch": "soon" } }', '"lazy.prefetch" must be one of: idle, view, none'],
@@ -51,6 +53,16 @@ describe("parseConfig errors", () => {
     ['{ "dev": { "host": "x" } }', 'unknown key "host" in "dev", allowed: port'],
     ['{ "routes": ["guide"] }', 'invalid route "guide", use a path such as /guide'],
     ['{ "minify": "yes" }', '"minify" must be true or false'],
+    ['{ "lint": { "extra": 1 } }', 'unknown key "extra" in "lint", allowed: rules'],
+    ['{ "lint": { "rules": [] } }', '"lint.rules" must be an object'],
+    [
+      '{ "lint": { "rules": { "nope": "warn" } } }',
+      'unknown lint rule "nope", allowed: unused-import, props-twice, unknown-prop, empty-expression, style-attribute, animate-keyframes, animate-key, scroll-numeric-line, flow-chain, bind-target',
+    ],
+    [
+      '{ "lint": { "rules": { "unused-import": "info" } } }',
+      '"lint.rules.unused-import" must be one of: off, warn, error',
+    ],
     ["[]", "the file must hold a JSON object"],
     ["{ nope", "not valid JSON"],
   ])("%s names the problem", (text, detail) => {
@@ -72,6 +84,14 @@ describe("CLI merge", () => {
       outdir: "flag",
       routes: ["/reference"],
     });
+  });
+
+  test("the lint rules come from the file", () => {
+    const dir = appWith(JSON.stringify({ lint: { rules: { "empty-expression": "off" } } }));
+    expect(parseCommand(["lint", dir], {})).toMatchObject({
+      rules: { "empty-expression": "off" },
+    });
+    expect(parseCommand(["lint"], {})).toMatchObject({ rules: undefined });
   });
 
   test("the port comes from the flag, then PORT, then the file, then 3000", () => {
