@@ -71,8 +71,13 @@
   letter-spacing: -0.02em;
 }
 
-// Each letter is its own box, so it can drop in and wobble.
+// The outer box moves with the scroll. The inner box drops in and wobbles.
+.letter-slot,
 .letter {
+  display: inline-block;
+}
+
+.badge-kaomoji {
   display: inline-block;
 }
 
