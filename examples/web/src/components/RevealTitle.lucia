@@ -1,0 +1,26 @@
+<script>
+import { props, WHEN, EASE } from "lucia";
+
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const { text } = props({ text: "" });
+
+const wordIn = {
+  0: { opacity: 0, translate: "0px 18px" },
+  1: [EASE.STYLE.QUART, EASE.OUT, { opacity: 1, translate: "0px 0px" }],
+};
+
+// Each word rises in turn when the title scrolls into view.
+const words = text.value.split(" ").map((word, index) => ({
+  word,
+  motion: reduced
+    ? []
+    : { style: wordIn, when: WHEN.VIEW, duration: 500, delay: index * 90 },
+}));
+</script>
+
+<h2 class="reveal-title">
+  <EACH {words} as="{item}">
+    <span class="reveal-word" animate={item.motion}>{item.word}</span>
+  </EACH>
+</h2>

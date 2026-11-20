@@ -1,52 +1,14 @@
 @use "theme" as *;
 
-// A full screen section, like the hero, with a soft drifting background.
+// A full screen section. It has no background of its own: the Home backdrop shows through.
 .features {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  isolation: isolate;
-  overflow: hidden;
   min-height: calc(100vh - var(--topbar-h, #{$topbar-height}));
   min-height: calc(100svh - var(--topbar-h, #{$topbar-height}));
   padding: 4rem clamp(1.25rem, 3vw, 3rem) 5.5rem;
-}
-
-// The drifting glows are their own layer, so the whole layer can move as the section scrolls.
-.features-bg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: calc(-15vh - 2px);
-  z-index: -1;
-  pointer-events: none;
-
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    width: 40rem;
-    height: 40rem;
-    border-radius: 50%;
-    opacity: 0.25;
-    filter: blur(40px);
-    animation: drift 24s ease-in-out infinite alternate;
-  }
-
-  &::before {
-    top: -14rem;
-    left: -12rem;
-    background: radial-gradient(circle, var(--pink), transparent 70%);
-  }
-
-  &::after {
-    right: -14rem;
-    bottom: -14rem;
-    background: radial-gradient(circle, var(--lavender), transparent 70%);
-    animation-delay: -12s;
-  }
 }
 
 .features-inner {
@@ -93,6 +55,7 @@
 
 .feature-card {
   position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -111,11 +74,31 @@
     grid-column: span 2;
   }
 
+  // The glow follows the pointer. It sits under the card text (z-index -1 inside the card's own stacking context).
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      circle 180px at var(--glow-x, 50%) var(--glow-y, 50%),
+      color-mix(in srgb, var(--tone) 40%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
   &:hover {
     border-color: var(--tone);
     box-shadow:
       0 0 28px color-mix(in srgb, var(--tone) 55%, transparent),
       var(--shadow);
+
+    &::before {
+      opacity: 1;
+    }
   }
 
   h3 {
@@ -238,15 +221,6 @@
   }
 }
 
-@keyframes drift {
-  from {
-    transform: translate(0, 0) scale(1);
-  }
-  to {
-    transform: translate(60px, 40px) scale(1.12);
-  }
-}
-
 @media (max-width: 899px) {
   .feature-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -278,8 +252,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .features-bg::before,
-  .features-bg::after,
   .blob,
   .card-sparkle {
     animation: none;

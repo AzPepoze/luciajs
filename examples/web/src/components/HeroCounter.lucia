@@ -1,0 +1,40 @@
+<script>
+import { store } from "lucia";
+import { pull, release } from "../motion/pointer.ts";
+
+const count = store(0);
+const doubled = store.from(() => count.value * 2);
+
+const code = `const count = store(0);
+const doubled = store.from(() => count.value * 2);
+
+count.value++;`;
+
+function bump(): void {
+  count.value++;
+}
+
+function reset(): void {
+  count.value = 0;
+}
+</script>
+
+<div class="hero-demo">
+  <div class="demo-live">
+    <p class="demo-count">{count}</p>
+    <p class="demo-doubled">Doubled: {doubled}</p>
+    <div class="demo-actions">
+      <button
+        class="button primary magnetic"
+        type="button"
+        onclick={bump}
+        onpointermove={pull}
+        onpointerleave={release}
+      >
+        +1
+      </button>
+      <button class="button" type="button" onclick={reset}>Reset</button>
+    </div>
+  </div>
+  <pre class="demo-code"><code>{code}</code></pre>
+</div>
