@@ -3,11 +3,11 @@ import { withRecent } from "./recent.ts";
 
 describe("withRecent", () => {
   test("puts the newest term first", () => {
-    expect(withRecent(["bind"], "store")).toEqual(["store", "bind"]);
+    expect(withRecent(["bind"], "variable")).toEqual(["variable", "bind"]);
   });
 
   test("moves a repeated term to the front without duplicating it", () => {
-    expect(withRecent(["bind", "store"], "store")).toEqual(["store", "bind"]);
+    expect(withRecent(["bind", "variable"], "variable")).toEqual(["variable", "bind"]);
   });
 
   test("keeps only the last five terms", () => {

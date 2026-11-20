@@ -9,7 +9,7 @@ import { EASE } from "@runtime/animate/modes.ts";
 import { readItem } from "@runtime/animate/options.ts";
 import { Player } from "@runtime/animate/player.ts";
 import { WHEN } from "@runtime/animate/trigger.ts";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
@@ -140,9 +140,9 @@ describe("MIDWAY with the HOVER trigger", () => {
   });
 });
 
-describe("MIDWAY with a store trigger", () => {
+describe("MIDWAY with a variable trigger", () => {
   test.each(MEMBERS)("%s", (name, midway) => {
-    const on = store(false);
+    const on = variable(false);
     const { opacity } = mountItem({ when: on, midway });
     on.value = true;
     advance(50);

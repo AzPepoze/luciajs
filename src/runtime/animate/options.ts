@@ -1,4 +1,4 @@
-import { isReactive } from "../store/store.ts";
+import { isReactive } from "../variable/reactive.ts";
 import type { AnimateItem } from "./animation.ts";
 import type { Controller } from "./controller.ts";
 import type { Keyframes } from "./keyframes.ts";
@@ -68,7 +68,10 @@ function readKeyframes(item: AnimateItem, when: When | Source): Keyframes {
 function rejectGlideStyles(keyframes: Keyframes): void {
   for (const [key, value] of Object.entries(keyframes)) {
     if (key === "default") continue;
-    const style = (Array.isArray(value) ? value[value.length - 1] : value) as Record<string, unknown>;
+    const style = (Array.isArray(value) ? value[value.length - 1] : value) as Record<
+      string,
+      unknown
+    >;
     for (const name of GLIDE_PROPS) {
       if (name in style) throw runtimeError("L2052", { name });
     }

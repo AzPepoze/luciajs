@@ -1,9 +1,9 @@
 <script>
-import { WHEN, store } from "lucia";
+import { WHEN, variable } from "lucia";
 
 // The card keeps its place. When the text opens, its size changes,
 // and WHEN.RESIZE glides the card to the new size.
-const open = store(false);
+const open = variable(false);
 const glide = {
   when: WHEN.RESIZE,
   duration: 500,

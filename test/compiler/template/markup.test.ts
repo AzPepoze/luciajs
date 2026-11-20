@@ -119,8 +119,8 @@ describe("bind", () => {
     expect(error.column).toBe(6);
   });
 
-  test("bind needs one {store}", () => {
-    expect(() => compileTemplate("<input bind />", FILE)).toThrow("bind needs {store}");
+  test("bind needs one {variable}", () => {
+    expect(() => compileTemplate("<input bind />", FILE)).toThrow("bind needs {variable}");
   });
 
   test("bind on a component tag is an error", () => {

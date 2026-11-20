@@ -23,7 +23,7 @@ describe("linkImports", () => {
   });
 
   test("keeps imports of other modules, such as lucia", () => {
-    const code = `import { store } from "lucia";\nimport Missing from "./Missing.lucia";`;
+    const code = `import { variable } from "lucia";\nimport Missing from "./Missing.lucia";`;
     expect(linkImports(code, "App.lucia", names)).toBe(code);
   });
 });

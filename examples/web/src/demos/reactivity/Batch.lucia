@@ -1,14 +1,14 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const first = store("Ada");
-const last = store("Lovelace");
-const full = store.from(() => `${first.value} ${last.value}`);
+const first = variable("Ada");
+const last = variable("Lovelace");
+const full = variable.compute(() => `${first.value} ${last.value}`);
 let renders = 0;
-const updates = store(0);
+const updates = variable(0);
 
-// The handler writes both stores. The page still updates the text once per click.
-function changeBoth() {
+// The handler writes both variables. The page still updates the text once per click.
+function updateBoth() {
   renders++;
   first.value = `First ${renders}`;
   last.value = `Last ${renders}`;
@@ -17,10 +17,10 @@ function changeBoth() {
 </script>
 
 <div class="batch-demo">
-  <p>Full name, a derived store: {full}</p>
+  <p>Full name, a derived variable: {full}</p>
   <p>Clicks so far: {updates}</p>
   <div class="actions">
-    <button onclick={changeBoth} type="button">Change both stores</button>
+    <button onclick={updateBoth} type="button">Update both variables</button>
   </div>
 </div>
 

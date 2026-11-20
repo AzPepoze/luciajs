@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lucia";
 import { attachCells, createTarget, detachCells } from "../cells.ts";
 import Edge from "../expressions/Edge.lucia";
-import { base, count, probe, resetStore } from "../store.ts";
+import { base, count, probe, resetVariable } from "../variable.ts";
 
 const CELLS = 2000;
 const WRITES = 100;
@@ -15,7 +15,7 @@ afterEach(() => {
   instances = [];
   for (const target of targets) target.remove();
   targets = [];
-  resetStore();
+  resetVariable();
 });
 
 function newTarget(): HTMLElement {
@@ -29,7 +29,7 @@ function writeCount(writes: number): void {
 }
 
 describe("updates", () => {
-  test(`one store write updates all ${CELLS} cells`, () => {
+  test(`one variable write updates all ${CELLS} cells`, () => {
     const target = newTarget();
     instances = attachCells(target, CELLS);
 
@@ -53,7 +53,7 @@ describe("updates", () => {
     expect(probe.tones).toBe(WRITES);
   });
 
-  test("a diamond of derived stores evaluates once per write", () => {
+  test("a diamond of derived variables evaluates once per write", () => {
     const target = newTarget();
     instances = [attach(Edge, target)];
     const before = probe.diamond;

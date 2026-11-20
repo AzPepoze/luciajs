@@ -3,11 +3,11 @@ import { completionsAt, type CompletionResult } from "./completions.ts";
 import { childProps, type EditorFile } from "./files.ts";
 import { planLuciaImport } from "./auto-import.ts";
 import { expressionEnd } from "./format-expressions.ts";
-import { localItems, receiverAt, storeMemberItems, storeNames } from "./locals.ts";
+import { localItems, receiverAt, variableMemberItems, variableNames } from "./locals.ts";
 import { regionAt } from "./regions.ts";
 import { scriptSection } from "./sections.ts";
 
-/** Everything the editor offers at `offset`: API names, markup items, file names, store members. */
+/** Everything the editor offers at `offset`: API names, markup items, file names, variable members. */
 export function editorCompletions(
   text: string,
   offset: number,
@@ -16,7 +16,7 @@ export function editorCompletions(
 ): CompletionResult[] {
   if (fileName.endsWith(".ts")) return typescriptCompletions(text, offset);
   const script = scriptText(text);
-  if (isStoreMember(script, text, offset)) return storeMemberItems();
+  if (isVariableMember(script, text, offset)) return variableMemberItems();
   const base = completionsAt(text, offset, (component) => {
     return childProps(files, fileName, text, component) ?? [];
   });
@@ -25,14 +25,14 @@ export function editorCompletions(
 
 /** A .ts file is all script: API names with their imports, and the names in the file. */
 function typescriptCompletions(text: string, offset: number): CompletionResult[] {
-  if (isStoreMember(text, text, offset)) return storeMemberItems();
+  if (isVariableMember(text, text, offset)) return variableMemberItems();
   const base = scriptItems().map((item) => withImportEdit(item, text));
   return [...base, ...localItems(text, takenLabels(base))];
 }
 
-function isStoreMember(script: string, text: string, offset: number): boolean {
+function isVariableMember(script: string, text: string, offset: number): boolean {
   const receiver = receiverAt(text, offset);
-  return receiver !== undefined && storeNames(script).has(receiver);
+  return receiver !== undefined && variableNames(script).has(receiver);
 }
 
 /** Names of this file, offered in script and in `{...}` expressions. */

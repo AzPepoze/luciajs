@@ -12,7 +12,7 @@ const readBase = { duration: 300 };
 const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
   readWith(when, more, readBase);
 import type { Leave } from "@runtime/dom/leave.ts";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();
@@ -196,10 +196,10 @@ describe("more errors", () => {
     ).toThrow('more has an unknown key "amount", use inDelay, outDelay, out or outDuration');
   });
 
-  test("more on a store when names it as a store", () => {
-    const source = store(true);
+  test("more on a variable when names it as a variable", () => {
+    const source = variable(true);
     expect(() => readItem({ style: fade, when: source, more: {} } as never)).toThrow(
-      "more is not used with a store",
+      "more is not used with a variable",
     );
   });
 

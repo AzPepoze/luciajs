@@ -1,8 +1,8 @@
 <script>
-import { attach, store, type Instance } from "lucia";
+import { attach, variable, type Instance } from "lucia";
 import Shrink from "./Shrink.lucia";
 
-const slot = store<Element | null>(null);
+const slot = variable<Element | null>(null);
 let box: Instance | null = null;
 
 // detach() waits for the OUT animation, then removes the box.

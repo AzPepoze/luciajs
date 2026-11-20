@@ -1,11 +1,11 @@
-import { store } from "lucia";
+import { variable } from "lucia";
 
 export type Theme = "light" | "dark";
 
 const storageKey = "lucia-web-theme";
 
 // The head script in index.html sets data-theme before first paint.
-export const theme = store<Theme>(
+export const theme = variable<Theme>(
   document.documentElement.dataset.theme === "dark" ? "dark" : "light",
 );
 

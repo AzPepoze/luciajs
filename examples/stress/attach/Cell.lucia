@@ -1,5 +1,5 @@
 <script>
-import { count, label, tick, tone } from "../store.ts";
+import { count, label, tick, tone } from "../variable.ts";
 </script>
 
 <li class="cell {tone}" data-count={count}>

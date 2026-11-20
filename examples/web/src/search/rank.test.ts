@@ -46,8 +46,8 @@ describe("groupsFor with an empty term", () => {
 });
 
 describe("groupsFor with a term", () => {
-  test("finds the store entry in the Reference and the Guide", () => {
-    const groups = groupsFor(index, "store", []);
+  test("finds the variable entry in the Reference and the Guide", () => {
+    const groups = groupsFor(index, "variable", []);
     const labels = groups.map((group) => group.label);
     expect(labels).toContain("Guide");
     expect(labels).toContain("Reference");
@@ -55,8 +55,10 @@ describe("groupsFor with a term", () => {
   });
 
   test("ranks an exact title above a prefix title", () => {
-    const reference = groupsFor(index, "store", []).find((group) => group.label === "Reference")!;
-    expect(titleOf(reference.rows[0]!)).toBe("Store");
+    const reference = groupsFor(index, "variable", []).find(
+      (group) => group.label === "Reference",
+    )!;
+    expect(titleOf(reference.rows[0]!)).toBe("Variable");
   });
 
   test("keeps the groups in page order", () => {
@@ -66,11 +68,11 @@ describe("groupsFor with a term", () => {
   });
 
   test("requires every word to match", () => {
-    expect(titles(groupsFor(index, "store zzzqx", []))).toEqual(suggestedTerms);
+    expect(titles(groupsFor(index, "variable zzzqx", []))).toEqual(suggestedTerms);
   });
 
   test("counts the rows across groups", () => {
-    expect(countRows(groupsFor(index, "store", []))).toBeGreaterThan(1);
+    expect(countRows(groupsFor(index, "variable", []))).toBeGreaterThan(1);
   });
 
   test("falls back to suggestions and reports no rows for a miss", () => {
@@ -79,24 +81,29 @@ describe("groupsFor with a term", () => {
   });
 
   test("matches letters in order when the query is fuzzy", () => {
-    const found = titles(groupsFor(index, "stf", []));
-    expect(found).toContain("store.from()");
+    const found = titles(groupsFor(index, "cpu", []));
+    expect(found).toContain("variable.compute()");
   });
 
   test("highlights the matched letters of the title", () => {
-    const row = groupsFor(index, "store", []).find((group) => group.label === "Reference")!.rows[0]!;
-    expect(row.title[0]).toEqual({ text: "Store", hit: true });
+    const row = groupsFor(index, "variable", []).find((group) => group.label === "Reference")!
+      .rows[0]!;
+    expect(row.title[0]).toEqual({ text: "Variable", hit: true });
   });
 
   test("breaks ties by the shorter title", () => {
-    const groups = groupsFor(index, "store", []);
+    const groups = groupsFor(index, "variable", []);
     const reference = groups.find((group) => group.label === "Reference")!;
     const names = reference.rows.map(titleOf);
-    expect(names.indexOf("store()")).toBeLessThan(names.indexOf("store.from()"));
+    expect(names.indexOf("variable()")).toBeLessThan(names.indexOf("variable.compute()"));
   });
 
   test("caps each page at twelve rows", () => {
-    const many = [entry("Guide", "a1"), entry("Guide", "a2"), ...Array.from({ length: 20 }, (_, i) => entry("Guide", `a${i + 3}`))];
+    const many = [
+      entry("Guide", "a1"),
+      entry("Guide", "a2"),
+      ...Array.from({ length: 20 }, (_, i) => entry("Guide", `a${i + 3}`)),
+    ];
     const guide = groupsFor(many, "a", []).find((group) => group.label === "Guide")!;
     expect(guide.rows.length).toBe(12);
   });

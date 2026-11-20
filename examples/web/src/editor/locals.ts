@@ -10,7 +10,8 @@ const DECLARATION = /\b(const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/g;
 const BOUND_LIST = /\b(?:const|let|var)\s*\{([^}]*)\}\s*=/g;
 const DEFAULT_IMPORT = /\bimport\s+([A-Za-z_$][\w$]*)\s+from\b/g;
 const NAMED_IMPORT = /\bimport\s*\{([^}]*)\}\s*from\b/g;
-const STORE_DECLARATION = /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*store(?:\.from)?\s*[(<]/g;
+const VARIABLE_DECLARATION =
+  /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*variable(?:\.compute)?\s*[(<]/g;
 const PROPS_DESTRUCTURING = /\b(?:const|let|var)\s*\{([^}]*)\}\s*=\s*props\s*\(/g;
 const IDENTIFIER = /^[A-Za-z_$][\w$]*$/;
 const RECEIVER = /([A-Za-z_$][\w$]*)\.[\w$]*$/;
@@ -49,25 +50,39 @@ export function localItems(script: string, taken: ReadonlySet<string>): Completi
     }));
 }
 
-/** Names that hold a store: from `store()`, `store.from()` or destructured from `props()`. */
-export function storeNames(script: string): Set<string> {
+/** Names that hold a variable: from `variable()`, `variable.compute()` or destructured from `props()`. */
+export function variableNames(script: string): Set<string> {
   const names = new Set<string>();
-  for (const match of script.matchAll(STORE_DECLARATION)) names.add(match[1] ?? "");
+  for (const match of script.matchAll(VARIABLE_DECLARATION)) names.add(match[1] ?? "");
   for (const match of script.matchAll(PROPS_DESTRUCTURING)) {
     for (const name of boundNames(match[1] ?? "")) names.add(name);
   }
   return names;
 }
 
-/** `.value` and `.peek()` for a store, described from the Store entry in reference/api.ts. */
-export function storeMemberItems(): CompletionItemData[] {
-  const bullets = findApiById("store-type")?.bullets ?? [];
+/** `.value`, `.get()`, `.set()` and `.peek()` for a variable, described from the Variable entry in reference/api.ts. */
+export function variableMemberItems(): CompletionItemData[] {
+  const bullets = findApiById("variable-type")?.bullets ?? [];
   return [
     {
       label: "value",
       kind: "property",
       insertText: "value",
       snippet: false,
+      detail: bullets[0] ?? "",
+    },
+    {
+      label: "get",
+      kind: "function",
+      insertText: "get()",
+      snippet: false,
+      detail: bullets[0] ?? "",
+    },
+    {
+      label: "set",
+      kind: "function",
+      insertText: "set($0)",
+      snippet: true,
       detail: bullets[0] ?? "",
     },
     {

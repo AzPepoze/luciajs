@@ -1,5 +1,5 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import CodeEditor from "../components/CodeEditor.lucia";
 import FileNameForm from "../components/FileNameForm.lucia";
 import PlayErrors from "../components/PlayErrors.lucia";
@@ -19,12 +19,12 @@ import { runNow } from "../playground/run.ts";
 import { active, autoRun, errors, files, jump, notice } from "../playground/state.ts";
 
 // "add" and "rename" open one name form at a time. "" means no form is open.
-const formMode = store<"" | "add" | "rename">("");
-const adding = store.from(() => formMode.value === "add");
-const renaming = store.from(() => formMode.value === "rename");
-const isEntry = store.from(() => active.value === ENTRY_FILE);
-const manual = store.from(() => !autoRun.value);
-const hasNotice = store.from(() => notice.value !== "");
+const formMode = variable<"" | "add" | "rename">("");
+const adding = variable.compute(() => formMode.value === "add");
+const renaming = variable.compute(() => formMode.value === "rename");
+const isEntry = variable.compute(() => active.value === ENTRY_FILE);
+const manual = variable.compute(() => !autoRun.value);
+const hasNotice = variable.compute(() => notice.value !== "");
 
 function openAdd() {
   formMode.value = "add";

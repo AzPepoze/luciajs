@@ -1,5 +1,5 @@
 <script>
-import { WHEN, EASE, MIDWAY, store, TURN } from "lucia";
+import { WHEN, EASE, MIDWAY, variable, TURN } from "lucia";
 
 // Hover in and out quickly. Each box turns its own way when you change your mind.
 const grow = {
@@ -21,10 +21,10 @@ const turnModes = [
   { label: "STOP", turn: TURN.STOP },
 ];
 
-const modeName = store("turn");
+const modeName = variable("turn");
 
 // midway is read when a box attaches. The boxes are rebuilt when the mode changes.
-const boxes = store.from(() =>
+const boxes = variable.compute(() =>
   turnModes.map(({ label, turn }) => ({
     key: label + modeName.value,
     label,

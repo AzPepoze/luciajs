@@ -77,14 +77,14 @@ const hintMotion = {
             <span class="blob" animate={bob} aria-hidden="true"></span>
             <span class="material-symbols-rounded" aria-hidden="true">bolt</span>
           </span>
-          <h3>Stores</h3>
+          <h3>Variables</h3>
         </div>
-        <p>Only the text and attributes that read a changed store are updated.</p>
+        <p>Only the text and attributes that read a changed variable are updated.</p>
         <div class="feature-demo">
           <FeatureCounter />
         </div>
-        <pre class="snippet"><code data-lang="typescript">const count = store(0);
-const double = store.from(() =&gt; count.value * 2);
+        <pre class="snippet"><code data-lang="typescript">const count = variable(0);
+const double = variable.compute(() =&gt; count.value * 2);
 count.value++;</code></pre>
       </article>
       <article
@@ -103,7 +103,7 @@ count.value++;</code></pre>
         </div>
         <p>Script, markup and styles live in one file.</p>
         <pre class="snippet"><code data-lang="lucia">&lt;script&gt;
-import {"{"} store {"}"} from "lucia";
+import {"{"} variable {"}"} from "lucia";
 &lt;/script&gt;
 &lt;p&gt;Hi {"{"}name{"}"}&lt;/p&gt;</code></pre>
       </article>
@@ -121,7 +121,7 @@ import {"{"} store {"}"} from "lucia";
           </span>
           <h3>Props and children</h3>
         </div>
-        <p>Pass values as attributes. Each prop is a store.</p>
+        <p>Pass values as attributes. Each prop is a variable.</p>
         <pre class="snippet"><code data-lang="lucia">{badgeSnippet}</code></pre>
       </article>
       <article

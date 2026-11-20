@@ -1,12 +1,12 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import { pull, release } from "../motion/pointer.ts";
 
-const count = store(0);
-const doubled = store.from(() => count.value * 2);
+const count = variable(0);
+const doubled = variable.compute(() => count.value * 2);
 
-const code = `const count = store(0);
-const doubled = store.from(() => count.value * 2);
+const code = `const count = variable(0);
+const doubled = variable.compute(() => count.value * 2);
 
 count.value++;`;
 

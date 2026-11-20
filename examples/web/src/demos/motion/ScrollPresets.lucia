@@ -1,9 +1,9 @@
 <script>
-import { WHEN, PRESET, store } from "lucia";
+import { WHEN, PRESET, variable } from "lucia";
 import { watchPinned } from "./scroll-readout.ts";
 
 // One tall lane drives all four presets, so they play side by side at the same progress.
-const lane = store(null);
+const lane = variable(null);
 
 const upMotion = { style: PRESET.SLIDE_UP, when: WHEN.SCROLL, more: { follow: lane } };
 const downMotion = {

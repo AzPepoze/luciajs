@@ -6,9 +6,13 @@ export const RENAMED_EXPORTS: ReadonlyMap<string, string> = new Map([
   ],
   ["CURVE", "CURVE was renamed to EASE.STYLE."],
   ["TRANSITION", "TRANSITION was renamed to EASE.STYLE."],
-  ["signal", "signal was renamed to store."],
-  ["computed", "computed was renamed to store.from."],
-  ["effect", "effect was renamed to store.onUpdate."],
-  ["batch", "batch was removed. Use .peek() to read a store without tracking it."],
-  ["untrack", "untrack was removed. Use .peek() to read a store without tracking it."],
+  [
+    "store",
+    "store was renamed to variable. Use variable.compute() for store.from() and variable.onUpdate() for store.onUpdate().",
+  ],
+  ["signal", "signal was renamed to variable."],
+  ["computed", "computed was renamed to variable.compute."],
+  ["effect", "effect was renamed to variable.onUpdate."],
+  ["batch", "batch was removed. Use .peek() to read a variable without tracking it."],
+  ["untrack", "untrack was removed. Use .peek() to read a variable without tracking it."],
 ]);

@@ -5,17 +5,17 @@ describe("docsElement", () => {
   test("renders a bold title, a code fence, bullets and inline code", () => {
     const root = docsElement(
       [
-        "**store()**",
+        "**variable()**",
         "",
         "```ts",
-        "store<T>(initial: T)",
+        "variable<T>(initial: T)",
         "```",
         "- Use `.value`.",
         "- Second.",
       ].join("\n"),
     );
-    expect(root.querySelector("strong")?.textContent).toBe("store()");
-    expect(root.querySelector("pre code")?.textContent).toBe("store<T>(initial: T)");
+    expect(root.querySelector("strong")?.textContent).toBe("variable()");
+    expect(root.querySelector("pre code")?.textContent).toBe("variable<T>(initial: T)");
     expect(root.querySelectorAll("li").length).toBe(2);
     expect(root.querySelector("li code")?.textContent).toBe(".value");
   });

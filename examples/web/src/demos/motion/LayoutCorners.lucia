@@ -1,5 +1,5 @@
 <script>
-import { WHEN, store } from "lucia";
+import { WHEN, variable } from "lucia";
 
 // The box has no keyframes. Its class moves it to another corner,
 // and WHEN.MOVE glides it there.
@@ -9,8 +9,8 @@ const CORNERS = [
   "corner-bottom-right",
   "corner-bottom-left",
 ];
-const step = store(0);
-const corner = store.from(() => CORNERS[step.value]);
+const step = variable(0);
+const corner = variable.compute(() => CORNERS[step.value]);
 const glide = { when: WHEN.MOVE, duration: 600 };
 
 function nextCorner() {

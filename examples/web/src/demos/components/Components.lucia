@@ -1,9 +1,11 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import badge from "./badge.lucia";
 
-const mail = store(0);
-const label = store.from(() => (mail.value === 0 ? "No mail" : `${mail.value} new`));
+const mail = variable(0);
+const label = variable.compute(() =>
+  mail.value === 0 ? "No mail" : `${mail.value} new`,
+);
 
 function addMail() {
   mail.value++;

@@ -6,17 +6,17 @@
 > [!IMPORTANT]
 > LuciaJS is under active development and has no release yet. APIs and markup may change without notice.
 
-A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through stores.
+A small UI framework for [Bun](https://bun.sh). You write components as single `.lucia` files: TypeScript, HTML and scoped SCSS. The page updates through variables.
 
 > [!NOTE]
 > Markup has `{expression}`, events, two-way `bind`, and `<IF>`, `<EACH>`, `<FOR>`. SSR and hydration are not designed yet.
 
 ```html
 <script>
-  import { store } from "lucia";
+  import { variable } from "lucia";
 
-  const count = store(0);
-  const hot = store.from(() => (count.value > 4 ? "hot" : ""));
+  const count = variable(0);
+  const hot = variable.compute(() => (count.value > 4 ? "hot" : ""));
 </script>
 
 <p class="count {hot}">Clicked {count} times</p>
@@ -49,7 +49,7 @@ If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](docs/
 | [Components](docs/components.md)     | The `.lucia` file: script, props, markup with `{}`, child components, scoped SCSS, attaching |
 | [Events and bind](docs/events.md)    | `onclick={fn}`, two-way `bind` for form fields, `bind-element`                               |
 | [Flow](docs/flow.md)                 | `<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>` and `<FOR>`                                           |
-| [Store](docs/store.md)               | State, derived values, `store.onUpdate` and shared stores                                    |
+| [Variable](docs/variable.md)               | State, derived values, `variable.onUpdate` and shared variables                                    |
 | [Animate](docs/animate.md)           | The `animate` attribute: keyframes, triggers, easings, presets and leave                     |
 | [Development](docs/development.md)   | Commands, tests, repo layout                                                                 |
 | [Architecture](docs/architecture.md) | How the compiler and runtime work                                                            |

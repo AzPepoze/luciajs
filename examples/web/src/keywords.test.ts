@@ -4,8 +4,8 @@ import { buildKeywordIndex, tokenize } from "./keywords.ts";
 
 const entries: ApiEntry[] = [
   {
-    id: "store",
-    name: "store()",
+    id: "variable",
+    name: "variable()",
     kind: "function",
     group: "reactivity",
     signature: "",
@@ -14,8 +14,8 @@ const entries: ApiEntry[] = [
     example: "",
   },
   {
-    id: "store-from",
-    name: "store.from()",
+    id: "variable-compute",
+    name: "variable.compute()",
     kind: "function",
     group: "reactivity",
     signature: "",
@@ -46,18 +46,20 @@ function chips(parts: ReturnType<typeof tokenize>) {
 
 describe("keyword tokenizer", () => {
   test("links an API name to its section", () => {
-    expect(chips(tokenize("Call store() first.", index, "props"))).toEqual([["store()", "store"]]);
+    expect(chips(tokenize("Call variable() first.", index, "props"))).toEqual([
+      ["variable()", "variable"],
+    ]);
   });
 
   test("prefers the longest name", () => {
-    expect(chips(tokenize("Use store.from() here.", index, "props"))).toEqual([
-      ["store.from()", "store-from"],
+    expect(chips(tokenize("Use variable.compute() here.", index, "props"))).toEqual([
+      ["variable.compute()", "variable-compute"],
     ]);
   });
 
   test("matches whole words only", () => {
-    expect(chips(tokenize("restore() is not store().", index, "props"))).toEqual([
-      ["store()", "store"],
+    expect(chips(tokenize("restore() is not variable().", index, "props"))).toEqual([
+      ["variable()", "variable"],
     ]);
   });
 
@@ -66,7 +68,9 @@ describe("keyword tokenizer", () => {
   });
 
   test("does not link a section to itself", () => {
-    expect(chips(tokenize("Call store() first.", index, "store"))).toEqual([["store()", null]]);
+    expect(chips(tokenize("Call variable() first.", index, "variable"))).toEqual([
+      ["variable()", null],
+    ]);
   });
 
   test("backticked text is always a chip, even when unknown", () => {
@@ -74,7 +78,9 @@ describe("keyword tokenizer", () => {
   });
 
   test("backticked text links when it names a section", () => {
-    expect(chips(tokenize("See `store()`.", index, "props"))).toEqual([["store()", "store"]]);
+    expect(chips(tokenize("See `variable()`.", index, "props"))).toEqual([
+      ["variable()", "variable"],
+    ]);
   });
 
   test("a demo title links only inside backticks", () => {
@@ -90,8 +96,8 @@ describe("keyword tokenizer", () => {
   });
 
   test("keeps plain text between chips in order", () => {
-    const text = tokenize("A store() and WHEN.VIEW.", index, "props").map((part) => part.text);
-    expect(text.join("")).toBe("A store() and WHEN.VIEW.");
+    const text = tokenize("A variable() and WHEN.VIEW.", index, "props").map((part) => part.text);
+    expect(text.join("")).toBe("A variable() and WHEN.VIEW.");
   });
 
   test("text without keywords is one plain part", () => {

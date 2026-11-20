@@ -1,10 +1,10 @@
 <script>
-import { attach, store, type Instance } from "lucia";
-import { clicks } from "../../store.ts";
+import { attach, variable, type Instance } from "lucia";
+import { clicks } from "../../variable.ts";
 import Chip from "./Chip.lucia";
 
-const attached = store(0);
-const slot = store<Element | null>(null);
+const attached = variable(0);
+const slot = variable<Element | null>(null);
 const instances: Instance[] = [];
 
 function addClick() {

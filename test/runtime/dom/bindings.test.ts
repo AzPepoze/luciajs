@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import { attr, bindText, listen } from "@runtime/dom/bindings.ts";
 import { TEXT_MARKER } from "@runtime/markers.ts";
-import { watch } from "@runtime/store/graph.ts";
-import { store } from "@runtime/store/store.ts";
+import { watch } from "@runtime/variable/graph.ts";
+import { variable } from "@runtime/variable/variable.ts";
 
 describe("bindText", () => {
-  test("replaces the marker and updates when the store changes", () => {
-    const count = store(0);
+  test("replaces the marker and updates when the variable changes", () => {
+    const count = variable(0);
     const cleanups: Array<() => void> = [];
     const parent = document.createElement("p");
     const marker = document.createComment(TEXT_MARKER);
@@ -24,7 +24,7 @@ describe("bindText", () => {
 
 describe("attr", () => {
   test("null and false remove the attribute, true sets it empty", () => {
-    const value = store<unknown>("x");
+    const value = variable<unknown>("x");
     const el = document.createElement("div");
     const cleanups: Array<() => void> = [];
     attr(el, "data-flag", () => value.value, cleanups);
@@ -58,12 +58,12 @@ describe("listen", () => {
     expect(clicks).toBe(1);
   });
 
-  test("a handler that writes three stores runs a dependent watcher once", () => {
+  test("a handler that writes three variables runs a dependent watcher once", () => {
     const button = document.createElement("button");
     const cleanups: Array<() => void> = [];
-    const first = store(0);
-    const second = store(0);
-    const third = store(0);
+    const first = variable(0);
+    const second = variable(0);
+    const third = variable(0);
     let runs = 0;
     const stop = watch(() => {
       runs++;

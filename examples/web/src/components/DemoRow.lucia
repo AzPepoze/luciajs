@@ -1,5 +1,5 @@
 <script>
-import { attach, props, store, type Instance } from "lucia";
+import { attach, props, variable, type Instance } from "lucia";
 import type { Demo } from "../catalog.ts";
 import type { EditorFile } from "../editor/files.ts";
 import { createDemoSession } from "../live/demo-session.ts";
@@ -13,13 +13,13 @@ import ErrorNote from "./ErrorNote.lucia";
 
 const emptyDemo: Demo = { id: "", title: "", caption: "", components: [], sources: [] };
 const { demo } = props({ demo: emptyDemo });
-const body = store<Element | null>(null);
-const stage = store<HTMLElement | null>(null);
-const lazy = store<HTMLElement | null>(null);
+const body = variable<Element | null>(null);
+const stage = variable<HTMLElement | null>(null);
+const lazy = variable<HTMLElement | null>(null);
 // The editor opens near the screen or on click. Until then the code is only shown.
-const near = store(false);
+const near = variable(false);
 // True while the edited build is shown in place of the original demo.
-const live = store(false);
+const live = variable(false);
 const sources: EditorFile[] = demo.peek().sources.map((file) => ({
   name: file.path,
   code: file.text,

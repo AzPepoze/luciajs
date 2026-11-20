@@ -1,5 +1,5 @@
 <script>
-import { WHEN, store } from "lucia";
+import { WHEN, variable } from "lucia";
 import Highlight from "./Highlight.lucia";
 import { buildSearchIndex } from "../search/build.ts";
 import { groupJump, groupStarts, moveIndex } from "../search/keys.ts";
@@ -9,16 +9,16 @@ import { closeSearch, openSearch, searchOpen } from "../search/state.ts";
 
 // Opening glides the box to the top centre. The backdrop fades in behind it.
 const index = buildSearchIndex();
-const typed = store("");
-const active = store(0);
-const recent = store(loadRecent());
-const field = store<HTMLInputElement | null>(null);
-const list = store<HTMLElement | null>(null);
+const typed = variable("");
+const active = variable(0);
+const recent = variable(loadRecent());
+const field = variable<HTMLInputElement | null>(null);
+const list = variable<HTMLElement | null>(null);
 
-const groups = store.from(() => groupsFor(index, typed.value, recent.value));
-const starts = store.from(() => groupStarts(rowCounts(groups.value)));
-const count = store.from(() => countRows(groups.value));
-const noResults = store.from(() => typed.value.trim() !== "" && count.value === 0);
+const groups = variable.compute(() => groupsFor(index, typed.value, recent.value));
+const starts = variable.compute(() => groupStarts(rowCounts(groups.value)));
+const count = variable.compute(() => countRows(groups.value));
+const noResults = variable.compute(() => typed.value.trim() !== "" && count.value === 0);
 
 const glide = { when: WHEN.MOVE_OR_RESIZE, duration: 380 };
 const fadeIn = { 0: { opacity: 0 }, 1: { opacity: 1 } };
@@ -29,7 +29,7 @@ const backdrop = {
 };
 
 // Focus follows the open state: opening focuses the field, closing leaves it.
-store.onUpdate(() => {
+variable.onUpdate(() => {
   if (searchOpen.value) field.value?.focus();
   else field.value?.blur();
 });

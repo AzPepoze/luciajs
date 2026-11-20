@@ -1,11 +1,11 @@
 <script>
-import { props, store } from "lucia";
+import { props, variable } from "lucia";
 import type { SourceFile } from "../catalog.ts";
 import { languageFor } from "../highlight/highlight.ts";
 import CodeBlock from "./CodeBlock.lucia";
 
 const { sources } = props({ sources: [] as SourceFile[] });
-const active = store(0);
+const active = variable(0);
 
 function selectTab(index: number) {
   active.value = index;

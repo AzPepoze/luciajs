@@ -4,7 +4,7 @@ import { colorEnabled } from "@cli/color.ts";
 import { addStep, now, type Steps } from "@cli/timings.ts";
 import type { BunPlugin } from "bun";
 import { cachedModule, pruneModules, storeModule, toCachedModule } from "./cache.ts";
-import { moduleChange, type ModuleChange } from "./change.ts";
+import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
 
 export interface LuciaPluginOptions {
@@ -12,11 +12,11 @@ export interface LuciaPluginOptions {
   dev?: boolean;
   /** Receives the time spent in the compiler (`compile`) and in Sass (`sass`). */
   steps?: Steps;
-  /** Receives each .lucia file whose output changed since the last build. */
-  onChange?: (change: ModuleChange) => void;
+  /** Receives each .lucia file whose output was updated since the last build. */
+  onUpdate?: (update: ModuleUpdate) => void;
 }
 
-export function lucia({ dev = false, steps = {}, onChange }: LuciaPluginOptions = {}): BunPlugin {
+export function lucia({ dev = false, steps = {}, onUpdate }: LuciaPluginOptions = {}): BunPlugin {
   return {
     name: "lucia",
     setup(build) {
@@ -29,8 +29,8 @@ export function lucia({ dev = false, steps = {}, onChange }: LuciaPluginOptions 
         const start = now();
         const result = compileModule(path, source, dev);
         const next = toCachedModule(source, dev, result);
-        const change = moduleChange(path, storeModule(path, next), next);
-        if (change) onChange?.(change);
+        const update = moduleUpdate(path, storeModule(path, next), next);
+        if (update) onUpdate?.(update);
         addStep(steps, "sass", result.sassMs);
         addStep(steps, "compile", now() - start - result.sassMs);
         return { contents: result.code, loader: "ts" };

@@ -1,5 +1,5 @@
 <script>
-import { clicks } from "../../store.ts";
+import { clicks } from "../../variable.ts";
 </script>
 
 <div class="chip-card">

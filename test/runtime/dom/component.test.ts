@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import Counter from "./fixtures/Counter.lucia";
 import Setup from "./fixtures/Setup.lucia";
 import Shelf from "./fixtures/Shelf.lucia";
@@ -26,8 +26,8 @@ describe("component instances", () => {
     expect(text(second, ".count")).toBe("0");
   });
 
-  test("a parent store updates the child's props", () => {
-    const label = store("First");
+  test("a parent variable updates the child's props", () => {
+    const label = variable("First");
     const el = host();
     mount(Shelf, el, { label: () => label.value });
     const [firstBadge] = el.querySelectorAll(".badge");
@@ -42,7 +42,7 @@ describe("component instances", () => {
   });
 
   test("detaching a parent removes nested child nodes and stops their watchers", () => {
-    const label = store("First");
+    const label = variable("First");
     const el = host();
     const instance = mount(Shelf, el, { label: () => label.value });
     const childBadge = el.querySelector(".badge")!;

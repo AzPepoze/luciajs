@@ -1,4 +1,4 @@
-import { batch, watch } from "../store/graph.ts";
+import { batch, watch } from "../variable/graph.ts";
 import type { Leave } from "./leave.ts";
 
 export type Cleanup = () => void;
@@ -26,7 +26,7 @@ export function attr(el: Element, name: string, read: () => unknown, cleanups: C
   );
 }
 
-/** The handler's store writes run as one batch, so dependent watchers run once per event. */
+/** The handler's variable writes run as one batch, so dependent watchers run once per event. */
 function batched(handler: EventListener): EventListener {
   return (event) => batch(() => handler(event));
 }

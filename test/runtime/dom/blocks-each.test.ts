@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { bindEach, type RowRender } from "@runtime/dom/blocks/each.ts";
 import { TEXT_MARKER } from "@runtime/markers.ts";
-import { store, type Store } from "@runtime/store/store.ts";
+import { variable, type Variable } from "@runtime/variable/variable.ts";
 import Groups from "./fixtures/Groups.lucia";
 import Rows from "./fixtures/Rows.lucia";
-import { resetStore, state, type Item } from "./fixtures/state.ts";
+import { resetVariable, state, type Item } from "./fixtures/state.ts";
 import { host, mount, resetMounts, unmount } from "./fixtures/mount.ts";
 
-beforeEach(resetStore);
+beforeEach(resetVariable);
 afterEach(resetMounts);
 
 function items(...titles: string[]): Item[] {
@@ -117,7 +117,7 @@ describe("EACH runtime", () => {
   test("duplicate keys are an error", () => {
     const marker = document.createComment(TEXT_MARKER);
     document.createElement("ul").append(marker);
-    const list = store([1, 1]);
+    const list = variable([1, 1]);
     const cleanups: Array<() => void> = [];
     const render: RowRender = () => document.createDocumentFragment();
     expect(() =>
@@ -129,7 +129,7 @@ describe("EACH runtime", () => {
     const parent = document.createElement("ul");
     const marker = document.createComment(TEXT_MARKER);
     parent.append(marker);
-    const list = store(["a", "b"]);
+    const list = variable(["a", "b"]);
     const release = new Map<string, () => void>();
     const render: RowRender = (item, _index, _cleanups, leaves) => {
       const fragment = document.createDocumentFragment();
@@ -152,11 +152,11 @@ describe("EACH runtime", () => {
     for (const cleanup of cleanups) cleanup();
   });
 
-  test("an index store is only created when the row asks for it", () => {
+  test("an index variable is only created when the row asks for it", () => {
     const parent = document.createElement("ul");
     const marker = document.createComment(TEXT_MARKER);
     parent.append(marker);
-    const seen: Array<Store<number> | undefined> = [];
+    const seen: Array<Variable<number> | undefined> = [];
     const render: RowRender = (item, index, cleanups) => {
       seen.push(index);
       return textRow(index !== undefined)(item, index, cleanups, []);

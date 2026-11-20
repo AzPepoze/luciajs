@@ -1,5 +1,5 @@
 <script>
-import { props, store } from "lucia";
+import { props, variable } from "lucia";
 import type { LiveError } from "../live/types.ts";
 
 const { errors, onJump } = props({
@@ -7,7 +7,7 @@ const { errors, onJump } = props({
   onJump: (error: LiveError) => {},
 });
 
-const isEmpty = store.from(() => errors.value.length === 0);
+const isEmpty = variable.compute(() => errors.value.length === 0);
 
 function where(error: LiveError): string {
   return error.file ? `${error.file}:${error.line ?? 1}:${error.column ?? 1}` : "";

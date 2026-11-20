@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { batch, untrack, watch } from "@runtime/store/graph.ts";
-import { store } from "@runtime/store/store.ts";
+import { batch, untrack, watch } from "@runtime/variable/graph.ts";
+import { variable } from "@runtime/variable/variable.ts";
 
 describe("batch", () => {
   test("runs watchers once for several writes", () => {
-    const first = store(0);
-    const second = store(0);
+    const first = variable(0);
+    const second = variable(0);
     let runs = 0;
     watch(() => {
       runs++;
@@ -25,7 +25,7 @@ describe("batch", () => {
 
 describe("untrack", () => {
   test("reads do not subscribe", () => {
-    const source = store(0);
+    const source = variable(0);
     let runs = 0;
     watch(() => {
       runs++;
@@ -38,7 +38,7 @@ describe("untrack", () => {
 
 describe("watch", () => {
   test("stop function unsubscribes", () => {
-    const source = store(0);
+    const source = variable(0);
     let runs = 0;
     const stop = watch(() => {
       runs++;

@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, symlink, unlink, writeFile } from "node:fs/promises
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { storeModule, pruneModules, type CachedModule } from "@bun-plugin/cache.ts";
-import type { ModuleChange } from "@bun-plugin/change.ts";
+import type { ModuleUpdate } from "@bun-plugin/update.ts";
 import { lucia } from "@bun-plugin/index.ts";
 import { compile, hash } from "@compiler/index.ts";
 import type { Steps } from "@cli/timings.ts";
@@ -43,12 +43,12 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-async function build(): Promise<{ steps: Steps; changes: ModuleChange[] }> {
+async function build(): Promise<{ steps: Steps; changes: ModuleUpdate[] }> {
   const steps: Steps = {};
-  const changes: ModuleChange[] = [];
+  const changes: ModuleUpdate[] = [];
   const result = await Bun.build({
     entrypoints: [join(dir, "entry.ts")],
-    plugins: [lucia({ dev: true, steps, onChange: (change) => changes.push(change) })],
+    plugins: [lucia({ dev: true, steps, onUpdate: (update) => changes.push(update) })],
     throw: false,
   });
   if (!result.success) throw new Error(result.logs.map((log) => log.message).join("\n"));

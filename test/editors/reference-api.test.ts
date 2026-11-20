@@ -32,13 +32,13 @@ describe("reference api table", () => {
   test("covers the public API and markup features", () => {
     const ids = api.map((entry) => entry.id);
     for (const id of [
-      "store",
-      "store-from",
-      "store-on-update",
+      "variable",
+      "variable-compute",
+      "variable-on-update",
       "props",
       "attach",
-      "store-type",
-      "read-store-type",
+      "variable-type",
+      "computed-variable-type",
       "component",
       "instance",
       "props-type",

@@ -1,11 +1,11 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const name = store("Ada");
-const age = store<number | null>(36);
-const subscribed = store(false);
-const plan = store("free");
-const summary = store.from(() => {
+const name = variable("Ada");
+const age = variable<number | null>(36);
+const subscribed = variable(false);
+const plan = variable("free");
+const summary = variable.compute(() => {
   const subscription = subscribed.value ? ", subscribed" : "";
   const ageText = age.value ?? "no";
   return `${name.value}, ${ageText} years old, ${plan.value} plan${subscription}`;

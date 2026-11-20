@@ -1,5 +1,5 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import Hero from "../components/Hero.lucia";
 import Features from "../components/Features.lucia";
 import HomeBackground from "../components/HomeBackground.lucia";
@@ -13,9 +13,9 @@ import { trackCursor } from "../motion/cursor.ts";
 import { spawnSparks, type Spark } from "../motion/sparks.ts";
 import { watchKonami } from "../motion/konami.ts";
 
-const homeEl = store<HTMLElement | null>(null);
-const sparks = store<Spark[]>([]);
-const storm = store(false);
+const homeEl = variable<HTMLElement | null>(null);
+const sparks = variable<Spark[]>([]);
+const storm = variable(false);
 
 const STORM_MS = 6000;
 

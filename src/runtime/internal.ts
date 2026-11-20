@@ -12,10 +12,10 @@ export { bindIf } from "./dom/blocks/if.ts";
 export { bindEach } from "./dom/blocks/each.ts";
 export { bindFor } from "./dom/blocks/range.ts";
 export { animate } from "./animate/bind.ts";
-export { unwrap } from "./store/store.ts";
-export { watch } from "./store/graph.ts";
+export { unwrap } from "./variable/reactive.ts";
+export { watch } from "./variable/graph.ts";
 // Dev builds only: hot swap for `lucia dev`.
 export { hotComponent } from "./dom/hot/define.ts";
 export type { HotComponent } from "./dom/hot/define.ts";
-export { hotStore } from "./dom/hot/store.ts";
+export { hotVariable } from "./dom/hot/variable.ts";
 export { swapComponent, swapStyle } from "./dom/hot/swap.ts";

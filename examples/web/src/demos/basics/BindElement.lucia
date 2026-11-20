@@ -1,10 +1,10 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-// bind-element stores the real DOM element here, and clears it when the demo unmounts.
-const field = store<HTMLInputElement | null>(null);
-const box = store<HTMLElement | null>(null);
-const width = store(0);
+// bind-element variables the real DOM element here, and clears it when the demo unmounts.
+const field = variable<HTMLInputElement | null>(null);
+const box = variable<HTMLElement | null>(null);
+const width = variable(0);
 
 function focusField() {
   field.value?.focus();

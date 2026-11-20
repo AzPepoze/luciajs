@@ -24,7 +24,7 @@ describe("compile errors", () => {
   });
 
   test("a valid file has no errors", () => {
-    const source = `<script>\nimport { store } from "lucia";\nconst count = store(0);\n</script>\n<p>{count.value}</p>\n`;
+    const source = `<script>\nimport { variable } from "lucia";\nconst count = variable(0);\n</script>\n<p>{count.value}</p>\n`;
     expect(diagnosticsFor(source, "App.lucia", noChildren)).toEqual([]);
   });
 });

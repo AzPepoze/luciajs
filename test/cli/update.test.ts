@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import type { ModuleChange } from "@bun-plugin/change.ts";
+import type { ModuleUpdate } from "@bun-plugin/update.ts";
 import { chooseUpdate, describeUpdate, RELOAD } from "@cli/update.ts";
 
-const STYLE: ModuleChange = { path: "/app/src/Card.lucia", kind: "style", id: "abc", css: ".a{}" };
-const CODE: ModuleChange = { path: "/app/src/Card.lucia", kind: "code" };
+const STYLE: ModuleUpdate = { path: "/app/src/Card.lucia", kind: "style", id: "abc", css: ".a{}" };
+const CODE: ModuleUpdate = { path: "/app/src/Card.lucia", kind: "code" };
 
 describe("chooseUpdate", () => {
   test("a style-only change of .lucia or .scss files swaps css", () => {

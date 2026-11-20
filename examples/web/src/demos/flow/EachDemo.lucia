@@ -1,12 +1,12 @@
 <script>
-import { WHEN, PRESET, store } from "lucia";
+import { WHEN, PRESET, variable } from "lucia";
 
 interface Task {
   id: number;
   title: string;
 }
 
-const tasks = store<Task[]>([
+const tasks = variable<Task[]>([
   { id: 1, title: "Write the docs" },
   { id: 2, title: "Fix the build" },
   { id: 3, title: "Ship the release" },

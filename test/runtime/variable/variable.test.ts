@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { store } from "@runtime/store/store.ts";
-import { watch } from "@runtime/store/graph.ts";
+import { variable } from "@runtime/variable/variable.ts";
+import { watch } from "@runtime/variable/graph.ts";
 
-describe("store", () => {
+describe("variable", () => {
   test("reads and writes a value", () => {
-    const count = store(1);
+    const count = variable(1);
     expect(count.value).toBe(1);
     count.value = 2;
     expect(count.value).toBe(2);
@@ -12,7 +12,7 @@ describe("store", () => {
   });
 
   test("setting the same value (Object.is) does not notify", () => {
-    const value = store(NaN);
+    const value = variable(NaN);
     let runs = 0;
     watch(() => {
       runs++;
@@ -23,7 +23,7 @@ describe("store", () => {
   });
 
   test("setting +0 to -0 is a change (Object.is)", () => {
-    const value = store(0);
+    const value = variable(0);
     let runs = 0;
     watch(() => {
       runs++;
@@ -35,8 +35,8 @@ describe("store", () => {
 });
 
 describe("peek", () => {
-  test("a store's peek does not subscribe the watcher", () => {
-    const value = store(0);
+  test("a variable's peek does not subscribe the watcher", () => {
+    const value = variable(0);
     let runs = 0;
     watch(() => {
       runs++;
@@ -46,9 +46,9 @@ describe("peek", () => {
     expect(runs).toBe(1);
   });
 
-  test("a read store's peek does not subscribe the watcher, and still gives fresh values", () => {
-    const base = store(1);
-    const doubled = store.from(() => base.value * 2);
+  test("a read variable's peek does not subscribe the watcher, and still gives fresh values", () => {
+    const base = variable(1);
+    const doubled = variable.compute(() => base.value * 2);
     const seen: number[] = [];
     let runs = 0;
     watch(() => {
@@ -62,11 +62,11 @@ describe("peek", () => {
   });
 });
 
-describe("store.from", () => {
+describe("variable.compute", () => {
   test("caches its value until an input changes", () => {
-    const base = store(2);
+    const base = variable(2);
     let calls = 0;
-    const double = store.from(() => {
+    const double = variable.compute(() => {
       calls++;
       return base.value * 2;
     });
@@ -82,9 +82,9 @@ describe("store.from", () => {
   });
 
   test("is lazy: does not run until read", () => {
-    const base = store(1);
+    const base = variable(1);
     let calls = 0;
-    const plusOne = store.from(() => {
+    const plusOne = variable.compute(() => {
       calls++;
       return base.value + 1;
     });
@@ -94,10 +94,10 @@ describe("store.from", () => {
   });
 
   test("diamond: watch on d runs once per write to a", () => {
-    const a = store(1);
-    const b = store.from(() => a.value * 2);
-    const c = store.from(() => a.value + 1);
-    const d = store.from(() => b.value + c.value);
+    const a = variable(1);
+    const b = variable.compute(() => a.value * 2);
+    const c = variable.compute(() => a.value + 1);
+    const d = variable.compute(() => b.value + c.value);
     const seen: number[] = [];
     watch(() => {
       seen.push(d.value);
@@ -112,11 +112,11 @@ describe("store.from", () => {
   });
 
   test("re-tracks dynamic dependencies on each run", () => {
-    const useA = store(true);
-    const a = store("a");
-    const b = store("b");
+    const useA = variable(true);
+    const a = variable("a");
+    const b = variable("b");
     let calls = 0;
-    const picked = store.from(() => {
+    const picked = variable.compute(() => {
       calls++;
       return useA.value ? a.value : b.value;
     });

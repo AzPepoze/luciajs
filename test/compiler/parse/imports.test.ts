@@ -12,18 +12,18 @@ function split(script: string) {
 describe("splitImports", () => {
   test("hoists import statements and keeps the rest in the body", () => {
     const { imports, body } = split(
-      '\nimport { store } from "lucia";\nconst count = store(0);\nimport a from "./a.ts";\n',
+      '\nimport { variable } from "lucia";\nconst count = variable(0);\nimport a from "./a.ts";\n',
     );
-    expect(imports).toBe('import { store } from "lucia";\nimport a from "./a.ts";');
-    expect(body).toContain("const count = store(0);");
+    expect(imports).toBe('import { variable } from "lucia";\nimport a from "./a.ts";');
+    expect(body).toContain("const count = variable(0);");
     expect(body).not.toContain("import");
   });
 
   test("a multi-line import is hoisted whole", () => {
     const { imports, body } = split(
-      '\nimport {\n  store,\n  attach,\n} from "lucia";\nconst a = 1;\n',
+      '\nimport {\n  variable,\n  attach,\n} from "lucia";\nconst a = 1;\n',
     );
-    expect(imports).toBe('import {\n  store,\n  attach,\n} from "lucia";');
+    expect(imports).toBe('import {\n  variable,\n  attach,\n} from "lucia";');
     expect(body).toContain("const a = 1;");
   });
 
@@ -41,7 +41,7 @@ describe("splitImports", () => {
 
   test("default imports of other files are not components", () => {
     const { components } = split(
-      '\nimport store from "./store.ts";\nimport * as ns from "./ns.lucia";\n',
+      '\nimport variable from "./variable.ts";\nimport * as ns from "./ns.lucia";\n',
     );
     expect(components.size).toBe(0);
   });

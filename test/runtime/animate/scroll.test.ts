@@ -11,7 +11,7 @@ const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof 
 import { WHEN } from "@runtime/animate/trigger.ts";
 import { EDGE, SCROLL_AT } from "@runtime/animate/scroll-modes.ts";
 import type { ScrollAt } from "@runtime/animate/scroll-touch.ts";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
 
@@ -209,7 +209,7 @@ function box(top: number, height: number) {
 /** Mounts a follow item. The item's own element is not used for progress. */
 function mountFollow(more: { part?: [number, number]; start?: ScrollAt; end?: ScrollAt } = {}) {
   const el = document.createElement("div");
-  const follow = store<Element | null>(null);
+  const follow = variable<Element | null>(null);
   const cleanups: Array<() => void> = [];
   const leaves: Leave[] = [];
   animate(
@@ -251,7 +251,7 @@ describe("WHEN.SCROLL follow", () => {
     expect(opacity()).toBe(1);
   });
 
-  test("null means progress 0, and setting the store later moves the item", () => {
+  test("null means progress 0, and setting the variable later moves the item", () => {
     const section = box(-1000, 2000);
     const { follow, opacity } = mountFollow();
     advance(16);
@@ -314,9 +314,9 @@ describe("WHEN.SCROLL follow", () => {
     );
   });
 
-  test("follow must be a store", () => {
+  test("follow must be a variable", () => {
     expect(() => readMore(WHEN.SCROLL, { follow: { value: null } } as never)).toThrow(
-      "follow must be a store",
+      "follow must be a variable",
     );
   });
 });

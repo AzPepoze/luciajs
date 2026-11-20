@@ -29,15 +29,15 @@ function clickButton(target: HTMLElement): void {
 
 const COUNTER = (label: string, extra = ""): string => `
 <script>
-import { store } from "lucia";
-const count = store(0);
+import { variable } from "lucia";
+const count = variable(0);
 ${extra}
 function bump() { count.value += 1; }
 </script>
 <button onclick={bump}>${label}</button>`;
 
 describe("hot swap keeps state", () => {
-  test("a store keeps its value by name and the markup changes in place", async () => {
+  test("a variable keeps its value by name and the markup changes in place", async () => {
     const first = await version("KeepValue", COUNTER("{count}"));
     const target = mount(first);
     clickButton(target);
@@ -52,22 +52,22 @@ describe("hot swap keeps state", () => {
     expect(target.textContent).toBe("count 4");
   });
 
-  test("a new store starts from its initial value and store.from recomputes", async () => {
-    const first = await version("NewStore", COUNTER("{count}"));
+  test("a new variable starts from its initial value and variable.compute recomputes", async () => {
+    const first = await version("NewVariable", COUNTER("{count}"));
     const target = mount(first);
     clickButton(target);
     clickButton(target);
 
-    const extra = `const total = store(10);
-const doubled = store.from(() => count.value * 2);`;
+    const extra = `const total = variable(10);
+const doubled = variable.compute(() => count.value * 2);`;
     const next = `<script>
-import { store } from "lucia";
-const count = store(0);
+import { variable } from "lucia";
+const count = variable(0);
 ${extra}
 function bump() { count.value += 1; }
 </script>
 <button onclick={bump}>{count} {total} {doubled}</button>`;
-    swapComponent(await version("NewStore", next));
+    swapComponent(await version("NewVariable", next));
     expect(target.textContent).toBe("2 10 4");
   });
 
@@ -77,7 +77,7 @@ function bump() { count.value += 1; }
       "Effects",
       COUNTER(
         "{count}",
-        'store.onUpdate(() => { globalThis.hotLog.push("one " + count.value); });',
+        'variable.onUpdate(() => { globalThis.hotLog.push("one " + count.value); });',
       ),
     );
     const target = mount(first);
@@ -89,7 +89,7 @@ function bump() { count.value += 1; }
         "Effects",
         COUNTER(
           "{count}",
-          'store.onUpdate(() => { globalThis.hotLog.push("two " + count.value); });',
+          'variable.onUpdate(() => { globalThis.hotLog.push("two " + count.value); });',
         ),
       ),
     );
@@ -150,12 +150,12 @@ function bump() { count.value += 1; }
     expect(style?.textContent).toContain("red");
   });
 
-  test("children are created again and keep their stores by name", async () => {
+  test("children are created again and keep their variables by name", async () => {
     await sourceFile(
       "Child",
       `<script>
-import { store } from "lucia";
-const ticks = store(0);
+import { variable } from "lucia";
+const ticks = variable(0);
 function tick() { ticks.value += 1; }
 </script>
 <i onclick={tick}>{ticks}</i>`,

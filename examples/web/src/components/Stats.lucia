@@ -1,5 +1,5 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 import RevealTitle from "./RevealTitle.lucia";
 import { catalog } from "../catalog.ts";
 import { countUp } from "../motion/count.ts";
@@ -9,8 +9,8 @@ const demoCount = Object.values(catalog).flatMap((entry) => entry.demos ?? []).l
 const entryCount = Object.keys(catalog).length;
 
 const stats = [
-  { value: store(0), target: entryCount, label: "API entries documented" },
-  { value: store(0), target: demoCount, label: "live demos" },
+  { value: variable(0), target: entryCount, label: "API entries documented" },
+  { value: variable(0), target: demoCount, label: "live demos" },
 ];
 
 function setup(root: Element) {

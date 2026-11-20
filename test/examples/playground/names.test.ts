@@ -9,7 +9,7 @@ const files = [
 describe("nameProblem", () => {
   test("accepts a new .lucia or .ts name", () => {
     expect(nameProblem("Badge.lucia", files)).toBeUndefined();
-    expect(nameProblem("store-utils.ts", files)).toBeUndefined();
+    expect(nameProblem("variable-utils.ts", files)).toBeUndefined();
   });
 
   test("rejects other extensions, folders and odd characters", () => {

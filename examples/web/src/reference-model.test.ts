@@ -25,7 +25,9 @@ function entry(id: string, overrides: Partial<ApiEntry> = {}): ApiEntry {
 
 describe("wrapSignature", () => {
   test("keeps a short signature on one line", () => {
-    expect(wrapSignature("store<T>(initial: T): Store<T>")).toBe("store<T>(initial: T): Store<T>");
+    expect(wrapSignature("variable<T>(initial: T): Variable<T>")).toBe(
+      "variable<T>(initial: T): Variable<T>",
+    );
   });
 
   test("puts each parameter on its own line when long", () => {
@@ -36,14 +38,14 @@ describe("wrapSignature", () => {
 
   test("keeps commas inside nested brackets and arrows", () => {
     const long =
-      "store.onUpdate(fn: (a: number, b: number) => void, extra: Record<string, unknown>): void";
+      "variable.onUpdate(fn: (a: number, b: number) => void, extra: Record<string, unknown>): void";
     expect(wrapSignature(long)).toBe(
-      "store.onUpdate(\n  fn: (a: number, b: number) => void,\n  extra: Record<string, unknown>\n): void",
+      "variable.onUpdate(\n  fn: (a: number, b: number) => void,\n  extra: Record<string, unknown>\n): void",
     );
   });
 
   test("leaves a long signature with one parameter alone", () => {
-    const long = "props<D extends Record<string, unknown>>(defaults: D): PropStores<D>";
+    const long = "props<D extends Record<string, unknown>>(defaults: D): PropVariables<D>";
     expect(wrapSignature(long)).toBe(long);
   });
 

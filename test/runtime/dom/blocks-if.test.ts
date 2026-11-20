@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { bindIf } from "@runtime/dom/blocks/if.ts";
 import { TEXT_MARKER } from "@runtime/markers.ts";
-import { store } from "@runtime/store/store.ts";
+import { variable } from "@runtime/variable/variable.ts";
 import Branches from "./fixtures/Branches.lucia";
-import { resetStore, state } from "./fixtures/state.ts";
+import { resetVariable, state } from "./fixtures/state.ts";
 import { host, mount, resetMounts, unmount } from "./fixtures/mount.ts";
 
-beforeEach(resetStore);
+beforeEach(resetVariable);
 afterEach(resetMounts);
 
 function labels(root: ParentNode): string[] {
@@ -44,7 +44,7 @@ describe("IF, ELSEIF and ELSE", () => {
     const marker = document.createComment(TEXT_MARKER);
     const parent = document.createElement("div");
     parent.append(marker);
-    const cond = store(false);
+    const cond = variable(false);
     const cleanups: Array<() => void> = [];
     bindIf(
       marker,
@@ -62,7 +62,7 @@ describe("IF leave animations", () => {
     const marker = document.createComment(TEXT_MARKER);
     const parent = document.createElement("div");
     parent.append(marker);
-    const mode = store("a");
+    const mode = variable("a");
     let finishOld!: () => void;
     const oldLeave = new Promise<void>((resolve) => (finishOld = resolve));
     const cleanups: Array<() => void> = [];

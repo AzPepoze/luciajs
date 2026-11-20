@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { attach, type Instance } from "lucia";
 import { attachCells, createTarget, detachCells } from "../cells.ts";
-import { count, resetStore } from "../store.ts";
+import { count, resetVariable } from "../variable.ts";
 import Cell from "./Cell.lucia";
 
 const CYCLES = 500;
@@ -15,7 +15,7 @@ afterEach(() => {
   instances = [];
   for (const target of targets) target.remove();
   targets = [];
-  resetStore();
+  resetVariable();
 });
 
 // Dev builds add empty text markers around each instance, so leaks are counted without them.

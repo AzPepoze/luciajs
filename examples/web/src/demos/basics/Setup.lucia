@@ -1,7 +1,7 @@
 <script>
-import { store } from "lucia";
+import { variable } from "lucia";
 
-const keys = store(0);
+const keys = variable(0);
 
 // setup(root) runs once when the demo mounts. Its return value runs on detach.
 function setup(root: Element) {

@@ -5,8 +5,8 @@ const SAMPLE = `<style scoped>
 .card{padding:1rem}
 </style>
 <script>
-import {store} from "lucia";
-const name=store("Ada");
+import {variable} from "lucia";
+const name=variable("Ada");
 </script>
 <p class="a {name}">Hi {name.value}</p>
 <button disabled={name.value === "" || {a:1}.a}>Go</button>
@@ -27,7 +27,7 @@ describe("format a .lucia file", () => {
 
   test("formats the script as TypeScript and keeps the section order", async () => {
     const output = await formatFile("App.lucia", SAMPLE);
-    expect(output).toContain('const name = store("Ada");');
+    expect(output).toContain('const name = variable("Ada");');
     expect(output).toContain("</style>\n\n<script>");
     expect(output).toContain("</script>\n\n<p ");
   });

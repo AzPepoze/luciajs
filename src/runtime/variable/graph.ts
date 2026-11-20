@@ -4,7 +4,7 @@ export interface Source {
 
 export interface Observer {
   sources: Set<Source>;
-  /** Called synchronously when a source changes; must not read stores or read stores. */
+  /** Called synchronously when a source changes; must not read variables or computed variables. */
   markDirty(): void;
 }
 
@@ -31,6 +31,10 @@ export function withObserver<T>(observer: Observer | null, fn: () => T): T {
   } finally {
     current = previous;
   }
+}
+
+export function queueWatcher(run: () => void): void {
+  queuedWatchers.add(run);
 }
 
 function runQueuedWatchers(): void {

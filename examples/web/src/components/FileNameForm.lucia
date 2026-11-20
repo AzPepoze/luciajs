@@ -1,5 +1,5 @@
 <script>
-import { props, store } from "lucia";
+import { props, variable } from "lucia";
 
 const { label, initial, submitText, onSubmit, onCancel } = props({
   label: "",
@@ -9,9 +9,9 @@ const { label, initial, submitText, onSubmit, onCancel } = props({
   onCancel: () => {},
 });
 
-const value = store(initial.peek());
-const problem = store("");
-const hasProblem = store.from(() => problem.value !== "");
+const value = variable(initial.peek());
+const problem = variable("");
+const hasProblem = variable.compute(() => problem.value !== "");
 
 // The parent returns a problem with the name, or nothing to accept it and close the form.
 function submit(event: SubmitEvent) {

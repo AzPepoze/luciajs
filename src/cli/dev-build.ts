@@ -1,4 +1,4 @@
-import type { ModuleChange } from "@bun-plugin/change.ts";
+import type { ModuleUpdate } from "@bun-plugin/update.ts";
 import { formatBuildFailure } from "./build-errors.ts";
 import { assetKey, bundleApp } from "./bundle.ts";
 import { colorEnabled } from "./color.ts";
@@ -14,19 +14,19 @@ const IMPORT_MAP = `<script type="importmap">${JSON.stringify({
 export type Assets = Map<string, Blob>;
 
 export type DevBuild =
-  | { ok: true; assets: Assets; changes: ModuleChange[]; steps: Steps }
+  | { ok: true; assets: Assets; changes: ModuleUpdate[]; steps: Steps }
   | { ok: false; messages: string[] };
 
 export async function buildDev(dir: string): Promise<DevBuild> {
   const steps: Steps = {};
-  const changes: ModuleChange[] = [];
+  const changes: ModuleUpdate[] = [];
   const start = now();
   const result = await bundleApp({
     dir,
     minify: false,
     dev: true,
     steps,
-    onChange: (change) => changes.push(change),
+    onUpdate: (update) => changes.push(update),
   });
   addBundleStep(steps, now() - start);
   if (!result.success)

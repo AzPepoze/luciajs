@@ -1,4 +1,4 @@
-import type { Store } from "../../store/store.ts";
+import type { Variable } from "../../variable/variable.ts";
 import type { Cleanup } from "../bindings.ts";
 import { renderWith, runSetup, type Rendered, type SetupHook } from "../component.ts";
 import type { Leave } from "../leave.ts";
@@ -14,12 +14,12 @@ export interface Rendering {
   readonly end: Text;
   readonly cleanups: Cleanup[];
   readonly leaves: Leave[];
-  readonly stores: Map<string, Store<unknown>>;
+  readonly variables: Map<string, Variable<unknown>>;
 }
 
 export interface Frame {
   readonly instance: HotInstance;
-  readonly stores: Map<string, Store<unknown>>;
+  readonly variables: Map<string, Variable<unknown>>;
 }
 
 let frame: Frame | null = null;
@@ -38,9 +38,9 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
   injectStyle(instance.id, definition.css);
   const cleanups: Cleanup[] = [];
   const leaves: Leave[] = [];
-  const stores = new Map<string, Store<unknown>>();
+  const variables = new Map<string, Variable<unknown>>();
   const previous = frame;
-  frame = { instance, stores };
+  frame = { instance, variables };
   try {
     const rendered: Rendered = renderWith(definition.render, instance.props, cleanups, leaves);
     const start = emptyText();
@@ -54,7 +54,7 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
       end,
       cleanups,
       leaves,
-      stores,
+      variables,
     };
   } catch (error) {
     runCleanups(cleanups);
