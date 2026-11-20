@@ -1,4 +1,4 @@
-import type { ModuleChange } from "@bun-plugin/change.ts";
+import type { ModuleUpdate } from "@bun-plugin/update.ts";
 
 export interface StyleUpdate {
   id: string;
@@ -20,7 +20,7 @@ const COMPONENT_FILE = /\.lucia$/;
  * Only style files changed: a css swap. `.lucia` script or markup changed: a hot swap, if every
  * changed file is a component. Anything else reloads the page.
  */
-export function chooseUpdate(files: string[], changes: ModuleChange[]): Update {
+export function chooseUpdate(files: string[], changes: ModuleUpdate[]): Update {
   if (files.length === 0 || !files.every(isStyleFile)) return RELOAD;
   const styles: StyleUpdate[] = [];
   const paths: string[] = [];
