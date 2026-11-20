@@ -44,10 +44,12 @@ function cssMarkdown(name: string): string {
 }
 
 function apiMarkdown(entry: ApiEntry): string {
+  return [`**${entry.name}**`, "", fence("ts", entry.signature), apiDocsMarkdown(entry)].join("\n");
+}
+
+/** The docs of an entry without its title and signature, to append below a typed hover. */
+export function apiDocsMarkdown(entry: ApiEntry): string {
   return [
-    `**${entry.name}**`,
-    "",
-    fence("ts", entry.signature),
     entry.summary,
     "",
     ...entry.bullets.map((bullet) => `- ${bullet}`),
