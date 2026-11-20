@@ -8,11 +8,14 @@ import { Group } from "./group.ts";
 import type { ItemOptions } from "./options.ts";
 import { prefersReducedMotion, type Player } from "./player.ts";
 import { sameMore, type ReadMore, type ScrollRead } from "./more.ts";
-import { WHEN, type When, type Source } from "./trigger.ts";
+import { WHEN, isLayoutWhen, type When, type Source } from "./trigger.ts";
 import { type ViewSettings } from "./view-options.ts";
 import { watchScroll } from "./scroll.ts";
 import { watchView } from "./view.ts";
 import { bindHover } from "./hover.ts";
+import { watchLayout } from "./layout.ts";
+import { layoutModeOf } from "./layout-mode.ts";
+import type { GlideSpec } from "./layout-glide.ts";
 
 /** The players that share one trigger, `once`, controller and more. A group is driven together. */
 export interface Slot {
@@ -20,6 +23,8 @@ export interface Slot {
   once: boolean;
   control: Controller | undefined;
   more: ReadMore;
+  /** Set for the layout triggers, which glide the element. Each layout item has its own slot. */
+  glide: GlideSpec | undefined;
   group: Group;
 }
 
@@ -28,35 +33,53 @@ interface Bucket {
   once: boolean;
   control: Controller | undefined;
   more: ReadMore;
+  glide: GlideSpec | undefined;
   players: Player[];
 }
 
 export function groupSlots(items: ItemOptions[], players: Player[], refresh: () => void): Slot[] {
   const buckets: Bucket[] = [];
   items.forEach((item, i) => bucketFor(buckets, item).players.push(players[i]!));
-  return buckets.map(({ when, once, control, more, players: members }) => ({
+  return buckets.map(({ when, once, control, more, glide, players: members }) => ({
     when,
     once,
     control,
     more,
+    glide,
     group: new Group(members, refresh),
   }));
 }
 
-function bucketFor(buckets: Bucket[], { when, once, control, more }: ItemOptions): Bucket {
-  const found = buckets.find(
-    (b) => b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
-  );
+function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
+  const { when, once, control, more } = item;
+  const glide = glideSpecOf(item);
+  const found = glide
+    ? undefined
+    : buckets.find(
+        (b) =>
+          b.when === when && b.once === once && b.control === control && sameMore(b.more, more),
+      );
   if (found) return found;
-  const bucket: Bucket = { when, once, control, more, players: [] };
+  const bucket: Bucket = { when, once, control, more, glide, players: [] };
   buckets.push(bucket);
   return bucket;
+}
+
+/** The glide settings of a layout item. Other triggers have none. */
+function glideSpecOf(item: ItemOptions): GlideSpec | undefined {
+  if (!isLayoutWhen(item.when)) return undefined;
+  return {
+    mode: layoutModeOf(item.when),
+    duration: item.timing.duration,
+    delay: item.timing.delay,
+    easing: item.keyframes.default,
+  };
 }
 
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
 export function bindTrigger(
   el: HTMLElement,
-  { when, once, more, group }: Slot,
+  { when, once, more, glide, group }: Slot,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
@@ -66,6 +89,7 @@ export function bindTrigger(
   else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
   else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
   else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);
+  else if (glide) cleanups.push(watchLayout(el, glide, once, () => void group.forward()));
 }
 
 /** A hot swap shows the end state at once, so the element does not play its entrance again. */

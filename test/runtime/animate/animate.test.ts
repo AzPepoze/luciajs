@@ -302,7 +302,7 @@ describe("validation", () => {
 
   test("an unknown when is an error", () => {
     expect(() => run({ style: fade(0, 1), when: "view" as never })).toThrow(
-      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL or MANUAL, or a store",
+      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a store",
     );
   });
 

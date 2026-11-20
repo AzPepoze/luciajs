@@ -112,7 +112,8 @@ export const CODES = {
     hint: "Add style to the item, such as { style: fadeIn }.",
   },
   L2002: {
-    message: "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL or MANUAL, or a store",
+    message:
+      "animate when must be WHEN.ATTACH, DETACH, VIEW, HOVER, SCROLL, MOVE, RESIZE, MOVE_OR_RESIZE or MANUAL, or a store",
     hint: "Pass one of the WHEN values, or a store.",
   },
   L2003: {
@@ -306,6 +307,14 @@ export const CODES = {
   L2050: {
     message: "animate more $name needs both element and window",
     hint: "Write { element: EDGE.TOP, window: EDGE.BOTTOM }.",
+  },
+  L2051: {
+    message: "loop does not work with WHEN.MOVE, RESIZE or MOVE_OR_RESIZE",
+    hint: "Remove loop. A glide plays once for each change.",
+  },
+  L2052: {
+    message: "$name is set by the glide and cannot be in style",
+    hint: "Remove $name from style. Use transform for other moves.",
   },
   L3001: {
     message: '"$name" is not exported by "$module"',

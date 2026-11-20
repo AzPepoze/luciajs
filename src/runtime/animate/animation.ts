@@ -2,7 +2,7 @@ import type { Controller } from "./controller.ts";
 import type { Keyframes } from "./keyframes.ts";
 import type { HoverMore, ScrollMore } from "./more.ts";
 import type { AnimateMidway } from "./midway-options.ts";
-import { WHEN, type Source } from "./trigger.ts";
+import { WHEN, type LayoutWhen, type Source } from "./trigger.ts";
 import type { ViewMore } from "./view-options.ts";
 
 interface ItemBase {
@@ -23,6 +23,13 @@ interface PlainItem extends ItemBase {
   more?: never;
 }
 
+/** A layout trigger glides the element. Its style is optional: the glide runs without it. */
+interface LayoutItem extends Omit<ItemBase, "style"> {
+  style?: Keyframes;
+  when: LayoutWhen;
+  more?: never;
+}
+
 interface ViewItem extends ItemBase {
   when: typeof WHEN.VIEW;
   more?: ViewMore;
@@ -39,7 +46,7 @@ interface ScrollItem extends ItemBase {
 }
 
 /** One animation on an element. `more` is typed by its trigger. Only `style` is required. */
-export type AnimateItem = PlainItem | ViewItem | HoverItem | ScrollItem;
+export type AnimateItem = PlainItem | LayoutItem | ViewItem | HoverItem | ScrollItem;
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];
 

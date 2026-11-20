@@ -4,6 +4,7 @@ import * as components from "./components/main.ts";
 import * as each from "./each/main.ts";
 import * as expressions from "./expressions/main.ts";
 import * as flow from "./flow/main.ts";
+import * as layout from "./layout/main.ts";
 import * as styles from "./styles/main.ts";
 import * as updates from "./updates/main.ts";
 
@@ -15,6 +16,7 @@ export const scenarios = [
   styles.run,
   components.run,
   animate.run,
+  layout.run,
   each.run,
   flow.run,
 ];
