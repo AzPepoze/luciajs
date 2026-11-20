@@ -218,6 +218,11 @@
   }
 }
 
+// The run-again button sits at the right end of the label.
+.demo-label > .icon-button {
+  margin-left: auto;
+}
+
 // Centers the demo inside its column.
 // `.doc-section p` caps paragraphs at 70ch. The label spans the whole card instead.
 .doc-section .demo-label {

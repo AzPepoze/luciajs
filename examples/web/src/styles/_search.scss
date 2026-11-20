@@ -69,6 +69,46 @@ $search-open-width: 42rem;
   margin-left: 0.4rem;
 }
 
+// The key hint sits inside the box, at its right end. Only for devices with a keyboard.
+.search-shortcut {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  display: none;
+  gap: 0.2rem;
+  color: var(--muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+
+  kbd {
+    padding: 0 0.35rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--code);
+    font-family: $font-mono;
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .search-shortcut {
+    display: inline-flex;
+  }
+
+  .search-field input {
+    padding-right: 4.6rem;
+  }
+}
+
+.search.is-open .search-shortcut {
+  display: none;
+}
+
+.search.is-open .search-field input {
+  padding-right: 0.8rem;
+}
+
 .search.is-open {
   .search-close {
     display: inline-grid;

@@ -56,6 +56,10 @@ function rowMotion(index: number) {
   return { style: rowIn, when: WHEN.ATTACH, duration: 200, delay: stagger };
 }
 
+// The shortcut hint shows the key of this platform: Cmd on Apple devices, Ctrl elsewhere.
+const APPLE_PLATFORM = /Mac|iPhone|iPad/;
+const shortcutModifier = APPLE_PLATFORM.test(navigator.platform) ? "⌘" : "Ctrl";
+
 // Focus follows the open state: opening focuses the field, closing leaves it.
 variable.autoRun(() => {
   if (searchOpen.value) field.value?.focus();
@@ -142,6 +146,9 @@ function pick(event: MouseEvent, row: Row) {
         onkeydown={onKey}
         onfocus={openSearch}
       />
+      <span class="search-shortcut" aria-hidden="true">
+        <kbd>{shortcutModifier}</kbd><kbd>K</kbd>
+      </span>
       <button
         class="icon-button search-close"
         type="button"
