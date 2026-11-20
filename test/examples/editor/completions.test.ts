@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { editorCompletions } from "../../../docs/src/editor/editor-completions.ts";
-import type { CompletionResult } from "../../../docs/src/editor/completions.ts";
+import type { CompletionResult } from "../../../editors/shared/completions.ts";
 
 const FILE = "App.lusia";
 const BADGE_SCRIPT = `<script>\nimport Badge from "./Badge.lusia";\nconst count = variable(0);\n`;
