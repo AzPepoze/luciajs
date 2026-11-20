@@ -16,6 +16,8 @@ export interface SplitScript {
 const IMPORT_STATEMENT = /^[ \t]*import(?!\s*\()\s[^"']*?(["'])([^"'\n]+)\1[ \t]*;?/gm;
 const EXPORT_STATEMENT = /^[ \t]*export\b/m;
 const DEFAULT_IMPORT = /^\s*import\s+(?!type\s)([A-Za-z_$][\w$]*)\s*(?:,|from\b)/;
+// A top-level `const Name = lazy(...)` is a component too, so it can be used as a tag.
+const LAZY_DECLARATION = /^const\s+([A-Za-z_$][\w$]*)\s*=\s*lazy\s*\(/gm;
 
 function defaultLuciaImport(statement: string, specifier: string): string | undefined {
   if (!specifier.endsWith(".lucia")) return undefined;
@@ -47,6 +49,11 @@ export function splitImports(section: Section | null, file: string): SplitScript
   const script = section.content;
   const imports: string[] = [];
   const components = new Set<string>();
+  for (const match of script.matchAll(LAZY_DECLARATION)) {
+    const name = match[1]!;
+    if (RESERVED_TAGS.has(name)) throw scriptError(section, match.index, file, "L1004", { name });
+    components.add(name);
+  }
   const body = script.replace(
     IMPORT_STATEMENT,
     (statement, _quote, specifier: string, offset: number) => {
