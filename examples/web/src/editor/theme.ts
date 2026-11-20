@@ -5,15 +5,19 @@ export const editorTheme = EditorView.theme({
   "&": { color: "var(--fg)", backgroundColor: "var(--code)" },
   ".cm-content": { caretColor: "var(--accent)", padding: "0.6rem 0" },
   "&.cm-focused": { outline: "none" },
-  ".cm-gutters": { backgroundColor: "var(--code)", color: "var(--muted)", border: "none" },
+  ".cm-gutters": {
+    backgroundColor: "var(--code-gutter)",
+    color: "var(--muted)",
+    border: "none",
+  },
   // drawSelection draws the cursor as a border, so the cursor is styled here, not by caretColor.
   ".cm-cursor, .cm-dropCursor": {
     borderLeftWidth: "3px",
     borderLeftColor: "var(--accent)",
     marginLeft: "-1.5px",
   },
-  ".cm-activeLine": { backgroundColor: "var(--accent-soft)" },
-  ".cm-activeLineGutter": { backgroundColor: "var(--accent-soft)", color: "var(--fg)" },
+  ".cm-activeLine": { backgroundColor: "var(--code-line)" },
+  ".cm-activeLineGutter": { backgroundColor: "var(--code-line)", color: "var(--fg)" },
   ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
     backgroundColor: "var(--select-soft)",
   },
