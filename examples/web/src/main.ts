@@ -1,9 +1,11 @@
 import { attach, type Instance } from "lucia";
 import Site from "./components/Site.lucia";
 import Loader from "./components/Loader.lucia";
+import SearchPalette from "./components/SearchPalette.lucia";
 import ThemeToggle from "./components/ThemeToggle.lucia";
 import { pageSpecs } from "./pages.ts";
 import { startRouter } from "./router.ts";
+import { initSearchShortcuts } from "./search/shortcuts.ts";
 import { initTopbar } from "./topbar.ts";
 
 const LOADER_MAX_MS = 2500;
@@ -15,6 +17,8 @@ document.getElementById("loader")?.remove();
 trackTopbarHeight();
 attach(Site, document.body);
 attach(ThemeToggle, document.getElementById("theme-slot")!);
+attach(SearchPalette, document.getElementById("search-slot")!);
+initSearchShortcuts();
 initTopbar();
 void start(loader);
 

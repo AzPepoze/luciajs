@@ -2,6 +2,7 @@
 export const homePath = "/";
 export const guidePath = "/guide";
 export const referencePath = "/reference";
+export const playgroundPath = "/playground";
 
 export function pageLink(path: string, id: string): string {
   return `${path}#${id}`;

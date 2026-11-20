@@ -5,17 +5,16 @@ import { initFeatures } from "./features.ts";
 import { initGroupToggles } from "./nav-group.ts";
 import { initReferenceFilter } from "./reference-filter.ts";
 import { initScrollSpy } from "./scroll-spy.ts";
-import { initSearch } from "./search.ts";
 import { initSidebarFollow } from "./sidebar-follow.ts";
 import type { PageSpec } from "./router.ts";
 import Guide from "./pages/Guide.lucia";
 import Home from "./pages/Home.lucia";
 import Reference from "./pages/Reference.lucia";
+import { playgroundPath } from "./page-link.ts";
 
 // The Guide's wiring starts when the page attaches and stops when the signal aborts.
 function mountGuide(root: HTMLElement, signal: AbortSignal): void {
   renderNav(root.querySelector<HTMLElement>("#nav-groups")!);
-  initSearch(signal);
   initGroupToggles(signal);
   initSidebarFollow(signal);
   initScrollSpy(signal, { sections: ".doc-section", demos: ".demo-block" });
@@ -68,7 +67,7 @@ export const pageSpecs: PageSpec[] = [
     mount: mountReference,
   },
   {
-    path: "/playground",
+    path: playgroundPath,
     route: "playground",
     title: "Playground · LuciaJS",
     load: () => import("./pages/Playground.lucia").then((module) => module.default),
