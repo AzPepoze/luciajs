@@ -1,5 +1,5 @@
 import { api, type ApiEntry } from "../../../reference/api.ts";
-import { catalog, groupTitles, type Demo } from "./catalog.ts";
+import { catalog, entryIcon, groupTitles, type Demo } from "./catalog.ts";
 
 const groupOrder: ApiEntry["group"][] = [
   "basics",
@@ -58,10 +58,7 @@ function navEntry(entry: ApiEntry): HTMLElement {
 function entryLink(entry: ApiEntry): HTMLAnchorElement {
   const link = document.createElement("a");
   link.href = `#${entry.id}`;
-  link.append(
-    glyph(catalog[entry.id]?.icon ?? "chevron_right"),
-    codeOrText(entry.name, "nav-label"),
-  );
+  link.append(glyph(entryIcon(entry.id)), codeOrText(entry.name, "nav-label"));
   return link;
 }
 

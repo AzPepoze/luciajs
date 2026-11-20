@@ -68,6 +68,12 @@
   text-align: left;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: color-mix(in srgb, var(--group) 38%, transparent);
+  }
 
   .group-name {
     display: flex;
