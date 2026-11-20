@@ -21,6 +21,8 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 
 - The main agent orchestrates only: plan, write exact specs, review and test. Hand all coding, tests and docs edits to Haiku subagents to save tokens.
 - The main agent writes code itself only for the hard core logic (store graph, template scanner, binding order), and says so when it does.
+- Each coding agent works in its own git worktree branched from `dev`, so one agent's half-done edits never break another's build. The main agent reviews, runs `bun run check`, and merges it into `dev`. `main` only gets `dev` when the user says so.
+- Every task the user gives gets a GitHub issue (`gh issue create`) before work starts, one per separate task, so nothing is forgotten. Gaps and follow-ups found during the work get their own issues too. Check open issues (`gh issue list`) at the start of a session and when choosing what to do next. Close an issue with a comment saying what was done only after `bun run check` passes and the change is committed or merged into the dev branch; reference the issue in the commit (`fixes #N`). Finished but uncommitted work keeps the `done-uncommitted` label until then.
 - `bun run check` (typecheck, tests, site build, extension build) must pass before any change is reported done or committed. Set `LUCIA_CHROMIUM` so the browser tests run too.
 - Every change updates the docs that describe it, in the same change. A task is not done while the docs are stale.
 - Every feature or behavior change also updates the demos in the same change: add or adjust the `examples/web` showcase section, and the `examples/stress` scenarios when it affects them. A task is not done while the demos are stale.
