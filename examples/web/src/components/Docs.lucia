@@ -7,6 +7,7 @@ import { buildKeywordIndex, tokenize } from "../keywords.ts";
 import { orderedEntries } from "../render.ts";
 import CodeBlock from "./CodeBlock.lucia";
 import DemoRow from "./DemoRow.lucia";
+import DocTable from "./DocTable.lucia";
 import RichText from "./RichText.lucia";
 
 // Built once from the rendered entries. Text is split into keyword chips once, here.
@@ -33,6 +34,7 @@ const sections = orderedEntries.map((entry) => {
   return {
     entry,
     demos: catalog[entry.id]?.demos ?? [],
+    table: catalog[entry.id]?.table ?? null,
     subtitle: tokenize(entry.summary, keywordIndex, entry.id),
     bullets: entry.bullets.map((text) => tokenize(text, keywordIndex, entry.id)),
     flashMotion: {
@@ -68,6 +70,9 @@ function languageOf(entry: ApiEntry): string {
         <li><RichText parts={parts} /></li>
       </EACH>
     </ul>
+    <IF {section.table}>
+      <DocTable head={section.table.head} rows={section.table.rows} />
+    </IF>
     <EACH {section.demos} as={demo}>
       <DemoRow demo={demo} />
     </EACH>

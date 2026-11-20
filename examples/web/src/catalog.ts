@@ -125,9 +125,16 @@ export interface Demo {
   sources: SourceFile[];
 }
 
+// A small table shown under the entry's bullets. Cells are plain text.
+export interface CatalogTable {
+  head: string[];
+  rows: string[][];
+}
+
 export interface CatalogEntry {
   icon: string;
   demos?: Demo[];
+  table?: CatalogTable;
 }
 
 // Each group has its own pastel colour. The sidebar tints the group header with it.
@@ -194,6 +201,29 @@ export const catalog: Record<string, CatalogEntry> = {
   "variable-compute": { icon: "calculate" },
   "variable-auto-run": {
     icon: "sync",
+    table: {
+      head: ["Form", "Finds what it reads", "Gets the values", "Use it when"],
+      rows: [
+        [
+          "variable.autoRun(fn)",
+          "Yes, on every run",
+          "You read them inside fn",
+          "The list of reads may change",
+        ],
+        [
+          "variable.watch([a, b], fn)",
+          "No, you list them",
+          "You read them inside fn",
+          "You know the exact list",
+        ],
+        [
+          "count.onUpdate((now, before) => ...)",
+          "One variable only",
+          "now and before are passed in",
+          "You need the old value of one variable",
+        ],
+      ],
+    },
     demos: [
       {
         id: "variable-auto-run-peek",
