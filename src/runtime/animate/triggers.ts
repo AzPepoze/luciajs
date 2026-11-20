@@ -14,7 +14,8 @@ import { watchScroll } from "./scroll.ts";
 import { watchView } from "./view.ts";
 import { bindHover } from "./hover.ts";
 import { watchLayout } from "./layout.ts";
-import { detachLeave, type ShrinkSpec } from "./shrink-space.ts";
+import { bindDetach } from "./shrink-space.ts";
+import type { ShrinkSpec } from "./shrink-closer.ts";
 import { layoutModeOf } from "./layout-mode.ts";
 import type { GlideSpec } from "./layout-glide.ts";
 
@@ -102,7 +103,7 @@ export function bindTrigger(
   if (loops) cleanups.push(pauseOffScreen(el, group));
   if (isReactive(when)) bindSource(when, group, once, cleanups);
   else if (when === WHEN.ATTACH) attachTrigger(group);
-  else if (when === WHEN.DETACH) leaves.push(detachLeave(el, group, shrink));
+  else if (when === WHEN.DETACH) bindDetach(el, group, shrink, leaves, cleanups);
   else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
   else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
   else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);

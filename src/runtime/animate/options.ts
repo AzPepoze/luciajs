@@ -7,7 +7,7 @@ import { animateDefault } from "./defaults.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
 import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "./trigger.ts";
 import { readMore, type ReadMore } from "./more.ts";
-import type { ShrinkSpec } from "./shrink-space.ts";
+import type { ShrinkSpec } from "./shrink-closer.ts";
 import { runtimeError } from "../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 

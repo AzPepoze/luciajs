@@ -108,3 +108,164 @@ suite("DETACH closes the space it holds", () => {
     }
   });
 });
+
+const GAP_LIST = `
+  <div id="list" style="display:flex;flex-direction:column;gap:16px;width:200px">
+    <div id="before" style="height:40px"></div>
+    <div id="gone" style="width:100px;height:60px;margin:10px 0"></div>
+    <div id="after" style="height:40px"></div>
+  </div>`;
+
+/** Starts the `#gone` leave and samples `#after`'s edge on every frame until the leave ends. */
+async function frameSamples(page: Page, edge: "top" | "left", extra = {}): Promise<number[]> {
+  return await page.evaluate(
+    async ([extraText, edgeName]) => {
+      const gone = document.getElementById("gone")!;
+      const after = document.getElementById("after")!;
+      const leaves: Array<() => Promise<void>> = [];
+      const value = {
+        style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+        when: (window as any).luciaWhen.DETACH,
+        duration: 400,
+        ...JSON.parse(extraText),
+      };
+      (window as any).luciaAnimate(gone, () => value, [], leaves);
+      const samples: number[] = [];
+      let running = true;
+      const sample = () => {
+        samples.push(after.getBoundingClientRect()[edgeName as "top" | "left"]);
+        if (running) requestAnimationFrame(sample);
+      };
+      requestAnimationFrame(sample);
+      await (window as any).luciaLeaveThen(leaves, () => gone.remove());
+      running = false;
+      samples.push(after.getBoundingClientRect()[edgeName as "top" | "left"]);
+      return samples;
+    },
+    [JSON.stringify(extra), edge] as const,
+  );
+}
+
+suite("DETACH places a placeholder and lifts the element out of flow", () => {
+  test("a sibling in a gapped flex column moves every frame with no final jump", async () => {
+    const page = await openPage(GAP_LIST);
+    try {
+      const tops = await frameSamples(page, "top");
+      const first = tops[0]!;
+      const last = tops[tops.length - 1]!;
+      expect(first - last).toBeCloseTo(96, 0);
+      for (let i = 1; i < tops.length; i++) expect(tops[i]!).toBeLessThanOrEqual(tops[i - 1]! + 0.01);
+      expect(tops[tops.length - 2]! - last).toBeLessThan(2);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("the leaving element keeps its size and rotation mid-leave", async () => {
+    const page = await openPage(GAP_LIST);
+    try {
+      const mid = await page.evaluate(async () => {
+        const gone = document.getElementById("gone")!;
+        const leaves: Array<() => Promise<void>> = [];
+        (window as any).luciaAnimate(
+          gone,
+          () => ({
+            style: { 0: { rotate: "0deg" }, 1: { rotate: "180deg" } },
+            when: (window as any).luciaWhen.DETACH,
+            duration: 400,
+          }),
+          [],
+          leaves,
+        );
+        const done = (window as any).luciaLeaveThen(leaves, () => gone.remove());
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        const snapshot = {
+          width: gone.offsetWidth,
+          height: gone.offsetHeight,
+          rotate: parseFloat(getComputedStyle(gone).rotate),
+          placeholders: document.querySelectorAll("#list > [aria-hidden]").length,
+        };
+        await done;
+        return snapshot;
+      });
+      expect(mid.width).toBe(100);
+      expect(mid.height).toBe(60);
+      expect(mid.rotate).toBeGreaterThan(0);
+      expect(mid.rotate).toBeLessThan(180);
+      expect(mid.placeholders).toBe(1);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("the placeholder and the lift are gone once the leave ends", async () => {
+    const page = await openPage(GAP_LIST);
+    try {
+      await frameSamples(page, "top");
+      expect(await page.locator("#list > [aria-hidden]").count()).toBe(0);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("a grid row shared with other items does not move while the item leaves", async () => {
+    const page = await openPage(`
+      <div id="list" style="display:grid;grid-template-columns:100px 100px;gap:16px">
+        <div id="before" style="grid-row:1;grid-column:1;height:40px"></div>
+        <div id="gone" style="grid-row:1;grid-column:2;height:40px"></div>
+        <div id="after" style="grid-row:2;grid-column:1;height:40px"></div>
+      </div>`);
+    try {
+      const tops = await frameSamples(page, "top");
+      expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(0.5);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("a cancelled leave reopens the space, with no jump at the cancel", async () => {
+    const page = await openPage(GAP_LIST);
+    try {
+      const result = await page.evaluate(async () => {
+        const gone = document.getElementById("gone")!;
+        const after = document.getElementById("after")!;
+        const cleanups: Array<() => void> = [];
+        const leaves: Array<() => Promise<void>> = [];
+        const initial = after.getBoundingClientRect().top;
+        (window as any).luciaAnimate(
+          gone,
+          () => ({
+            style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+            when: (window as any).luciaWhen.DETACH,
+            duration: 400,
+          }),
+          cleanups,
+          leaves,
+        );
+        const leaving = Promise.all(leaves.map((leave) => leave()));
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        const beforeCancel = after.getBoundingClientRect().top;
+        cleanups.forEach((cleanup) => cleanup());
+        const atCancel = after.getBoundingClientRect().top;
+        await leaving;
+        return {
+          initial,
+          beforeCancel,
+          atCancel,
+          afterReopen: after.getBoundingClientRect().top,
+          inFlow: gone.style.position === "",
+          placeholders: document.querySelectorAll("#list > [aria-hidden]").length,
+          width: gone.offsetWidth,
+        };
+      });
+      expect(Math.abs(result.atCancel - result.beforeCancel)).toBeLessThan(0.5);
+      expect(result.afterReopen).toBeCloseTo(result.initial, 0);
+      expect(result.inFlow).toBe(true);
+      expect(result.placeholders).toBe(0);
+      expect(result.width).toBe(100);
+    } finally {
+      await page.close();
+    }
+  });
+});
+
