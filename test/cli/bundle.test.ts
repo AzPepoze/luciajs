@@ -55,7 +55,9 @@ describe("splitting", () => {
     const result = await buildDev(app);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
-    const scripts = [...result.assets.entries()].filter(([key]) => SCRIPT.test(key));
+    const scripts = [...result.assets.entries()].filter(
+      ([key]) => SCRIPT.test(key) && !key.startsWith("__lucia/"),
+    );
     expect(scripts).toHaveLength(2);
     const texts = await Promise.all(scripts.map(([, blob]) => blob.text()));
     expect(texts.filter((text) => text.includes(LAZY_MARKER))).toHaveLength(1);

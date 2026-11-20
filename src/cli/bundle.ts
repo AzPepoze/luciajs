@@ -1,6 +1,7 @@
 import { lucia, type LuciaPluginOptions } from "@bun-plugin/index.ts";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { RUNTIME_SPECIFIER, runtimeShim } from "./runtime-shim.ts";
 
 export const ENTRY_FILE = "index.html";
 const INDEX_KEY = "index.html";
@@ -34,6 +35,7 @@ export async function bundleApp({
     splitting: true,
     sourcemap: "linked",
     throw: false,
-    plugins: [lucia(plugin)],
+    external: plugin.dev ? [RUNTIME_SPECIFIER] : [],
+    plugins: plugin.dev ? [lucia(plugin), runtimeShim()] : [lucia(plugin)],
   });
 }

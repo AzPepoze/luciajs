@@ -77,7 +77,7 @@ describe("buildDev changes", () => {
     expect(result.steps.compile).toBeDefined();
   });
 
-  test("a script edit is a code change, so the page reloads", async () => {
+  test("a script edit is a code change, so the component is hot swapped", async () => {
     await writeFile(
       join(app, "src/Greeting.lucia"),
       GREETING.replace("Hello from the fixture", "Changed text"),
@@ -86,6 +86,13 @@ describe("buildDev changes", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.changes).toEqual([expect.objectContaining({ kind: "code" })]);
-    expect(chooseUpdate(["src/Greeting.lucia"], result.changes)).toBe(RELOAD);
+    expect(chooseUpdate(["src/Greeting.lucia"], result.changes)).toMatchObject({
+      kind: "hot",
+      paths: [expect.stringContaining("Greeting.lucia")],
+    });
+  });
+
+  test("a change to a plain .ts file still reloads the page", () => {
+    expect(chooseUpdate(["src/main.ts"], [])).toBe(RELOAD);
   });
 });

@@ -1,6 +1,7 @@
 import type { ServerWebSocket } from "bun";
 import { assetKey } from "./bundle.ts";
 import type { Assets } from "./dev-build.ts";
+import type { HotModule } from "./hot-build.ts";
 import { publicFile } from "./public.ts";
 import { RELOAD_PATH } from "./reload-client.ts";
 import { now } from "./timings.ts";
@@ -20,15 +21,20 @@ export interface DevServerOptions {
 
 export interface DevServer {
   readonly url: URL;
-  publish(assets: Assets, update: Update): void;
+  /** Replaces the app and sends `update` to every page. `modules` are the built hot modules of a hot update. */
+  publish(assets: Assets, update: Update, modules?: HotModule[]): void;
   showError(message: string): void;
   stop(): void;
 }
 
 type Socket = ServerWebSocket<unknown>;
 
+// Hot modules are needed only until the page has imported them, so the oldest are dropped.
+const MAX_HOT_MODULES = 50;
+
 export function createDevServer({ dir, port, onReady }: DevServerOptions): DevServer {
   let assets: Assets = new Map();
+  const hotModules = new Map<string, Blob>();
   let error: string | null = null;
   let publishedAt: number | null = null;
   const sockets = new Set<Socket>();
@@ -62,6 +68,8 @@ export function createDevServer({ dir, port, onReady }: DevServerOptions): DevSe
 
   async function respond(request: Request): Promise<Response> {
     const { pathname } = new URL(request.url);
+    const hot = hotModules.get(pathname);
+    if (hot) return new Response(hot, { headers: { "content-type": "text/javascript" } });
     const asset = assets.get(assetKey(pathname));
     if (asset) return new Response(asset);
     const file = publicFile(dir, pathname);
@@ -76,15 +84,25 @@ export function createDevServer({ dir, port, onReady }: DevServerOptions): DevSe
     for (const socket of sockets) socket.send(text);
   }
 
+  function keepHotModule({ url, body }: HotModule): void {
+    hotModules.set(url, body);
+    if (hotModules.size > MAX_HOT_MODULES) hotModules.delete(hotModules.keys().next().value!);
+  }
+
+  function messagesFor(update: Update, modules: HotModule[]): object[] {
+    if (update.kind === "reload") return [{ type: "reload" }];
+    const styles = update.styles.map((style) => ({ type: "css", id: style.id, css: style.css }));
+    if (update.kind === "styles") return styles;
+    return [...modules.map(({ url }) => ({ type: "hot", url })), ...styles];
+  }
+
   return {
     url: new URL(`http://localhost:${server.port}/`),
-    publish(next, update) {
+    publish(next, update, modules = []) {
       assets = next;
       error = null;
-      const messages =
-        update.kind === "reload"
-          ? [{ type: "reload" }]
-          : update.styles.map((style) => ({ type: "css", id: style.id, css: style.css }));
+      for (const module of modules) keepHotModule(module);
+      const messages = messagesFor(update, modules);
       if (messages.length === 0) return;
       for (const message of messages) broadcast(message);
       if (sockets.size > 0) publishedAt = now();
