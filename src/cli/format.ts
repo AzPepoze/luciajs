@@ -1,12 +1,16 @@
 import { relative } from "node:path";
+import { formatLusia } from "@language/format.ts";
 import { ANSI, colorEnabled, paint } from "./color.ts";
 import { collectFiles } from "./files.ts";
-import { formatFiles } from "./format-pool.ts";
+import { openFormatCache, type FormatCache } from "./format-cache.ts";
+import { partsFor, prettierConfigFor } from "./format-parts.ts";
 
 export interface FormatOptions {
   paths: string[];
   check: boolean;
   quiet: boolean;
+  /** Reuse the results of earlier runs for files whose content did not change. Default true. */
+  cache?: boolean;
 }
 
 /** Formats the .lusia files in place, or lists the ones that would change with `--check`. */
@@ -15,17 +19,39 @@ export async function runFormat(options: FormatOptions): Promise<number> {
   const color = colorEnabled();
   const changed: string[] = [];
   const errors: string[] = [];
-  for (const result of await formatFiles(files)) {
-    if (result.error !== undefined) {
-      errors.push(`${display(result.file)}: ${result.error}`);
-      continue;
+  const cache =
+    options.cache === false ? undefined : openFormatCache(process.cwd());
+  for (const file of files) {
+    try {
+      await formatOne(file, options, cache, changed);
+    } catch (error) {
+      errors.push(`${display(file)}: ${messageOf(error)}`);
     }
-    if (result.changed !== true) continue;
-    if (!options.check) await Bun.write(result.file, result.formatted ?? "");
-    changed.push(display(result.file));
   }
+  cache?.save();
   report(options, files.length, changed, errors, color);
   return errors.length > 0 || (options.check && changed.length > 0) ? 1 : 0;
+}
+
+async function formatOne(
+  file: string,
+  options: FormatOptions,
+  cache: FormatCache | undefined,
+  changed: string[],
+): Promise<void> {
+  const source = await Bun.file(file).text();
+  const config = await prettierConfigFor(file);
+  const decision = cache?.decide(file, source, config) ?? "unknown";
+  if (decision === "clean") return;
+  if (decision === "changed" && options.check) {
+    changed.push(display(file));
+    return;
+  }
+  const formatted = await formatLusia(source, partsFor(config));
+  cache?.record(file, source, formatted, config);
+  if (formatted === source) return;
+  if (!options.check) await Bun.write(file, formatted);
+  changed.push(display(file));
 }
 
 function report(
@@ -70,4 +96,8 @@ function plural(count: number): string {
 
 function display(file: string): string {
   return relative(process.cwd(), file) || file;
+}
+
+function messageOf(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }

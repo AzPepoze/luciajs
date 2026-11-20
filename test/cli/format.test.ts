@@ -1,10 +1,11 @@
 import { afterAll, beforeAll, describe, expect, spyOn, test } from "bun:test";
+import { statSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, relative } from "node:path";
 import { UsageError } from "@cli/args.ts";
 import { collectFiles } from "@cli/files.ts";
-import { partsFor } from "@cli/format-parts.ts";
+import { partsFor, prettierConfigFor } from "@cli/format-parts.ts";
 import { runFormat } from "@cli/format.ts";
 import { formatLusia } from "@language/format.ts";
 
@@ -85,9 +86,9 @@ describe("runFormat", () => {
     const formatted = await readFile(file, "utf8");
     expect(formatted).toContain('const name = variable("Ada");');
     expect(formatted).toContain(".card {");
-    expect(await formatLusia(UNFORMATTED, await partsFor(file))).toBe(
-      formatted,
-    );
+    expect(
+      await formatLusia(UNFORMATTED, partsFor(await prettierConfigFor(file))),
+    ).toBe(formatted);
     expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
       0,
     );
@@ -133,23 +134,53 @@ describe("runFormat", () => {
     expect(loud()).toBe("Formatted 1 of 1 file.\n");
   });
 
-  test("formats a large set through the worker pool", async () => {
+  test("skips an already formatted file on the next run", async () => {
     const dir = testFolder();
-    const files: string[] = [];
-    for (let index = 0; index < 220; index++) {
-      files.push(await writeLusia(dir, `Card${index}.lusia`, UNFORMATTED));
-    }
-    const report = captureStdout();
-    expect(await runFormat({ paths: [dir], check: true, quiet: true })).toBe(1);
-    expect(report().split("\n").filter(Boolean)).toHaveLength(220);
-    for (const file of files)
-      expect(await readFile(file, "utf8")).toBe(UNFORMATTED);
-
-    expect(await runFormat({ paths: [dir], check: false, quiet: true })).toBe(
+    const file = await writeLusia(dir, "Card.lusia", UNFORMATTED);
+    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
       0,
     );
-    for (const file of files)
-      expect(await readFile(file, "utf8")).toContain(".card {");
+    const formatted = await readFile(file, "utf8");
+    const mtime = statSync(file).mtimeMs;
+    await Bun.sleep(10);
+    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
+      0,
+    );
+    expect(await readFile(file, "utf8")).toBe(formatted);
+    expect(statSync(file).mtimeMs).toBe(mtime);
+  });
+
+  test("a changed file is formatted again even after a cached run", async () => {
+    const dir = testFolder();
+    const file = await writeLusia(dir, "Card.lusia", UNFORMATTED);
+    await runFormat({ paths: [file], check: false, quiet: true });
+    await writeFile(file, `${UNFORMATTED}<p>   extra</p>\n`);
+    const report = captureStdout();
+    expect(await runFormat({ paths: [file], check: true, quiet: true })).toBe(
+      1,
+    );
+    expect(report()).toContain("Card.lusia");
+    expect(await runFormat({ paths: [file], check: false, quiet: true })).toBe(
+      0,
+    );
+    expect(await readFile(file, "utf8")).toContain("<p>extra</p>");
+  });
+
+  test("--no-cache formats again instead of using the cache", async () => {
+    const dir = testFolder();
+    const file = await writeLusia(dir, "Card.lusia", UNFORMATTED);
+    await runFormat({ paths: [file], check: false, quiet: true });
+    const formatted = await readFile(file, "utf8");
+    await writeFile(file, UNFORMATTED);
+    expect(
+      await runFormat({
+        paths: [file],
+        check: false,
+        quiet: true,
+        cache: false,
+      }),
+    ).toBe(0);
+    expect(await readFile(file, "utf8")).toBe(formatted);
   });
 
   test("reports a file that cannot be formatted and exits 1", async () => {
