@@ -1,5 +1,5 @@
 <script>
-import { WHEN, EASE } from "lucia";
+import { WHEN, EASE, EDGE, SCROLL_AT } from "lucia";
 import { scrollHint } from "../motion.ts";
 import FeatureCounter from "./FeatureCounter.lucia";
 
@@ -30,7 +30,10 @@ const swipeMotion = {
 };
 
 // The glows lift as the section scrolls past. The nearer layer moves faster.
-const scrolled = { when: WHEN.SCROLL, more: { start: 1, end: 2 } };
+const scrolled = {
+  when: WHEN.SCROLL,
+  more: { start: { element: EDGE.TOP, window: EDGE.TOP }, end: SCROLL_AT.LEAVE },
+};
 const glowLift = { 0: { translate: "0px 0px" }, 1: { translate: "0px -15vh" } };
 const bgMotion = reduced ? [] : { ...scrolled, style: glowLift };
 
