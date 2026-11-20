@@ -30,7 +30,8 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun src/cli/index.ts build docs
+        # The docs build also needs the generated playground runtime, which the package script writes first.
+        run: bun run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
