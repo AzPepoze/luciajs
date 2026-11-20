@@ -49,19 +49,6 @@ $star: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 
   mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
 }
 
-// A big katakana word that slides sideways behind the sections.
-.bg-kanji {
-  top: 48svh;
-  left: 12vw;
-  color: var(--accent);
-  font-family: $font-display;
-  font-size: 20vw;
-  font-weight: 900;
-  line-height: 1;
-  white-space: nowrap;
-  opacity: 0.05;
-}
-
 .bg-sparkles {
   inset: 0;
 }

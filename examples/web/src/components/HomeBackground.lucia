@@ -16,7 +16,6 @@ const rays = layer(
   { translate: "0 -15vh", rotate: "30deg" },
 );
 const dots = layer({ translate: "0 0" }, { translate: "0 -25vh" });
-const kanji = layer({ translate: "0% 0" }, { translate: "-35% 0" });
 const sparkles = layer({ translate: "0 0" }, { translate: "0 -45vh" });
 
 function petal(
@@ -65,7 +64,6 @@ const stormPetals = [
 <div class="home-bg" aria-hidden="true">
   <span class="bg-rays" animate={rays}></span>
   <span class="bg-dots" animate={dots}></span>
-  <span class="bg-kanji" animate={kanji}>ルシア</span>
   <div class="bg-sparkles" animate={sparkles}>
     <span class="bg-sparkle s1"></span>
     <span class="bg-sparkle s2"></span>
