@@ -96,8 +96,15 @@ describe(".ts files", () => {
     expect(from?.importEdit).toBeUndefined();
   });
 
-  test("leave out setup, which is a hook and not an export", () => {
-    expect(labelsOf(completeAt("const x = 1;\n|", [], "util.ts"))).not.toContain("setup");
+  test("setup is now a lusia export with an auto-import", () => {
+    const setup = completeAt("const x = 1;\n|", [], "util.ts").find(
+      (item) => item.label === "setup",
+    );
+    expect(setup?.importEdit).toEqual({
+      start: 0,
+      end: 0,
+      text: 'import { setup } from "lusia";\n',
+    });
   });
 
   test("a new API name gets an import at the top of the file", () => {

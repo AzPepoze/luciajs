@@ -3,6 +3,7 @@ export { variable } from "./variable/variable.ts";
 export type { Variable, UpdateOptions } from "./variable/variable.ts";
 export type { ComputedVariable } from "./variable/compute.ts";
 export { attach } from "./dom/attach.ts";
+export { setup } from "./dom/setup.ts";
 export { props } from "./dom/props.ts";
 export type { Prop, PropVariables } from "./dom/props.ts";
 export type { Component, Instance, Props } from "./dom/component.ts";

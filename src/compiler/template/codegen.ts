@@ -1,6 +1,7 @@
 import { hotVariables } from "../hot/variables.ts";
 import { markLines } from "../sourcemap/marker.ts";
 import { GenContext, type GenOptions } from "./codegen-context.ts";
+import { setupHook } from "./setup-hook.ts";
 import type { Template } from "./types.ts";
 
 export interface ComponentParts extends GenOptions {
@@ -46,11 +47,13 @@ const HOT_IMPORT = `import {
   hotVariable as __hotVariable,
 } from "lusia/internal";`;
 
-function renderFunction(body: string, bodyLine: number, fragment: string): string {
+const FALLBACK_HOOK = `typeof setup === "function" ? setup : undefined`;
+
+function renderFunction(body: string, bodyLine: number, fragment: string, hook: string): string {
   return `function __render(__cleanups: __Cleanup[], __leaves: __Leave[], __host: __Host): __Rendered {
 ${markLines(body, bodyLine)}
   const __fragment = ${fragment};
-  return { fragment: __fragment, setup: typeof setup === "function" ? setup : undefined };
+  return { fragment: __fragment, setup: ${hook} };
 }`;
 }
 
@@ -69,13 +72,14 @@ export function generate({
 }: ComponentParts): string {
   const ctx = new GenContext(id, { file, dev, source, script });
   const fragment = ctx.fragment(template);
+  const hook = setupHook(body) ?? FALLBACK_HOOK;
   return [
     imports,
     RUNTIME_IMPORT,
     ...(dev ? [HOT_IMPORT] : []),
     `const __css = ${JSON.stringify(css)};`,
     ...ctx.declarations,
-    renderFunction(dev ? hotVariables(body) : body, bodyLine, fragment),
+    renderFunction(dev ? hotVariables(body) : body, bodyLine, fragment, hook),
     exportLine(id, dev),
   ].join("\n");
 }

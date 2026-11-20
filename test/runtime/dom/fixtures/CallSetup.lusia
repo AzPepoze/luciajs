@@ -1,0 +1,14 @@
+<script>
+import { setup } from "lusia";
+import { events } from "./log.ts";
+
+setup((root: Element) => {
+  const button = root.querySelector(".go")!;
+  const pairs = [[1, 2], { label: ")" }];
+  const onClick = () => events.push("click: " + pairs[0]!.join("-"));
+  button.addEventListener("click", onClick);
+  return () => button.removeEventListener("click", onClick);
+});
+</script>
+
+<button class="go">Go</button>
