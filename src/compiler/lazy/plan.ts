@@ -47,8 +47,7 @@ export function splitImportCode(
 ): string {
   const load = `() => import(${JSON.stringify(item.specifier)})`;
   const mode = JSON.stringify(prefetch);
-  if (!hasFallback)
-    return `const ${item.name} = __lazyComponent(${load}, undefined, ${mode});`;
+  if (!hasFallback) return `const ${item.name} = __lazyComponent(${load}, undefined, ${mode});`;
   const fallback = `__${item.name}Fallback`;
   const fallbackImport = `import ${fallback} from ${JSON.stringify(`${item.specifier}?fallback`)};`;
   return `${fallbackImport}\nconst ${item.name} = __lazyComponent(${load}, ${fallback}, ${mode});`;

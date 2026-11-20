@@ -43,9 +43,18 @@ describe("lazy chunks", () => {
       join(shared, "main.ts"),
       'import("./first.ts").then((m) => m.run());\nimport("./second.ts").then((m) => m.run());\n',
     );
-    await writeFile(join(shared, "first.ts"), 'import { hi } from "./shared.ts";\nexport const run = () => hi("first");\n');
-    await writeFile(join(shared, "second.ts"), 'import { hi } from "./shared.ts";\nexport const run = () => hi("second");\n');
-    await writeFile(join(shared, "shared.ts"), `export const hi = (name: string) => "${SHARED_MARKER}" + name;\n`);
+    await writeFile(
+      join(shared, "first.ts"),
+      'import { hi } from "./shared.ts";\nexport const run = () => hi("first");\n',
+    );
+    await writeFile(
+      join(shared, "second.ts"),
+      'import { hi } from "./shared.ts";\nexport const run = () => hi("second");\n',
+    );
+    await writeFile(
+      join(shared, "shared.ts"),
+      `export const hi = (name: string) => "${SHARED_MARKER}" + name;\n`,
+    );
 
     const result = await bundleApp({ dir: shared, minify: false, dev: false });
     expect(result.success).toBe(true);

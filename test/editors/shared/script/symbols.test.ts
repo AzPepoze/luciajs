@@ -18,6 +18,7 @@ export function add(
         kind: "function",
         signature: "function add( a: number, b: number, ): number",
         doc: "Adds two numbers.",
+        isDefault: false,
         specifier: "./math.ts",
       },
     ]);
@@ -47,6 +48,7 @@ export var lookup:
         kind: "const",
         signature: "const count: number",
         doc: "",
+        isDefault: false,
         specifier: "./state.ts",
       },
       {
@@ -54,6 +56,7 @@ export var lookup:
         kind: "const",
         signature: "let label",
         doc: "",
+        isDefault: false,
         specifier: "./state.ts",
       },
       {
@@ -61,6 +64,7 @@ export var lookup:
         kind: "const",
         signature: "var lookup: Map<string, number>",
         doc: "",
+        isDefault: false,
         specifier: "./state.ts",
       },
     ]);
@@ -83,6 +87,7 @@ export enum Color {
         kind: "class",
         signature: "class Store extends Base",
         doc: "",
+        isDefault: false,
         specifier: "./model.ts",
       },
       {
@@ -90,6 +95,7 @@ export enum Color {
         kind: "interface",
         signature: "interface Props extends Base",
         doc: "",
+        isDefault: false,
         specifier: "./model.ts",
       },
       {
@@ -97,6 +103,7 @@ export enum Color {
         kind: "type",
         signature: "type Id",
         doc: "",
+        isDefault: false,
         specifier: "./model.ts",
       },
       {
@@ -104,6 +111,7 @@ export enum Color {
         kind: "enum",
         signature: "enum Color",
         doc: "",
+        isDefault: false,
         specifier: "./model.ts",
       },
     ]);
@@ -115,13 +123,14 @@ export default class Panel {
   open() {}
 }`;
     expect(
-      exportedSymbols(source, "./x.ts").map(({ name, signature }) => ({
+      exportedSymbols(source, "./x.ts").map(({ name, signature, isDefault }) => ({
         name,
         signature,
+        isDefault,
       })),
     ).toEqual([
-      { name: "make", signature: "default function make(): void" },
-      { name: "Panel", signature: "default class Panel" },
+      { name: "make", signature: "default function make(): void", isDefault: true },
+      { name: "Panel", signature: "default class Panel", isDefault: true },
     ]);
   });
 
@@ -130,6 +139,7 @@ export default class Panel {
       name: "default",
       kind: "function",
       signature: "default function ()",
+      isDefault: true,
       doc: "",
       specifier: "./x.ts",
     });
@@ -145,6 +155,7 @@ export { a, b as c };`;
         kind: "const",
         signature: "const a",
         doc: "",
+        isDefault: false,
         specifier: "./x.ts",
       },
       {
@@ -152,6 +163,7 @@ export { a, b as c };`;
         kind: "const",
         signature: "const c",
         doc: "",
+        isDefault: false,
         specifier: "./x.ts",
       },
     ]);

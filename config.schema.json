@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "lusia.config.json",
-  "description": "Settings for lusia build and lusia dev. Put the file in the app folder. CLI flags override it.",
+  "description": "Settings for lusia build, dev, format and lint. Put the file in the app folder. CLI flags override it.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -9,7 +9,7 @@
     "outdir": {
       "type": "string",
       "minLength": 1,
-      "description": "Output folder for lusia build. Default: dist"
+      "description": "Output folder for lusia build, relative to the app folder. Default: dist"
     },
     "minify": {
       "type": "boolean",
@@ -46,6 +46,30 @@
         "prefetch": {
           "enum": ["idle", "view", "none"],
           "description": "When split components start to download. Default: idle"
+        }
+      }
+    },
+    "lint": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Lint settings for lusia lint and the editors",
+      "properties": {
+        "rules": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Severity of each lint rule: off hides it, warn shows it, error fails lusia lint",
+          "properties": {
+            "unused-import": { "enum": ["off", "warn", "error"] },
+            "props-twice": { "enum": ["off", "warn", "error"] },
+            "unknown-prop": { "enum": ["off", "warn", "error"] },
+            "empty-expression": { "enum": ["off", "warn", "error"] },
+            "style-attribute": { "enum": ["off", "warn", "error"] },
+            "animate-keyframes": { "enum": ["off", "warn", "error"] },
+            "animate-key": { "enum": ["off", "warn", "error"] },
+            "scroll-numeric-line": { "enum": ["off", "warn", "error"] },
+            "flow-chain": { "enum": ["off", "warn", "error"] },
+            "bind-target": { "enum": ["off", "warn", "error"] }
+          }
         }
       }
     }

@@ -2,7 +2,19 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { lusiaError } from "@compiler/errors/create.ts";
 import { LusiaError } from "@compiler/errors.ts";
-import { LAZY_MODES, LAZY_PREFETCH, type LazyMode, type LazyPrefetch } from "@compiler/lazy/options.ts";
+import {
+  LAZY_MODES,
+  LAZY_PREFETCH,
+  type LazyMode,
+  type LazyPrefetch,
+} from "@compiler/lazy/options.ts";
+import {
+  LINT_LEVELS,
+  LINT_RULE_CODES,
+  type LintLevel,
+  type LintRuleCode,
+  type LintRuleSettings,
+} from "@language/lint.ts";
 
 export const CONFIG_FILE = "lusia.config.json";
 
@@ -12,6 +24,7 @@ export interface LusiaConfig {
   routes?: string[];
   dev?: { port?: number };
   lazy?: { mode?: LazyMode; prefetch?: LazyPrefetch };
+  lint?: { rules?: LintRuleSettings };
 }
 
 type JsonObject = Record<string, unknown>;
@@ -40,13 +53,14 @@ export function isRoute(route: string): boolean {
 
 function checkRoot(value: unknown): LusiaConfig {
   const root = asObject(value, "the file must hold a JSON object");
-  checkKeys(root, ["$schema", "outdir", "minify", "routes", "dev", "lazy"]);
+  checkKeys(root, ["$schema", "outdir", "minify", "routes", "dev", "lazy", "lint"]);
   return {
     outdir: optionalString(root, "outdir"),
     minify: optionalBoolean(root, "minify"),
     routes: optionalRoutes(root),
     dev: optionalDev(root),
     lazy: optionalLazy(root),
+    lint: optionalLint(root),
   };
 }
 
@@ -73,6 +87,35 @@ function optionalLazy(root: JsonObject): LusiaConfig["lazy"] {
     mode: oneOf(lazy.mode, LAZY_MODES, "lazy.mode"),
     prefetch: oneOf(lazy.prefetch, LAZY_PREFETCH, "lazy.prefetch"),
   };
+}
+
+function optionalLint(root: JsonObject): LusiaConfig["lint"] {
+  if (root.lint === undefined) return undefined;
+  const lint = asObject(root.lint, '"lint" must be an object');
+  checkKeys(lint, ["rules"], "lint");
+  return { rules: optionalLintRules(lint) };
+}
+
+function optionalLintRules(lint: JsonObject): LintRuleSettings | undefined {
+  if (lint.rules === undefined) return undefined;
+  const rules = asObject(lint.rules, '"lint.rules" must be an object');
+  const settings: LintRuleSettings = {};
+  for (const [code, level] of Object.entries(rules)) {
+    if (!isLintRule(code))
+      throw configError(`unknown lint rule "${code}", allowed: ${LINT_RULE_CODES.join(", ")}`);
+    if (!isLintLevel(level))
+      throw configError(`"lint.rules.${code}" must be one of: ${LINT_LEVELS.join(", ")}`);
+    settings[code] = level;
+  }
+  return settings;
+}
+
+function isLintRule(code: string): code is LintRuleCode {
+  return (LINT_RULE_CODES as readonly string[]).includes(code);
+}
+
+function isLintLevel(level: unknown): level is LintLevel {
+  return typeof level === "string" && (LINT_LEVELS as readonly string[]).includes(level);
 }
 
 function optionalRoutes(root: JsonObject): string[] | undefined {

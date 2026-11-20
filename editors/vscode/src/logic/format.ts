@@ -1,32 +1,46 @@
-import { formatMarkup, formatScript, formatStyle } from "./format-parts.ts";
-import { findSections, type Section } from "../../../shared/sections.ts";
+import type { Options } from "prettier";
+import { formatLusia as formatLusiaSource } from "@language/format.ts";
+import { prettierParts } from "@language/prettier-parts.ts";
 
-/** Formats a .lusia file: script as TypeScript, styles as SCSS or CSS, markup as HTML. Sections keep their order. */
-export async function formatLusia(source: string): Promise<string> {
-  const blocks: string[] = [];
-  let last = 0;
-  for (const section of findSections(source)) {
-    blocks.push(await formatMarkupBlock(source.slice(last, section.openStart)));
-    blocks.push(await formatSectionBlock(source, section));
-    last = section.end;
-  }
-  blocks.push(await formatMarkupBlock(source.slice(last)));
-  return blocks.filter((block) => block !== "").join("\n\n") + "\n";
+/** The indentation the editor formats with, used when the Prettier config leaves it out. */
+export interface FormatSettings {
+  fileName?: string;
+  tabSize?: number;
+  insertSpaces?: boolean;
 }
 
-async function formatMarkupBlock(markup: string): Promise<string> {
-  return markup.trim() === "" ? "" : formatMarkup(markup);
+type Prettier = typeof import("prettier");
+
+let loaded: Promise<Prettier> | undefined;
+
+/** Formats a .lusia file with the project's Prettier config and the editor indentation. */
+export async function formatLusia(source: string, settings: FormatSettings = {}): Promise<string> {
+  const prettier = await loadPrettier();
+  const config = await configFor(prettier, settings);
+  const parts = prettierParts(
+    async () => ({ format: (code, options) => prettier.format(code, options as Options) }),
+    config,
+  ).parts;
+  return formatLusiaSource(source, parts);
 }
 
-async function formatSectionBlock(source: string, section: Section): Promise<string> {
-  const content = source.slice(section.contentStart, section.contentEnd);
-  const code = await formatSectionContent(section, content);
-  const open = `<${section.kind}${section.attrs.trimEnd()}>`;
-  const close = `</${section.kind}>`;
-  return code === "" ? `${open}${close}` : `${open}\n${code}\n${close}`;
+// Prettier is large, so it loads on the first format, not when the extension starts.
+function loadPrettier(): Promise<Prettier> {
+  loaded ??= import("prettier");
+  return loaded;
 }
 
-function formatSectionContent(section: Section, content: string): Promise<string> {
-  if (section.kind === "script") return formatScript(content);
-  return formatStyle(content, /\blang\s*=\s*"css"/.test(section.attrs));
+/** The Prettier config wins; the editor's indent fills in what the config does not set. */
+async function configFor(
+  prettier: Prettier,
+  settings: FormatSettings,
+): Promise<Record<string, unknown>> {
+  const resolved: Record<string, unknown> =
+    settings.fileName === undefined
+      ? {}
+      : ((await prettier.resolveConfig(settings.fileName)) ?? {});
+  const editor: Record<string, unknown> = {};
+  if (settings.tabSize !== undefined) editor.tabWidth = settings.tabSize;
+  if (settings.insertSpaces !== undefined) editor.useTabs = !settings.insertSpaces;
+  return { ...editor, ...resolved };
 }

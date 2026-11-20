@@ -12,7 +12,8 @@
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "@runtime/*": ["../../src/runtime/*"]
+      "@runtime/*": ["../../src/runtime/*"],
+      "@language/*": ["../../src/language/*"]
     }
   },
   "include": ["src", "../shared", "../../reference", "../../src/compiler"]

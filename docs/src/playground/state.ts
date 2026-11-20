@@ -7,9 +7,13 @@ import type { PlayFile } from "./types.ts";
 
 export const files = variable<PlayFile[]>(loadFiles());
 export const active = variable(ENTRY_FILE);
+export const view = variable<"code" | "preview">("code");
 export const autoRun = variable(true);
 export const compileErrors = variable<LiveError[]>([]);
 export const runtimeErrors = variable<LiveError[]>([]);
 export const jump = variable<EditorJump | null>(null);
 export const notice = variable("");
-export const errors = variable.compute(() => [...compileErrors.value, ...runtimeErrors.value]);
+export const errors = variable.compute(() => [
+	...compileErrors.value,
+	...runtimeErrors.value,
+]);

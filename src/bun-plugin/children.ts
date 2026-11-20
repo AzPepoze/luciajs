@@ -53,7 +53,11 @@ export function lazyOptionsFor(path: string, settings: LazySettings): LazyOption
 }
 
 /** Changes whenever a compile would differ: the settings, and what each imported child has. */
-export function lazyKeyFor(path: string, source: string, settings: LazySettings | undefined): string {
+export function lazyKeyFor(
+  path: string,
+  source: string,
+  settings: LazySettings | undefined,
+): string {
   if (!settings) return "off";
   const children = lusiaImportsOf(source, path).map((item) =>
     childInfo(resolve(dirname(path), item.specifier)),

@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { completionsAt } from "../../../editors/shared/completions.ts";
+import type { SymbolLookup } from "../../../editors/shared/script/imported-symbols.ts";
+import type { ScriptSymbol } from "../../../editors/shared/script/symbols.ts";
 
 const noProps = () => [];
 const BADGE_SCRIPT = `<script>\nimport Badge from "./badge.lusia";\n</script>\n`;
@@ -373,5 +375,161 @@ describe("flow and element completions", () => {
       (item) => item.label === "onclick",
     );
     expect(onclick).toMatchObject({ insertText: "onclick={$1}", snippet: true });
+  });
+});
+
+describe("script member completions", () => {
+  const memberLabels = (script: string, marker: string) => {
+    const text = `${script}</script>`;
+    return completionsAt(text, text.indexOf(marker) + marker.length, noProps).map(
+      (item) => item.label,
+    );
+  };
+
+  test("offers the variable members after count.", () => {
+    const text = `<script>\nconst count = variable(0);\ncount.</script>`;
+    const offset = text.indexOf("count.") + "count.".length;
+    const items = completionsAt(text, offset, noProps);
+    expect(items.map((item) => item.label)).toEqual(["value", "get", "set", "peek", "onUpdate"]);
+    expect(items.find((item) => item.label === "set")).toMatchObject({
+      insertText: "set($0)",
+      snippet: true,
+      kind: "function",
+    });
+    expect(items.find((item) => item.label === "onUpdate")).toMatchObject({
+      insertText: "onUpdate($0)",
+      snippet: true,
+      entryId: "variable-instance-on-update",
+    });
+  });
+
+  test("offers no set() or onUpdate() on a computed variable", () => {
+    const labels = memberLabels(
+      `<script>\nconst double = variable.compute(() => 0);\ndouble.`,
+      "double.",
+    );
+    expect(labels).toEqual(["value", "get", "peek"]);
+  });
+
+  test("offers set() but no onUpdate() on a prop", () => {
+    const labels = memberLabels(
+      `<script>\nconst { label } = props({ label: "x" });\nlabel.`,
+      "label.",
+    );
+    expect(labels).toEqual(["value", "get", "set", "peek"]);
+  });
+
+  test("offers the namespaced variable functions after variable.", () => {
+    const text = `<script>\nvariable.</script>`;
+    const items = completionsAt(text, text.indexOf("variable.") + "variable.".length, noProps);
+    expect(items.map((item) => item.label)).toEqual(["compute", "autoRun", "watch"]);
+    expect(items[0]).toMatchObject({
+      kind: "function",
+      insertText: "compute",
+      entryId: "variable-compute",
+      detail: "variable.compute<T>(fn: () => T): ComputedVariable<T>",
+    });
+  });
+});
+
+const ADD_SYMBOL: ScriptSymbol = {
+  name: "add",
+  kind: "function",
+  signature: "function add(a: number): void",
+  isDefault: false,
+  doc: "Adds two numbers.",
+  specifier: "./math.ts",
+};
+const WIDGET_SYMBOL: ScriptSymbol = {
+  name: "Widget",
+  kind: "interface",
+  signature: "interface Widget",
+  isDefault: false,
+  doc: "A widget.",
+  specifier: "./math.ts",
+};
+const PANEL_SYMBOL: ScriptSymbol = {
+  name: "default",
+  kind: "class",
+  signature: "default class Panel",
+  isDefault: true,
+  doc: "",
+  specifier: "./panel.ts",
+};
+const symbolsOf: SymbolLookup = (specifier) => {
+  if (specifier === "./math.ts") return [ADD_SYMBOL, WIDGET_SYMBOL];
+  if (specifier === "./panel.ts") return [PANEL_SYMBOL];
+  return [];
+};
+
+describe("script name completions", () => {
+  const script = `<script>\nimport { add as sum, type Widget } from "./math.ts";\nimport make from "./panel.ts";\n</script>`;
+  const items = completionsAt(script, script.indexOf("</script>"), noProps, symbolsOf);
+
+  test("offers a named import under its alias, with its signature and docs", () => {
+    const sum = items.find((item) => item.label === "sum");
+    expect(sum).toMatchObject({
+      kind: "function",
+      insertText: "sum",
+      detail: "function add(a: number): void",
+      documentation: "Adds two numbers.",
+    });
+    expect(sum?.importEdit).toBeUndefined();
+  });
+
+  test("offers a type-only import as a type", () => {
+    expect(items.find((item) => item.label === "Widget")).toMatchObject({
+      kind: "type",
+      documentation: "A widget.",
+    });
+  });
+
+  test("offers a default import from the default export", () => {
+    expect(items.find((item) => item.label === "make")).toMatchObject({
+      kind: "class",
+      detail: "default class Panel",
+    });
+  });
+
+  test("keeps offering the local names", () => {
+    const local = `<script>\nconst count = variable(0);\nfunction reset() {}\n</script>`;
+    const localItems = completionsAt(local, local.indexOf("</script>"), noProps);
+    expect(localItems.find((item) => item.label === "count")).toMatchObject({
+      kind: "variable",
+      insertText: "count",
+      detail: "In this file",
+    });
+    expect(localItems.find((item) => item.label === "reset")?.kind).toBe("function");
+    expect(localItems.find((item) => item.label === "count")?.importEdit).toBeUndefined();
+  });
+
+  test("offers the imported and local names inside a markup expression", () => {
+    const markup = `<script>\nimport { add } from "./math.ts";\nconst count = variable(0);\n</script>\n<p>{co`;
+    const labels = completionsAt(markup, markup.length, noProps, symbolsOf).map(
+      (item) => item.label,
+    );
+    expect(labels).toEqual(["add", "count"]);
+  });
+
+  test("lets an API item win over an import with the same label", () => {
+    const imported = `<script>\nimport { variable } from "./math.ts";\n</script>`;
+    const variableSymbols: SymbolLookup = () => [{ ...ADD_SYMBOL, name: "variable" }];
+    const found = completionsAt(
+      imported,
+      imported.indexOf("</script>"),
+      noProps,
+      variableSymbols,
+    ).filter((item) => item.label === "variable");
+    expect(found).toHaveLength(1);
+    expect(found[0]?.importEdit).toBeDefined();
+  });
+
+  test("lets an import win over a local with the same label", () => {
+    const shadowed = `<script>\nimport { add } from "./math.ts";\nconst add = 1;\n</script>`;
+    const found = completionsAt(shadowed, shadowed.indexOf("</script>"), noProps, symbolsOf).filter(
+      (item) => item.label === "add",
+    );
+    expect(found).toHaveLength(1);
+    expect(found[0]?.detail).toBe("function add(a: number): void");
   });
 });

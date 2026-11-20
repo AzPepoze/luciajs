@@ -16,12 +16,18 @@ import {
   markupAttributeItems,
 } from "./markup-items.ts";
 import { enumMembersAt } from "./enum-members.ts";
-import { findComponentImport, scriptImports } from "./imports.ts";
-import type { PropDef } from "./props.ts";
+import { findComponentImport, scriptImports } from "@language/imports.ts";
+import { inExpressionAt } from "@language/format-expressions.ts";
+import type { PropDef } from "@language/props.ts";
 import type { TextRange } from "./range.ts";
-import { regionAt } from "./regions.ts";
-import { scriptSection, type Section } from "./sections.ts";
-import { isTagNameTyping, openTagAt } from "./tag.ts";
+import { regionAt } from "@language/regions.ts";
+import { withScriptNames } from "./script-names.ts";
+import { scriptMemberItems } from "./script-members.ts";
+import type { SymbolLookup } from "./script/imported-symbols.ts";
+import { scriptSection, scriptSource, type Section } from "@language/sections.ts";
+import { isTagNameTyping, openTagAt } from "@language/tag.ts";
+
+export { scriptMemberItems, withScriptNames };
 
 export interface CompletionResult extends CompletionItemData {
   /** Document offsets. */
@@ -36,17 +42,27 @@ export function completionsAt(
   text: string,
   offset: number,
   propsOf: PropLookup,
+  symbolsOf?: SymbolLookup,
 ): CompletionResult[] {
   const members = enumMembersAt(text, offset);
   if (members) return members.map((item) => withScriptImport(item, text));
+  const script = scriptSource(text);
+  const knownMembers = scriptMemberItems(script, offset, text);
+  if (knownMembers) return knownMembers;
   const region = regionAt(text, offset);
-  if (region.section?.kind === "script") return scriptCompletions(text, region.section);
+  if (region.section?.kind === "script") return scriptCompletions(text, region.section, symbolsOf);
   if (region.section?.kind === "style") return STYLE_BODY_ITEMS;
-  return markupCompletions(text, offset, propsOf);
+  return markupCompletions(text, offset, propsOf, script, symbolsOf);
 }
 
-function scriptCompletions(text: string, section: Section): CompletionResult[] {
-  return scriptItems().map((item) => withImport(item, text, section));
+function scriptCompletions(
+  text: string,
+  section: Section,
+  symbolsOf?: SymbolLookup,
+): CompletionItemData[] {
+  const script = text.slice(section.contentStart, section.contentEnd);
+  const base = scriptItems().map((item) => withImport(item, text, section));
+  return withScriptNames(base, script, symbolsOf);
 }
 
 /** Adds the import edit when the item needs one and the file has a script section. */
@@ -75,11 +91,14 @@ function markupCompletions(
   text: string,
   offset: number,
   propsOf: PropLookup,
+  script: string,
+  symbolsOf?: SymbolLookup,
 ): CompletionItemData[] {
   if (isTagNameTyping(text, offset))
     return [...tagNameItems(scriptImports(text)), ...FLOW_TAG_ITEMS];
   const fields = animateFieldsAt(text, offset);
   if (fields) return fields.map((item) => withScriptImport(item, text));
+  if (inExpressionAt(text, offset)) return withScriptNames([], script, symbolsOf);
   const tag = openTagAt(text, offset);
   if (!tag) return [];
   if (tag.name === "style") return STYLE_ATTRIBUTE_ITEMS;

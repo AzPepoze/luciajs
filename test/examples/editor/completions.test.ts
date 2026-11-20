@@ -45,9 +45,24 @@ describe("script completions", () => {
     expect(labelsOf(items)).toContain("count");
   });
 
-  test("a variable offers value and peek after its name and dot", () => {
+  test("a variable offers its members after its name and dot", () => {
     const items = completeAt(`${BADGE_SCRIPT}</script>\n<p>{count.|}</p>`);
-    expect(labelsOf(items)).toEqual(["value", "get", "set", "peek"]);
+    expect(labelsOf(items)).toEqual(["value", "get", "set", "peek", "onUpdate"]);
+  });
+
+  test("offers a function imported from a sibling .ts file, with its signature and docs", () => {
+    const util = {
+      name: "util.ts",
+      code: `/**\n * Adds two numbers.\n */\nexport function add(a: number, b: number): number {\n  return a + b;\n}\n`,
+    };
+    const items = completeAt(`<script>\nimport { add } from "./util.ts";\n|</script>`, [util]);
+    const add = items.find((item) => item.label === "add");
+    expect(add).toMatchObject({
+      kind: "function",
+      detail: "function add(a: number, b: number): number",
+      documentation: "Adds two numbers.",
+    });
+    expect(add?.importEdit).toBeUndefined();
   });
 });
 

@@ -2,7 +2,7 @@ import type { ApiEntry, ApiMember } from "../../reference/api.ts";
 import { findApiById } from "./api-lookup.ts";
 import type { CompletionItemData } from "./completion-data.ts";
 import type { HoverResult } from "./hover.ts";
-import type { PropDef } from "./props.ts";
+import type { PropDef } from "@language/props.ts";
 import type { ScriptSymbol } from "./script/symbols.ts";
 
 export function hoverMarkdown(result: HoverResult): string {
@@ -44,10 +44,12 @@ function cssMarkdown(name: string): string {
 }
 
 function apiMarkdown(entry: ApiEntry): string {
+  return [`**${entry.name}**`, "", fence("ts", entry.signature), apiDocsMarkdown(entry)].join("\n");
+}
+
+/** The docs of an entry without its title and signature, to append below a typed hover. */
+export function apiDocsMarkdown(entry: ApiEntry): string {
   return [
-    `**${entry.name}**`,
-    "",
-    fence("ts", entry.signature),
     entry.summary,
     "",
     ...entry.bullets.map((bullet) => `- ${bullet}`),

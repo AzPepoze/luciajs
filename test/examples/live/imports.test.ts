@@ -1,9 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-  findBrokenImports,
-  linkImports,
-  rootNames,
-} from "../../../docs/src/live/imports.ts";
+import { findBrokenImports, linkImports, rootNames } from "../../../docs/src/live/imports.ts";
 
 const names = new Set(["App.lusia", "Card.lusia", "util.ts", "src/demos/x/Badge.lusia"]);
 

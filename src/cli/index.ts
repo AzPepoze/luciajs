@@ -4,7 +4,9 @@ import { parseCommand, UsageError } from "./args.ts";
 import { runBuild } from "./build.ts";
 import { colorEnabled } from "./color.ts";
 import { startDev } from "./dev.ts";
+import { runFormat } from "./format.ts";
 import { formatError } from "./format-error.ts";
+import { runLint } from "./lint.ts";
 import { createLogger } from "./log.ts";
 import { USAGE } from "./usage.ts";
 
@@ -16,6 +18,8 @@ async function main(argv: string[]): Promise<number> {
       return 0;
     }
     if (command.name === "build") return runBuild(command);
+    if (command.name === "format") return runFormat(command);
+    if (command.name === "lint") return runLint(command);
     await startDev(command);
     return 0;
   } catch (error) {

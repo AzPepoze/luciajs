@@ -5,6 +5,7 @@ export interface ExportDeclaration {
   name: string;
   kind: SymbolKind;
   signature: string;
+  isDefault: boolean;
   docIndex?: number;
 }
 
@@ -67,6 +68,7 @@ function readExport(source: string, masked: string, index: number): ExportDeclar
       name: name || "default",
       kind,
       signature: declarationSignature(source, masked, kind, start, nameEnd),
+      isDefault,
       docIndex: index,
     },
   ];
@@ -81,7 +83,7 @@ function readBraceExport(masked: string, start: number): ExportDeclaration[] {
   for (const entry of masked.slice(start + 1, close).split(",")) {
     const name = readExportedName(entry);
     if (!name) continue;
-    declarations.push({ name, kind: "const", signature: `const ${name}` });
+    declarations.push({ name, kind: "const", signature: `const ${name}`, isDefault: false });
   }
   return declarations;
 }

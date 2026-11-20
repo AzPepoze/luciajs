@@ -12,6 +12,7 @@ import { addBundleStep, addStep, formatBuildSteps, now, type Steps } from "./tim
 
 export interface BuildOptions {
   dir: string;
+  /** Absolute, or relative to the current folder. */
   outdir: string;
   minify: boolean;
   routes?: string[];
@@ -25,6 +26,10 @@ export async function runBuild(options: BuildOptions): Promise<number> {
   const dir = resolve(options.dir);
   const outdir = resolve(options.outdir);
   entryPath(dir);
+  if (outdir === dir) {
+    log.error(`the output folder must be different from the app folder: ${outdir}`);
+    return 1;
+  }
   if (isInside(dir, outdir)) {
     log.error(`the output folder must not contain the app folder: ${outdir}`);
     return 1;

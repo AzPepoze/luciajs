@@ -6,6 +6,7 @@ export interface ScriptSymbol {
   name: string;
   kind: SymbolKind;
   signature: string;
+  isDefault: boolean;
   doc: string;
   specifier: string;
 }
@@ -15,6 +16,7 @@ export function exportedSymbols(source: string, specifier: string): ScriptSymbol
     name: declaration.name,
     kind: declaration.kind,
     signature: declaration.signature,
+    isDefault: declaration.isDefault,
     doc: declaration.docIndex === undefined ? "" : declarationDoc(source, declaration.docIndex),
     specifier,
   }));
