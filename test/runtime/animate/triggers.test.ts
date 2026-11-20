@@ -184,6 +184,27 @@ describe("WHEN.ATTACH", () => {
   });
 });
 
+describe("an ATTACH item and a DETACH item on the same property", () => {
+  test("the enter item plays from its start, and the leave item does not overwrite it", () => {
+    const fadeOut: Keyframes = {
+      0: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 1 }],
+      1: [EASE.STYLE.LINEAR, EASE.IN, { opacity: 0 }],
+    };
+    const el = document.createElement("div");
+    const cleanups: Array<() => void> = [];
+    const leaves: Leave[] = [];
+    const items = [
+      { style: fade, when: WHEN.ATTACH, duration: 100 },
+      { style: fadeOut, when: WHEN.DETACH, duration: 100 },
+    ] as AnimateItem[];
+    animate(el, () => items, cleanups, leaves);
+    onReset(() => cleanups.forEach((cleanup) => cleanup()));
+    expect(Number(el.style.opacity)).toBe(0);
+    advance(100);
+    expect(Number(el.style.opacity)).toBe(1);
+  });
+});
+
 describe("WHEN.MANUAL", () => {
   test("does not play by itself and adds no leave", () => {
     const { leaves, opacity } = mount({ when: WHEN.MANUAL });

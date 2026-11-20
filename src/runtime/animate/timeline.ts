@@ -50,13 +50,28 @@ export function startingFrom(timeline: Timeline, current: (prop: string) => stri
   return { props: timeline.props, segments: [restart, ...rest] };
 }
 
-/** Each property belongs to the last timeline that animates it, so later items win per property. */
-export function ownTimelines(timelines: Timeline[]): Timeline[] {
+/** A timeline and whether its item is a DETACH item. */
+export interface Phased {
+  timeline: Timeline;
+  detach: boolean;
+}
+
+/**
+ * Each property belongs to the last timeline that animates it, so later items win per property.
+ * DETACH items play on their own, so they never take a property from the enter items.
+ */
+export function ownTimelines(items: Phased[]): Timeline[] {
   const owner = new Map<string, number>();
-  timelines.forEach((timeline, index) => timeline.props.forEach((prop) => owner.set(prop, index)));
-  return timelines.map((timeline, index) =>
-    keepProps(timeline, (prop) => owner.get(prop) === index),
+  items.forEach(({ timeline, detach }, index) =>
+    timeline.props.forEach((prop) => owner.set(phasedKey(prop, detach), index)),
   );
+  return items.map(({ timeline, detach }, index) =>
+    keepProps(timeline, (prop) => owner.get(phasedKey(prop, detach)) === index),
+  );
+}
+
+function phasedKey(prop: string, detach: boolean): string {
+  return detach ? `detach:${prop}` : prop;
 }
 
 function keepProps(timeline: Timeline, keep: (prop: string) => boolean): Timeline {

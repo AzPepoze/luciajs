@@ -5,7 +5,8 @@ import { prepareTimeline } from "./keyframes.ts";
 import { readItem } from "./options.ts";
 import { Player } from "./player.ts";
 import { ownTimelines } from "./timeline.ts";
-import { bindTrigger, groupSlots } from "./triggers.ts";
+import { WHEN } from "./trigger.ts";
+import { bindTrigger, groupSlots, type Slot } from "./triggers.ts";
 import { runtimeError, withWhere } from "../errors.ts";
 
 /** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from variables. */
@@ -21,7 +22,7 @@ export function animate(
   const reload = (): void => withWhere(where, () => loadTimelines(el, readValue, players));
   reload();
   const slots = groupSlots(first, players, reload);
-  for (const slot of slots) slot.group.show(0);
+  for (const slot of startOrder(slots)) slot.group.show(0);
   cleanups.push(() => slots.forEach((slot) => slot.group.cancel()));
   for (const slot of slots) {
     if (slot.control) cleanups.push(slot.control.attach(slot.group));
@@ -32,6 +33,17 @@ export function animate(
 function loadTimelines(el: HTMLElement, readValue: () => Animate, players: Player[]): void {
   const items = itemsOf(readValue()).map(readItem);
   if (items.length !== players.length) throw runtimeError("L2039");
-  const timelines = ownTimelines(items.map((item) => prepareTimeline(item.keyframes, el)));
+  const timelines = ownTimelines(
+    items.map((item) => ({
+      timeline: prepareTimeline(item.keyframes, el),
+      detach: item.when === WHEN.DETACH,
+    })),
+  );
   players.forEach((player, i) => player.load(timelines[i]!, items[i]!.timing));
+}
+
+/** DETACH slots write their start first, so an enter item's start values win on a shared property. */
+function startOrder(slots: Slot[]): Slot[] {
+  const detach = slots.filter((slot) => slot.when === WHEN.DETACH);
+  return [...detach, ...slots.filter((slot) => slot.when !== WHEN.DETACH)];
 }
