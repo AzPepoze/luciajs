@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { nameProblem } from "../../../examples/web/src/playground/names.ts";
+import { nameProblem } from "../../../docs/src/playground/names.ts";
 
 const files = [
   { name: "App.lucia", code: "" },

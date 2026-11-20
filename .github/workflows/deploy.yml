@@ -30,7 +30,7 @@ jobs:
         run: bun install
 
       - name: Build
-        run: bun src/cli/index.ts build examples/web --outdir dist --routes /guide,/reference
+        run: bun src/cli/index.ts build docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

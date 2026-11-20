@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
-const SITE = join(ROOT, "examples/web");
+const SITE = join(ROOT, "docs");
 const BUILD_TIMEOUT_MS = 120_000;
 const TEST_TIMEOUT_MS = 30_000;
 // A new frame stays pending until it has mounted. The shown one is the one that is not pending.

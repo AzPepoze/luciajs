@@ -1,7 +1,7 @@
 import { RUNTIME_PATH } from "./runtime-module.ts";
 
 export const RELOAD_PATH = "/__lucia/reload";
-const ERROR_DOCS_URL = "https://github.com/AzPepoze/luciajs/blob/main/docs/errors.md";
+const ERROR_DOCS_URL = "/errors";
 
 // Reloads the page on a new build, swaps changed component css in place, shows build errors
 // as an overlay, reports `ready` to the server, and reconnects after a server restart.

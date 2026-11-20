@@ -1,6 +1,6 @@
 // Writes the Lucia runtime that the playground preview loads. Run before `dev` and `build`.
-const ENTRY = "examples/web/src/playground/runtime.ts";
-const OUTDIR = "examples/web/public/playground";
+const ENTRY = "docs/src/playground/runtime.ts";
+const OUTDIR = "docs/public/playground";
 
 const result = await Bun.build({
   entrypoints: [ENTRY],

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { luciaMarkRanges } from "../../../examples/web/src/editor/lang/marks.ts";
+import { luciaMarkRanges } from "../../../docs/src/editor/lang/marks.ts";
 
 const SOURCE = `<script>\nconst n = 1;\n</script>\n<IF {n > 0}>\n  <Badge onclick={go} bind-value={n} />\n</IF>\n<p animate={fade}>x</p>\n`;
 

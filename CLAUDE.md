@@ -4,20 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 LuciaJS: a Bun-native UI framework with single-file `.lucia` components, variables and scoped SCSS.
 
-- Commands and layout: [docs/development.md](docs/development.md)
-- How the compiler and runtime fit together: [docs/architecture.md](docs/architecture.md)
-- The `.lucia` format: [docs/components.md](docs/components.md)
-- Events and `bind`: [docs/events.md](docs/events.md). Flow tags: [docs/flow.md](docs/flow.md). Animate: [docs/animate.md](docs/animate.md)
-- Lazy components (config-driven splitting, `<FALLBACK>`, `<NOLAZY />`): [docs/lazy.md](docs/lazy.md)
-- The docs site playground (`/playground`): [docs/playground.md](docs/playground.md). It needs `scripts/playground-runtime.ts`, which `dev` and `build` run first.
+- Commands, tests and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md)
+- The site Guide (learning path, live demos and source): https://azpepoze.github.io/luciajs/guide
+- The API table: [reference/api.ts](reference/api.ts)
+- The docs site source is in `docs/` (`index.html`, `src/`, `public/`). Its playground needs `scripts/playground-runtime.ts`, which `dev` and `build` run first.
 
 ## Keep docs current
 
-Update this file and the matching `docs/` page in the same change whenever commands, architecture, the compiled-output contract or the `.lucia` format change. The README is a front page only: keep the detail in `docs/`.
+Update the site Guide and `reference/api.ts` in the same change instead of keeping a `.md` page per topic. The README is a front page only: keep the detail on the site.
 
-Any `.lucia` syntax change (new tag, attribute, keyword or export) must update both highlighters in the same change, with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lucia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lucia` language in `examples/web`. A change is not done while either one shows the new syntax as plain text. See [docs/editor.md](docs/editor.md).
+Any `.lucia` syntax change (new tag, attribute, keyword or export) must update both highlighters in the same change, with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lucia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lucia` language in `docs`. A change is not done while either one shows the new syntax as plain text. See the Editor section of the site Guide.
 
-`reference/api.ts` is the API table. It feeds both the VS Code extension and `examples/web`, so it must change in the same change whenever the public API or the `.lucia` markup changes.
+`reference/api.ts` is the API table. It feeds both the VS Code extension and `docs`, so it must change in the same change whenever the public API or the `.lucia` markup changes.
 
 ## Workflow
 
@@ -28,7 +26,7 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 - Create a GitHub issue only for work that will not be finished now: a feature or design the user asks to track, or a real gap left open after a task. Small fixes, tweaks and UI feedback that are done right away get no issue; the commit message is the record. Add details to an existing issue as a comment instead of opening a new one, and never open an issue per screenshot or per sub-step. Check open issues (`gh issue list`) at the start of a session and when choosing what to do next. Close an issue yourself, with a comment saying what was done, as soon as its work is merged into `dev` and `bun run check` passes. Do not wait for `main` (`fixes #N` only closes on `main`), and do not use an "on dev" label. Reference the issue in the commit (`refs #N`). Finished but uncommitted work keeps the `done-uncommitted` label until then.
 - `bun run check` (typecheck, tests, site build, extension build) must pass before any change is reported done or committed. Set `LUCIA_CHROMIUM` so the browser tests run too.
 - Every change updates the docs that describe it, in the same change. A task is not done while the docs are stale.
-- Every feature or behavior change also updates the demos in the same change: add or adjust the `examples/web` showcase section, and the `examples/stress` scenarios when it affects them. A task is not done while the demos are stale.
+- Every feature or behavior change also updates the demos in the same change: add or adjust the `docs` showcase section, and the `examples/stress` scenarios when it affects them. A task is not done while the demos are stale.
 
 ## Design direction
 
@@ -37,9 +35,9 @@ Any `.lucia` syntax change (new tag, attribute, keyword or export) must update b
 - Reuse the words the API already uses. A new option for the same idea takes the same word, with a prefix for the variant: `duration` -> `outDuration`, `turnDuration`; `style`/`ease` -> `turnStyle`/`turnEase`. Never introduce a synonym (`time`, `length`, `curve`, `transition`) for an existing word.
 - The user designs the markup syntax. Do not invent new syntax, and do not borrow Svelte's (`{#if}`, `on:`, runes, `export let`).
 - Deferred until designed with the user: SSR, hydration.
-- Events (`onclick={fn}`), `bind` and the flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) are designed and implemented. Their syntax follows [docs/events.md](docs/events.md) and [docs/flow.md](docs/flow.md). Change it only with the user.
-- `animate` is designed. Its syntax follows [docs/animate.md](docs/animate.md): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
-- `examples/web` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches web's `Events` demo, so update both together.
+- Events (`onclick={fn}`), `bind` and the flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) are designed and implemented. Their syntax follows the site Guide's Events, bind and Flow sections (https://azpepoze.github.io/luciajs/guide). Change it only with the user.
+- `animate` is designed. Its syntax follows the site Guide's Animate section (https://azpepoze.github.io/luciajs/guide): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
+- `docs` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches the docs site's `Events` demo, so update both together.
 
 ## Docs site structure
 

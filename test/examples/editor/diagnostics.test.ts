@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Text } from "@codemirror/state";
-import { diagnosticRange } from "../../../examples/web/src/editor/lint-source.ts";
-import { diagnosticsFor } from "../../../examples/web/src/editor/diagnostics.ts";
+import { diagnosticRange } from "../../../docs/src/editor/lint-source.ts";
+import { diagnosticsFor } from "../../../docs/src/editor/diagnostics.ts";
 
 const noChildren = () => undefined;
 

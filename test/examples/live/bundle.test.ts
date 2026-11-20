@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { buildLive } from "../../../examples/web/src/live/build.ts";
+import { buildLive } from "../../../docs/src/live/build.ts";
 
 const CARD = `<script>\nconst label: string = "card";\n</script>\n<p>{label}</p>\n`;
 const APP = `<script>\nimport Card from "./Card.lucia";\n</script>\n<main>\n  <Card />\n</main>\n`;

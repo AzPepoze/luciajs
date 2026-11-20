@@ -13,9 +13,9 @@
     "./bun-plugin": "./src/bun-plugin/index.ts"
   },
   "scripts": {
-    "dev": "bun scripts/playground-runtime.ts && bun src/cli/index.ts dev examples/web",
+    "dev": "bun scripts/playground-runtime.ts && bun src/cli/index.ts dev docs",
     "dev:stress": "bun src/cli/index.ts dev examples/stress",
-    "build": "bun scripts/playground-runtime.ts && bun src/cli/index.ts build examples/web --outdir dist --routes /guide,/reference,/playground",
+    "build": "bun scripts/playground-runtime.ts && bun src/cli/index.ts build docs",
     "test": "bun test",
     "format": "bun fmt",
     "format:check": "bun fmt --check",

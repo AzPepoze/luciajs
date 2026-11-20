@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { api } from "../../reference/api.ts";
-import { entryIcon } from "../../examples/web/src/catalog.ts";
+import { entryIcon } from "../../docs/src/catalog.ts";
 
 const ICON_NAME = /^[a-z0-9_]+$/;
 const CHEVRON_OR_ARROW = /chevron|arrow/;

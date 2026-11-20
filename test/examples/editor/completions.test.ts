@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { editorCompletions } from "../../../examples/web/src/editor/editor-completions.ts";
-import type { CompletionResult } from "../../../examples/web/src/editor/completions.ts";
+import { editorCompletions } from "../../../docs/src/editor/editor-completions.ts";
+import type { CompletionResult } from "../../../docs/src/editor/completions.ts";
 
 const FILE = "App.lucia";
 const BADGE_SCRIPT = `<script>\nimport Badge from "./Badge.lucia";\nconst count = variable(0);\n`;
