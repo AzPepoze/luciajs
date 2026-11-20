@@ -1,5 +1,6 @@
 export type ApiKind = "function" | "type" | "markup" | "style" | "value";
-export type ApiGroup = "basics" | "reactivity" | "flow" | "components" | "styling" | "motion";
+export type ApiGroup =
+  "basics" | "reactivity" | "events" | "flow" | "components" | "styling" | "motion";
 
 export interface ApiMember {
   members?: ApiMember[];
@@ -307,7 +308,7 @@ export const api: ApiEntry[] = [
     id: "html",
     name: "<HTML>{expr}</HTML>",
     kind: "markup",
-    group: "basics",
+    group: "components",
     signature: "<HTML>{expression}</HTML>",
     summary: "Inserts the expression's value as HTML, not as text.",
     bullets: [
@@ -337,7 +338,7 @@ export const api: ApiEntry[] = [
     id: "event",
     name: "onclick={fn}",
     kind: "markup",
-    group: "basics",
+    group: "events",
     signature: "on<event>={handler}",
     summary: "Runs a function when the element fires an event.",
     bullets: [
@@ -353,7 +354,7 @@ export const api: ApiEntry[] = [
     id: "bind",
     name: "bind={variable}",
     kind: "markup",
-    group: "basics",
+    group: "events",
     signature: "bind={variable}",
     summary: "Links a form control and a variable in both directions.",
     bullets: [
@@ -369,7 +370,7 @@ export const api: ApiEntry[] = [
     id: "bind-prop",
     name: "bind-<prop>={variable}",
     kind: "markup",
-    group: "basics",
+    group: "events",
     signature: "bind-<prop>={variable}",
     summary: "Links any DOM property and a variable in both directions.",
     bullets: [
@@ -384,7 +385,7 @@ export const api: ApiEntry[] = [
     id: "bind-element",
     name: "bind-element={variable}",
     kind: "markup",
-    group: "basics",
+    group: "events",
     signature: "bind-element={variable}",
     summary: "Variables the element itself, so code can use it without querySelector.",
     bullets: [
@@ -555,6 +556,20 @@ export const api: ApiEntry[] = [
       "more sets options for the trigger: VIEW, HOVER and SCROLL each take their own.",
     ],
     example: `<div animate={[\n  { style: fadeIn, when: WHEN.VIEW, duration: 400 },\n  { style: glow, when: WHEN.HOVER },\n]}>Hi</div>`,
+  },
+  {
+    id: "layout",
+    name: "Layout",
+    kind: "markup",
+    group: "motion",
+    signature: "animate={{ when: WHEN.MOVE }}",
+    summary: "Glides an element to its new place or size, with no keyframes.",
+    bullets: [
+      "No keyframes: the element moves from its old box to its new one.",
+      "WHEN.MOVE glides on a place change, WHEN.RESIZE on a size change, WHEN.MOVE_OR_RESIZE on either.",
+      "Any cause works: a class change, a list reorder, or content that opens.",
+    ],
+    example: `import { WHEN } from "lucia";\n\n<div animate={{ when: WHEN.MOVE, duration: 600 }}>Box</div>`,
   },
   {
     id: "ease",

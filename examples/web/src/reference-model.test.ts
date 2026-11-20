@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import type { ApiEntry } from "../../../reference/api.ts";
 import {
   flattenMembers,
-  groupEntries,
   kindsOf,
   matchesFilter,
   searchText,
@@ -53,19 +52,6 @@ describe("wrapSignature", () => {
     const long =
       "const WHEN: { readonly ATTACH: When; readonly DETACH: When; readonly VIEW: When }";
     expect(wrapSignature(long)).toBe(long);
-  });
-});
-
-describe("groupEntries", () => {
-  test("follows the given group order and drops empty groups", () => {
-    const entries = [
-      entry("a", { group: "flow" }),
-      entry("b", { group: "basics" }),
-      entry("c", { group: "flow" }),
-    ];
-    const groups = groupEntries(entries, ["basics", "reactivity", "flow"]);
-    expect(groups.map((item) => item.group)).toEqual(["basics", "flow"]);
-    expect(groups[1]!.entries.map((item) => item.id)).toEqual(["a", "c"]);
   });
 });
 

@@ -1,23 +1,27 @@
 <script>
-import { api, type ApiGroup } from "../../../../reference/api.ts";
-import { entryIcon, groupTitles } from "../catalog.ts";
+import { api } from "../../../../reference/api.ts";
+import { entryIcon } from "../catalog.ts";
 import RefCard from "../components/RefCard.lucia";
 import RefIndex from "../components/RefIndex.lucia";
+import { placeGroups } from "../guide-placement.ts";
 import { pageMotion } from "../motion/page.ts";
-import { groupEntries, kindsOf } from "../reference-model.ts";
+import { kindsOf } from "../reference-model.ts";
 
-// The index and the cards read the same groups, so their order always matches the Guide's.
-const groupOrder = Object.keys(groupTitles) as ApiGroup[];
-const groups = groupEntries(api, groupOrder).map(({ group, entries }) => ({
-  group,
-  label: groupTitles[group].label,
-  icon: groupTitles[group].icon,
-  color: groupTitles[group].color,
-  entries,
-  links: entries.map((entry) => ({
-    id: entry.id,
-    name: entry.name,
-    icon: entryIcon(entry.id),
+// The index and the cards read the same plan as the Guide, so their order always matches.
+const groups = placeGroups().map((group) => ({
+  group: group.group,
+  label: group.label,
+  icon: group.icon,
+  color: group.color,
+  blocks: group.blocks.map((block) => ({
+    id: block.id,
+    label: block.label,
+    entries: block.entries,
+    links: block.entries.map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      icon: entryIcon(entry.id),
+    })),
   })),
 }));
 const kinds = kindsOf(api);
@@ -57,10 +61,17 @@ const kinds = kindsOf(api);
     </div>
 
     <EACH {groups} as={group}>
-      <section class="ref-group" data-ref-section data-group={group.group} style={"--group: " + group.color}>
+      <section class="ref-group" data-ref-group={group.group} style={"--group: " + group.color}>
         <h2 class="ref-group-title">{group.label}</h2>
-        <EACH {group.entries} as={entry}>
-          <RefCard entry={entry} />
+        <EACH {group.blocks} as={block}>
+          <section class="ref-block" data-ref-section data-block={block.id}>
+            <IF {block.label}>
+              <h3 class="ref-block-title">{block.label}</h3>
+            </IF>
+            <EACH {block.entries} as={entry}>
+              <RefCard entry={entry} block={block.id} />
+            </EACH>
+          </section>
         </EACH>
       </section>
     </EACH>

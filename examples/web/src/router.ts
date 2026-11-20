@@ -1,4 +1,5 @@
 import { attach, type Component, type Instance } from "lucia";
+import { scrollToTarget } from "./hash-scroll.ts";
 import { normalizePath } from "./page-link.ts";
 import { refreshTopbar } from "./topbar.ts";
 
@@ -88,6 +89,5 @@ function markActiveLink(path: string): void {
 // Scrolls to the hash target, or to the top of the page when there is no hash.
 function scrollTo(hash: string): void {
   const target = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
-  if (target) target.scrollIntoView({ block: "start", behavior: "instant" });
-  else window.scrollTo({ top: 0, behavior: "instant" });
+  scrollToTarget(target);
 }

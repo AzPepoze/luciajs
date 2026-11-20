@@ -1,5 +1,4 @@
 import { lazy, type Component } from "lucia";
-import type { ApiGroup } from "../../../reference/api.ts";
 const Attributes = lazy(() => import("./demos/basics/Attributes.lucia"));
 const Markdown = lazy(() => import("./demos/basics/Markdown.lucia"));
 const BindElement = lazy(() => import("./demos/basics/BindElement.lucia"));
@@ -156,16 +155,6 @@ export interface CatalogEntry {
   demos?: Demo[];
   table?: CatalogTable;
 }
-
-// Each group has its own pastel colour. The sidebar tints the group header with it.
-export const groupTitles: Record<ApiGroup, { label: string; icon: string; color: string }> = {
-  basics: { label: "Basics", icon: "school", color: "var(--pink)" },
-  reactivity: { label: "Reactivity", icon: "bolt", color: "var(--lavender)" },
-  flow: { label: "Flow", icon: "alt_route", color: "var(--lemon)" },
-  components: { label: "Components", icon: "widgets", color: "var(--mint)" },
-  styling: { label: "Styling", icon: "palette", color: "var(--sky)" },
-  motion: { label: "Motion", icon: "animation", color: "var(--peach)" },
-};
 
 // Keyed by the api entry id. Entries without a demo show no live card.
 export const catalog: Record<string, CatalogEntry> = {
@@ -504,18 +493,7 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
-  "animate-item": {
-    icon: "tune",
-    demos: [
-      {
-        id: "animate-keyframe-default",
-        title: "Keyframe default",
-        caption: "default sets the style and ease for keys that do not set their own.",
-        components: [KeyframeDefault],
-        sources: [{ path: "src/demos/motion/KeyframeDefault.lucia", text: keyframeDefaultSource }],
-      },
-    ],
-  },
+  "animate-item": { icon: "tune" },
   style: {
     icon: "code",
     demos: [
@@ -563,7 +541,7 @@ export const catalog: Record<string, CatalogEntry> = {
     demos: [
       {
         id: "animate-enter",
-        title: "Enter only (WHEN.ATTACH)",
+        title: "Enter only",
         caption: "Plays once when attached. detach() removes the box at once.",
         components: [Enter],
         sources: [
@@ -573,7 +551,7 @@ export const catalog: Record<string, CatalogEntry> = {
       },
       {
         id: "animate-leave",
-        title: "Leave only (WHEN.DETACH)",
+        title: "Leave only",
         caption: "Plays when detached. detach() waits for it, then removes the box.",
         components: [Leave],
         sources: [
@@ -599,104 +577,6 @@ export const catalog: Record<string, CatalogEntry> = {
           { path: "src/demos/motion/Pop.lucia", text: popSource },
         ],
       },
-      {
-        id: "animate-variable",
-        title: "Variable as trigger",
-        caption: "A variable plays the animation forward when true, and back when false.",
-        components: [VariableTrigger],
-        sources: [{ path: "src/demos/motion/VariableTrigger.lucia", text: variableTriggerSource }],
-      },
-      {
-        id: "animate-control",
-        title: "Controller",
-        caption: "Play, reverse or stop the animation from code.",
-        components: [Control],
-        sources: [{ path: "src/demos/motion/Control.lucia", text: controlSource }],
-      },
-      {
-        id: "animate-reveal",
-        title: "Reveal on scroll",
-        caption: "Each line plays once as it scrolls into view.",
-        components: [Reveal],
-        sources: [{ path: "src/demos/motion/Reveal.lucia", text: revealSource }],
-      },
-      {
-        id: "animate-layout-corners",
-        title: "Layout: move",
-        caption: "No keyframes. The box glides when its place changes, from any cause.",
-        components: [LayoutCorners],
-        sources: [{ path: "src/demos/motion/LayoutCorners.lucia", text: layoutCornersSource }],
-      },
-      {
-        id: "animate-layout-list",
-        title: "Layout: reorder",
-        caption: "Rows glide to their new place when the list reorders.",
-        components: [LayoutList],
-        sources: [{ path: "src/demos/motion/LayoutList.lucia", text: layoutListSource }],
-      },
-      {
-        id: "animate-layout-card",
-        title: "Layout: resize",
-        caption: "A card grows and shrinks smoothly when its content opens.",
-        components: [LayoutCard],
-        sources: [{ path: "src/demos/motion/LayoutCard.lucia", text: layoutCardSource }],
-      },
-      {
-        id: "animate-easing",
-        title: "Custom easing",
-        caption: "Any function from 0 to 1 can be the curve.",
-        components: [Easing],
-        sources: [{ path: "src/demos/motion/Easing.lucia", text: easingSource }],
-      },
-      {
-        id: "animate-keys",
-        title: "Several keys",
-        caption: "Three keys set the color and size. The loop goes back and forth.",
-        components: [Keys],
-        sources: [{ path: "src/demos/motion/Keys.lucia", text: keysSource }],
-      },
-      {
-        id: "animate-loops",
-        title: "Loops",
-        caption: "Two loops on one square, each at its own speed.",
-        components: [Loops],
-        sources: [{ path: "src/demos/motion/Loops.lucia", text: loopsSource }],
-      },
-      {
-        id: "animate-hover-delay",
-        title: "Hover with a delay out",
-        caption: "The box stays lit for 300 ms after the pointer leaves.",
-        components: [HoverDelay],
-        sources: [{ path: "src/demos/motion/HoverDelay.lucia", text: hoverDelaySource }],
-      },
-      {
-        id: "animate-follow-scroll",
-        title: "Follow the scroll",
-        caption: "The bar fills and the card turns as you scroll.",
-        components: [FollowScroll],
-        sources: [{ path: "src/demos/motion/FollowScroll.lucia", text: followScrollSource }],
-      },
-      {
-        id: "animate-pinned-scroll",
-        title: "Pinned scroll",
-        caption: "A tall section holds the box on screen while you scroll past it.",
-        components: [PinnedScroll],
-        sources: [{ path: "src/demos/motion/PinnedScroll.lucia", text: pinnedScrollSource }],
-      },
-      {
-        id: "animate-hover-in-out",
-        title: "Hover in and out",
-        caption: "Plays in after a wait, and leaves with its own keys.",
-        components: [HoverInOut],
-        sources: [{ path: "src/demos/motion/HoverInOut.lucia", text: hoverInOutSource }],
-      },
-      {
-        id: "animate-midway",
-        title: "Midway: changing your mind",
-        caption: "Hover in and out quickly. Each box turns its own way.",
-        components: [MidwayMode],
-        sources: [{ path: "src/demos/motion/MidwayMode.lucia", text: midwayModeSource }],
-      },
     ],
   },
   "scroll-at": {
@@ -704,7 +584,7 @@ export const catalog: Record<string, CatalogEntry> = {
     demos: [
       {
         id: "scroll-default",
-        title: "Default: ENTER to LEAVE",
+        title: "Whole time on screen",
         caption: "With no start or end, the card fades in for the whole time it is on screen.",
         components: [ScrollDefault],
         sources: [
@@ -714,7 +594,7 @@ export const catalog: Record<string, CatalogEntry> = {
       },
       {
         id: "scroll-enter-center",
-        title: "ENTER to CENTER",
+        title: "Ends at the middle",
         caption: "The card finishes when it reaches the middle of the screen.",
         components: [ScrollEnterCenter],
         sources: [
@@ -723,7 +603,7 @@ export const catalog: Record<string, CatalogEntry> = {
       },
       {
         id: "scroll-center-leave",
-        title: "CENTER to LEAVE",
+        title: "Fades out at the top",
         caption: "The card fades out as it leaves the top of the screen.",
         components: [ScrollCenterLeave],
         sources: [
@@ -758,18 +638,27 @@ export const catalog: Record<string, CatalogEntry> = {
     demos: [
       {
         id: "scroll-touch-points",
-        title: "Object with EDGE or numbers",
+        title: "Edges or numbers",
         caption: "{ element, window } takes EDGE members or numbers from 0 to 1.",
         components: [ScrollTouchPoints],
         sources: [
           { path: "src/demos/motion/ScrollTouchPoints.lucia", text: scrollTouchPointsSource },
         ],
       },
-    ],
-  },
-  when: {
-    icon: "schedule",
-    demos: [
+      {
+        id: "animate-follow-scroll",
+        title: "Follow the scroll",
+        caption: "The bar fills and the card turns as you scroll.",
+        components: [FollowScroll],
+        sources: [{ path: "src/demos/motion/FollowScroll.lucia", text: followScrollSource }],
+      },
+      {
+        id: "animate-pinned-scroll",
+        title: "Pinned scroll",
+        caption: "A tall section holds the box on screen while you scroll past it.",
+        components: [PinnedScroll],
+        sources: [{ path: "src/demos/motion/PinnedScroll.lucia", text: pinnedScrollSource }],
+      },
       {
         id: "scroll-part-follow",
         title: "Steps with part and follow",
@@ -789,16 +678,129 @@ export const catalog: Record<string, CatalogEntry> = {
       },
     ],
   },
+  when: {
+    icon: "schedule",
+    demos: [
+      {
+        id: "animate-reveal",
+        title: "Reveal on scroll",
+        caption: "Each line plays once as it scrolls into view.",
+        components: [Reveal],
+        sources: [{ path: "src/demos/motion/Reveal.lucia", text: revealSource }],
+      },
+      {
+        id: "animate-hover-in-out",
+        title: "Hover in and out",
+        caption: "Plays in after a wait, and leaves with its own keys.",
+        components: [HoverInOut],
+        sources: [{ path: "src/demos/motion/HoverInOut.lucia", text: hoverInOutSource }],
+      },
+      {
+        id: "animate-hover-delay",
+        title: "Hover with a delay out",
+        caption: "The box stays lit for 300 ms after the pointer leaves.",
+        components: [HoverDelay],
+        sources: [{ path: "src/demos/motion/HoverDelay.lucia", text: hoverDelaySource }],
+      },
+      {
+        id: "animate-variable",
+        title: "Variable as trigger",
+        caption: "A variable plays the animation forward when true, and back when false.",
+        components: [VariableTrigger],
+        sources: [{ path: "src/demos/motion/VariableTrigger.lucia", text: variableTriggerSource }],
+      },
+    ],
+  },
+  layout: {
+    icon: "open_with",
+    demos: [
+      {
+        id: "animate-layout-corners",
+        title: "Move",
+        caption: "No keyframes. The box glides when its place changes, from any cause.",
+        components: [LayoutCorners],
+        sources: [{ path: "src/demos/motion/LayoutCorners.lucia", text: layoutCornersSource }],
+      },
+      {
+        id: "animate-layout-list",
+        title: "Reorder",
+        caption: "Rows glide to their new place when the list reorders.",
+        components: [LayoutList],
+        sources: [{ path: "src/demos/motion/LayoutList.lucia", text: layoutListSource }],
+      },
+      {
+        id: "animate-layout-card",
+        title: "Resize",
+        caption: "A card grows and shrinks smoothly when its content opens.",
+        components: [LayoutCard],
+        sources: [{ path: "src/demos/motion/LayoutCard.lucia", text: layoutCardSource }],
+      },
+    ],
+  },
   scoped: { icon: "segment" },
   global: { icon: "language" },
   "inline-global": { icon: "filter_center_focus" },
   elseif: { icon: "call_split" },
   else: { icon: "fork_right" },
   "bind-prop": { icon: "swap_horiz" },
-  ease: { icon: "show_chart" },
+  ease: {
+    icon: "show_chart",
+    demos: [
+      {
+        id: "animate-easing",
+        title: "Custom easing",
+        caption: "Any function from 0 to 1 can be the curve.",
+        components: [Easing],
+        sources: [{ path: "src/demos/motion/Easing.lucia", text: easingSource }],
+      },
+      {
+        id: "animate-keyframe-default",
+        title: "Keyframe default",
+        caption: "default sets the style and ease for keys that do not set their own.",
+        components: [KeyframeDefault],
+        sources: [{ path: "src/demos/motion/KeyframeDefault.lucia", text: keyframeDefaultSource }],
+      },
+      {
+        id: "animate-keys",
+        title: "Several keys",
+        caption: "Three keys set the color and size. The loop goes back and forth.",
+        components: [Keys],
+        sources: [{ path: "src/demos/motion/Keys.lucia", text: keysSource }],
+      },
+      {
+        id: "animate-loops",
+        title: "Loops",
+        caption: "Two loops on one square, each at its own speed.",
+        components: [Loops],
+        sources: [{ path: "src/demos/motion/Loops.lucia", text: loopsSource }],
+      },
+    ],
+  },
   "set-animate-default": { icon: "tune" },
-  controller: { icon: "play_circle" },
-  midway: { icon: "alt_route" },
+  controller: {
+    icon: "play_circle",
+    demos: [
+      {
+        id: "animate-control",
+        title: "Controller",
+        caption: "Play, reverse or stop the animation from code.",
+        components: [Control],
+        sources: [{ path: "src/demos/motion/Control.lucia", text: controlSource }],
+      },
+    ],
+  },
+  midway: {
+    icon: "alt_route",
+    demos: [
+      {
+        id: "animate-midway",
+        title: "Midway: changing your mind",
+        caption: "Hover in and out quickly. Each box turns its own way.",
+        components: [MidwayMode],
+        sources: [{ path: "src/demos/motion/MidwayMode.lucia", text: midwayModeSource }],
+      },
+    ],
+  },
   turn: { icon: "u_turn_left" },
   "animate-more": { icon: "more_horiz" },
   "animate-type": { icon: "movie" },

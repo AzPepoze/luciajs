@@ -116,9 +116,27 @@
   }
 }
 
-.nav-group.is-collapsed .nav-items {
+.is-collapsed > .nav-items {
   opacity: 0;
   grid-template-rows: 0fr;
+}
+
+// A named sub-group sits inside its group. Its header is smaller and tinted more lightly.
+.nav-subgroup + .nav-subgroup {
+  margin-top: 0.25rem;
+}
+
+.nav-title.nav-subtitle {
+  margin: 0.6rem 0 0.2rem 1rem;
+  padding: 0.3rem 0.6rem;
+  background: color-mix(in srgb, var(--group) 12%, transparent);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+
+  &:hover,
+  &:focus-visible {
+    background: color-mix(in srgb, var(--group) 24%, transparent);
+  }
 }
 
 .sidebar a {

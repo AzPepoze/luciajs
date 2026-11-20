@@ -8,7 +8,8 @@ const index = buildSearchIndex();
 describe("search index", () => {
   test("has one entry for every reference entry", () => {
     const reference = index.filter((entry) => entry.page === "Reference");
-    expect(reference.map((entry) => entry.title.text)).toEqual(api.map((entry) => entry.name));
+    const titles = reference.map((entry) => entry.title.text);
+    expect([...titles].sort()).toEqual(api.map((entry) => entry.name).sort());
   });
 
   test("has one Guide entry for every demo in the catalog", () => {

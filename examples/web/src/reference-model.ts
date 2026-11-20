@@ -1,9 +1,4 @@
-import type { ApiEntry, ApiGroup, ApiMember } from "../../../reference/api.ts";
-
-export interface GroupEntries {
-  group: ApiGroup;
-  entries: ApiEntry[];
-}
+import type { ApiEntry, ApiMember } from "../../../reference/api.ts";
 
 export interface MemberRow {
   name: string;
@@ -15,13 +10,6 @@ export interface MemberRow {
 const WRAP_AT = 60;
 const OPENERS = "([{<";
 const CLOSERS = ")]}>";
-
-// Entries grouped in the given order. Groups with no entries are left out. Type entries stay in.
-export function groupEntries(entries: ApiEntry[], order: readonly ApiGroup[]): GroupEntries[] {
-  return order
-    .map((group) => ({ group, entries: entries.filter((entry) => entry.group === group) }))
-    .filter((item) => item.entries.length > 0);
-}
 
 // Every kind in the list once, in the order it first appears.
 export function kindsOf(entries: ApiEntry[]): string[] {

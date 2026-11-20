@@ -1,3 +1,4 @@
+import { expandAround } from "./nav-group.ts";
 import { keepInView } from "./sidebar-follow.ts";
 
 // Px from the top of the viewport where a section or demo becomes current. Below the scroll margin, so a clicked target is current.
@@ -96,8 +97,10 @@ function activate(section: HTMLElement | undefined, demo: HTMLElement | undefine
   for (const link of activeLinks) link.removeAttribute("aria-current");
   for (const link of links) link.setAttribute("aria-current", "true");
   activeLinks = links;
-  placeIndicator(links.at(-1));
-  if (links.length > 0) keepInView(links.at(-1)!);
+  const current = links.at(-1);
+  if (current) expandAround(current);
+  placeIndicator(current);
+  if (current) keepInView(current);
 }
 
 function linksFor(target: HTMLElement | undefined): HTMLAnchorElement[] {
