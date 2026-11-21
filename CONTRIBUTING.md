@@ -1,110 +1,133 @@
 # Contributing to Lusia
 
-Lusia is a Bun-native UI framework built from single-file `.lusia` components, variables and scoped SCSS. This page is for contributors and coding agents. It covers the commands, the repo layout, how the compiler and runtime fit together, and the rules that keep a change consistent. It only includes facts that are not obvious from the code.
+Welcome, and thank you for helping improve Lusia. Start with the [quick start](README.md#quick-start), then use this page for commands and code rules. The [Guide](https://azpepoze.github.io/lusia/guide) explains the framework itself.
 
-## Install, run and test
+## Commands
 
-| Task                                      | Command                                      |
-| ----------------------------------------- | -------------------------------------------- |
-| Install lusia's packages                  | `bun install`                                |
-| Install the docs site's packages          | `cd docs && bun install`                     |
-| Stress example (port 3000)                | `bun run dev:stress`                         |
-| Docs site (port 3000)                     | `cd docs && bun run dev`                     |
-| Build the docs site (writes `docs/dist/`) | `cd docs && bun run build`                   |
-| Lusia tests (parallel, 6 workers)         | `bun run test`                               |
-| Docs site tests                           | `cd docs && bun run test`                    |
-| One test file                             | `bun test test/compiler/style/modes.test.ts` |
-| Tests by name                             | `bun test -t "diamond"`                      |
-| Typecheck                                 | `bun run typecheck`                          |
-| Format all files                          | `bun run format`                             |
-| Check formatting without writing          | `bun run format:check`                       |
-| Everything before a commit (lusia)        | `bun run check`                              |
-| Everything before a commit (docs site)    | `cd docs && bun run check`                   |
+| Task | Command |
+| ---- | ------- |
+| Install packages | `bun install` |
+| Install docs site packages | `cd docs && bun install` |
+| Run the stress example (port 3000) | `bun run dev:stress` |
+| Run the docs site (port 3000) | `cd docs && bun run dev` |
+| Build the docs site into `docs/dist/` | `cd docs && bun run build` |
+| Run the lusia tests | `bun run test` |
+| Run the docs site tests | `cd docs && bun run test` |
+| Run one test file | `bun test test/compiler/style/modes.test.ts` |
+| Run tests by name | `bun test -t "diamond"` |
+| Typecheck | `bun run typecheck` |
+| Format all files | `bun run format` |
+| Check formatting without writing | `bun run format:check` |
+| Check before a commit (lusia) | `bun run check` |
+| Check before a commit (docs site) | `cd docs && bun run check` |
+| Run the editor tests | `bun test test/editors` |
+| Build the VS Code extension | `cd editors/vscode && bun run build` |
 
-`cd docs && bun run dev` and `cd docs && bun run build` first run `docs/scripts/playground-runtime.ts`, which writes the playground preview runtime. Run `cd docs && bun scripts/playground-runtime.ts` yourself before using the CLI directly.
+> [!TIP]
+> Set `LUSIA_CHROMIUM` to a Chromium path to run the browser tests. Without it they are skipped.
 
-`bun run check` covers the lusia package only: it runs the typecheck, tests and the VS Code extension build in parallel and prints each step's time. `cd docs && bun run check` covers the docs site: typecheck, tests and site build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
+`bun run check` runs the typecheck, the tests and the extension build in parallel. `cd docs && bun run check` runs the docs site typecheck, tests and build.
 
-Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
+`cd docs && bun run dev` and `bun run build` first run `docs/scripts/playground-runtime.ts`. Run that script yourself before using the CLI directly.
 
-The `lusia` command builds and serves an app folder, and formats and lints its `.lusia` files. An app folder has an `index.html` that points to its entry with a module script. Run it with Bun, for example `bun src/cli/index.ts build docs`. Its commands are `lusia build [dir]`, `lusia dev [dir]`, `lusia format [path...]` and `lusia lint [path...]`; a `lusia.config.json` sets the same options and flags win over it. `outdir` in the config file, and the default output folder, are relative to the app folder, while `--outdir` is relative to the current folder. The docs site builds into `docs/dist`; the repo's root `dist/` is kept for the Lusia package build.
+Tests use small data. The large stress sizes live in `examples/stress` and run only on the stress page.
 
-`lusia format` writes files formatted with the project's Prettier config, `--check` lists the files that would change and exits 1, and section content is formatted as TypeScript, SCSS or CSS and markup as HTML through the same formatter the editor uses. It remembers which files are already formatted and skips them on the next run, keyed by content and Prettier options; `--no-cache` formats every file again. `lusia lint` compiles each file, prints the compile errors and the lint findings, and exits 1 on errors or too many warnings (`--max-warnings`); `--fix` applies the safe fixes, such as removing an unused import. `lint.rules` in `lusia.config.json` sets each rule to `"off"`, `"warn"` or `"error"`, and `<!-- lusia-lint-disable[-next-line] rule -->` turns a rule off for the rest of the file or for the next line.
-
-The lint rules are the ones the VS Code extension shows: `unused-import`, `props-twice`, `unknown-prop`, `empty-expression`, `style-attribute`, `animate-keyframes`, `animate-key`, `scroll-numeric-line`, `flow-chain` and `bind-target`.
+Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `bun src/cli/index.ts --help` for the commands and flags.
 
 ## Repo layout
 
-| Path               | What it holds                                                |
-| ------------------ | ------------------------------------------------------------ |
-| `src/runtime`      | Variables, DOM helpers, blocks, animate                      |
-| `src/compiler`     | The `.lusia` compiler: parse, style, template, codegen       |
-| `src/bun-plugin`   | The Bun loader for `.lusia` files and `?raw` imports         |
-| `src/cli`          | The `lusia` command: `build` and `dev`                       |
-| `test/`            | Tests. One folder per area, each mirroring its `src/` folder |
-| `docs`             | The docs site (own `package.json`): every feature with a live demo and source, and its tests |
-| `examples/stress`  | Scenarios that push the limits and report timings            |
-| `editors/vscode`   | The VS Code extension and `.lusia` grammar                   |
-| `reference/api.ts` | The single API table for the extension and the docs site     |
-| `test/setup.ts`    | Sets up the fake DOM (happy-dom) and the `.lusia` loader     |
+| Path | What it holds |
+| ---- | ------------- |
+| `src/runtime` | The `lusia` package: variables, DOM helpers, animate |
+| `src/compiler` | Turns `.lusia` files into TypeScript modules |
+| `src/language` | Parse, format and lint for `.lusia` files |
+| `src/bun-plugin` | The Bun loader for `.lusia` files and `?raw` imports |
+| `src/cli` | The `lusia` command |
+| `test/` | Tests. One folder per area, mirroring `src/`. `test/setup.ts` sets up the fake DOM |
+| `docs/` | The docs site, with its own `package.json` |
+| `examples/stress` | Scenarios that push the limits and report timings |
+| `editors/vscode` | The VS Code extension and the `.lusia` grammar |
+| `reference/api.ts` | The API table for the extension and the docs site |
+| `scripts/check.ts` | The steps behind `bun run check` |
 
-Domain folders own framework logic (`parse/`, `style/`, `template/`, `variable/`, `dom/`). `utils/` holds only helpers used by two or more domains. One job per file, around 150 lines. Imports across areas use `@runtime/`, `@compiler/`, `@bun-plugin/` and `@cli/` aliases; imports inside one area stay relative.
+### Folders inside `src`
 
-## How the compiler and runtime fit together
+| Folder | What it holds |
+| ------ | ------------- |
+| `src/runtime/variable` | Variables, compute values and updates |
+| `src/runtime/dom` | Bindings, blocks, components, lazy loading, hot reload and templates |
+| `src/runtime/animate` | The animate helpers |
+| `src/compiler/parse` | Splits script, style and markup |
+| `src/compiler/style` | Sass compile and selector scoping |
+| `src/compiler/template` | Scans markup, checks it and writes the module |
+| `src/compiler/errors` | Error codes and error output |
+| `src/compiler/sourcemap` | Source maps for compiled files |
+| `src/compiler/hot` | Hot reload support for compiled files |
+| `src/compiler/lazy` | Lazy component loading for compiled files |
+| `src/compiler/utils` | Small helpers for the compiler |
+| `src/language/parse` | Sections, imports, props and tags |
+| `src/language/format` | Formatting for `.lusia` files |
+| `src/language/lint` | Lint rules, one file per rule group |
+| `src/cli/args` | Command line and `lusia.config.json` options |
+| `src/cli/build` | The build command |
+| `src/cli/dev` | The dev server and file watching |
+| `src/cli/format` | The format command |
+| `src/cli/lint` | The lint command |
+| `src/cli/log` | Colored log output |
 
-A `.lusia` file becomes DOM through the Bun plugin and a four-step compiler pipeline:
+## Code rules
 
-```text
-App.lusia
-   |  lusia/bun-plugin (onLoad, loader "ts")
-   v
-lusia/compiler:  parse  ->  style  ->  template  ->  codegen
-   |
-   v
-TypeScript module  --imports-->  lusia/internal (runtime helpers)
+- Framework logic lives in domain folders: `parse/`, `style/`, `template/`, `variable/` and `dom/`.
+- `utils/` holds only helpers that two or more domains use.
+- One job per file, around 150 lines.
+- Imports across areas use the `@runtime/`, `@compiler/`, `@bun-plugin/`, `@cli/` and `@language/` aliases. Imports inside one area stay relative.
+- `src/runtime` ships to apps as the `lusia` package, so it uses relative imports only.
+- Public names use plain words and "update", never "change". The DOM `change` event keeps its name.
+- Avoid allocations on hot paths. Render loops and audio callbacks must not allocate, lock or log.
+- Compiler and runtime share the marker names in `src/runtime/markers.ts`. Both walk the markup in document order, because bindings match nodes by index.
+- Variable writes only mark dependent `variable.compute` values dirty. `markDirty()` must never read variables.
+
+### Error codes
+
+Codes live in the `CODES` table in `src/compiler/errors/codes.ts`.
+
+| Range | Meaning |
+| ----- | ------- |
+| `L1xxx` | Compile errors in `.lusia` files |
+| `L2xxx` | Runtime errors |
+| `L3xxx` | Bundler errors from `Bun.build` |
+
+To add a code, add one entry to `CODES`. Raise it with `lusiaError` (compiler) or `runtimeError` (runtime). The [Errors](https://azpepoze.github.io/lusia/errors) page reads the table, so it needs no edit.
+
+### Syntax and API changes
+
+A change to the API or to `.lusia` markup must update these in the same change:
+
+- `reference/api.ts`
+- The site Guide
+- The demos in `docs`, and `examples/stress` when it is affected
+
+A `.lusia` syntax change also updates both highlighters: the VS Code grammar, the extension's completion, hover, lint and formatter, and the docs site's Prism `lusia` language. See the Guide's Editor section.
+
+### VS Code extension
+
+The extension build bundles the compiler from `src/compiler`, so install the repo root first. To try a build in VS Code:
+
+```sh
+cd editors/vscode
+bun install
+bun run build
+ln -s "$PWD" ~/.vscode/extensions/lusia.lusia-vscode-0.2.0
 ```
 
-- **Parse** splits script, style and markup. Removed sections keep their newlines so markup line numbers match the source.
-- **Style** compiles each `<style>` with Sass, then adds a scope filter to each selector. The scope id is the FNV-1a hash of the file path.
-- **Template** scans the markup into static HTML plus a list of bindings in document order. Components, flow tags, events and `bind-value` become bindings.
-- **Codegen** writes the module. Imports stay at module level, `export` is a compile error, and the script body runs once per instance.
+Run **Developer: Reload Window** after each build. To check a colour token, run **Developer: Inspect Editor Tokens and Scopes**.
 
-The compiler replaces each binding with a marker in the HTML (`<!--l-->` comments or `data-l-bind` on an element). Marker names live in `src/runtime/markers.ts`, shared by compiler and runtime. At runtime `createTemplate` parses the HTML and records the path to each marked node, `instantiate` clones it per attach, and one binder per binding wires the node to a `watch()`. Paths and binders are matched by index, so both sides must walk in document order.
-
-Variable updates run in two phases: a write marks dependent `variable.compute` values dirty without running them, then queued watchers run once each. `markDirty()` must never read variables.
-
-## Error codes
-
-Error codes live in the `CODES` table in `src/compiler/errors/codes.ts`. Each code has a message and a hint.
-
-To add a code:
-
-1. Add one entry to `CODES`. Use `L1xxx` for compile errors and `L2xxx` for runtime errors.
-2. Raise it with `lusiaError` (compiler) or `runtimeError` (runtime), passing a value for each `$name` placeholder.
-3. Add the code to the docs site's Errors page.
-
-> [!WARNING]
-> Error codes are documented on the site's `/errors` page, generated from `src/compiler/errors/codes.ts`. Add a code there and the page picks it up automatically.
-
-## Editor setup
-
-The VS Code extension is in `editors/vscode`. It provides colours, completion, hover, diagnostics, navigation and formatting for `.lusia` files. The docs site also has a browser editor (`docs/src/components/CodeEditor.lusia`) and a Prism `lusia` language in `docs`, both backed by the same API table.
-
-- `reference/api.ts` is the **single source of truth** for the API. Completion, hover and the docs site all read it. Update it in the same change as any public API or markup change.
-- Any `.lusia` syntax change (new tag, attribute, keyword or export) must update **both highlighters in the same change** with matching coverage: the VS Code grammar (`editors/vscode/syntaxes/lusia.tmLanguage.json`) plus the extension's completion, hover, lint and formatter, and the docs site's Prism `lusia` language. A change is not done while either one shows the new syntax as plain text.
-
-Editor checks:
-
-| Command                               | Checks                                                            |
-| ------------------------------------- | ----------------------------------------------------------------- |
-| `bun test test/editors`               | Grammar, token scopes, completion, hover, format, lint, API table |
-| `cd editors/vscode && bun run build`  | The extension bundles                                             |
-| `bunx tsc --noEmit -p editors/vscode` | The extension type checks                                         |
+Check the extension with `bunx tsc --noEmit -p editors/vscode`.
 
 ## Workflow
 
-- Use **Conventional Commits**: `type(scope): short imperative summary`, with a lowercase summary, no trailing period and under about 72 characters. Types: `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `build`, `ci`, `chore`, `style`, `revert`. Add `!` for a breaking change. Do not add attribution trailers.
-- Work in your own git worktree branched from `dev`. Create one with `git worktree add .worktrees/<name> -b <branch> dev`, then run `git rebase dev` first. Worktrees live under `.worktrees/` and are gitignored. Keep screenshots, benchmarks and scripts under `.agent/` in your worktree, not in a scratchpad or a copy of the repo in `/tmp`.
-- `bun run check` must pass before any change is reported done or committed.
-- Update the docs that describe a change in the same change. Feature and behaviour changes also update the demos in `docs` (and `examples/stress` when affected). A task is not done while the docs or demos are stale.
-- `main` gets `dev` only when the user says so.
+- Commit messages use [Conventional Commits](https://www.conventionalcommits.org): `type(scope): short imperative summary`. Keep the summary lowercase, with no trailing period, under about 72 characters.
+- Work on a branch from `dev`, in your own worktree: `git worktree add .worktrees/<name> -b <branch> dev`. `.worktrees/` and `.agent/` are gitignored.
+- Run `bun run check` before you report a change as done.
+- Update the docs that describe your change in the same change.
+- `main` only takes changes from `dev` when the maintainer says so.
