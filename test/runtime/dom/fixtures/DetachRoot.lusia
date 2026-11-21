@@ -1,0 +1,10 @@
+<script>
+import { onDetach } from "lusia";
+import { roots } from "./log.ts";
+
+onDetach((root: ParentNode) => {
+  roots.push(root);
+});
+</script>
+
+<p>Root</p>

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { variable } from "@runtime/variable/variable.ts";
 import Counter from "../fixtures/Counter.lusia";
-import Setup from "../fixtures/Setup.lusia";
+import OnAttach from "../fixtures/OnAttach.lusia";
 import Shelf from "../fixtures/Shelf.lusia";
 import { events } from "../fixtures/log.ts";
 import { host, mount, resetMounts, text, unmount, click } from "../fixtures/mount.ts";
@@ -55,14 +55,14 @@ describe("component instances", () => {
     expect(childBadge.textContent).toBe("First");
   });
 
-  test("setup runs after the nodes are placed, and its cleanup runs on detach", () => {
+  test("onAttach runs after the nodes are placed, and its returned cleanup runs on detach", () => {
     const el = host();
-    const instance = mount(Setup, el);
+    const instance = mount(OnAttach, el);
 
-    expect(events).toEqual(["setup"]);
+    expect(events).toEqual(["attach"]);
 
     unmount(instance);
 
-    expect(events).toEqual(["setup", "cleanup"]);
+    expect(events).toEqual(["attach", "cleanup"]);
   });
 });

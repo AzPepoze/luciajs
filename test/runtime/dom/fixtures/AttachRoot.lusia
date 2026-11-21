@@ -1,0 +1,10 @@
+<script>
+import { onAttach } from "lusia";
+import { roots } from "./log.ts";
+
+onAttach((root: ParentNode) => {
+  roots.push(root);
+});
+</script>
+
+<p>Root</p>
