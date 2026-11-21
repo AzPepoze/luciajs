@@ -50,10 +50,7 @@ function readTag(markup: string, start: number, expressions: number[]): Tag {
   return { name, start, end: markup.length, closing, selfClosing: false };
 }
 
-/**
- * Every tag in the markup, in order. Comments are skipped. `{...}` is skipped too, and each `{` in
- * the text or in a tag is pushed to `expressions`, so a caller can check for expressions.
- */
+/** Every tag in order. Skips comments and `{...}`, and records each `{` in `expressions`. */
 export function readTags(markup: string, expressions: number[]): Tag[] {
   const tags: Tag[] = [];
   let pos = 0;

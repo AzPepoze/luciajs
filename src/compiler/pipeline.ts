@@ -35,10 +35,8 @@ export type StyleCompiler = (style: Section, index: number, id: string) => Style
 
 export interface PipelineOptions {
   dev: boolean;
-  /** The file name written into the generated code. */
   displayFile: string;
   styles: StyleCompiler;
-  /** Splits imported .lusia files into their own chunks. Off when absent. */
   lazy?: LazyOptions;
 }
 

@@ -3,7 +3,7 @@ import type { Template } from "../types/template.ts";
 import type { Cursor } from "./cursor.ts";
 import { isBlank } from "./scope.ts";
 
-/** Reads the markup between a component's open and close tags. Blank children count as none. */
+/** Blank children count as none. */
 export function readComponentChildren(
   c: Cursor,
   name: string,

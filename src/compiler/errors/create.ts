@@ -19,7 +19,6 @@ export function fill(template: string, values: Values = {}): string {
   );
 }
 
-/** Builds the error for a code, with its message and hint filled in. */
 export function lusiaError(code: ErrorCodeName, values: Values = {}, span?: Span): LusiaError {
   const entry = CODES[code];
   return new LusiaError(fill(entry.message, values), span?.file, span?.line, span?.column, {

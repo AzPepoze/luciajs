@@ -2,7 +2,6 @@ import type { ImportStatement, LusiaImport } from "../parse/imports.ts";
 import type { LazyOptions, LazyPrefetch } from "./options.ts";
 import { onlyInFlow, usedInScript } from "./uses.ts";
 
-/** The import statements of a script, with each split `.lusia` import replaced by a lazy component. */
 export function importsWithSplits(
   statements: ImportStatement[],
   markup: string,

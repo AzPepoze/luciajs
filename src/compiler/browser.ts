@@ -15,11 +15,9 @@ export interface BrowserOptions {
 }
 
 export interface BrowserCompile {
-  /** Plain JavaScript, with the TypeScript removed. */
   code: string;
 }
 
-/** Compiles a .lusia file for the browser, without Node modules. Syntax errors in the script point at the source. */
 export function compileForBrowser(
   source: string,
   file: string,
@@ -35,7 +33,7 @@ export function compileForBrowser(
   return { code: stripTypes(code, file) };
 }
 
-/** Removes the TypeScript from a script or module. Throws a SyntaxError with `loc` on bad syntax. */
+/** Throws a SyntaxError with `loc` on bad syntax. */
 export function stripTypes(code: string, file: string): string {
   return transform(code, { transforms: ["typescript"], filePath: file }).code;
 }
@@ -56,7 +54,6 @@ function checkScriptSyntax(source: string, file: string): void {
   }
 }
 
-/** A sucrase syntax message without its file prefix and position. */
 export function cleanSyntaxMessage(message: string): string {
   return message.replace(/^Error transforming [^:]*: /, "").replace(/ \(\d+:\d+\)$/, "");
 }

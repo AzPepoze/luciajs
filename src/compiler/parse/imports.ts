@@ -36,7 +36,6 @@ function defaultLusiaImport(statement: string, specifier: string): string | unde
   return DEFAULT_IMPORT.exec(statement)?.[1];
 }
 
-/** An error at `offset` inside the script section, reported with the file position. */
 function scriptError(
   script: Section,
   offset: number,

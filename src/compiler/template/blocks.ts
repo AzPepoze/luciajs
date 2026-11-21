@@ -11,7 +11,6 @@ export function readBlock(c: Cursor, name: BlockName, body: BodyReader): Binding
   return readFor(c, body);
 }
 
-/** The block that opens at the cursor, if any. */
 export function blockOpenAt(c: Cursor): BlockName | undefined {
   return c.match(OPEN_TAG)?.[1] as BlockName | undefined;
 }
