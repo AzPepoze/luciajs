@@ -161,6 +161,7 @@ describe("motion completions", () => {
       "outDelay",
       "out",
       "outDuration",
+      "area",
     ]);
     expect(completionsAt(scroll, scroll.length, noProps).map((item) => item.label)).toEqual([
       "start",

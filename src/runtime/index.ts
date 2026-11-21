@@ -17,6 +17,8 @@ export { MIDWAY, TURN } from "./animate/modes/midway-modes.ts";
 export type { MidwayMode, TurnMode } from "./animate/modes/midway-modes.ts";
 export { SCROLL_AT, EDGE } from "./animate/modes/scroll-modes.ts";
 export type { ScrollAtMode } from "./animate/modes/scroll-modes.ts";
+export { HOVER_AREA } from "./animate/modes/hover-modes.ts";
+export type { HoverArea } from "./animate/modes/hover-modes.ts";
 export { controller } from "./animate/play/controller.ts";
 export type { Controller } from "./animate/play/controller.ts";
 export type { Keyframe, KeyframeValue, Keyframes, Style } from "./animate/options/keyframes.ts";

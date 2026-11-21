@@ -1,6 +1,7 @@
 import { listen, type Cleanup } from "../../dom/template/bindings.ts";
 import { prepareTimeline } from "../options/keyframes.ts";
 import type { Group } from "./group.ts";
+import { HOVER_AREA } from "../modes/hover-modes.ts";
 import type { HoverRead } from "../options/hover-options.ts";
 import type { Timing } from "../options/options.ts";
 import { DEFAULT_MIDWAY } from "../options/midway-options.ts";
@@ -58,22 +59,8 @@ export function bindHover(
     if (playedIn && !once) after(state, hover.outDelay, "out", playOut);
   };
 
-  listen(
-    el,
-    "pointerenter",
-    (event) => {
-      if (!isTouch(event)) enter();
-    },
-    cleanups,
-  );
-  listen(
-    el,
-    "pointerleave",
-    (event) => {
-      if (!isTouch(event)) leave();
-    },
-    cleanups,
-  );
+  if (hover.area === HOVER_AREA.FINAL) bindFinalArea(el, state, enter, leave, cleanups);
+  else bindElementArea(el, enter, leave, cleanups);
   listen(
     el,
     "pointerdown",
@@ -98,6 +85,80 @@ export function bindHover(
     cancel();
     outPlayer?.cancel();
   });
+}
+
+/** The element's own hit box: the pointer events of the moving element. */
+function bindElementArea(
+  el: HTMLElement,
+  enter: () => void,
+  leave: () => void,
+  cleanups: Cleanup[],
+): void {
+  listen(
+    el,
+    "pointerenter",
+    (event) => {
+      if (!isTouch(event)) enter();
+    },
+    cleanups,
+  );
+  listen(
+    el,
+    "pointerleave",
+    (event) => {
+      if (!isTouch(event)) leave();
+    },
+    cleanups,
+  );
+}
+
+/** The resting box: the pointer is checked against where the element sits without its transform. */
+function bindFinalArea(
+  el: HTMLElement,
+  state: HoverState,
+  enter: () => void,
+  leave: () => void,
+  cleanups: Cleanup[],
+): void {
+  listen(
+    document,
+    "pointermove",
+    (event) => {
+      if (isTouch(event)) return;
+      const pointer = event as PointerEvent;
+      const isOver = isInBox(restBox(el), pointer.clientX, pointer.clientY);
+      if (isOver && !state.inside) enter();
+      else if (!isOver && state.inside) leave();
+    },
+    cleanups,
+  );
+  listen(
+    document.documentElement,
+    "pointerout",
+    (event) => {
+      if ((event as PointerEvent).relatedTarget === null) leave();
+    },
+    cleanups,
+  );
+}
+
+const TRANSFORM_PROPERTIES = ["translate", "scale", "rotate", "transform"];
+
+/** The box the element has with no inline transform. Clearing and restoring is synchronous, so nothing paints. */
+function restBox(el: HTMLElement): DOMRect {
+  const style = el.style;
+  const saved = TRANSFORM_PROPERTIES.map((name) => style.getPropertyValue(name));
+  if (saved.every((value) => value === "")) return el.getBoundingClientRect();
+  TRANSFORM_PROPERTIES.forEach((name) => style.removeProperty(name));
+  const box = el.getBoundingClientRect();
+  TRANSFORM_PROPERTIES.forEach((name, index) => {
+    if (saved[index] !== "") style.setProperty(name, saved[index]!);
+  });
+  return box;
+}
+
+function isInBox(box: DOMRect, x: number, y: number): boolean {
+  return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom;
 }
 
 /** A delay of 0 plays at once, so the play is synchronous unless the item asks to wait. */

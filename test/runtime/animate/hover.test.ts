@@ -5,6 +5,8 @@ import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
 import { readMore as readWith } from "@runtime/animate/options/trigger-options.ts";
 import { EASE } from "@runtime/animate/modes/modes.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { HOVER_AREA } from "@runtime/animate/modes/hover-modes.ts";
+import { HOVER_KEYS } from "@runtime/animate/options/keys.ts";
 import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
@@ -27,7 +29,14 @@ function mount(item: Omit<AnimateItem, "style"> = {}) {
   const leaves: Leave[] = [];
   animate(
     el,
-    () => ({ style: fade, duration: 100, when: WHEN.HOVER, ...item }) as AnimateItem,
+    () =>
+      ({
+        style: fade,
+        duration: 100,
+        when: WHEN.HOVER,
+        ...item,
+        more: { area: HOVER_AREA.ELEMENT, ...item.more },
+      }) as AnimateItem,
     cleanups,
     leaves,
   );
@@ -91,7 +100,7 @@ describe("WHEN.HOVER more outDelay", () => {
 
   test("more on HOVER only accepts its own keys", () => {
     expect(() => readMore(WHEN.HOVER, { margin: 10 } as never)).toThrow(
-      'more has an unknown key "margin", use inDelay, outDelay, out or outDuration',
+      'more has an unknown key "margin", use area, inDelay, outDelay, out or outDuration',
     );
   });
 });
@@ -257,5 +266,26 @@ describe("WHEN.HOVER touch and keyboard", () => {
     el.dispatchEvent(new Event("focusout"));
     advance(100);
     expect(opacity()).toBe(0);
+  });
+});
+
+describe("WHEN.HOVER more area", () => {
+  test("defaults to HOVER_AREA.FINAL", () => {
+    expect(readMore(WHEN.HOVER, undefined).hover.area).toBe(HOVER_AREA.FINAL);
+    expect(readMore(WHEN.HOVER, {}).hover.area).toBe(HOVER_AREA.FINAL);
+  });
+
+  test("accepts HOVER_AREA.ELEMENT", () => {
+    expect(readMore(WHEN.HOVER, { area: HOVER_AREA.ELEMENT }).hover.area).toBe(HOVER_AREA.ELEMENT);
+  });
+
+  test("rejects a string such as 'final'", () => {
+    expect(() => readMore(WHEN.HOVER, { area: "final" } as never)).toThrow(
+      "animate more area must be HOVER_AREA.FINAL or HOVER_AREA.ELEMENT",
+    );
+  });
+
+  test("HOVER_KEYS includes area", () => {
+    expect(HOVER_KEYS).toContain("area");
   });
 });

@@ -193,7 +193,7 @@ describe("more errors", () => {
     );
     expect(() =>
       readItem({ style: fade, when: WHEN.HOVER, more: { amount: 0.5 } } as AnimateItem),
-    ).toThrow('more has an unknown key "amount", use inDelay, outDelay, out or outDuration');
+    ).toThrow('more has an unknown key "amount", use area, inDelay, outDelay, out or outDuration');
   });
 
   test("more on a variable when names it as a variable", () => {

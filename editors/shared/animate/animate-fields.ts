@@ -40,7 +40,7 @@ const FIELD_ITEMS: CompletionItemData[] = [
     insertText: "more: { $1 }",
     snippet: true,
     detail:
-      "Trigger options: VIEW margin, amount, reverse; HOVER inDelay, outDelay, out, outDuration; SCROLL start, end, follow, part; DETACH and ATTACH animateSpace",
+      "Trigger options: VIEW margin, amount, reverse; HOVER inDelay, outDelay, out, outDuration, area; SCROLL start, end, follow, part; DETACH and ATTACH animateSpace",
   },
   {
     label: "midway",
@@ -148,6 +148,13 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
       insertText: "outDuration: $1",
       snippet: true,
       detail: "Ms for the way out (default: the item duration). Needs out",
+    },
+    {
+      label: "area",
+      kind: "property",
+      insertText: "area: $1",
+      snippet: true,
+      detail: "Where the hover is checked: HOVER_AREA.FINAL (resting box, default) or HOVER_AREA.ELEMENT",
     },
   ],
   DETACH: [ANIMATE_SPACE_FIELD],
