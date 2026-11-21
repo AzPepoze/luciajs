@@ -20,7 +20,6 @@ export interface HotInstance {
   readonly children: Set<HotInstance>;
   /** The leave list this instance joined: its parent's, or the list of a root attach. */
   readonly parentLeaves: Leave[];
-  /** This instance's entry in `parentLeaves`, when its render has leave animations. */
   leaveHook: Leave | null;
   start: Text;
   end: Text;
@@ -103,7 +102,6 @@ function forgetInstance(instance: HotInstance): void {
   untrackInstance(instance);
 }
 
-/** Adds one leave hook to the parent's list. The parent waits for it, as it does for a plain child. */
 function attachLeaves(instance: HotInstance, leaves: Leave[]): void {
   if (leaves.length === 0) return;
   const hook: Leave = async () => {

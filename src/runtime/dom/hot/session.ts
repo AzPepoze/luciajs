@@ -1,6 +1,5 @@
 export type Restore = Map<string, unknown>;
 
-/** The variables of one instance, by variable name, taken before a swap. */
 export interface Snapshot {
   id: string;
   values: Restore;
@@ -27,7 +26,6 @@ export function endSwap(): void {
   pool = null;
 }
 
-/** The values for the next new instance of `id` during a swap, or null. */
 export function takeRestore(id: string): Restore | null {
   return pool?.get(id)?.shift() ?? null;
 }

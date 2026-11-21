@@ -1,7 +1,7 @@
 import type { LayoutKey } from "../modes/layout-mode.ts";
 import type { Box } from "./layout-box.ts";
 
-/** Reads the layout box once. The offsets ignore transforms, so only a real layout change moves the key. */
+// The offsets ignore transforms, so only a real layout change moves the key.
 export function measureBox(el: HTMLElement, key: LayoutKey, rect: Box): void {
   const box = el.getBoundingClientRect();
   key.x = el.offsetLeft;

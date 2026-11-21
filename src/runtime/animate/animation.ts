@@ -53,7 +53,6 @@ interface ScrollItem extends ItemBase {
   more?: ScrollMore;
 }
 
-/** One animation on an element. `more` is typed by its trigger. Only `style` is required. */
 export type AnimateItem = PlainItem | DetachItem | LayoutItem | ViewItem | HoverItem | ScrollItem;
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];

@@ -7,7 +7,7 @@ import type { Segment, Timeline } from "../play/timeline.ts";
 import { runtimeError } from "../../errors.ts";
 import { isKeyframesKey, KEYFRAMES_HINT, KEYFRAMES_NAME, unknownKeyValues } from "./keys.ts";
 
-/** The string style properties of the DOM, in camelCase (opacity, backgroundColor). Methods and non-string properties are left out. */
+/** DOM style properties with string values, in camelCase (opacity, backgroundColor). */
 type DomStyleKey = {
   [K in keyof CSSStyleDeclaration]: K extends string
     ? CSSStyleDeclaration[K] extends string
@@ -21,7 +21,6 @@ export type Style = {
   [K in Exclude<DomStyleKey, "cssText" | "cssFloat">]?: string | number;
 } & { [custom: `--${string}`]: string | number };
 
-/** A full key: its easing style, its ease and its styles. */
 export type Keyframe = [EaseStyle, Ease, Style];
 /** A key is its styles, or its styles with an ease, an easing style, or both. See keyform.ts. */
 export type KeyframeValue = Style | [EaseStyle, Ease, Style] | [EaseStyle, Style] | [Ease, Style];
@@ -38,7 +37,7 @@ interface Stop {
   style: Map<string, string>;
 }
 
-/** Validates the keys and precomputes every segment. Runs at each play, so the engine default is current. */
+// Runs at each play, so the engine default is current.
 export function prepareTimeline(keyframes: Keyframes, probe?: HTMLElement): Timeline {
   const stops = readStops(keyframes, readDefault(keyframes.default));
   const props = propertyNames(stops);
@@ -96,7 +95,6 @@ function valueAt(stops: Stop[], stop: Stop, prop: string): string {
   return stop.style.get(prop) ?? nearestValue(stops, stop.at, prop);
 }
 
-/** A property missing from a key takes the value of the nearest key that sets it. */
 function nearestValue(stops: Stop[], at: number, prop: string): string {
   let best = "";
   let bestDistance = Infinity;

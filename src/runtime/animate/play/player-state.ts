@@ -8,7 +8,6 @@ import type { Turn } from "./turn.ts";
 
 /** The running state of one element's play. The player's helper files read and write it. */
 export class PlayState implements Playable {
-  /** The value last written to the element. */
   progress = 0;
   /** Where the current play is on its own timeline. A turn shows a blend of this and the old motion. */
   playAt = 0;
@@ -66,7 +65,6 @@ export class PlayState implements Playable {
     return true;
   }
 
-  /** With `keep: false`, a play that ends at 1 removes the styles it wrote. */
   settle(): void {
     if (this.target !== 1 || this.timing.keep) return;
     for (const prop of this.timeline.props) this.style.removeProperty(prop);

@@ -16,10 +16,7 @@ interface Loader {
 
 const noop: Cleanup = () => {};
 
-/**
- * The compiler makes an imported component like this when it is split into its own file.
- * `load` is a dynamic import. The fallback shows in its place until the file has loaded.
- */
+// The compiler makes this for an imported component split into its own file.
 export function lazyComponent(
   load: LazyLoad,
   fallback: Component | undefined,
@@ -85,7 +82,7 @@ function placeLoading(
   };
 
   if (loader.prefetch === "view" && loader.fallback) {
-    // The fallback is in place, so its position is known. The import starts once it is near the screen.
+    // The import waits until the sentinel is near the screen.
     sentinel = document.createElement("span");
     parent.insertBefore(sentinel, marker);
     stopWatch = whenNear(sentinel, show);

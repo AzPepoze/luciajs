@@ -1,4 +1,3 @@
-/** The name closest to `word` by edit distance, when it is near enough to be a typo. */
 export function closestName(word: string, names: readonly string[]): string | undefined {
   const limit = Math.max(1, Math.floor(word.length / 2));
   let best: string | undefined;
@@ -13,7 +12,6 @@ export function closestName(word: string, names: readonly string[]): string | un
   return best;
 }
 
-/** Levenshtein distance: the fewest insertions, deletions and replacements that turn `a` into `b`. */
 function editDistance(a: string, b: string): number {
   let previous = Array.from({ length: b.length + 1 }, (_, j) => j);
   for (let i = 1; i <= a.length; i++) {

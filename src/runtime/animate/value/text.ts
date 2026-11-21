@@ -11,7 +11,7 @@ interface TextTemplate {
   rounded: boolean[];
 }
 
-// A color or a word (checked as a color), or a number with an optional unit. Colors are normalized to rgba() first.
+// Matches colors and words, then numbers with an optional unit.
 const TOKEN =
   /(#[0-9a-f]{3,8}\b)|(\b(?:rgba?|hsla?)\([^)]*\))|(\b[a-z]+\b)|(-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)([a-z]+|%)?/gi;
 

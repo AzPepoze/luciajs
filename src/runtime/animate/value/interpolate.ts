@@ -1,10 +1,7 @@
 import { discrete, type Interpolator } from "./interpolator.ts";
 import { interpolateText } from "./text.ts";
 
-/**
- * Blends any two values: numbers, strings (with numbers, units and colors), arrays and plain objects.
- * `probe` is the element that var() and named colors are resolved on. Without it a detached probe is used.
- */
+// `probe` is the element that var() and named colors resolve on.
 export function interpolate(from: unknown, to: unknown, probe?: HTMLElement): Interpolator {
   if (Object.is(from, to)) return () => from;
   if (typeof from === "number" && typeof to === "number") return lerp(from, to);

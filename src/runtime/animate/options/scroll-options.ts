@@ -9,7 +9,6 @@ import {
   type ScrollRange,
 } from "../scroll/scroll-touch.ts";
 
-/** The `more` options of WHEN.SCROLL. `start` and `end` say where the element meets the window. */
 export interface ScrollMore {
   start?: ScrollAt;
   end?: ScrollAt;
@@ -19,10 +18,7 @@ export interface ScrollMore {
 
 export type Part = [number, number];
 
-/**
- * The checked scroll options. `follow` is a variable of the element whose box is measured.
- * `pinned` is true when `follow` has no start or end: the tall element is then pinned to the screen.
- */
+// Pinned when `follow` has no start or end: the element sticks to the screen.
 export interface ScrollRead {
   range: ScrollRange;
   part: Part;
@@ -48,10 +44,7 @@ export function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
   );
 }
 
-/**
- * With `follow` the progress reads the followed element's box. Without start and end it is pinned
- * to the screen; with them it runs like the item's own box. `part` does not combine with start and end.
- */
+// `part` cannot combine with start and end.
 export function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead {
   if (follow === undefined) {
     return { range: readRange(start, end), part: readPart(part), follow: undefined, pinned: false };

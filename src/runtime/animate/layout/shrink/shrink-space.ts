@@ -5,10 +5,7 @@ import { Closer, type ShrinkSpec } from "./shrink-closer.ts";
 import { readSpace, type Space } from "./shrink-box.ts";
 import { prefersReducedMotion } from "../../play/reduced-motion.ts";
 
-/**
- * A DETACH leave. In a flow box it also closes the space the element holds, so its siblings
- * slide to their new places while it leaves. The element itself plays its keyframes in place.
- */
+// In a flow box, a DETACH leave also closes the space the element holds.
 export function bindDetach(
   el: HTMLElement,
   group: Group,
@@ -27,7 +24,6 @@ export function bindDetach(
   cleanups.push(() => closer?.cancel());
 }
 
-/** The box to close, or undefined when the space stays: reduced motion, or a box that takes no space. */
 function spaceToClose(el: HTMLElement): Space | undefined {
   return prefersReducedMotion() ? undefined : readSpace(el);
 }

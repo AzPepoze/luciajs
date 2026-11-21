@@ -6,7 +6,6 @@ export interface LayoutMode {
   size: boolean;
 }
 
-/** The place and size each layout trigger follows. MOVE_OR_RESIZE follows both. */
 const MODES: ReadonlyMap<LayoutWhen, LayoutMode> = new Map<LayoutWhen, LayoutMode>([
   [WHEN.MOVE, { place: true, size: false }],
   [WHEN.RESIZE, { place: false, size: true }],
@@ -25,7 +24,6 @@ export interface LayoutKey {
   height: number;
 }
 
-/** True when a change in place or size is one the trigger follows. */
 export function layoutChanged(mode: LayoutMode, prev: LayoutKey, next: LayoutKey): boolean {
   const moved = prev.x !== next.x || prev.y !== next.y;
   const resized = prev.width !== next.width || prev.height !== next.height;

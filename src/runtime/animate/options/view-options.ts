@@ -1,13 +1,11 @@
 import { runtimeError } from "../../errors.ts";
 
-/** The `more` options of WHEN.VIEW. */
 export interface ViewMore {
   margin?: number | string;
   amount?: number;
   reverse?: boolean;
 }
 
-/** The root margin and the share of the screen an element must cover. */
 export interface ViewSettings {
   rootMargin: string;
   amount: number;
@@ -35,10 +33,7 @@ function readReverse(reverse: boolean | undefined): boolean {
   return reverse;
 }
 
-/**
- * A positive margin is inside the screen edge, so the root box shrinks: it maps to the
- * negated rootMargin. A number is px. A string is a CSS length or percentage.
- */
+// A positive margin shrinks the root box, so it maps to the negated rootMargin.
 function readMargin(margin: number | string | undefined): string {
   if (margin === undefined) return DEFAULT_VIEW.rootMargin;
   if (typeof margin === "number") return numberMargin(margin);

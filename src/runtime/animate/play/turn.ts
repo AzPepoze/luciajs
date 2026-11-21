@@ -32,7 +32,6 @@ export function startTurn(
   return { ...base, kind: "smooth", duration: turnDuration };
 }
 
-/** The progress to show at `turn.age`, while the new play is at `playAt`. */
 export function turnValue(turn: Turn, playAt: number): number {
   const { from, speed, age, duration } = turn;
   if (turn.custom) return turn.custom(from, playAt, age, speed);

@@ -18,7 +18,6 @@ export interface EachSpec {
   render: RowRender;
   /** Defaults to the item itself. The key sees the index as a number. */
   key?: (item: unknown, index: number) => unknown;
-  /** Whether the rows need a live index variable. */
   indexed: boolean;
   where?: string;
 }

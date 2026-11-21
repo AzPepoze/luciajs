@@ -66,7 +66,6 @@ export class Player {
     this.state.offScreen = offScreen;
   }
 
-  /** The new play starts from the current look, with a turn if the switch asks for one. */
   private turnInto(passes: Iterable<Pass>): Promise<void> {
     const state = this.state;
     const switching: Switch = { from: state.progress, speed: state.speed, restart: false };
@@ -74,7 +73,6 @@ export class Player {
     return startPlay(state, passes, switching);
   }
 
-  /** The running play jumps to its end, then the new play starts from there. */
   private skipThen(passes: Iterable<Pass>): Promise<void> {
     const state = this.state;
     const end = state.target;

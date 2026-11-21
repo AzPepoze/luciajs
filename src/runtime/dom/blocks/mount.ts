@@ -41,7 +41,6 @@ export function removeNodes(mount: Mount): void {
   }
 }
 
-/** Stops the mount's watchers and animations, then removes its nodes. */
 export function disposeMount(mount: Mount): void {
   for (const cleanup of mount.cleanups) cleanup();
   removeNodes(mount);

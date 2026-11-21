@@ -2,7 +2,6 @@ import type { PlayState } from "./player-state.ts";
 import { begin, startQueued } from "./player-start.ts";
 import { turnValue, type Turn } from "./turn.ts";
 
-/** Moves the play to `now`, and ends the pass when it reaches its target. */
 export function moveTo(state: PlayState, now: number): void {
   const elapsed = now - state.clock;
   const used = Math.abs(state.target - state.playAt) * state.duration;
@@ -11,7 +10,6 @@ export function moveTo(state: PlayState, now: number): void {
   if (state.playAt === state.target) nextPass(state, now - Math.max(0, elapsed - used));
 }
 
-/** Writes this frame's progress, and tracks the speed from it. */
 export function present(state: PlayState, now: number): void {
   const dt = now - state.at;
   state.at = now;

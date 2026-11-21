@@ -7,9 +7,7 @@ const PERCENT_SCALE = 255 / PERCENT;
 const probeCache = new Map<string, Rgba | null>();
 let probe: HTMLElement | undefined;
 
-/**
- * Hex and rgb() are parsed here. Named colors and hsl() are read from the browser, on `probe` when given.
- */
+// Named colors and hsl() are read from the browser, on `probe` when given.
 export function resolveColor(token: string, probe?: HTMLElement): Rgba | null {
   if (token.startsWith("#")) return parseHex(token);
   if (RGB_FUNCTION.test(token)) return parseRgb(token);
@@ -40,13 +38,11 @@ function parseRgb(token: string): Rgba | null {
   return [channels[0]!, channels[1]!, channels[2]!, alpha];
 }
 
-/** `50%` scales by `percentScale`; a plain number is used as it is. */
 function parseChannel(part: string, percentScale: number): number {
   if (part.endsWith("%")) return parseFloat(part) * percentScale;
   return parseFloat(part);
 }
 
-/** Sets the color on the element for a moment, reads the computed value, and puts the old value back. */
 function readComputedColor(token: string, el: HTMLElement): Rgba | null {
   const previous = el.style.color;
   el.style.color = token;

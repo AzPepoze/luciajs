@@ -9,7 +9,6 @@ export interface Segment {
   end: number;
   easeStyle: EaseStyle;
   ease: Ease;
-  /** One per entry in `Timeline.props`. */
   values: Interpolator[];
   /** The raw start and end values, kept so a timeline can restart from the current look. */
   fromText: string[];
@@ -35,10 +34,7 @@ export function writeProgress(
   }
 }
 
-/**
- * The same timeline, but the first segment starts from the values `current` reads now. A
- * property with no current value keeps its own start value.
- */
+// A property with no current value keeps its own start value.
 export function startingFrom(timeline: Timeline, current: (prop: string) => string): Timeline {
   const [first, ...rest] = timeline.segments;
   const from = timeline.props.map((prop, i) => current(prop) || first!.fromText[i]!);
@@ -50,16 +46,12 @@ export function startingFrom(timeline: Timeline, current: (prop: string) => stri
   return { props: timeline.props, segments: [restart, ...rest] };
 }
 
-/** A timeline and whether its item is a DETACH item. */
 export interface Phased {
   timeline: Timeline;
   detach: boolean;
 }
 
-/**
- * Each property belongs to the last timeline that animates it, so later items win per property.
- * DETACH items play on their own, so they never take a property from the enter items.
- */
+// DETACH items never take a property from the enter items.
 export function ownTimelines(items: Phased[]): Timeline[] {
   const owner = new Map<string, number>();
   items.forEach(({ timeline, detach }, index) =>

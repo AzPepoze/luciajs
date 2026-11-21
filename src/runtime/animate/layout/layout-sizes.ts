@@ -1,4 +1,3 @@
-/** How many watched elements observe each element's size. An element is observed while the count is above 0. */
 const sized = new Map<Element, number>();
 let sizes: ResizeObserver | undefined;
 

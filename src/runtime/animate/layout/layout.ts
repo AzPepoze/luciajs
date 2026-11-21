@@ -14,11 +14,9 @@ import { copyKey, measureBox } from "./layout-measure.ts";
 import { startListening, stopListening } from "./layout-listen.ts";
 import { observeSize, unobserveSize } from "./layout-sizes.ts";
 
-/** One element that glides when its layout box changes. */
 interface Watched {
   el: HTMLElement;
   glide: Glide;
-  /** The layout place and size as the last frame measured them. */
   key: LayoutKey;
   rect: Box;
   /** A change was seen this frame and the glide starts in the write phase. */
@@ -58,7 +56,6 @@ export function watchLayout(
   return () => forget(item);
 }
 
-/** Reads every layout box first, then writes the glides that started or still run. */
 function frame(): void {
   scheduled = false;
   for (const item of watched) readItem(item);

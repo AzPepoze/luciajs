@@ -35,7 +35,6 @@ export function bindTrigger(
 // Loops start a little before they reach the screen, so they are running when it arrives.
 const PAUSE_VIEW: ViewSettings = { rootMargin: "200px 0px", amount: 0 };
 
-/** Looping items stop writing styles while their element is off screen. */
 function pauseOffScreen(el: Element, group: Group): () => void {
   return watchView(el, PAUSE_VIEW, (inView) => group.setOffScreen(!inView));
 }

@@ -9,10 +9,8 @@ export type Props = Record<string, () => unknown>;
 /** The children a parent gave a component. `<CONTENT />` places them; they render in the parent's scope. */
 export type Slot = (cleanups: Cleanup[], leaves: Leave[]) => DocumentFragment;
 
-/** A parent's writable variables, by prop name, for the props it binds with bind-<prop>. */
 export type Bound = Record<string, Variable<unknown>>;
 
-/** What a parent hands a component: its props, the variables it binds, and its children when it gave any. */
 export interface Host {
   props: Props;
   bound: Bound;

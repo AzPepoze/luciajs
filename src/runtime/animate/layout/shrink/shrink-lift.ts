@@ -17,13 +17,11 @@ const LIFT_PROPS = [
 
 type Saved = [name: string, value: string, priority: string];
 
-/** The placeholder that holds the element's flow spot, and the element's styles before the lift. */
 export interface Lift {
   placeholder: HTMLElement;
   saved: Saved[];
 }
 
-/** Puts a placeholder in the element's flow spot, then lifts the element out of flow where it was. */
 export function openSpace(el: HTMLElement, space: Space): Lift {
   const placeholder = makePlaceholder(space);
   const saved = saveStyles(el);
@@ -48,7 +46,6 @@ export function removePlaceholder(lift: Lift): void {
   lift.placeholder.remove();
 }
 
-/** Removes the placeholder and puts the element's styles back, so it sits in flow again. */
 export function closeLift(el: HTMLElement, lift: Lift): void {
   removePlaceholder(lift);
   for (const [name, value, priority] of lift.saved) {
@@ -57,7 +54,7 @@ export function closeLift(el: HTMLElement, lift: Lift): void {
   }
 }
 
-/** Builds the placeholder from values read at leave start. Flex-basis is auto, so the closing size applies. */
+// Flex-basis is auto, so the closing size applies.
 function makePlaceholder(space: Space): HTMLElement {
   const placeholder = document.createElement("div");
   placeholder.setAttribute("aria-hidden", "true");

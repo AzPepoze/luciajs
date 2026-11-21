@@ -67,7 +67,6 @@ function observerFor(settings: ViewSettings): SharedObserver {
   return created;
 }
 
-/** Calls onChange when el enters or leaves view. Returns the stop function. */
 export function watchView(el: Element, settings: ViewSettings, onChange: ViewChange): () => void {
   let inside: boolean | undefined;
   const onState: ViewChange = (inView, stop) => {
@@ -80,10 +79,7 @@ export function watchView(el: Element, settings: ViewSettings, onChange: ViewCha
   return () => observer.remove(el, onState);
 }
 
-/**
- * The part of the screen that the element covers, as a share of what fits on screen. An element
- * taller than the screen counts against the screen, so it can reach the full share.
- */
+// A tall element counts against the screen, so it can reach the full share.
 function visibleShare(entry: IntersectionObserverEntry): number {
   const root = entry.rootBounds;
   if (!root) return entry.intersectionRatio;

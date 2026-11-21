@@ -1,7 +1,6 @@
 import { EDGE, SCROLL_AT, type ScrollAtMode, type ScrollEdge } from "../modes/scroll-modes.ts";
 import { runtimeError } from "../../errors.ts";
 
-/** The element's point `element` meets the window's point `window`. */
 export interface ScrollTouch {
   element: ScrollEdge;
   window: ScrollEdge;
@@ -13,7 +12,6 @@ export interface ScrollRange {
   end: ScrollTouch;
 }
 
-/** What a user can write for start or end. */
 export type ScrollAt = ScrollAtMode | ScrollTouch;
 
 const ENTER_TOUCH: ScrollTouch = Object.freeze({ element: EDGE.TOP, window: EDGE.BOTTOM });
@@ -30,7 +28,6 @@ export const DEFAULT_RANGE: ScrollRange = { start: ENTER_TOUCH, end: LEAVE_TOUCH
 
 const TOUCH_KEYS = ["element", "window"];
 
-/** Turns a SCROLL_AT member or an { element, window } object into a touch, or throws. */
 export function readScrollAt(value: unknown, name: "start" | "end"): ScrollTouch {
   const mode = MODE_TOUCH.get(value);
   if (mode !== undefined) return mode;

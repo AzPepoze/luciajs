@@ -24,7 +24,6 @@ export interface Frame {
 
 let frame: Frame | null = null;
 
-/** The instance whose script is running, or null outside a component's script. */
 export function currentFrame(): Frame | null {
   return frame;
 }
@@ -64,7 +63,7 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
   }
 }
 
-/** Inserts the nodes, then runs setup. If setup throws, the rendering is discarded and the error passes on. */
+// A throwing setup discards the rendering.
 export function insertRendering(rendering: Rendering, parent: Node, anchor: Node | null): void {
   parent.insertBefore(rendering.fragment, anchor);
   try {

@@ -1,4 +1,3 @@
-/** The layout axis of a leave: the size, the two sides on it, and the parent gap that sits between items. */
 export interface Axis {
   size: "width" | "height";
   start: "left" | "top";
@@ -16,13 +15,9 @@ export interface Sides {
   left: number;
 }
 
-/**
- * The box of a leaving element as layout placed it. Read once, when the leave starts, so the
- * frame that writes the placeholder reads nothing.
- */
+// Read once at leave start, so the frame that writes the placeholder reads nothing.
 export interface Space {
   axis: Axis;
-  /** The size on the layout axis. */
   along: number;
   /** Offsets from the offsetParent's padding edge. These skip the element's own transform. */
   top: number;
@@ -47,10 +42,7 @@ const PLACEMENT_PROPS = [
   "grid-column-end",
 ];
 
-/**
- * Reads the box of an in-flow element. Returns undefined when nothing closes: no parent, an inline,
- * contents or hidden box, or a positioned box, which takes no space along the flow.
- */
+// Undefined when nothing closes: no parent, a non-flow box, or a positioned box.
 export function readSpace(el: HTMLElement): Space | undefined {
   const parent = el.parentElement;
   if (parent === null) return undefined;
@@ -92,7 +84,6 @@ function placementOf(style: CSSStyleDeclaration): Record<string, string> {
   return placement;
 }
 
-/** A flex item in a row flow lays out along the width. Anything else lays out along the height. */
 function isRowItem(style: CSSStyleDeclaration): boolean {
   return style.display.endsWith("flex") && style.flexDirection.startsWith("row");
 }

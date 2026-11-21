@@ -15,7 +15,6 @@ export interface Prop<T> {
 
 export type PropVariables<D> = { readonly [K in keyof D]: Prop<D[K]> };
 
-/** A prop the parent passed without a bind: reads a cached computed value, and refuses writes. */
 function readOnlyProp<T>(key: string, read: (() => unknown) | undefined, fallback: T): Prop<T> {
   const computed = variable.compute(() => read?.() ?? fallback);
   const reject = (): never => {
@@ -35,7 +34,6 @@ function readOnlyProp<T>(key: string, read: (() => unknown) | undefined, fallbac
   };
 }
 
-/** A prop the parent bound: reads and writes the parent's variable, with the default for null. */
 function boundProp<T>(target: Variable<unknown>, fallback: T): Prop<T> {
   const current = (): T => (target.value ?? fallback) as T;
   const write = (next: T): void => {
@@ -55,10 +53,7 @@ function boundProp<T>(target: Variable<unknown>, fallback: T): Prop<T> {
   };
 }
 
-/**
- * Declare the props this component reads, with their defaults. A passed value is read-only, unless the
- * parent bound it with bind-<prop>: then the prop writes back to the parent's variable.
- */
+// A passed value is read-only unless the parent binds it with bind-<prop>.
 export function props<D extends Record<string, unknown>>(defaults: D): PropVariables<D> {
   const host = currentComponentHost();
   const variables = {} as Record<string, Prop<unknown>>;

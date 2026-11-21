@@ -16,7 +16,6 @@ interface HoverState {
   timer: ReturnType<typeof setTimeout> | undefined;
 }
 
-/** Mouse, keyboard and touch on WHEN.HOVER. Touch and keyboard use their own events. */
 export function bindHover(
   el: HTMLElement,
   group: Group,

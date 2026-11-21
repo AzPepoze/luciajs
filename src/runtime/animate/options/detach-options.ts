@@ -5,7 +5,6 @@ export interface DetachMore {
   keepSpace?: boolean;
 }
 
-/** The checked DETACH options. Without `keepSpace` the leave also closes the element's space. */
 export interface DetachRead {
   keepSpace: boolean;
 }

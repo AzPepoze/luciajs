@@ -18,7 +18,6 @@ import {
 } from "./layout-box.ts";
 import type { LayoutMode } from "../modes/layout-mode.ts";
 
-/** The timing and easing a layout trigger needs for its glide. */
 export interface GlideSpec {
   mode: LayoutMode;
   duration: number;
@@ -38,7 +37,6 @@ export interface Glide {
   from: Box;
   to: Box;
   visual: Box;
-  /** The translate last written to the element. */
   writtenSlide: Slide;
   /** The layout place at the size written this frame, for the slide. */
   place: Box;
@@ -68,7 +66,7 @@ export function newGlide(spec: GlideSpec): Glide {
   };
 }
 
-/** Starts from the last visual box. Easing is read here so engine defaults are current. */
+// Easing is read here so engine defaults are current.
 export function startGlide(glide: Glide, el: HTMLElement, now: number): void {
   const easing = readDefault(glide.spec.easing);
   const engine = animateDefault();
@@ -99,7 +97,6 @@ export function stepGlide(glide: Glide, el: HTMLElement, now: number): boolean {
   return true;
 }
 
-/** Drops the written size and translate so the element sits on its layout box again. */
 export function clearGlide(glide: Glide, el: HTMLElement): void {
   glide.active = false;
   glide.writtenSlide.x = 0;

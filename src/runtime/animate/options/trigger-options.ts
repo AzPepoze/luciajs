@@ -13,7 +13,7 @@ export interface MoreBase {
   duration: number;
 }
 
-/** The `more` options of one item, checked for its trigger. Fields a trigger does not use keep their defaults. */
+// Fields a trigger does not use keep their defaults.
 export interface ReadMore {
   view: ViewSettings;
   reverse: boolean;
@@ -58,7 +58,6 @@ function whenName(when: When | Source): string {
   return isWhen(when) ? `WHEN.${String(when.description)}` : "a variable";
 }
 
-/** Rejects a non-object or an unknown key, and returns the object typed as T. */
 function checkKeys<T extends object>(more: More, allowed: readonly string[]): T {
   if (typeof more !== "object" || more === null) {
     throw runtimeError("L2011", { keys: keyList(allowed), value: String(more) });

@@ -45,7 +45,6 @@ function channelFor(el: HTMLElement): Channel {
   return TEXT;
 }
 
-/** `bind-value={sig}` on a form control: the right property and event for its type. */
 export function bindInput(
   el: HTMLElement,
   target: unknown,

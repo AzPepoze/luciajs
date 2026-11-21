@@ -70,7 +70,6 @@ function schedule(): void {
   requestAnimationFrame(update);
 }
 
-/** Reads every position first, then writes only the progress that changed. */
 function update(): void {
   scheduled = false;
   measured.clear();
@@ -109,21 +108,16 @@ export function scrollProgress(el: Element, range: ScrollRange): number {
   return clamp01((startTop - rect.top) / span);
 }
 
-/** The element's top edge at the moment its touch point meets the window's touch point. */
 function topWhenTouching(touch: ScrollTouch, viewport: number, height: number): number {
   return touch.window * viewport - touch.element * height;
 }
 
-/**
- * 0 when the top of a tall element reaches the top of the screen, 1 when its bottom reaches
- * the bottom. An element that fits on screen is 1 once its top has passed the top edge.
- */
+// A tall element runs from its top edge to its bottom edge.
 export function pinnedProgress(rect: { top: number; height: number }, viewport: number): number {
   if (rect.height <= viewport) return rect.top <= 0 ? 1 : 0;
   return clamp01(-rect.top / (rect.height - viewport));
 }
 
-/** The slice `[from, to]` of the section progress, stretched to 0 to 1. */
 export function partProgress(progress: number, [from, to]: Part): number {
   return clamp01((progress - from) / (to - from));
 }

@@ -7,29 +7,22 @@ import type { Ease } from "../../modes/modes.ts";
 import type { Space } from "./shrink-box.ts";
 import { closeLift, openSpace, removePlaceholder, type Lift } from "./shrink-lift.ts";
 
-/** The timing and keyframes of a DETACH item, which the space closes with. */
 export interface ShrinkSpec {
   duration: number;
   delay: number;
   keyframes: Keyframes;
 }
 
-/** A cancelled close reopens from the closed amount it had reached. */
 interface Reopen {
   from: number;
   begin: number;
   duration: number;
 }
 
-/**
- * Closes one leave's space: the placeholder shrinks along the layout axis, its margins go to 0,
- * and its end margin goes to minus the parent gap, so the gap closes too.
- * Writes happen in the frame loop. Reads were taken when the leave started.
- */
+// Closes one leave's space. Its reads were taken when the leave started.
 export class Closer implements Playable {
   private finish: () => void = () => {};
   private lift: Lift | undefined;
-  /** 0 when the space is open, 1 when it is closed. */
   private closed = 0;
   private reopen: Reopen | undefined;
   private finished = false;

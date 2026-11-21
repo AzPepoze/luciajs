@@ -1,7 +1,6 @@
 import { closestName } from "./closest.ts";
 import type { Values } from "../../../compiler/errors/create.ts";
 
-/** The keys of an AnimateItem. */
 export const ITEM_KEYS: readonly string[] = [
   "style",
   "when",
@@ -38,7 +37,6 @@ export const HOVER_KEYS: readonly string[] = ["inDelay", "outDelay", "out", "out
 export const SCROLL_KEYS: readonly string[] = ["start", "end", "follow", "part"];
 export const DETACH_KEYS: readonly string[] = ["keepSpace"];
 
-/** The `more` keys of each trigger, by its WHEN member name. */
 export const MORE_KEYS_BY_WHEN: Readonly<Record<string, readonly string[]>> = {
   VIEW: VIEW_KEYS,
   HOVER: HOVER_KEYS,
@@ -64,7 +62,6 @@ export function keyList(names: readonly string[]): string {
   return `${names.slice(0, -1).join(", ")} or ${names[names.length - 1]}`;
 }
 
-/** The values for an unknown-key error: a "did you mean" hint when a name is close, else the fallback. */
 export function unknownKeyValues(key: string, names: readonly string[], fallback: string): Values {
   const near = closestName(key, names);
   const tip = near === undefined ? fallback : `did you mean '${near}'?`;

@@ -12,7 +12,6 @@ export interface PartialEasing {
 /** The forms of a `default`: [style, ease], [style] or [ease]. */
 export type DefaultEasing = [EaseStyle, Ease] | [EaseStyle] | [Ease];
 
-/** Checks a `default` value. Undefined means no default, so nothing is set. */
 export function readDefault(value: DefaultEasing | undefined): PartialEasing {
   if (value === undefined) return {};
   if (!Array.isArray(value) || value.length < 1 || value.length > 2) throw runtimeError("L2032");

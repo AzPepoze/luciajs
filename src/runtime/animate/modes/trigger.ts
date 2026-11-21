@@ -25,7 +25,6 @@ export const WHEN = Object.freeze({
 
 export type When = (typeof WHEN)[keyof typeof WHEN];
 
-/** The triggers that glide the element when its layout box changes. */
 export type LayoutWhen = typeof WHEN.MOVE | typeof WHEN.RESIZE | typeof WHEN.MOVE_OR_RESIZE;
 
 /** A variable or computed variable: truthy plays forward, falsy plays back. */

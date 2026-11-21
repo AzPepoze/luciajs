@@ -22,7 +22,6 @@ export interface MidwayItem {
 
 export type AnimateMidway = MidwayMode | MidwayItem;
 
-/** The checked midway options of one item. */
 export interface MidwayOptions {
   play: MidwayMode;
   turn: TurnMode | TurnFn;

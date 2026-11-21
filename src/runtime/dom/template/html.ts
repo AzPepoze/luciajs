@@ -9,10 +9,7 @@ function parseHtml(html: string): DocumentFragment {
   return template.content;
 }
 
-/**
- * `<HTML>{expr}</HTML>`: the value is parsed as HTML. Each update replaces the previous nodes.
- * The value is trusted: never pass user input, or it can run script (XSS).
- */
+// The value is trusted: never pass user input, or it can run script (XSS).
 export function bindHtml(marker: Node, read: () => unknown, cleanups: Cleanup[]): void {
   let mount: Mount | undefined;
   cleanups.push(

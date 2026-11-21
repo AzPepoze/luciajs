@@ -19,7 +19,6 @@ export interface Slot {
   glide: GlideSpec | undefined;
   /** Set for a DETACH item that closes its space. Each such item has its own slot. */
   shrink: ShrinkSpec | undefined;
-  /** True when a player in the group loops, so the group pauses off screen. */
   loops: boolean;
   group: Group;
 }
@@ -72,7 +71,6 @@ function bucketFor(buckets: Bucket[], item: ItemOptions): Bucket {
   return bucket;
 }
 
-/** The glide settings of a layout item. Other triggers have none. */
 function glideSpecOf(item: ItemOptions): GlideSpec | undefined {
   if (!isLayoutWhen(item.when)) return undefined;
   return {

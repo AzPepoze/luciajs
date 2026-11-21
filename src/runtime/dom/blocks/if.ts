@@ -12,7 +12,6 @@ export interface IfBranch {
   render: BranchRender;
 }
 
-/** The first branch whose test is true, or -1. */
 function pickBranch(branches: IfBranch[]): number {
   for (let i = 0; i < branches.length; i++) {
     const test = branches[i]!.test;

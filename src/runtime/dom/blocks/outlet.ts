@@ -5,11 +5,7 @@ async function leaveMount(mount: Mount): Promise<void> {
   await Promise.all(mount.leaves.map((leave) => leave()));
 }
 
-/**
- * The mounts of one block. A removed mount plays its leave animations and is disposed after them.
- * The parent's leave list gets one hook, added on the first mount that has leaves, so blocks without
- * animations keep a synchronous detach.
- */
+// Removed mounts play their leaves first. Blocks without leaves stay synchronous.
 export class Outlet {
   private readonly live = new Set<Mount>();
   private readonly leaving = new Set<Promise<void>>();

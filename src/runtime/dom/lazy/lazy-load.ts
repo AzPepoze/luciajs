@@ -17,7 +17,6 @@ export function memoizeLoad(load: LazyLoad): () => Promise<Component> {
   };
 }
 
-/** Runs `task` after the first paint, when the browser has spare time. */
 export function whenIdle(task: () => void): void {
   requestAnimationFrame(() =>
     setTimeout(() => {
@@ -27,7 +26,6 @@ export function whenIdle(task: () => void): void {
   );
 }
 
-/** Runs `task` once `element` comes within 200px of the viewport. Returns a function that stops the watch. */
 export function whenNear(element: Element, task: () => void): () => void {
   if (typeof IntersectionObserver !== "function") {
     task();

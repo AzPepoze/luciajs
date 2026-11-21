@@ -24,7 +24,6 @@ function collectPaths(parent: Node, path: number[], paths: number[][]): void {
   });
 }
 
-/** Parse markup once, stamp its top-level elements with the component id and record where the bindings go. */
 export function createTemplate(html: string, id: string): CompiledTemplate {
   const template = document.createElement("template");
   template.innerHTML = html;
@@ -40,7 +39,6 @@ function resolvePath(root: Node, path: number[]): Node {
   return node;
 }
 
-/** Clone the template and run each binder on its node. */
 export function instantiate(
   { template, paths }: CompiledTemplate,
   binders: Binder[],
@@ -53,7 +51,6 @@ export function instantiate(
   return fragment;
 }
 
-/** Parses the markup on first use and reuses the parsed template for every instance. */
 export function lazyTemplate(html: string, id: string): () => CompiledTemplate {
   let compiled: CompiledTemplate | undefined;
   return () => (compiled ??= createTemplate(html, id));

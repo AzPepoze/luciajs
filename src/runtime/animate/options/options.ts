@@ -20,7 +20,6 @@ export interface Timing {
   midway: MidwayOptions;
 }
 
-/** A checked item, ready to prepare and bind. */
 export interface ItemOptions {
   keyframes: Keyframes;
   timing: Timing;
@@ -59,7 +58,6 @@ export function readItem(item: AnimateItem): ItemOptions {
   };
 }
 
-/** A DETACH item closes its space unless `keepSpace` is set. */
 function readShrink(
   when: When | Source,
   more: ReadMore,

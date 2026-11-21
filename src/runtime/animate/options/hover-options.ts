@@ -10,7 +10,6 @@ export interface HoverMore {
   outDuration?: number;
 }
 
-/** The checked HOVER options. `out` is the keyframes for leaving, with its duration. */
 export interface HoverRead {
   inDelay: number;
   outDelay: number;
