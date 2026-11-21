@@ -37,25 +37,31 @@ export interface ReadMore {
 }
 
 /** The `more` of an item that sets none. Every field takes its config value, then its library default. */
-function defaultMore(): ReadMore {
+function defaultMore(when: When | Source): ReadMore {
   return {
     ...readViewMore({}),
     hover: hoverDefault(),
     scroll: readScroll({}),
-    space: readSpace({}),
+    space: readSpace({}, when),
   };
 }
 
 export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
-  if (more === undefined) return defaultMore();
+  if (more === undefined) return defaultMore(when);
   if (when === WHEN.VIEW)
-    return { ...defaultMore(), ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
+    return { ...defaultMore(when), ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
   if (when === WHEN.HOVER)
-    return { ...defaultMore(), hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
+    return {
+      ...defaultMore(when),
+      hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base),
+    };
   if (when === WHEN.SCROLL)
-    return { ...defaultMore(), scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
+    return { ...defaultMore(when), scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
   if (when === WHEN.ATTACH || when === WHEN.DETACH)
-    return { ...defaultMore(), space: readSpace(checkKeys<SpaceMore>(more, SPACE_KEYS)) };
+    return {
+      ...defaultMore(when),
+      space: readSpace(checkKeys<SpaceMore>(more, SPACE_KEYS), when),
+    };
   throw runtimeError("L2010", { when: whenName(when) });
 }
 
