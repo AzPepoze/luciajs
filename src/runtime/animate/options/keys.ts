@@ -1,5 +1,5 @@
-import { closestName } from "../../compiler/utils/closest.ts";
-import type { Values } from "../../compiler/errors/create.ts";
+import { closestName } from "@compiler/utils/closest.ts";
+import type { Values } from "@compiler/errors/create.ts";
 
 /** The keys of an AnimateItem. */
 export const ITEM_KEYS: readonly string[] = [
@@ -54,7 +54,6 @@ export function isKeyframesKey(key: string): boolean {
   return key === KEYFRAMES_NAME || isNumberKey(key);
 }
 
-/** Keyframes have only numbers and `default`, so an item key tells the two apart. */
 export function hasItemKey(keys: readonly string[]): boolean {
   return keys.some((key) => ITEM_KEYS.includes(key) || OLD_ITEM_KEYS.includes(key));
 }

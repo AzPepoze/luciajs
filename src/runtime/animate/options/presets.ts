@@ -1,4 +1,4 @@
-import { EASE } from "./modes.ts";
+import { EASE } from "../modes/modes.ts";
 import type { Keyframes } from "./keyframes.ts";
 
 // Presets use the individual translate, scale and rotate properties, so they combine with an element's own transform.

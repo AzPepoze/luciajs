@@ -1,9 +1,9 @@
-import { animateDefault } from "./defaults.ts";
-import type { EaseStyle } from "./easing.ts";
-import type { Keyframes } from "./keyframes.ts";
-import { readDefault, readKey } from "./keyform.ts";
-import { startPlaying, type Playable } from "./loop.ts";
-import type { Ease } from "./modes.ts";
+import { animateDefault } from "../../options/defaults.ts";
+import type { EaseStyle } from "../../modes/easing.ts";
+import type { Keyframes } from "../../options/keyframes.ts";
+import { readDefault, readKey } from "../../options/keyform.ts";
+import { startPlaying, type Playable } from "../../play/loop.ts";
+import type { Ease } from "../../modes/modes.ts";
 import type { Space } from "./shrink-box.ts";
 import { closeLift, openSpace, removePlaceholder, type Lift } from "./shrink-lift.ts";
 

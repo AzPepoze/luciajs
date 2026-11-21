@@ -1,4 +1,4 @@
-import type { LayoutMode } from "./layout-mode.ts";
+import type { LayoutMode } from "../modes/layout-mode.ts";
 
 /** A box in viewport pixels. Reused in place, so the frame loop allocates nothing. */
 export interface Box {

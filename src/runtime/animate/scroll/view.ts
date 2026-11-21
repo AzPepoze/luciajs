@@ -1,4 +1,4 @@
-import type { ViewSettings } from "./view-options.ts";
+import type { ViewSettings } from "../options/view-options.ts";
 
 export type ViewChange = (inView: boolean, stop: () => void) => void;
 

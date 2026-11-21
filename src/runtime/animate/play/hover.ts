@@ -1,9 +1,9 @@
-import { listen, type Cleanup } from "../dom/bindings.ts";
-import { prepareTimeline } from "./keyframes.ts";
+import { listen, type Cleanup } from "@runtime/dom/bindings.ts";
+import { prepareTimeline } from "../options/keyframes.ts";
 import type { Group } from "./group.ts";
-import type { HoverRead } from "./more.ts";
-import type { Timing } from "./options.ts";
-import { DEFAULT_MIDWAY } from "./midway-options.ts";
+import type { HoverRead } from "../options/hover-options.ts";
+import type { Timing } from "../options/options.ts";
+import { DEFAULT_MIDWAY } from "../options/midway-options.ts";
 import { Player } from "./player.ts";
 
 interface HoverState {

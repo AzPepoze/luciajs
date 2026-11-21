@@ -1,7 +1,7 @@
-import type { EaseStyle } from "./easing.ts";
-import type { Ease } from "./modes.ts";
-import { TURN } from "./midway-modes.ts";
-import type { MidwayOptions } from "./midway-options.ts";
+import type { EaseStyle } from "../modes/easing.ts";
+import type { Ease } from "../modes/modes.ts";
+import { TURN } from "../modes/midway-modes.ts";
+import type { MidwayOptions } from "../options/midway-options.ts";
 
 /** Gives the progress to show during a turn. `t` is ms since the switch, `speed` is progress per ms. */
 export type TurnFn = (from: number, to: number, t: number, speed: number) => number;

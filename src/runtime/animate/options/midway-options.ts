@@ -1,5 +1,5 @@
-import type { EaseStyle } from "./easing.ts";
-import { EASE, isEase, type Ease } from "./modes.ts";
+import type { EaseStyle } from "../modes/easing.ts";
+import { EASE, isEase, type Ease } from "../modes/modes.ts";
 import {
   isMidwayMode,
   isTurnMode,
@@ -7,9 +7,9 @@ import {
   TURN,
   type MidwayMode,
   type TurnMode,
-} from "./midway-modes.ts";
-import type { TurnFn } from "./turn.ts";
-import { runtimeError } from "../errors.ts";
+} from "../modes/midway-modes.ts";
+import type { TurnFn } from "../play/turn.ts";
+import { runtimeError } from "@runtime/errors.ts";
 
 /** The `midway` field of an item. A MIDWAY member alone sets `play` and keeps the other defaults. */
 export interface MidwayItem {

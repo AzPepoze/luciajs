@@ -1,15 +1,16 @@
-import { isReactive } from "../variable/reactive.ts";
-import type { AnimateItem } from "./animation.ts";
-import type { Controller } from "./controller.ts";
+import { isReactive } from "@runtime/variable/reactive.ts";
+import type { AnimateItem } from "../animation.ts";
+import type { Controller } from "../play/controller.ts";
 import type { Keyframes } from "./keyframes.ts";
-import type { LoopSpec } from "./passes.ts";
+import type { LoopSpec } from "../play/passes.ts";
 import { animateDefault } from "./defaults.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
-import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "./trigger.ts";
-import { readMore, type ReadMore } from "./more.ts";
-import type { ShrinkSpec } from "./shrink-closer.ts";
-import { runtimeError } from "../errors.ts";
+import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "../modes/trigger.ts";
+import { readMore, type ReadMore } from "./trigger-options.ts";
+import type { ShrinkSpec } from "../layout/shrink/shrink-closer.ts";
+import { runtimeError } from "@runtime/errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
+import { readKeyframes } from "./item-style.ts";
 
 export interface Timing {
   duration: number;
@@ -67,34 +68,6 @@ function readShrink(
 ): ShrinkSpec | undefined {
   if (when !== WHEN.DETACH || more.detach.keepSpace) return undefined;
   return { duration: timing.duration, delay: timing.delay, keyframes };
-}
-
-/** The keyframes of a layout item with no style. It has no props, so only the glide and the timing run. */
-const NO_STYLE: Keyframes = { 0: {}, 1: {} };
-
-/** The styles the glide writes. A layout item cannot animate them, or its keyframes would fight the glide. */
-const GLIDE_PROPS = ["translate", "scale"];
-
-function readKeyframes(item: AnimateItem, when: When | Source): Keyframes {
-  if (!item.style) {
-    if (isLayoutWhen(when)) return NO_STYLE;
-    throw runtimeError("L2001");
-  }
-  if (isLayoutWhen(when)) rejectGlideStyles(item.style);
-  return item.style;
-}
-
-function rejectGlideStyles(keyframes: Keyframes): void {
-  for (const [key, value] of Object.entries(keyframes)) {
-    if (key === "default") continue;
-    const style = (Array.isArray(value) ? value[value.length - 1] : value) as Record<
-      string,
-      unknown
-    >;
-    for (const name of GLIDE_PROPS) {
-      if (name in style) throw runtimeError("L2052", { name });
-    }
-  }
 }
 
 /** A removed member such as WHEN.IN is undefined, so a `when` key with no value means an old name. */

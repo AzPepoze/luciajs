@@ -1,9 +1,9 @@
-import type { Group } from "./group.ts";
-import type { Part, ScrollRead } from "./more.ts";
+import type { Group } from "../play/group.ts";
+import type { Part, ScrollRead } from "../options/scroll-options.ts";
 import type { ScrollRange, ScrollTouch } from "./scroll-touch.ts";
-import { unwrap } from "../variable/reactive.ts";
-import type { ComputedVariable } from "../variable/compute.ts";
-import { watch } from "../variable/graph.ts";
+import { unwrap } from "@runtime/variable/reactive.ts";
+import type { ComputedVariable } from "@runtime/variable/compute.ts";
+import { watch } from "@runtime/variable/graph.ts";
 
 interface Tracked {
   el: Element;

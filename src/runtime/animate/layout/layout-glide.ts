@@ -1,7 +1,7 @@
-import { animateDefault } from "./defaults.ts";
-import type { EaseStyle } from "./easing.ts";
-import { readDefault, type DefaultEasing } from "./keyform.ts";
-import { EASE, type Ease } from "./modes.ts";
+import { animateDefault } from "../options/defaults.ts";
+import type { EaseStyle } from "../modes/easing.ts";
+import { readDefault, type DefaultEasing } from "../options/keyform.ts";
+import { EASE, type Ease } from "../modes/modes.ts";
 import {
   copyBox,
   cssHeight,
@@ -16,7 +16,7 @@ import {
   type Edges,
   type Slide,
 } from "./layout-box.ts";
-import type { LayoutMode } from "./layout-mode.ts";
+import type { LayoutMode } from "../modes/layout-mode.ts";
 
 /** The timing and easing a layout trigger needs for its glide. */
 export interface GlideSpec {

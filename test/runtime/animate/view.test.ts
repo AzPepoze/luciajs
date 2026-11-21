@@ -1,12 +1,12 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
-import type { Keyframes } from "@runtime/animate/keyframes.ts";
-import { readItem } from "@runtime/animate/options.ts";
-import { EASE } from "@runtime/animate/modes.ts";
-import { WHEN } from "@runtime/animate/trigger.ts";
-import { readMore as readWith } from "@runtime/animate/more.ts";
-import { watchView } from "@runtime/animate/view.ts";
+import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
+import { readItem } from "@runtime/animate/options/options.ts";
+import { EASE } from "@runtime/animate/modes/modes.ts";
+import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { readMore as readWith } from "@runtime/animate/options/trigger-options.ts";
+import { watchView } from "@runtime/animate/scroll/view.ts";
 
 const readBase = { duration: 300 };
 const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>

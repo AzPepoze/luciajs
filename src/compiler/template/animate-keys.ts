@@ -9,7 +9,7 @@ import {
   OLD_ITEM_KEYS,
   SPELLING_HINT,
   unknownKeyValues,
-} from "../../runtime/animate/keys.ts";
+} from "@runtime/animate/options/keys.ts";
 import type { Section } from "../parse/sections.ts";
 import { objectEntries, listItems, skipSpace, type Entry } from "../utils/literals.ts";
 

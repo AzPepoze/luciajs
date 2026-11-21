@@ -1,7 +1,7 @@
-import type { EaseStyle } from "./easing.ts";
-import type { Ease } from "./modes.ts";
-import type { Interpolator } from "./interpolator.ts";
-import { interpolate } from "./interpolate.ts";
+import type { EaseStyle } from "../modes/easing.ts";
+import type { Ease } from "../modes/modes.ts";
+import type { Interpolator } from "../value/interpolator.ts";
+import { interpolate } from "../value/interpolate.ts";
 
 /** One stretch between two keys. Its easing style belongs to the key it ends at. */
 export interface Segment {

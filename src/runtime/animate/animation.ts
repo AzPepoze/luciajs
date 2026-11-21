@@ -1,10 +1,12 @@
-import type { Controller } from "./controller.ts";
-import type { Keyframes } from "./keyframes.ts";
-import type { DetachMore, HoverMore, ScrollMore } from "./more.ts";
-import type { AnimateMidway } from "./midway-options.ts";
-import { WHEN, type LayoutWhen, type Source } from "./trigger.ts";
-import type { ViewMore } from "./view-options.ts";
-import { hasItemKey } from "./keys.ts";
+import type { Controller } from "./play/controller.ts";
+import type { Keyframes } from "./options/keyframes.ts";
+import type { DetachMore } from "./options/detach-options.ts";
+import type { HoverMore } from "./options/hover-options.ts";
+import type { ScrollMore } from "./options/scroll-options.ts";
+import type { AnimateMidway } from "./options/midway-options.ts";
+import { WHEN, type LayoutWhen, type Source } from "./modes/trigger.ts";
+import type { ViewMore } from "./options/view-options.ts";
+import { hasItemKey } from "./options/keys.ts";
 
 interface ItemBase {
   style: Keyframes;

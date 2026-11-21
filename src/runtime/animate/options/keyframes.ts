@@ -1,10 +1,10 @@
-import type { EaseStyle } from "./easing.ts";
+import type { EaseStyle } from "../modes/easing.ts";
 import { animateDefault } from "./defaults.ts";
-import { interpolate } from "./interpolate.ts";
+import { interpolate } from "../value/interpolate.ts";
 import { readDefault, readKey, type DefaultEasing, type PartialEasing } from "./keyform.ts";
-import type { Ease } from "./modes.ts";
-import type { Segment, Timeline } from "./timeline.ts";
-import { runtimeError } from "../errors.ts";
+import type { Ease } from "../modes/modes.ts";
+import type { Segment, Timeline } from "../play/timeline.ts";
+import { runtimeError } from "@runtime/errors.ts";
 import { isKeyframesKey, KEYFRAMES_HINT, KEYFRAMES_NAME, unknownKeyValues } from "./keys.ts";
 
 /** The string style properties of the DOM, in camelCase (opacity, backgroundColor). Methods and non-string properties are left out. */

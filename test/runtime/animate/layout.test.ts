@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
 import type { Leave } from "@runtime/dom/leave.ts";
-import { WHEN } from "@runtime/animate/trigger.ts";
+import { WHEN } from "@runtime/animate/modes/trigger.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();
