@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { lusiaError } from "@compiler/errors/create.ts";
-import { LusiaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
 import {
   LAZY_MODES,
   LAZY_PREFETCH,

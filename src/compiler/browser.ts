@@ -1,13 +1,13 @@
 import type * as sass from "sass";
 import { transform } from "sucrase";
-import { LusiaError } from "./errors.ts";
+import { LusiaError } from "./errors/error.ts";
 import { compileParts } from "./pipeline.ts";
 import { parse, type Section } from "./parse/sections.ts";
 import { scopeCss, styleMode } from "./style/modes.ts";
 import { compileSectionScss } from "./style/sass-browser.ts";
 import type { StyleResult } from "./style/sass.ts";
 
-export { LusiaError } from "./errors.ts";
+export { LusiaError } from "./errors/error.ts";
 
 export interface BrowserOptions {
   /** Sass importers. They are the only way `@use` and `@import` find files in the browser. */

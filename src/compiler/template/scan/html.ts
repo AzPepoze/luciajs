@@ -1,7 +1,7 @@
 import { readAttributes } from "./attributes.ts";
-import { blockCheck } from "./checks.ts";
+import { blockCheck } from "../check/checks.ts";
 import type { Cursor } from "./cursor.ts";
-import type { Expr } from "./types.ts";
+import type { Expr } from "../types/expression.ts";
 
 export const HTML_TAG = "HTML";
 const CLOSE_TAG = "</HTML>";

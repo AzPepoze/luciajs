@@ -1,4 +1,4 @@
-import type { ErrorCodeName } from "./errors/codes.ts";
+import type { ErrorCodeName } from "./codes.ts";
 
 export interface LusiaErrorDetails {
   code?: ErrorCodeName;

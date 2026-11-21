@@ -1,13 +1,8 @@
-import { markedCode } from "../sourcemap/marker.ts";
-import { trailingArg, type GenContext } from "./codegen-context.ts";
-import type {
-  AttrBinding,
-  AttrPart,
-  BindBinding,
-  ElementBinding,
-  EventBinding,
-  Expr,
-} from "./types.ts";
+import { markedCode } from "@compiler/sourcemap/marker.ts";
+import { trailingArg, type GenContext } from "./context.ts";
+import type { AttrBinding, AttrPart, BindBinding, EventBinding } from "../types/attribute.ts";
+import type { ElementBinding } from "../types/element.ts";
+import type { Expr } from "../types/expression.ts";
 
 export function readExpression(expr: Expr): string {
   return `__unwrap((${markedCode(expr)}))`;

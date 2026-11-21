@@ -1,4 +1,4 @@
-import { closestName } from "@compiler/utils/closest.ts";
+import { closestName } from "./closest.ts";
 import type { Values } from "@compiler/errors/create.ts";
 
 /** The keys of an AnimateItem. */

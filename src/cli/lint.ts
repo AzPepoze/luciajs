@@ -1,5 +1,5 @@
 import { compile } from "@compiler/index.ts";
-import { LusiaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
 import { lintLusia, type LintIssue, type LintRuleSettings } from "@language/lint.ts";
 import { applyFixes } from "@language/lint/fixes.ts";
 import { readFileSync, writeFileSync } from "node:fs";

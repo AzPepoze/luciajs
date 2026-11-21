@@ -1,5 +1,5 @@
-import { hasExpression } from "./attributes.ts";
-import type { AttrBinding } from "./types.ts";
+import { hasExpression } from "./scan/attributes.ts";
+import type { AttrBinding } from "./types/attribute.ts";
 
 const EVENT_NAME = /^on[a-z][a-z-]*$/;
 

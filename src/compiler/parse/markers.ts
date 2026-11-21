@@ -1,6 +1,6 @@
 import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
-import { LusiaError } from "../errors.ts";
+import { LusiaError } from "../errors/error.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import { nextDepth, readTags, type Tag } from "./tags.ts";
 

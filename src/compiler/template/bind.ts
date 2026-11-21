@@ -1,5 +1,7 @@
-import { expressionOf } from "./attributes.ts";
-import type { AttrBinding, BindBinding, ComponentBind, Expr } from "./types.ts";
+import { expressionOf } from "./scan/attributes.ts";
+import type { AttrBinding, BindBinding } from "./types/attribute.ts";
+import type { ComponentBind } from "./types/component.ts";
+import type { Expr } from "./types/expression.ts";
 
 export const BIND_NAME = /^bind-[a-z][a-z-]*$/;
 

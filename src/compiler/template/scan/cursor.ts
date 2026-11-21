@@ -1,8 +1,8 @@
-import { lusiaError, type Values } from "../errors/create.ts";
-import type { ErrorCodeName } from "../errors/codes.ts";
-import { skipExpression } from "../utils/braces.ts";
-import { lineIndexAt, lineStarts } from "../utils/position.ts";
-import type { Expr } from "./types.ts";
+import { lusiaError, type Values } from "@compiler/errors/create.ts";
+import type { ErrorCodeName } from "@compiler/errors/codes.ts";
+import { skipExpression } from "@compiler/utils/braces.ts";
+import { lineIndexAt, lineStarts } from "@compiler/utils/position.ts";
+import type { Expr } from "../types/expression.ts";
 
 const WHITESPACE = /\s/;
 

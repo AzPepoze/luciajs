@@ -2,7 +2,7 @@
 import { lusiaError, type Values } from "../compiler/errors/create.ts";
 import type { ErrorCodeName } from "../compiler/errors/codes.ts";
 import { parseWhere } from "../compiler/errors/where.ts";
-import type { LusiaError } from "../compiler/errors.ts";
+import type { LusiaError } from "../compiler/errors/error.ts";
 
 /** The location of each key that a dev build found wrong, by key name. */
 export type KeyWheres = Record<string, string>;

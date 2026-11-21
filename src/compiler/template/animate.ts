@@ -1,5 +1,5 @@
-import { expressionOf, type Fail } from "./attributes.ts";
-import type { AttrBinding } from "./types.ts";
+import { expressionOf, type Fail } from "./scan/attributes.ts";
+import type { AttrBinding } from "./types/attribute.ts";
 
 const ANIMATE = "animate";
 

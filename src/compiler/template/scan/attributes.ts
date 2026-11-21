@@ -1,7 +1,8 @@
-import type { ErrorCodeName } from "../errors/codes.ts";
-import type { Values } from "../errors/create.ts";
+import type { ErrorCodeName } from "@compiler/errors/codes.ts";
+import type { Values } from "@compiler/errors/create.ts";
 import type { Cursor } from "./cursor.ts";
-import type { AttrBinding, AttrPart, Expr } from "./types.ts";
+import type { AttrBinding, AttrPart } from "../types/attribute.ts";
+import type { Expr } from "../types/expression.ts";
 
 export type Fail = (code: ErrorCodeName, values?: Values) => never;
 

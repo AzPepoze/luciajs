@@ -1,4 +1,4 @@
-import type { Expr } from "../template/types.ts";
+import type { Expr } from "../template/types/expression.ts";
 
 // A marker comment records the .lusia position of the code after it. extractSourceMap removes them.
 export function markAt(line: number, column: number): string {

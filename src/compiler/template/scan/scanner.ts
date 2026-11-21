@@ -1,27 +1,18 @@
 import { ELEMENT_MARKER, TEXT_MARKER } from "@runtime/markers.ts";
-import { blockCheck, componentCheck, elementCheck } from "./checks.ts";
+import { componentCheck, elementCheck } from "../check/checks.ts";
 import { compileElement } from "./element.ts";
-import { componentBindsOf, isBindName } from "./bind.ts";
 import { readHtml, HTML_TAG } from "./html.ts";
 import { readAttributes, type AttrCheck } from "./attributes.ts";
-import { atBlockBoundary, blockOpenAt, failBoundary, readBlock } from "./blocks.ts";
+import { atBlockBoundary, blockOpenAt, failBoundary, readBlock } from "../blocks.ts";
 import { Cursor } from "./cursor.ts";
-import type { AttrBinding, Binding, ComponentBinding, Template } from "./types.ts";
-
-export type { AttrBinding, AttrPart, Binding, Template } from "./types.ts";
+import { CONTENT_TAG, claimContent } from "./content.ts";
+import { componentBinding } from "./component.ts";
+import { readComponentChildren } from "./children.ts";
+import type { ScanScope } from "./scope.ts";
+import type { AttrBinding } from "../types/attribute.ts";
+import type { Binding, Template } from "../types/template.ts";
 
 const TAG_NAME_END = /[\s>/]/;
-const CONTENT_TAG = "CONTENT";
-
-/** What one component file's markup shares across all its scanners. */
-interface ScanScope {
-  components: ReadonlySet<string>;
-  contentUsed: boolean;
-}
-
-function isBlank(template: Template): boolean {
-  return template.html.trim() === "" && template.bindings.length === 0;
-}
 
 class TemplateScanner {
   private html = "";
@@ -103,16 +94,7 @@ class TemplateScanner {
   }
 
   private addContent(start: number): void {
-    const c = this.cursor;
-    const { selfClosing } = readAttributes(
-      c,
-      CONTENT_TAG,
-      start,
-      blockCheck(CONTENT_TAG, new Map()),
-    );
-    if (!selfClosing) c.fail("L1036", {}, start);
-    if (this.scope.contentUsed) c.fail("L1035", {}, start);
-    this.scope.contentUsed = true;
+    claimContent(this.cursor, start, this.scope);
     this.bindings.push({ kind: "content" });
     this.html += `<!--${TEXT_MARKER}-->`;
   }
@@ -135,12 +117,7 @@ class TemplateScanner {
     selfClosing: boolean,
     start: number,
   ): void {
-    const binding: ComponentBinding = {
-      kind: "component",
-      name,
-      props: props.filter((attr) => !isBindName(attr.name)),
-      binds: componentBindsOf(props),
-    };
+    const binding = componentBinding(name, props);
     if (!selfClosing) {
       const children = this.readChildren(name, start);
       if (children) binding.children = children;
@@ -149,17 +126,10 @@ class TemplateScanner {
     this.html += `<!--${TEXT_MARKER}-->`;
   }
 
-  /** Reads the markup between a component's open and close tags. Blank children count as none. */
   private readChildren(name: string, start: number): Template | undefined {
-    const c = this.cursor;
-    const close = `</${name}>`;
-    const children = new TemplateScanner(c, this.scope, close).scanBody();
-    if (!c.startsWith(close)) {
-      if (c.pos < c.src.length) failBoundary(c);
-      c.fail("L1009", { name }, start);
-    }
-    c.pos += close.length;
-    return isBlank(children) ? undefined : children;
+    const scanChildren = (close: string) =>
+      new TemplateScanner(this.cursor, this.scope, close).scanBody();
+    return readComponentChildren(this.cursor, name, start, scanChildren);
   }
 }
 

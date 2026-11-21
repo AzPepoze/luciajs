@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { LusiaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
 import { CODES } from "@compiler/errors/codes.ts";
 import { fill, lusiaError } from "@compiler/errors/create.ts";
 import { formatWhere, parseWhere } from "@compiler/errors/where.ts";

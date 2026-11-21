@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { LusiaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
 import { formatError } from "@cli/format-error.ts";
 
 const SOURCE = ["<script>", "const a = 1;", "</script>", "<p>{a + }</p>", "<p>ok</p>"].join("\n");

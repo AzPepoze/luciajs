@@ -1,8 +1,8 @@
-import { checkAnimateAttribute } from "./animate.ts";
-import { expressionOf, hasExpression, type AttrCheck, type Fail } from "./attributes.ts";
-import { BIND_NAME, FORM_TAGS, isBindName } from "./bind.ts";
-import { isEventName } from "./events.ts";
-import type { AttrBinding } from "./types.ts";
+import { checkAnimateAttribute } from "../animate.ts";
+import { expressionOf, hasExpression, type AttrCheck, type Fail } from "../scan/attributes.ts";
+import { BIND_NAME, FORM_TAGS, isBindName } from "../bind.ts";
+import { isEventName } from "../events.ts";
+import type { AttrBinding } from "../types/attribute.ts";
 
 export type AttrKind = "expression" | "identifier";
 

@@ -1,8 +1,10 @@
-import { markedCode } from "../sourcemap/marker.ts";
-import type { GenContext } from "./codegen-context.ts";
-import { trailingArg } from "./codegen-context.ts";
-import { readExpression } from "./codegen-element.ts";
-import type { EachBinding, Expr, ForBinding, IfBinding } from "./types.ts";
+import { markedCode } from "@compiler/sourcemap/marker.ts";
+import { trailingArg, type GenContext } from "./context.ts";
+import { readExpression } from "./element.ts";
+import type { EachBinding } from "../types/each.ts";
+import type { Expr } from "../types/expression.ts";
+import type { ForBinding } from "../types/for.ts";
+import type { IfBinding } from "../types/if.ts";
 
 const DEFAULT_ITEM = "__item";
 const DEFAULT_INDEX = "__index";

@@ -1,8 +1,10 @@
-import { formatWhere } from "../errors/where.ts";
-import { lineAt, columnAt, lineStarts } from "../utils/position.ts";
-import { bindersOf } from "./codegen-binders.ts";
-import { unknownKeysAt, type ScriptRange } from "./animate-keys.ts";
-import type { Expr, Template } from "./types.ts";
+import { formatWhere } from "@compiler/errors/where.ts";
+import { lineAt, columnAt, lineStarts } from "@compiler/utils/position.ts";
+import { bindersOf } from "./binders.ts";
+import { unknownKeysAt } from "../check/animate-keys.ts";
+import type { ScriptRange } from "../check/script-range.ts";
+import type { Expr } from "../types/expression.ts";
+import type { Template } from "../types/template.ts";
 
 export interface GenOptions {
   /** The path shown in runtime errors. */

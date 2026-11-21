@@ -1,4 +1,4 @@
-import type { Values } from "../errors/create.ts";
+import type { Values } from "@compiler/errors/create.ts";
 import {
   hasItemKey,
   isKeyframesKey,
@@ -10,8 +10,8 @@ import {
   SPELLING_HINT,
   unknownKeyValues,
 } from "@runtime/animate/options/keys.ts";
-import type { Section } from "../parse/sections.ts";
-import { objectEntries, listItems, skipSpace, type Entry } from "../utils/literals.ts";
+import { objectEntries, listItems, skipSpace, type Entry } from "./literals.ts";
+import type { ScriptRange } from "./script-range.ts";
 
 /** A key the runtime rejects. `offset` is in the source, and `code` and `values` fill its error. */
 export interface UnknownKey {
@@ -21,25 +21,11 @@ export interface UnknownKey {
   values: Values;
 }
 
-/** Where the script section's text sits in the source. */
-export interface ScriptRange {
-  from: number;
-  to: number;
-}
-
 const IDENTIFIER = /[A-Za-z_$][\w$]*/y;
 const WHEN_MEMBER = /WHEN\.([A-Za-z_]+)/y;
 const MAX_DEPTH = 8;
 
-/**
- * Finds the keys of an animate value that the runtime would reject. The value starts at `start`
- * in `source`. A name is followed into the script's `const`, so keyframes kept in a variable are checked too.
- */
-export function unknownKeysAt(source: string, start: number, script: ScriptRange): UnknownKey[] {
-  return new KeyScan(source, script).value(start, 0);
-}
-
-class KeyScan {
+export class KeyScan {
   private readonly found: UnknownKey[] = [];
 
   constructor(
@@ -145,10 +131,4 @@ function triggerOf(source: string, entries: Entry[]): string | undefined {
   if (when?.valueOffset === undefined) return undefined;
   WHEN_MEMBER.lastIndex = when.valueOffset;
   return WHEN_MEMBER.exec(source)?.[1];
-}
-
-/** The source range of a script section. An absent script has an empty range. */
-export function scriptRange(script: Section | null): ScriptRange {
-  if (!script) return { from: 0, to: 0 };
-  return { from: script.from, to: script.from + script.content.length };
 }

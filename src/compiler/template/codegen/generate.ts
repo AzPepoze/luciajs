@@ -1,8 +1,8 @@
-import { hotVariables } from "../hot/variables.ts";
-import { markLines } from "../sourcemap/marker.ts";
-import { GenContext, type GenOptions } from "./codegen-context.ts";
+import { hotVariables } from "@compiler/hot/variables.ts";
+import { markLines } from "@compiler/sourcemap/marker.ts";
+import { GenContext, type GenOptions } from "./context.ts";
 import { setupHook } from "./setup-hook.ts";
-import type { Template } from "./types.ts";
+import type { Template } from "../types/template.ts";
 
 export interface ComponentParts extends GenOptions {
   imports: string;

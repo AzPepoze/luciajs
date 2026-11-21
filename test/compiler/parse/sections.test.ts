@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { LusiaError } from "@compiler/errors.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
 import { parse } from "@compiler/parse/sections.ts";
 
 const FILE = "Card.lusia";

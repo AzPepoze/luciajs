@@ -1,7 +1,8 @@
 import { expressionOf, formatStaticAttr, hasExpression } from "./attributes.ts";
-import { bindBinding, isBindName } from "./bind.ts";
-import { eventType, isEventAttr } from "./events.ts";
-import type { AttrBinding, ElementBinding } from "./types.ts";
+import { bindBinding, isBindName } from "../bind.ts";
+import { eventType, isEventAttr } from "../events.ts";
+import type { AttrBinding } from "../types/attribute.ts";
+import type { ElementBinding } from "../types/element.ts";
 
 const ANIMATE = "animate";
 

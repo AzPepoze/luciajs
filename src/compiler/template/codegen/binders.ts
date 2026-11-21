@@ -1,8 +1,11 @@
-import { markedCode } from "../sourcemap/marker.ts";
-import { trailingArg, type GenContext } from "./codegen-context.ts";
-import { attrValue, elementBinder, readExpression } from "./codegen-element.ts";
-import { eachBinder, forBinder, ifBinder } from "./codegen-blocks.ts";
-import type { Binding, ComponentBinding, HtmlBinding, TextBinding } from "./types.ts";
+import { markedCode } from "@compiler/sourcemap/marker.ts";
+import { trailingArg, type GenContext } from "./context.ts";
+import { attrValue, elementBinder, readExpression } from "./element.ts";
+import { eachBinder, forBinder, ifBinder } from "./blocks.ts";
+import type { ComponentBinding } from "../types/component.ts";
+import type { HtmlBinding } from "../types/html.ts";
+import type { TextBinding } from "../types/text.ts";
+import type { Binding } from "../types/template.ts";
 
 function textBinder({ expr }: TextBinding): string {
   return `(__node, __cleanups) => __bindText(__node, () => ${readExpression(expr)}, __cleanups)`;

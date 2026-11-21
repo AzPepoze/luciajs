@@ -1,6 +1,6 @@
 import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
-import { RESERVED_TAGS } from "../utils/reserved.ts";
+import { RESERVED_TAGS } from "./reserved.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import type { Section } from "./sections.ts";
 

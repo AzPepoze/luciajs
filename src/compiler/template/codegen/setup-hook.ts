@@ -1,4 +1,4 @@
-import { groupEnd, skipNonCode } from "../hot/group.ts";
+import { groupEnd, skipNonCode } from "@compiler/hot/group.ts";
 
 const IDENTIFIER = /[A-Za-z_$][\w$]*/y;
 const WORD_CHAR = /[\w$]/;

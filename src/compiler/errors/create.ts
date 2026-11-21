@@ -1,4 +1,4 @@
-import { LusiaError } from "../errors.ts";
+import { LusiaError } from "./error.ts";
 import { CODES, type ErrorCodeName } from "./codes.ts";
 
 export type Values = Record<string, string | number>;
