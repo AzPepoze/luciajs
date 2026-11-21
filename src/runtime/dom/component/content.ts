@@ -1,4 +1,4 @@
-import type { Cleanup } from "./bindings.ts";
+import type { Cleanup } from "../template/bindings.ts";
 import type { Slot } from "./component.ts";
 import type { Leave } from "./leave.ts";
 

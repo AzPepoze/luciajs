@@ -5,7 +5,7 @@ import type { DefaultEasing } from "@runtime/animate/options/keyform.ts";
 import { readItem } from "@runtime/animate/options/options.ts";
 import { EASE } from "@runtime/animate/modes/modes.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();

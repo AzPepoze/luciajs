@@ -1,6 +1,6 @@
-import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "../markers.ts";
+import { COMPONENT_ATTR, ELEMENT_MARKER, TEXT_MARKER } from "../../markers.ts";
 import type { Binder, Cleanup } from "./bindings.ts";
-import type { Leave } from "./leave.ts";
+import type { Leave } from "../component/leave.ts";
 
 export interface CompiledTemplate {
   template: HTMLTemplateElement;

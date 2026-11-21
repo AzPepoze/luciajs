@@ -1,5 +1,5 @@
-import type { Cleanup } from "../dom/bindings.ts";
-import type { Leave } from "../dom/leave.ts";
+import type { Cleanup } from "../dom/template/bindings.ts";
+import type { Leave } from "../dom/component/leave.ts";
 import { itemsOf, type Animate } from "./animation.ts";
 import { prepareTimeline } from "./options/keyframes.ts";
 import { readItem } from "./options/options.ts";

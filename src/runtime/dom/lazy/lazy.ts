@@ -1,7 +1,7 @@
-import type { Cleanup } from "./bindings.ts";
-import { componentFrom, type Component, type Host, type Place } from "./component.ts";
-import type { Leave } from "./leave.ts";
-import { runtimeError } from "../errors.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import { componentFrom, type Component, type Host, type Place } from "../component/component.ts";
+import type { Leave } from "../component/leave.ts";
+import { runtimeError } from "../../errors.ts";
 import { memoizeLoad, whenIdle, whenNear, type LazyLoad } from "./lazy-load.ts";
 
 export type { LazyLoad } from "./lazy-load.ts";

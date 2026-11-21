@@ -1,7 +1,7 @@
-import { runtimeError } from "../errors.ts";
-import { variable } from "../variable/variable.ts";
-import type { Variable } from "../variable/variable.ts";
-import { REACTIVE } from "../variable/reactive.ts";
+import { runtimeError } from "../../errors.ts";
+import { variable } from "../../variable/variable.ts";
+import type { Variable } from "../../variable/variable.ts";
+import { REACTIVE } from "../../variable/reactive.ts";
 import { currentComponentHost } from "./component.ts";
 
 /** A prop as the component sees it. Writing it sets the parent's variable when the parent bound it. */

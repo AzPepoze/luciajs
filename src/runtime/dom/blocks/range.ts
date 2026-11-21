@@ -1,6 +1,6 @@
 import { runtimeError, withWhere } from "../../errors.ts";
-import type { Cleanup } from "../bindings.ts";
-import type { Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Leave } from "../component/leave.ts";
 import { bindEach, type RowRender } from "./each.ts";
 
 export interface Bounds {

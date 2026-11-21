@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { setup } from "lusia";
-import CallSetup from "./fixtures/CallSetup.lusia";
-import { events } from "./fixtures/log.ts";
-import { click, host, mount, resetMounts, unmount } from "./fixtures/mount.ts";
+import CallSetup from "../fixtures/CallSetup.lusia";
+import { events } from "../fixtures/log.ts";
+import { click, host, mount, resetMounts, unmount } from "../fixtures/mount.ts";
 
 beforeEach(() => {
   events.length = 0;

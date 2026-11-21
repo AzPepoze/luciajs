@@ -1,8 +1,8 @@
-import type { Variable } from "../variable/variable.ts";
-import type { Cleanup } from "./bindings.ts";
+import type { Variable } from "../../variable/variable.ts";
+import type { Cleanup } from "../template/bindings.ts";
 import { leaveThen, type Leave } from "./leave.ts";
-import { injectStyle } from "./styles.ts";
-import { runtimeError } from "../errors.ts";
+import { injectStyle } from "../template/styles.ts";
+import { runtimeError } from "../../errors.ts";
 
 export type Props = Record<string, () => unknown>;
 

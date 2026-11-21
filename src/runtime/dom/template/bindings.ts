@@ -1,5 +1,5 @@
-import { batch, watch } from "../variable/graph.ts";
-import type { Leave } from "./leave.ts";
+import { batch, watch } from "../../variable/graph.ts";
+import type { Leave } from "../component/leave.ts";
 
 export type Cleanup = () => void;
 

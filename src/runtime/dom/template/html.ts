@@ -1,6 +1,6 @@
-import { watch } from "../variable/graph.ts";
+import { watch } from "../../variable/graph.ts";
 import { toText, type Cleanup } from "./bindings.ts";
-import { mountBefore, removeNodes, type Mount } from "./blocks/mount.ts";
+import { mountBefore, removeNodes, type Mount } from "../blocks/mount.ts";
 
 /** The value's nodes, parsed from a template so the page's scripts do not run while parsing. */
 function parseHtml(html: string): DocumentFragment {

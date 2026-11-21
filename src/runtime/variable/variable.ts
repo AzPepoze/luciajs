@@ -1,4 +1,4 @@
-import { currentComponentCleanups } from "../dom/component.ts";
+import { currentComponentCleanups } from "../dom/component/component.ts";
 import { compute } from "./compute.ts";
 import { batch, propagate, queueWatcher, track, untrack, type Source } from "./graph.ts";
 import { REACTIVE } from "./reactive.ts";

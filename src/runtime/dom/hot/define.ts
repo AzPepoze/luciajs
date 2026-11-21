@@ -1,6 +1,6 @@
-import type { Cleanup } from "../bindings.ts";
-import type { Component, Host, Instance, Props, Render } from "../component.ts";
-import { leaveThen, type Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Component, Host, Instance, Props, Render } from "../component/component.ts";
+import { leaveThen, type Leave } from "../component/leave.ts";
 import {
   createInstance,
   mountInstance,

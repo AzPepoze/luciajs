@@ -5,7 +5,7 @@ import { PRESET } from "@runtime/animate/options/presets.ts";
 import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
 import { EASE } from "@runtime/animate/modes/modes.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, pendingFrames, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();

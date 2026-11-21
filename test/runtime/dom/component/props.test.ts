@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { props } from "@runtime/dom/props.ts";
+import { props } from "@runtime/dom/component/props.ts";
 import { variable } from "@runtime/variable/variable.ts";
-import Badge from "./fixtures/badge.lusia";
-import Shelf from "./fixtures/Shelf.lusia";
-import { host, mount, resetMounts, text } from "./fixtures/mount.ts";
+import Badge from "../fixtures/badge.lusia";
+import Shelf from "../fixtures/Shelf.lusia";
+import { host, mount, resetMounts, text } from "../fixtures/mount.ts";
 
 afterEach(resetMounts);
 

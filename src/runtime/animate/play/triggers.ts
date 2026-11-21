@@ -1,6 +1,6 @@
-import type { Cleanup } from "../../dom/bindings.ts";
+import type { Cleanup } from "../../dom/template/bindings.ts";
 import { isSwapping } from "../../dom/hot/session.ts";
-import type { Leave } from "../../dom/leave.ts";
+import type { Leave } from "../../dom/component/leave.ts";
 import { untrack, watch } from "../../variable/graph.ts";
 import { isReactive, unwrap } from "../../variable/reactive.ts";
 import type { Group } from "./group.ts";

@@ -1,7 +1,7 @@
 import type { Variable } from "../../variable/variable.ts";
-import type { Cleanup } from "../bindings.ts";
-import type { Host, Render } from "../component.ts";
-import type { Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Host, Render } from "../component/component.ts";
+import type { Leave } from "../component/leave.ts";
 import { currentFrame, insertRendering, renderInstance, type Rendering } from "./render.ts";
 import { type Restore, takeRestore } from "./session.ts";
 import { untrackInstance, trackInstance } from "./registry.ts";

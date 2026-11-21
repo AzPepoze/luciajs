@@ -10,7 +10,7 @@ import { readItem } from "@runtime/animate/options/options.ts";
 import { Player } from "@runtime/animate/play/player.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
 import { variable } from "@runtime/variable/variable.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();

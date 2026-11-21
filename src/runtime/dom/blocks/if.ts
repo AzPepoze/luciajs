@@ -1,6 +1,6 @@
 import { untrack, watch } from "../../variable/graph.ts";
-import type { Cleanup } from "../bindings.ts";
-import type { Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Leave } from "../component/leave.ts";
 import { Outlet } from "./outlet.ts";
 import { mountBefore, type Mount } from "./mount.ts";
 

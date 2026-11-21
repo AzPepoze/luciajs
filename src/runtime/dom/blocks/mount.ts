@@ -1,5 +1,5 @@
-import type { Cleanup } from "../bindings.ts";
-import type { Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Leave } from "../component/leave.ts";
 
 /** Content between two comments, so the whole range can be moved or removed in one walk. */
 export interface Mount {

@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { variable } from "@runtime/variable/variable.ts";
-import Counter from "./fixtures/Counter.lusia";
-import Setup from "./fixtures/Setup.lusia";
-import Shelf from "./fixtures/Shelf.lusia";
-import { events } from "./fixtures/log.ts";
-import { host, mount, resetMounts, text, unmount, click } from "./fixtures/mount.ts";
+import Counter from "../fixtures/Counter.lusia";
+import Setup from "../fixtures/Setup.lusia";
+import Shelf from "../fixtures/Shelf.lusia";
+import { events } from "../fixtures/log.ts";
+import { host, mount, resetMounts, text, unmount, click } from "../fixtures/mount.ts";
 
 beforeEach(() => {
   events.length = 0;

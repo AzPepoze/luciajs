@@ -1,8 +1,8 @@
 import { untrack, watch } from "../../variable/graph.ts";
 import { variable, type Variable } from "../../variable/variable.ts";
 import { runtimeError, withWhere } from "../../errors.ts";
-import type { Cleanup } from "../bindings.ts";
-import type { Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Leave } from "../component/leave.ts";
 import { mountBefore, moveBefore, type Mount } from "./mount.ts";
 import { Outlet } from "./outlet.ts";
 

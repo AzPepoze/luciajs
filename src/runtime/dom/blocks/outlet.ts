@@ -1,4 +1,4 @@
-import { leaveThen, type Leave } from "../leave.ts";
+import { leaveThen, type Leave } from "../component/leave.ts";
 import { disposeMount, type Mount } from "./mount.ts";
 
 async function leaveMount(mount: Mount): Promise<void> {

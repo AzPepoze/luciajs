@@ -12,7 +12,7 @@ import { WHEN } from "@runtime/animate/modes/trigger.ts";
 import { EDGE, SCROLL_AT } from "@runtime/animate/modes/scroll-modes.ts";
 import type { ScrollAt } from "@runtime/animate/scroll/scroll-touch.ts";
 import { variable } from "@runtime/variable/variable.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, setReducedMotion, useFakeClock } from "./clock.ts";
 
 useFakeClock();

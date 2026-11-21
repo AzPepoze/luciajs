@@ -1,13 +1,13 @@
 // Helpers used by compiled .lusia output; not part of the public API.
-export { attr, bindText, insert, listen, toText } from "./dom/bindings.ts";
-export type { Binder, Cleanup } from "./dom/bindings.ts";
-export { bindComponent, defineComponent } from "./dom/component.ts";
-export type { Host, Rendered } from "./dom/component.ts";
-export { bindContent } from "./dom/content.ts";
-export { bindHtml } from "./dom/html.ts";
-export type { Leave } from "./dom/leave.ts";
-export { createTemplate, instantiate, lazyTemplate } from "./dom/template.ts";
-export { lazyComponent } from "./dom/lazy.ts";
+export { attr, bindText, insert, listen, toText } from "./dom/template/bindings.ts";
+export type { Binder, Cleanup } from "./dom/template/bindings.ts";
+export { bindComponent, defineComponent } from "./dom/component/component.ts";
+export type { Host, Rendered } from "./dom/component/component.ts";
+export { bindContent } from "./dom/component/content.ts";
+export { bindHtml } from "./dom/template/html.ts";
+export type { Leave } from "./dom/component/leave.ts";
+export { createTemplate, instantiate, lazyTemplate } from "./dom/template/template.ts";
+export { lazyComponent } from "./dom/lazy/lazy.ts";
 export { bindInput } from "./dom/bind/input.ts";
 export { writableTarget } from "./dom/bind/channel.ts";
 export { bindProp } from "./dom/bind/property.ts";

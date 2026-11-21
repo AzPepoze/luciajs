@@ -11,7 +11,7 @@ import { watchView } from "@runtime/animate/scroll/view.ts";
 const readBase = { duration: 300 };
 const readMore = (when: Parameters<typeof readWith>[0], more: Parameters<typeof readWith>[1]) =>
   readWith(when, more, readBase);
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Leave } from "@runtime/dom/component/leave.ts";
 import { variable } from "@runtime/variable/variable.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 

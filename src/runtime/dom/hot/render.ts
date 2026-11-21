@@ -1,8 +1,8 @@
 import type { Variable } from "../../variable/variable.ts";
-import type { Cleanup } from "../bindings.ts";
-import { renderWith, runSetup, type Rendered, type SetupHook } from "../component.ts";
-import type { Leave } from "../leave.ts";
-import { injectStyle } from "../styles.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import { renderWith, runSetup, type Rendered, type SetupHook } from "../component/component.ts";
+import type { Leave } from "../component/leave.ts";
+import { injectStyle } from "../template/styles.ts";
 import type { Definition, HotInstance } from "./instance.ts";
 import { removeRegion, runCleanups } from "./teardown.ts";
 

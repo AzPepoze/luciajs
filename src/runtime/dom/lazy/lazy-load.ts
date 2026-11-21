@@ -1,4 +1,4 @@
-import type { Component } from "./component.ts";
+import type { Component } from "../component/component.ts";
 
 export type LazyLoad = () => Promise<{ default: Component }>;
 
