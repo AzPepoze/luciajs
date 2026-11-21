@@ -1,10 +1,10 @@
 {
   "name": "lusia",
   "version": "0.1.0",
-  "description": "A Bun-native UI framework: single-file components, variables and scoped SCSS.",
+  "description": "Write UI in one file. Update it with variables. Built for Bun.",
   "license": "MIT",
   "type": "module",
-  "keywords": ["ui", "framework", "bun", "components", "scss"],
+  "keywords": ["ui", "framework", "bun", "typescript", "components", "reactive", "scss", "single-file"],
   "homepage": "https://azpepoze.github.io/lusia",
   "repository": {
     "type": "git",
