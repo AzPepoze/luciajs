@@ -35,12 +35,12 @@ describe("script completions", () => {
     expect(props?.insertText.startsWith("props({")).toBe(true);
   });
 
-  test("offers setup, which is now a lusia export", () => {
-    const setup = items.find((item) => item.label === "setup");
-    expect(setup?.importEdit).toEqual({
+  test("offers onAttach, which is a lusia export", () => {
+    const onAttach = items.find((item) => item.label === "onAttach");
+    expect(onAttach?.importEdit).toEqual({
       start: 8,
       end: 8,
-      text: 'import { setup } from "lusia";\n',
+      text: 'import { onAttach } from "lusia";\n',
     });
   });
 });
