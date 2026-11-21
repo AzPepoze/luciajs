@@ -7,10 +7,6 @@ const presets = Object.entries(PRESET) as [string, Keyframes][];
 
 const IN_OUT_PAIRS = [
   ["FADE_IN", "FADE_OUT"],
-  ["SLIDE_IN_UP", "SLIDE_OUT_UP"],
-  ["SLIDE_IN_DOWN", "SLIDE_OUT_DOWN"],
-  ["SLIDE_IN_LEFT", "SLIDE_OUT_LEFT"],
-  ["SLIDE_IN_RIGHT", "SLIDE_OUT_RIGHT"],
   ["POP_IN", "POP_OUT"],
   ["ZOOM_IN", "ZOOM_OUT"],
   ["FLIP_IN", "FLIP_OUT"],
@@ -59,10 +55,10 @@ describe("PRESET", () => {
   });
 
   test.each([
-    ["SLIDE_IN_UP", "0px 24px"],
-    ["SLIDE_IN_DOWN", "0px -24px"],
-    ["SLIDE_IN_LEFT", "-24px 0px"],
-    ["SLIDE_IN_RIGHT", "24px 0px"],
+    ["SLIDE_UP", "0px 24px"],
+    ["SLIDE_DOWN", "0px -24px"],
+    ["SLIDE_LEFT", "-24px 0px"],
+    ["SLIDE_RIGHT", "24px 0px"],
   ] as const)("%s starts at %s, so it comes from that side", (name, start) => {
     expect(PRESET[name][0]).toMatchObject({ translate: start });
   });
@@ -84,7 +80,7 @@ describe("PRESET", () => {
 
   test("presets that move different properties keep all of them", () => {
     const timelines = ownTimelines([
-      { timeline: prepareTimeline(PRESET.SLIDE_IN_UP), detach: false },
+      { timeline: prepareTimeline(PRESET.SLIDE_UP), detach: false },
       { timeline: prepareTimeline(PRESET.ZOOM_IN), detach: false },
     ]);
     expect(timelines.map((timeline) => timeline.props)).toEqual([
@@ -95,7 +91,7 @@ describe("PRESET", () => {
 
   test("a DETACH item does not take the properties of an enter item", () => {
     const timelines = ownTimelines([
-      { timeline: prepareTimeline(PRESET.SLIDE_IN_UP), detach: false },
+      { timeline: prepareTimeline(PRESET.SLIDE_UP), detach: false },
       { timeline: prepareTimeline(PRESET.FADE_IN), detach: true },
     ]);
     expect(timelines.map((timeline) => timeline.props)).toEqual([

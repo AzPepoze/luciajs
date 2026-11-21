@@ -141,7 +141,7 @@ describe("reference api: flow, events and bind-value", () => {
   test("PRESET lists its members in upper case with underscores", () => {
     const members = presetMemberNames();
     expect(members).toContain("FADE_IN");
-    expect(members).toContain("SLIDE_IN_UP");
+    expect(members).toContain("SLIDE_UP");
     for (const name of members) expect(name).toMatch(/^[A-Z_]+$/);
   });
 

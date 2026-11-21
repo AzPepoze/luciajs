@@ -39,7 +39,7 @@ export const animateTypeEntries: ApiEntry[] = [
 		kind: "value",
 		group: "motion",
 		signature:
-			"const PRESET: { readonly FADE_IN: Keyframes; readonly FADE_OUT: Keyframes; readonly SLIDE_IN_UP: Keyframes; readonly SLIDE_IN_DOWN: Keyframes; readonly SLIDE_IN_LEFT: Keyframes; readonly SLIDE_IN_RIGHT: Keyframes; readonly SLIDE_OUT_UP: Keyframes; readonly SLIDE_OUT_DOWN: Keyframes; readonly SLIDE_OUT_LEFT: Keyframes; readonly SLIDE_OUT_RIGHT: Keyframes; readonly POP_IN: Keyframes; readonly POP_OUT: Keyframes; readonly ZOOM_IN: Keyframes; readonly ZOOM_OUT: Keyframes; readonly FLIP_IN: Keyframes; readonly FLIP_OUT: Keyframes; readonly BLUR_IN: Keyframes; readonly BLUR_OUT: Keyframes; readonly DROP_IN: Keyframes; readonly BOUNCE_IN: Keyframes; readonly SHAKE: Keyframes; readonly PULSE: Keyframes; readonly SPIN: Keyframes; readonly WOBBLE: Keyframes; readonly HEARTBEAT: Keyframes; readonly TADA: Keyframes }",
+			"const PRESET: { readonly FADE_IN: Keyframes; readonly FADE_OUT: Keyframes; readonly SLIDE_UP: Keyframes; readonly SLIDE_DOWN: Keyframes; readonly SLIDE_LEFT: Keyframes; readonly SLIDE_RIGHT: Keyframes;readonly POP_IN: Keyframes; readonly POP_OUT: Keyframes; readonly ZOOM_IN: Keyframes; readonly ZOOM_OUT: Keyframes; readonly FLIP_IN: Keyframes; readonly FLIP_OUT: Keyframes; readonly BLUR_IN: Keyframes; readonly BLUR_OUT: Keyframes; readonly DROP_IN: Keyframes; readonly BOUNCE_IN: Keyframes; readonly SHAKE: Keyframes; readonly PULSE: Keyframes; readonly SPIN: Keyframes; readonly WOBBLE: Keyframes; readonly HEARTBEAT: Keyframes; readonly TADA: Keyframes }",
 		summary: "Ready-made keyframes for common motion.",
 		bullets: [
 			"Use one as the style: animate={PRESET.FADE_IN} plays once on attach.",
@@ -48,30 +48,26 @@ export const animateTypeEntries: ApiEntry[] = [
 			"Spread one to change it: { ...PRESET.FADE_IN, 1: { opacity: 0.5 } }.",
 			"IN presets ease OUT, OUT presets ease IN (both CUBIC). A key in a spread can still set its own.",
 		],
-		example: `import { WHEN, PRESET } from "lusia";\n\n<section animate={{ style: PRESET.SLIDE_IN_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
+		example: `import { WHEN, PRESET } from "lusia";\n\n<section animate={{ style: PRESET.SLIDE_UP, when: WHEN.VIEW, duration: 500 }}>...</section>`,
 		members: [
 			{ name: "FADE_IN", summary: "Fades in from transparent." },
 			{ name: "FADE_OUT", summary: "Fades out to transparent." },
 			{
-				name: "SLIDE_IN_UP",
+				name: "SLIDE_UP",
 				summary: "Comes up from below, moving up 24px into place while fading in.",
 			},
 			{
-				name: "SLIDE_IN_DOWN",
+				name: "SLIDE_DOWN",
 				summary: "Comes down from above, moving down 24px into place while fading in.",
 			},
 			{
-				name: "SLIDE_IN_LEFT",
+				name: "SLIDE_LEFT",
 				summary: "Comes in from the left, moving right 24px into place while fading in.",
 			},
 			{
-				name: "SLIDE_IN_RIGHT",
+				name: "SLIDE_RIGHT",
 				summary: "Comes in from the right, moving left 24px into place while fading in.",
 			},
-			{ name: "SLIDE_OUT_UP", summary: "Moves up 24px and fades out." },
-			{ name: "SLIDE_OUT_DOWN", summary: "Moves down 24px and fades out." },
-			{ name: "SLIDE_OUT_LEFT", summary: "Moves left 24px and fades out." },
-			{ name: "SLIDE_OUT_RIGHT", summary: "Moves right 24px and fades out." },
 			{ name: "POP_IN", summary: "Grows from 80% size while fading in." },
 			{ name: "POP_OUT", summary: "Shrinks to 80% size while fading out." },
 			{ name: "ZOOM_IN", summary: "Grows from nothing to full size." },

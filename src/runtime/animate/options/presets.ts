@@ -13,26 +13,17 @@ function outPreset(from: Style, to: Style): Keyframes {
   return { default: [EASE.STYLE.CUBIC, EASE.IN], 0: from, 1: to };
 }
 
-function slideIn(start: string): Keyframes {
+function slide(start: string): Keyframes {
   return inPreset({ translate: start, opacity: 0 }, RESTED);
-}
-
-function slideOut(end: string): Keyframes {
-  return outPreset(RESTED, { translate: end, opacity: 0 });
 }
 
 const FADE_IN = inPreset({ opacity: 0 }, { opacity: 1 });
 const FADE_OUT = outPreset({ opacity: 1 }, { opacity: 0 });
 
-const SLIDE_IN_UP = slideIn("0px 24px");
-const SLIDE_IN_DOWN = slideIn("0px -24px");
-const SLIDE_IN_LEFT = slideIn("-24px 0px");
-const SLIDE_IN_RIGHT = slideIn("24px 0px");
-
-const SLIDE_OUT_UP = slideOut("0px -24px");
-const SLIDE_OUT_DOWN = slideOut("0px 24px");
-const SLIDE_OUT_LEFT = slideOut("-24px 0px");
-const SLIDE_OUT_RIGHT = slideOut("24px 0px");
+const SLIDE_UP = slide("0px 24px");
+const SLIDE_DOWN = slide("0px -24px");
+const SLIDE_LEFT = slide("-24px 0px");
+const SLIDE_RIGHT = slide("24px 0px");
 
 const POP_IN = inPreset({ scale: "0.8", opacity: 0 }, { scale: "1", opacity: 1 });
 const POP_OUT = outPreset({ scale: "1", opacity: 1 }, { scale: "0.8", opacity: 0 });
@@ -120,14 +111,10 @@ const TADA: Keyframes = {
 export const PRESET = Object.freeze({
   FADE_IN,
   FADE_OUT,
-  SLIDE_IN_UP,
-  SLIDE_IN_DOWN,
-  SLIDE_IN_LEFT,
-  SLIDE_IN_RIGHT,
-  SLIDE_OUT_UP,
-  SLIDE_OUT_DOWN,
-  SLIDE_OUT_LEFT,
-  SLIDE_OUT_RIGHT,
+  SLIDE_UP,
+  SLIDE_DOWN,
+  SLIDE_LEFT,
+  SLIDE_RIGHT,
   POP_IN,
   POP_OUT,
   ZOOM_IN,
