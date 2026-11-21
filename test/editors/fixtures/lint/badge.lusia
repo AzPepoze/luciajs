@@ -1,7 +1,0 @@
-<script>
-import { props } from "lusia";
-
-const { label, tone } = props({ label: "New", tone: "info" });
-</script>
-
-<span class="badge {tone}">{label}</span>
