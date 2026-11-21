@@ -152,7 +152,7 @@ export const animateEnumEntries: ApiEntry[] = [
 			'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
 			"HOVER: area (HOVER_AREA.FINAL, the default, checks the resting box; HOVER_AREA.ELEMENT checks the box as it is drawn now), inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
 			"SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE) on the item's own box. follow: a variable of the element whose box is measured. Alone it is pinned to the screen; with start and end it runs from those points. part: [from, to] plays only that slice, without start and end.",
-			"DETACH and ATTACH: animateSpace (default false, off). false: the siblings jump at once. true: they slide into the freed space (DETACH) or apart (ATTACH).",
+			"DETACH and ATTACH: animateSpace (default true, on). true: the siblings slide into the freed space (DETACH) or apart (ATTACH). false: they jump at once.",
 			"Any other trigger that sets more is an error.",
 		],
 		example: `<div animate={{\n  style: fadeUp,\n  when: WHEN.VIEW,\n  more: { margin: "10%", amount: 0.5, reverse: true },\n}}>...</div>`,

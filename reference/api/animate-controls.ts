@@ -24,7 +24,7 @@ export const animateControlEntries: ApiEntry[] = [
 			},
 			{
 				name: "DETACH",
-				summary: "Plays its own keyframes on detach. Detach waits for it. The siblings jump when it is removed, unless more.animateSpace is true.",
+				summary: "Plays its own keyframes on detach. Detach waits for it. The siblings slide closed, unless more.animateSpace is false.",
 			},
 			{
 				name: "VIEW",

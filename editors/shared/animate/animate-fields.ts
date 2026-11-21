@@ -92,7 +92,7 @@ const ANIMATE_SPACE_FIELD: CompletionItemData = {
   kind: "property",
   insertText: "animateSpace: true",
   snippet: false,
-  detail: "Slide the siblings into the freed space or apart. Default false: they jump",
+  detail: "Slide the siblings into the freed space or apart. Default true. false: they jump",
 };
 
 /** The keys of `more` for each trigger. Each trigger takes only its own. */

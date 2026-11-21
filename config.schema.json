@@ -72,6 +72,214 @@
           }
         }
       }
+    },
+    "animate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Default timing and options for every animate item. An item in code overrides them. Enum values are written as names, such as \"QUART\".",
+      "properties": {
+        "duration": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Length of one play, in ms. Default: 300"
+        },
+        "delay": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Wait before each forward play, in ms. Default: 0"
+        },
+        "ease": {
+          "type": "array",
+          "description": "[easing style, direction]. Default: [\"QUART\", \"INOUT\"]",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/easeStyle" },
+            { "$ref": "#/$defs/ease" }
+          ],
+          "items": false
+        },
+        "keep": {
+          "type": "boolean",
+          "description": "Remove the inline styles when a play ends. Default: true"
+        },
+        "midway": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "What a new play does while one is running",
+          "properties": {
+            "play": {
+              "enum": ["TURN", "FINISH", "RESTART", "SKIP", "IGNORE"],
+              "description": "Default: TURN"
+            },
+            "turn": {
+              "enum": ["SUDDEN", "SMOOTH", "STOP"],
+              "description": "How the motion turns around. Default: SUDDEN"
+            },
+            "turnDuration": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Length of the turn, in ms. Default: 200"
+            },
+            "turnStyle": {
+              "$ref": "#/$defs/easeStyle",
+              "description": "Easing style of the turn. Default: CUBIC"
+            },
+            "turnEase": {
+              "$ref": "#/$defs/ease",
+              "description": "Direction of the turn. Default: INOUT"
+            }
+          }
+        },
+        "view": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Options for WHEN.VIEW",
+          "properties": {
+            "margin": {
+              "description": "How far inside the screen edge: a number of px, or a CSS length such as \"10%\". Default: \"0px\"",
+              "oneOf": [
+                { "type": "number" },
+                { "type": "string" }
+              ]
+            },
+            "amount": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Share of the element that must be visible, 0 to 1. Default: 0.15"
+            },
+            "reverse": {
+              "type": "boolean",
+              "description": "Play back out when it leaves the view. Default: false"
+            }
+          }
+        },
+        "hover": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Options for WHEN.HOVER",
+          "properties": {
+            "inDelay": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Wait after pointer enter before playing in, in ms. Default: 0"
+            },
+            "outDelay": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Wait after pointer leave before playing out, in ms. Default: 0"
+            },
+            "outDuration": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Length of the play out, in ms. Used only when the item sets out. Default: the item duration"
+            }
+          }
+        },
+        "scroll": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Options for WHEN.SCROLL",
+          "properties": {
+            "start": {
+              "$ref": "#/$defs/scrollAt",
+              "description": "Where the progress starts. Default: ENTER"
+            },
+            "end": {
+              "$ref": "#/$defs/scrollAt",
+              "description": "Where the progress ends. Default: LEAVE"
+            },
+            "part": {
+              "type": "array",
+              "description": "[from, to] of the progress to play. Default: [0, 1]",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": { "type": "number", "minimum": 0, "maximum": 1 }
+            }
+          }
+        },
+        "space": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Options for WHEN.DETACH and WHEN.ATTACH",
+          "properties": {
+            "animateSpace": {
+              "type": "boolean",
+              "description": "Slide the siblings into the freed space, or apart. false: they jump at once. Default: true"
+            }
+          }
+        },
+        "in": {
+          "$ref": "#/$defs/preset",
+          "description": "Preset used by items with no style, on attach and other triggers. Default: none"
+        },
+        "out": {
+          "$ref": "#/$defs/preset",
+          "description": "Preset used by items with no style, on detach. Default: none"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "easeStyle": {
+      "enum": [
+        "LINEAR",
+        "QUAD",
+        "CUBIC",
+        "QUART",
+        "QUINT",
+        "SINE",
+        "EXPO",
+        "CIRC",
+        "BACK",
+        "ELASTIC",
+        "BOUNCE"
+      ]
+    },
+    "ease": {
+      "enum": ["IN", "OUT", "INOUT"]
+    },
+    "scrollAt": {
+      "description": "A name, or a point on the element and the window. Each point is a number from 0 (top) to 1 (bottom).",
+      "oneOf": [
+        { "enum": ["ENTER", "CENTER", "LEAVE"] },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["element", "window"],
+          "properties": {
+            "element": { "type": "number", "minimum": 0, "maximum": 1 },
+            "window": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      ]
+    },
+    "preset": {
+      "enum": [
+        "FADE_IN",
+        "FADE_OUT",
+        "SLIDE_UP",
+        "SLIDE_DOWN",
+        "SLIDE_LEFT",
+        "SLIDE_RIGHT",
+        "POP_IN",
+        "POP_OUT",
+        "ZOOM_IN",
+        "ZOOM_OUT",
+        "FLIP_IN",
+        "FLIP_OUT",
+        "BLUR_IN",
+        "BLUR_OUT",
+        "DROP_IN",
+        "BOUNCE_IN",
+        "SHAKE",
+        "PULSE",
+        "SPIN",
+        "WOBBLE",
+        "HEARTBEAT",
+        "TADA"
+      ]
     }
   }
 }
