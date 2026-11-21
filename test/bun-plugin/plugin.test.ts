@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { compile } from "lusia/compiler";
 
-const EVENTS_PATH = "../../docs/src/demos/basics/Events.lusia";
+const EVENTS_PATH = "./fixtures/Events.lusia";
 const EVENTS_FILE = new URL(EVENTS_PATH, import.meta.url).pathname;
 
 type Attached = { detach(): void };
@@ -36,7 +36,7 @@ function textOf(root: HTMLElement, selector: string): string {
   return root.querySelector(selector)!.textContent!.replace(/\s+/g, " ").trim();
 }
 
-describe("lusia bun plugin with the web example's Events demo", () => {
+describe("lusia bun plugin with an Events component", () => {
   test("stamps only the top-level element and injects compiled scss", async () => {
     const { id } = await attachEvents();
     expect(target!.querySelector("div")!.getAttribute("data-l")).toBe(id);

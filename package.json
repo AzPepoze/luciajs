@@ -13,29 +13,14 @@
     "./bun-plugin": "./src/bun-plugin/index.ts"
   },
   "scripts": {
-    "dev": "bun scripts/playground-runtime.ts && bun src/cli/index.ts dev docs",
     "dev:stress": "bun src/cli/index.ts dev examples/stress",
-    "build": "bun run build:docs",
-    "build:docs": "bun scripts/playground-runtime.ts && bun src/cli/index.ts build docs",
-    "test": "bun test --parallel=6",
+    "test": "bun test --parallel=6 ./test/ ./examples/",
     "format": "bun fmt",
     "format:check": "bun fmt --check",
     "typecheck": "tsc --noEmit",
-    "check": "tsc --noEmit && bun run test && bun run build && cd editors/vscode && bun run build"
+    "check": "bun scripts/check.ts"
   },
   "dependencies": {
-    "@codemirror/autocomplete": "6.20.4",
-    "@codemirror/commands": "6.11.1",
-    "@codemirror/lang-html": "6.4.12",
-    "@codemirror/lang-javascript": "6.2.5",
-    "@codemirror/lang-sass": "6.0.2",
-    "@codemirror/language": "6.13.1",
-    "@codemirror/lint": "6.9.8",
-    "@codemirror/search": "6.7.2",
-    "@codemirror/state": "6.7.6",
-    "@codemirror/view": "6.43.15",
-    "@lezer/common": "1.5.6",
-    "@lezer/highlight": "1.2.5",
     "prettier": "3.10.1",
     "sass": "^1.80.0",
     "sucrase": "3.35.1"
@@ -43,9 +28,7 @@
   "devDependencies": {
     "@happy-dom/global-registrator": "^15.11.0",
     "@types/bun": "latest",
-    "@types/prismjs": "^1.26.6",
     "playwright": "1.63.0",
-    "prismjs": "^1.30.0",
     "typescript": "^5.6.0"
   }
 }

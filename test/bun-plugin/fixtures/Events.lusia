@@ -1,0 +1,53 @@
+<script>
+import { variable } from "lusia";
+
+const limit = 5;
+const count = variable(0);
+const done = variable.compute(() => count.value >= limit);
+
+function addOne() {
+	count.value++;
+}
+
+function resetCount() {
+	count.value = 0;
+}
+</script>
+
+<div class="events">
+	<p class="status {done.value ? 'done' : ''}">
+		Clicked {count} of {limit} times.
+	</p>
+	<progress max={limit} value={count}></progress>
+	<p class="hint">
+		{done.value ? "Limit reached" : `${limit - count.value} left`}
+	</p>
+	<button
+		class="add"
+		type="button"
+		onclick={addOne}
+		disabled={done}
+	>
+		Add one
+	</button>
+	<button
+		class="reset"
+		type="button"
+		onclick={resetCount}
+		title={count.value === 0 ? null : "Start again"}
+	>
+		Reset
+	</button>
+</div>
+
+<style>
+.events {
+	display: grid;
+	gap: 0.5rem;
+}
+
+.status.done {
+	color: var(--accent);
+	font-weight: 700;
+}
+</style>

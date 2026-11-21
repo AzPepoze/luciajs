@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { createDemoSession } from "../../../docs/src/live/demo-session.ts";
-import type { LiveBundle } from "../../../docs/src/live/types.ts";
+import { createDemoSession } from "../../src/live/demo-session.ts";
+import type { LiveBundle } from "../../src/live/types.ts";
 
 const FILE = "src/Box.lusia";
 

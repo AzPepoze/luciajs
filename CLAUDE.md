@@ -7,7 +7,7 @@ Lusia: a Bun-native UI framework with single-file `.lusia` components, variables
 - Commands, tests and repo layout: [CONTRIBUTING.md](CONTRIBUTING.md)
 - The site Guide (learning path, live demos and source): https://azpepoze.github.io/lusia/guide
 - The API table: [reference/api.ts](reference/api.ts)
-- The docs site source is in `docs/` (`index.html`, `src/`, `public/`). Its playground needs `scripts/playground-runtime.ts`, which `dev` and `build` run first.
+- The docs site source is in `docs/` (`index.html`, `src/`, `public/`). Its playground needs `docs/scripts/playground-runtime.ts`, which `dev` and `build` run first.
 
 ## Keep docs current
 
@@ -37,8 +37,7 @@ Any `.lusia` syntax change (new tag, attribute, keyword or export) must update b
 - Deferred until designed with the user: SSR, hydration.
 - Events (`onclick={fn}`), `bind-value` and the flow tags (`<IF>`, `<ELSEIF>`, `<ELSE>`, `<EACH>`, `<FOR>`) are designed and implemented. Their syntax follows the site Guide's Events, bind-value and Flow sections (https://azpepoze.github.io/lusia/guide). Change it only with the user.
 - `animate` is designed. Its syntax follows the site Guide's Animate section (https://azpepoze.github.io/lusia/guide): one special attribute, options inside the value, enums `EASE` (with `EASE.STYLE`) and `WHEN` (no flat names). Change its syntax only with the user.
-- `docs` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits. The plugin test attaches the docs site's `Events` demo, so update both together.
-
+- `docs` is a docs-style showcase: every feature with a live demo and its source. `examples/stress` pushes the limits.
 ## Docs site structure
 
 - The Guide is a learning path: order groups, entries and sub-nav so a beginner meets each idea before anything that uses it, simplest first, advanced last.

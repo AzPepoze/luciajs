@@ -34,13 +34,14 @@ A small UI framework for [Bun](https://bun.sh). You write components as single `
 You need Bun 1.4 or newer.
 
 ```sh
-bun install          # install dependencies
-bun run dev          # run the docs site at http://localhost:3000
-bun run dev:stress   # run the stress example at http://localhost:3000
-bun run build        # build the docs site into docs/dist/
+bun install                # install dependencies
+bun run dev:stress         # run the stress example at http://localhost:3000
+cd docs && bun install     # install the docs site's packages
+cd docs && bun run dev     # run the docs site at http://localhost:3000
+cd docs && bun run build   # build the docs site into docs/dist/
 ```
 
-If port 3000 is taken, run `bun run dev -- --port 3100`. See [Development](CONTRIBUTING.md) for all options.
+If port 3000 is taken, run `cd docs && bun run dev -- --port 3100`. See [Development](CONTRIBUTING.md) for all options.
 
 ## More
 

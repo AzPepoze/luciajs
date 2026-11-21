@@ -23,7 +23,6 @@
     "src",
     "test",
     "examples",
-    "docs",
     "reference",
     "lusia.d.ts",
     "editors/vscode/src/logic/css/scss/sass-graph.d.ts"

@@ -6,21 +6,24 @@ Lusia is a Bun-native UI framework built from single-file `.lusia` components, v
 
 | Task                                      | Command                                      |
 | ----------------------------------------- | -------------------------------------------- |
-| Install                                   | `bun install`                                |
-| Web example (port 3000)                   | `bun run dev`                                |
+| Install lusia's packages                  | `bun install`                                |
+| Install the docs site's packages          | `cd docs && bun install`                     |
 | Stress example (port 3000)                | `bun run dev:stress`                         |
-| Build the docs site (writes `docs/dist/`) | `bun run build`                              |
-| All tests                                 | `bun run test` (parallel, 6 workers)         |
+| Docs site (port 3000)                     | `cd docs && bun run dev`                     |
+| Build the docs site (writes `docs/dist/`) | `cd docs && bun run build`                   |
+| Lusia tests (parallel, 6 workers)         | `bun run test`                               |
+| Docs site tests                           | `cd docs && bun run test`                    |
 | One test file                             | `bun test test/compiler/style/modes.test.ts` |
 | Tests by name                             | `bun test -t "diamond"`                      |
 | Typecheck                                 | `bun run typecheck`                          |
 | Format all files                          | `bun run format`                             |
 | Check formatting without writing          | `bun run format:check`                       |
-| Everything before a commit                | `bun run check`                              |
+| Everything before a commit (lusia)        | `bun run check`                              |
+| Everything before a commit (docs site)    | `cd docs && bun run check`                   |
 
-`bun run dev` and `bun run build:docs` first run `scripts/playground-runtime.ts`, which writes the playground preview runtime. `bun run build` runs that same site build. Run `bun scripts/playground-runtime.ts` yourself before using the CLI directly.
+`cd docs && bun run dev` and `cd docs && bun run build` first run `docs/scripts/playground-runtime.ts`, which writes the playground preview runtime. Run `cd docs && bun scripts/playground-runtime.ts` yourself before using the CLI directly.
 
-`bun run check` runs the typecheck, tests, site build and extension build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
+`bun run check` covers the lusia package only: it runs the typecheck, tests and the VS Code extension build in parallel and prints each step's time. `cd docs && bun run check` covers the docs site: typecheck, tests and site build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
 
 Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
 
@@ -39,11 +42,10 @@ The lint rules are the ones the VS Code extension shows: `unused-import`, `props
 | `src/bun-plugin`   | The Bun loader for `.lusia` files and `?raw` imports         |
 | `src/cli`          | The `lusia` command: `build` and `dev`                       |
 | `test/`            | Tests. One folder per area, each mirroring its `src/` folder |
-| `docs`             | The docs site: every feature with a live demo and source     |
+| `docs`             | The docs site (own `package.json`): every feature with a live demo and source, and its tests |
 | `examples/stress`  | Scenarios that push the limits and report timings            |
 | `editors/vscode`   | The VS Code extension and `.lusia` grammar                   |
 | `reference/api.ts` | The single API table for the extension and the docs site     |
-| `scripts/`         | Build helpers, including `playground-runtime.ts`             |
 | `test/setup.ts`    | Sets up the fake DOM (happy-dom) and the `.lusia` loader     |
 
 Domain folders own framework logic (`parse/`, `style/`, `template/`, `variable/`, `dom/`). `utils/` holds only helpers used by two or more domains. One job per file, around 150 lines. Imports across areas use `@runtime/`, `@compiler/`, `@bun-plugin/` and `@cli/` aliases; imports inside one area stay relative.

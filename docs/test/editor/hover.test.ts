@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { editorHover } from "../../../docs/src/editor/editor-hover.ts";
+import { editorHover } from "../../src/editor/editor-hover.ts";
 import { hoverMarkdown } from "../../../editors/shared/markdown.ts";
 
 const UTIL = {

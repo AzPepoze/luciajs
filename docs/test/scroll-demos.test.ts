@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { host, mount, resetMounts } from "../runtime/dom/fixtures/mount.ts";
-import ScrollCenterLeave from "../../docs/src/demos/motion/ScrollCenterLeave.lusia";
-import ScrollDefault from "../../docs/src/demos/motion/ScrollDefault.lusia";
-import ScrollEffects from "../../docs/src/demos/motion/ScrollEffects.lusia";
-import ScrollEnterCenter from "../../docs/src/demos/motion/ScrollEnterCenter.lusia";
-import ScrollLines from "../../docs/src/demos/motion/ScrollLines.lusia";
-import ScrollPartFollow from "../../docs/src/demos/motion/ScrollPartFollow.lusia";
-import ScrollPresets from "../../docs/src/demos/motion/ScrollPresets.lusia";
-import ScrollTouchPoints from "../../docs/src/demos/motion/ScrollTouchPoints.lusia";
-import ScrollTwo from "../../docs/src/demos/motion/ScrollTwo.lusia";
-import { progressOf } from "../../docs/src/demos/motion/scroll-readout.ts";
+import { host, mount, resetMounts } from "../../test/runtime/dom/fixtures/mount.ts";
+import ScrollCenterLeave from "../src/demos/motion/ScrollCenterLeave.lusia";
+import ScrollDefault from "../src/demos/motion/ScrollDefault.lusia";
+import ScrollEffects from "../src/demos/motion/ScrollEffects.lusia";
+import ScrollEnterCenter from "../src/demos/motion/ScrollEnterCenter.lusia";
+import ScrollLines from "../src/demos/motion/ScrollLines.lusia";
+import ScrollPartFollow from "../src/demos/motion/ScrollPartFollow.lusia";
+import ScrollPresets from "../src/demos/motion/ScrollPresets.lusia";
+import ScrollTouchPoints from "../src/demos/motion/ScrollTouchPoints.lusia";
+import ScrollTwo from "../src/demos/motion/ScrollTwo.lusia";
+import { progressOf } from "../src/demos/motion/scroll-readout.ts";
 
 afterEach(resetMounts);
 
