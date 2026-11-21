@@ -20,7 +20,7 @@ Welcome, and thank you for helping improve Lusia. Start with the [quick start](R
 | Check formatting without writing | `bun run format:check` |
 | Check before a commit (lusia) | `bun run check` |
 | Check before a commit (docs site) | `cd docs && bun run check` |
-| Run the editor tests | `bun test test/editors` |
+| Run the editor tests | `bun test test/editor test/editors` |
 | Build the VS Code extension | `cd editors/vscode && bun run build` |
 
 > [!TIP]
@@ -41,6 +41,7 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | `src/runtime` | The `lusia` package: variables, DOM helpers, animate |
 | `src/compiler` | Turns `.lusia` files into TypeScript modules |
 | `src/language` | Parse, format and lint for `.lusia` files |
+| `src/editor` | Completion, hover and error logic shared by editors. Tests in `test/editor` |
 | `src/bun-plugin` | The Bun loader for `.lusia` files and `?raw` imports |
 | `src/cli` | The `lusia` command |
 | `test/` | Tests. One folder per area, mirroring `src/`. `test/setup.ts` sets up the fake DOM |

@@ -43,6 +43,7 @@
     "./config": "./src/config/index.ts",
     "./api": "./reference/api.ts",
     "./language/*": "./src/language/*",
+    "./editor/*": "./src/editor/*",
     "./errors/*": "./src/compiler/errors/*",
     "./types": "./lusia.d.ts"
   },
