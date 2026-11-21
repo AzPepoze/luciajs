@@ -19,7 +19,6 @@ export interface LintOptions {
   rules?: LintRuleSettings;
 }
 
-/** Compiles and lints the .lusia files, applies safe fixes with `--fix`, and reports the findings. */
 export async function runLint(options: LintOptions): Promise<number> {
   const files = await collectFiles(options.paths);
   const color = colorEnabled();

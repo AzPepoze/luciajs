@@ -15,7 +15,6 @@ export const ANSI = {
   bold: "\x1b[1m",
 } as const;
 
-/** Colors only in a terminal, and never when NO_COLOR is set. */
 export function colorEnabled(
   env: Record<string, string | undefined> = process.env,
   isTerminal = Boolean(process.stderr.isTTY),

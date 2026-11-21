@@ -6,7 +6,6 @@ const LUSIA = ".lusia";
 const GLOB_CHARS = /[*?[\]{}]/;
 const SKIP_FOLDERS = new Set(["node_modules", ".git", "dist", ".worktrees"]);
 
-/** The `.lusia` files of the given files, folders and globs. No paths means the current folder. */
 export async function collectFiles(
   patterns: readonly string[],
   cwd = process.cwd(),

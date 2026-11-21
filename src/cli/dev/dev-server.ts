@@ -7,7 +7,7 @@ import { RELOAD_PATH } from "./reload-client.ts";
 import { now } from "../build/timings.ts";
 import type { Update } from "./update.ts";
 
-/** A GET for a path with no file extension is a client route, so it gets index.html (history-API routing). */
+/** A GET with no file extension is a client route and gets index.html. */
 export function isPageRoute(method: string, pathname: string): boolean {
   return method === "GET" && !/\.[^/]*$/.test(pathname);
 }
@@ -21,7 +21,6 @@ export interface DevServerOptions {
 
 export interface DevServer {
   readonly url: URL;
-  /** Replaces the app and sends `update` to every page. `modules` are the built hot modules of a hot update. */
   publish(assets: Assets, update: Update, modules?: HotModule[]): void;
   showError(message: string): void;
   stop(): void;

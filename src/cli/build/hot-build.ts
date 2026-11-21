@@ -5,19 +5,14 @@ import { colorEnabled } from "../log/color.ts";
 import { isShimInput, RUNTIME_SPECIFIER, runtimeShim } from "./runtime-shim.ts";
 
 export interface HotModule {
-  /** Where the dev server serves the module. */
   url: string;
-  /**
-   * True when the module bundles only `.lusia` files. Any other file would be copied into the
-   * module, and its state would not be shared with the page.
-   */
+  /** Other files would not share their state with the page. */
   onlyComponents: boolean;
   body: Blob;
 }
 
 export type HotBuild = { ok: true; module: HotModule } | { ok: false; messages: string[] };
 
-/** Builds one `.lusia` file as its own module, for the browser to import after an edit. */
 export interface HotBuilder {
   build(file: string): Promise<HotBuild>;
 }

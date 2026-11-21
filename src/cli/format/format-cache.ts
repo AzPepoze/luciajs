@@ -12,11 +12,8 @@ const MAX_ENTRIES = 20000;
 export type CacheDecision = "clean" | "changed" | "unknown";
 
 interface Entry {
-  /** Hash of the Prettier options the file was formatted with. */
   config: string;
-  /** Hash of the source before formatting. */
   source: string;
-  /** Hash of the formatted result. */
   formatted: string;
 }
 
@@ -25,10 +22,6 @@ interface CacheFile {
   files: Record<string, Entry>;
 }
 
-/**
- * Remembers which files are already formatted, so `lusia format` can skip the
- * Prettier work on unchanged files. Prettier's own `--cache` uses the same idea.
- */
 export interface FormatCache {
   decide(file: string, source: string, config: Options): CacheDecision;
   record(file: string, source: string, formatted: string, config: Options): void;

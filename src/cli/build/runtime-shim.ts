@@ -7,15 +7,11 @@ export const RUNTIME_SPECIFIER = "lusia-runtime";
 
 const SHIM_NAMESPACE = "lusia-shim";
 
-/** True for a build input that is a runtime shim, not a file. */
 export function isShimInput(input: string): boolean {
   return input.startsWith(`${SHIM_NAMESPACE}:`);
 }
 
-/**
- * Dev builds leave `lusia` out of the bundle, so the app and hot updates share one runtime. The
- * shim still lists the real export names, so Bun reports a missing name at build time (L3001).
- */
+// Dev builds keep `lusia` external; the shim still lists its names so Bun reports missing ones.
 export function runtimeShim(): BunPlugin {
   return {
     name: "lusia-runtime-shim",

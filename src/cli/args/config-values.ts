@@ -4,7 +4,6 @@ import { CONFIG_FILE } from "./config-types.ts";
 
 export type JsonObject = Record<string, unknown>;
 
-/** True for a client route such as /guide: it starts with a slash and has no "..". */
 export function isRoute(route: string): boolean {
   return route.startsWith("/") && !route.includes("..");
 }

@@ -1,4 +1,3 @@
-/** Old export names and the hint shown when a build imports one of them. */
 export const RENAMED_EXPORTS: ReadonlyMap<string, string> = new Map([
   [
     "ACTIVE",

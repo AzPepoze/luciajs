@@ -6,7 +6,6 @@ const RUNTIME_ENTRY = fileURLToPath(new URL("../../runtime/all.ts", import.meta.
 
 let built: Promise<Blob> | undefined;
 
-/** The whole runtime as one browser module, built once per dev server. */
 export function runtimeModule(): Promise<Blob> {
   built ??= buildRuntime();
   return built;

@@ -9,11 +9,9 @@ export interface FormatOptions {
   paths: string[];
   check: boolean;
   quiet: boolean;
-  /** Reuse the results of earlier runs for files whose content did not change. Default true. */
   cache?: boolean;
 }
 
-/** Formats the .lusia files in place, or lists the ones that would change with `--check`. */
 export async function runFormat(options: FormatOptions): Promise<number> {
   const files = await collectFiles(options.paths);
   const color = colorEnabled();

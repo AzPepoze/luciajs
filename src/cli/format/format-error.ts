@@ -4,7 +4,6 @@ import { ANSI, paint } from "../log/color.ts";
 
 const CONTEXT_LINES = 2;
 
-/** Prints an error like tsc: a location line, a code frame, then the hint. */
 export function formatError(error: LusiaError, source: string | undefined, color: boolean): string {
   const paintWith = (text: string, code: string): string => (color ? paint(text, code) : text);
   const parts = [headline(error, paintWith)];
@@ -24,7 +23,7 @@ function headline(error: LusiaError, paintWith: Painter): string {
   return `${place} - ${message}`;
 }
 
-/** A dev runtime error ends its message with its location. The headline already shows it, so it is removed here. */
+/** Dev runtime errors end with their location, which the headline already shows. */
 function messageText(error: LusiaError): string {
   if (error.file === undefined || error.line === undefined) return error.message;
   const suffix = ` (${error.file}:${error.line}:${error.column ?? 1})`;
@@ -51,7 +50,6 @@ function codeFrame(error: LusiaError, source: string, paintWith: Painter): strin
   return rows.join("\n");
 }
 
-/** `^` at the error column, then `~` for the rest of the span. */
 function caret(error: LusiaError): string {
   const offset = " ".repeat(Math.max(0, (error.column ?? 1) - 1));
   const tildes = "~".repeat(Math.max(0, (error.length ?? 1) - 1));

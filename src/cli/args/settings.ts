@@ -13,7 +13,6 @@ export function outdirOf(dir: string, flag: string | undefined, config: LusiaCon
   return resolve(dir, config.outdir ?? DEFAULT_OUTDIR);
 }
 
-/** The lazy settings from the config file, with the defaults for what it leaves out. */
 export function lazyOf(config: LusiaConfig): LazySettings {
   return {
     mode: config.lazy?.mode ?? DEFAULT_LAZY_MODE,

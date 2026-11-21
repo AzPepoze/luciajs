@@ -3,8 +3,7 @@ import { RUNTIME_PATH } from "../build/runtime-module.ts";
 export const RELOAD_PATH = "/__lusia/reload";
 const ERROR_DOCS_URL = "/errors";
 
-// Reloads the page on a new build, swaps changed component css in place, shows build errors
-// as an overlay, reports `ready` to the server, and reconnects after a server restart.
+// Browser script: reload, css and hot swaps, error overlay, and reconnect.
 const CLIENT_CODE = `
 (function () {
   var protocol = location.protocol === "https:" ? "wss://" : "ws://";

@@ -73,11 +73,10 @@ function createRebuild(
 ): Rebuild {
   let busy = false;
   let pending: Change | null = null;
-  // After a failed build the page may hold code the failed build never published, so the next success reloads.
+  // A failed build may leave code the page never got, so the next success reloads.
   let needsReload = false;
   const hotBuilder: HotBuilder = createHotBuilder();
 
-  /** Builds each changed component as its own module. Any build error stops the update. */
   async function buildHotModules(paths: string[]): Promise<HotPlan> {
     const modules: HotModule[] = [];
     for (const path of paths) {

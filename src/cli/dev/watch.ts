@@ -8,10 +8,7 @@ export interface Watcher {
   close(): void;
 }
 
-/**
- * Calls `onChange` with the changed files (relative to `dir`) once changes settle.
- * `waitMs` is the time from the first change of the batch to the call.
- */
+/** Calls onChange with the changed files once they settle. waitMs counts from the first change. */
 export function watchFolder(
   dir: string,
   onChange: (files: string[], waitMs: number) => void,

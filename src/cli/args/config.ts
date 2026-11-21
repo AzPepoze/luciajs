@@ -14,7 +14,6 @@ export { CONFIG_FILE };
 export type { LusiaConfig };
 export { isRoute } from "./config-values.ts";
 
-/** Reads the app folder's lusia.config.json. A missing file means no settings. */
 export function readConfig(dir: string): LusiaConfig {
   const file = join(dir, CONFIG_FILE);
   if (!existsSync(file)) return {};

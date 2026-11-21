@@ -20,7 +20,6 @@ export function declaredProps(
   return parsePropDefs(readFileSync(path, "utf8"));
 }
 
-/** A lookup that reads each imported component once. */
 export function childPropsLookup(
   documentPath: string,
   text: string,

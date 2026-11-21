@@ -45,7 +45,6 @@ function parseBuild(args: string[]): Command {
   };
 }
 
-/** `--routes /guide,/reference` becomes a list of paths. Each must start with a slash and hold no `..`. */
 export function parseRoutes(value: string | undefined): string[] {
   if (value === undefined) return [];
   const routes = value

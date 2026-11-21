@@ -21,7 +21,6 @@ const UNRESOLVED = /^Could not resolve: "(.+)"$/;
 const IMPORT_FROM = /\bfrom\s+["']([^"']+)["']/;
 const LUSIA_ERROR = /\berror L\d{4}: /;
 
-/** Formats the logs of a failed Bun.build like tsc: one block per log, then a summary line. */
 export function formatBuildFailure(logs: BuildLog[], color: boolean): string {
   const blocks = logs.map((log) => formatLog(log, color));
   return [...blocks, summary(logs.length)].join("\n\n");
@@ -85,7 +84,7 @@ function whereOf(log: BuildLog): Where {
   return lusiaWhere(position.file, position.lineText, position.column, position.length);
 }
 
-/** Bun reports the position in the compiled module. Import lines are copied as they are, so the line text finds them in the .lusia file. */
+// Bun reports compiled positions; import lines are copied as-is, so their text finds the source line.
 function lusiaWhere(file: string, lineText: string, column: number, length: number): Where {
   const lines = readSource(file)?.split("\n");
   const text = lineText.trim();

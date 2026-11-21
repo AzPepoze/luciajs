@@ -16,10 +16,7 @@ export const RELOAD: Update = { kind: "reload" };
 const STYLE_FILE = /\.(lusia|scss|sass)$/;
 const COMPONENT_FILE = /\.lusia$/;
 
-/**
- * Only style files changed: a css swap. `.lusia` script or markup changed: a hot swap, if every
- * changed file is a component. Anything else reloads the page.
- */
+// Styles only is a css swap; components only is a hot swap; anything else reloads.
 export function chooseUpdate(files: string[], changes: ModuleUpdate[]): Update {
   if (files.length === 0 || !files.every(isStyleFile)) return RELOAD;
   const styles: StyleUpdate[] = [];

@@ -5,7 +5,6 @@ const DEFAULT_HINT = "Check the name, or see reference/api.ts.";
 const MIN_DISTANCE_LIMIT = 2;
 const DISTANCE_DIVISOR = 3;
 
-/** The hint for an import name the module does not export. */
 export function missingExportHint(name: string, exportNames: string[]): string {
   const renamed = RENAMED_EXPORTS.get(name);
   if (renamed !== undefined) return renamed;
@@ -13,7 +12,7 @@ export function missingExportHint(name: string, exportNames: string[]): string {
   return closest === undefined ? DEFAULT_HINT : `Did you mean "${closest}"?`;
 }
 
-/** The names a module exports directly. `export *` re-exports are not followed. Returns [] when the module cannot be read. */
+/** Returns [] when the module cannot be read. `export *` is not followed. */
 export function exportsOf(specifier: string, fromDir: string): string[] {
   try {
     const path = Bun.resolveSync(specifier, fromDir);
@@ -37,7 +36,6 @@ function closestName(name: string, candidates: string[]): string | undefined {
   return best;
 }
 
-/** Levenshtein distance: the fewest single-character inserts, deletes and changes. */
 function editDistance(from: string, to: string): number {
   let previous = Array.from({ length: to.length + 1 }, (_, column) => column);
   for (let row = 1; row <= from.length; row++) {

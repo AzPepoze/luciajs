@@ -16,7 +16,6 @@ export interface BuildOptions {
   outdir: string;
   minify: boolean;
   routes?: string[];
-  /** Hides the step table. */
   quiet?: boolean;
   lazy: LazySettings;
 }
