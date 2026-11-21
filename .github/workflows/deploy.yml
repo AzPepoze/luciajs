@@ -29,9 +29,12 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Install docs dependencies
+        run: cd docs && bun install
+
       - name: Build
         # The docs build also needs the generated playground runtime, which the package script writes first.
-        run: bun run build
+        run: cd docs && bun run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -9,8 +9,8 @@ import type { BunFile } from "bun";
 export const BUILD_TIMEOUT_MS = 120_000;
 export const TEST_TIMEOUT_MS = 30_000;
 
-const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
-const SITE = join(ROOT, "docs");
+const ROOT = fileURLToPath(new URL("../../", import.meta.url));
+const SITE = ROOT;
 
 export interface SiteServer {
   base: string;
@@ -52,7 +52,7 @@ function serveFolder(out: string): Server {
 export async function serveSite(routes: string[]): Promise<SiteServer> {
   const out = await mkdtemp(join(tmpdir(), "lusia-site-"));
   await runBun(["scripts/playground-runtime.ts"]);
-  await runBun(["src/cli/index.ts", "build", SITE, "--outdir", out, "--routes", routes.join(",")]);
+  await runBun(["../src/cli/index.ts", "build", SITE, "--outdir", out, "--routes", routes.join(",")]);
   const server = serveFolder(out);
   await new Promise<void>((resolve) => server.listen(0, "localhost", resolve));
   const address = server.address() as AddressInfo;

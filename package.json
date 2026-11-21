@@ -13,16 +13,12 @@
     "./bun-plugin": "./src/bun-plugin/index.ts"
   },
   "scripts": {
-    "dev": "bun scripts/playground-runtime.ts && bun src/cli/index.ts dev docs",
     "dev:stress": "bun src/cli/index.ts dev examples/stress",
-    "build": "bun run build:docs",
-    "build:docs": "bun scripts/playground-runtime.ts && bun src/cli/index.ts build docs",
-    "test": "bun test --parallel=6",
+    "test": "bun test --parallel=6 ./test/ ./examples/",
     "format": "bun fmt",
     "format:check": "bun fmt --check",
     "typecheck": "tsc --noEmit",
-    "docs:install": "cd docs && bun install",
-    "check": "bun run docs:install && tsc --noEmit && bun run test && bun run build && cd editors/vscode && bun run build"
+    "check": "tsc --noEmit && bun run test && cd editors/vscode && bun run build"
   },
   "dependencies": {
     "prettier": "3.10.1",

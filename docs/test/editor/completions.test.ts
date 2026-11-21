@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { editorCompletions } from "../../../docs/src/editor/editor-completions.ts";
+import { editorCompletions } from "../../src/editor/editor-completions.ts";
 import type { CompletionResult } from "../../../editors/shared/completions.ts";
 
 const FILE = "App.lusia";

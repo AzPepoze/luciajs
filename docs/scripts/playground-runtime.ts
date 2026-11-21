@@ -1,6 +1,8 @@
-// Writes the Lusia runtime that the playground preview loads. Run before `dev` and `build`.
-const ENTRY = "docs/src/playground/runtime.ts";
-const OUTDIR = "docs/public/playground";
+// Writes the Lusia runtime that the playground preview loads. Run from docs/ before `dev` and `build`.
+const ENTRY = "src/playground/runtime.ts";
+const OUTDIR = "public/playground";
+
+export {};
 
 const result = await Bun.build({
 	entrypoints: [ENTRY],

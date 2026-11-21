@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { docsElement } from "../../../docs/src/editor/docs-dom.ts";
+import { docsElement } from "../../src/editor/docs-dom.ts";
 
 describe("docsElement", () => {
   test("renders a bold title, a code fence, bullets and inline code", () => {

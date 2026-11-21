@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { formatFile } from "../../../docs/src/editor/format-file.ts";
+import { formatFile } from "../../src/editor/format-file.ts";
 
 const SAMPLE = `<style scoped>
 .card{padding:1rem}
