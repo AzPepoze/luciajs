@@ -116,7 +116,7 @@ export const animateOptionEntries: ApiEntry[] = [
 		signature: "export default defineConfig({ animate: { duration: 400 } })",
 		summary: "One file sets the app-wide defaults: animate timing and the build, dev and lint settings.",
 		bullets: [
-			"Name the file lusia.config.ts (TypeScript) or lusia.config.json (JSON). Put it in the app folder. Use only one of them.",
+			"Name the file lusia.config.ts (TypeScript) or lusia.config.json (JSON). Put it in the app folder. Use only one of them. Dev reloads when it changes.",
 			"Precedence, highest first: the value on the item in code, then setAnimateDefault in code, then lusia.config, then the library default.",
 			"In TypeScript, enum values are the real values, such as EASE.STYLE.CUBIC. In JSON, write their names, such as \"CUBIC\".",
 			"in and out name a preset. An item with no style uses in, or out when it detaches. An item's own style always wins.",
