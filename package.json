@@ -1,17 +1,41 @@
 {
   "name": "lusia",
-  "private": true,
+  "version": "0.1.0",
+  "description": "A Bun-native UI framework: single-file components, variables and scoped SCSS.",
+  "license": "MIT",
   "type": "module",
+  "keywords": ["ui", "framework", "bun", "components", "scss"],
+  "homepage": "https://azpepoze.github.io/lusia",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AzPepoze/lusia.git"
+  },
+  "engines": {
+    "bun": ">=1.4"
+  },
   "bin": {
     "lusia": "./src/cli/index.ts"
   },
+  "files": [
+    "src",
+    "reference",
+    "tsconfig.json",
+    "lusia.d.ts",
+    "config.schema.json",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": "./src/runtime/index.ts",
     "./internal": "./src/runtime/internal.ts",
     "./markers": "./src/runtime/markers.ts",
     "./compiler": "./src/compiler/index.ts",
     "./bun-plugin": "./src/bun-plugin/index.ts",
-    "./config": "./src/config/index.ts"
+    "./config": "./src/config/index.ts",
+    "./api": "./reference/api.ts",
+    "./language/*": "./src/language/*",
+    "./errors/*": "./src/compiler/errors/*",
+    "./types": "./lusia.d.ts"
   },
   "scripts": {
     "dev:stress": "bun src/cli/index.ts dev examples/stress",
