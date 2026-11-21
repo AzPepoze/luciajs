@@ -1,4 +1,4 @@
-import type { ErrorCode } from "../codes.ts";
+import type { ErrorCode } from "../../codes.ts";
 
 export const RUNTIME_ANIMATE_CODES = {
   L2001: {
