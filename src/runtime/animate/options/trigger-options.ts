@@ -1,12 +1,12 @@
 import { runtimeError } from "../../errors.ts";
 import { WHEN, isWhen, type When, type Source } from "../modes/trigger.ts";
-import { DEFAULT_DETACH, readDetach, type DetachMore, type DetachRead } from "./detach-options.ts";
+import { DEFAULT_SPACE, readSpace, type SpaceMore, type SpaceRead } from "./space-options.ts";
 import { DEFAULT_HOVER, readHover, sameHover, type HoverMore, type HoverRead } from "./hover-options.ts";
-import { DETACH_KEYS, HOVER_KEYS, keyList, SCROLL_KEYS, SPELLING_HINT, unknownKeyValues, VIEW_KEYS } from "./keys.ts";
+import { HOVER_KEYS, keyList, SCROLL_KEYS, SPACE_KEYS, SPELLING_HINT, unknownKeyValues, VIEW_KEYS } from "./keys.ts";
 import { DEFAULT_VIEW, readViewMore, sameView, type ViewMore, type ViewSettings } from "./view-options.ts";
 import { DEFAULT_SCROLL, readScroll, sameScroll, type ScrollMore, type ScrollRead } from "./scroll-options.ts";
 
-export type More = ViewMore | HoverMore | ScrollMore | DetachMore;
+export type More = ViewMore | HoverMore | ScrollMore | SpaceMore;
 
 /** The item's own timing, used as the defaults for `more`. */
 export interface MoreBase {
@@ -19,7 +19,7 @@ export interface ReadMore {
   reverse: boolean;
   hover: HoverRead;
   scroll: ScrollRead;
-  detach: DetachRead;
+  space: SpaceRead;
 }
 
 const DEFAULT_MORE: ReadMore = {
@@ -27,7 +27,7 @@ const DEFAULT_MORE: ReadMore = {
   reverse: false,
   hover: DEFAULT_HOVER,
   scroll: DEFAULT_SCROLL,
-  detach: DEFAULT_DETACH,
+  space: DEFAULT_SPACE,
 };
 
 export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
@@ -38,8 +38,8 @@ export function readMore(when: When | Source, more: More | undefined, base: More
     return { ...DEFAULT_MORE, hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
   if (when === WHEN.SCROLL)
     return { ...DEFAULT_MORE, scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
-  if (when === WHEN.DETACH)
-    return { ...DEFAULT_MORE, detach: readDetach(checkKeys<DetachMore>(more, DETACH_KEYS)) };
+  if (when === WHEN.ATTACH || when === WHEN.DETACH)
+    return { ...DEFAULT_MORE, space: readSpace(checkKeys<SpaceMore>(more, SPACE_KEYS)) };
   throw runtimeError("L2010", { when: whenName(when) });
 }
 
@@ -50,7 +50,7 @@ export function sameMore(a: ReadMore, b: ReadMore): boolean {
     a.reverse === b.reverse &&
     sameHover(a.hover, b.hover) &&
     sameScroll(a.scroll, b.scroll) &&
-    a.detach.keepSpace === b.detach.keepSpace
+    a.space.animateSpace === b.space.animateSpace
   );
 }
 

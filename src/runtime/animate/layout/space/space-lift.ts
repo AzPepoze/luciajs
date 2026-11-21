@@ -1,6 +1,6 @@
-import type { Box } from "./shrink-movers.ts";
+import type { Box } from "./space-movers.ts";
 
-/** The inline styles a lift writes, so a cancel can put back the ones the element had. */
+/** The inline styles a lift writes, so it can be put back. */
 const LIFT_PROPS = [
   "position",
   "top",
@@ -19,6 +19,14 @@ type Saved = [name: string, value: string, priority: string];
 
 export interface Lift {
   saved: Saved[];
+}
+
+/** A box that sits in the flow, so taking it out moves its siblings. */
+export function isFlowBox(el: HTMLElement): boolean {
+  if (el.parentElement === null) return false;
+  const { display, position } = getComputedStyle(el);
+  const box = display !== "inline" && display !== "contents" && display !== "none";
+  return box && (position === "static" || position === "relative" || position === "sticky");
 }
 
 /** Takes the element out of flow. Its place is set by `placeLift`. */

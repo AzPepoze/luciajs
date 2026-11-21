@@ -62,11 +62,11 @@ const LIST = `
     <div id="after" style="height:40px"></div>
   </div>`;
 
-suite("DETACH closes the space it holds", () => {
+suite("DETACH with animateSpace slides the siblings", () => {
   test("the sibling after a leaving row moves gradually, not in one jump", async () => {
     const page = await openPage(LIST);
     try {
-      const tops = await sampleLeave(page, "", "top");
+      const tops = await sampleLeave(page, '{"animateSpace":true}', "top");
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(80, 0);
@@ -77,10 +77,10 @@ suite("DETACH closes the space it holds", () => {
     }
   });
 
-  test("keepSpace: true keeps the space until the row is removed, then the sibling jumps", async () => {
+  test("without animateSpace the sibling jumps once, when the row is removed", async () => {
     const page = await openPage(LIST);
     try {
-      const tops = await sampleLeave(page, '{"keepSpace":true}', "top");
+      const tops = await sampleLeave(page, "", "top");
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(80, 0);
@@ -98,7 +98,7 @@ suite("DETACH closes the space it holds", () => {
         <div id="after" style="width:50px;height:30px"></div>
       </div>`);
     try {
-      const lefts = await sampleLeave(page, "", "left");
+      const lefts = await sampleLeave(page, '{"animateSpace":true}', "left");
       const first = lefts[0]!;
       const last = lefts[lefts.length - 1]!;
       expect(first - last).toBeCloseTo(120, 0);
@@ -155,7 +155,7 @@ suite("DETACH lifts the element out of flow", () => {
   test("a sibling in a gapped flex column moves every frame with no final jump", async () => {
     const page = await openPage(GAP_LIST);
     try {
-      const tops = await frameSamples(page, "top");
+      const tops = await frameSamples(page, "top", { more: { animateSpace: true } });
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(96, 0);
@@ -175,7 +175,7 @@ suite("DETACH lifts the element out of flow", () => {
         <div id="after" style="height:40px"></div>
       </div>`);
     try {
-      const tops = await frameSamples(page, "top");
+      const tops = await frameSamples(page, "top", { more: { animateSpace: true } });
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(96, 0);

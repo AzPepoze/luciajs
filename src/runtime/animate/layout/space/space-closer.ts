@@ -4,7 +4,7 @@ import type { Keyframes } from "../../options/keyframes.ts";
 import { readDefault, readKey } from "../../options/keyform.ts";
 import { startPlaying, type Playable } from "../../play/loop.ts";
 import type { Ease } from "../../modes/modes.ts";
-import { liftOut, placeLift, restoreLift, type Lift } from "./shrink-lift.ts";
+import { liftOut, placeLift, restoreLift, type Lift } from "./space-lift.ts";
 import {
   boxesOf,
   compensate,
@@ -14,9 +14,9 @@ import {
   writeShift,
   type Box,
   type Mover,
-} from "./shrink-movers.ts";
+} from "./space-movers.ts";
 
-export interface ShrinkSpec {
+export interface SpaceSpec {
   duration: number;
   delay: number;
   keyframes: Keyframes;
@@ -40,7 +40,7 @@ export class Closer implements Playable {
 
   constructor(
     private readonly el: HTMLElement,
-    private readonly spec: ShrinkSpec,
+    private readonly spec: SpaceSpec,
   ) {
     [this.easeStyle, this.ease] = easingOf(spec.keyframes);
     this.targets = movingElements(el);
@@ -99,8 +99,8 @@ function clampedProgress(elapsed: number, duration: number): number {
   return Math.min(1, Math.max(0, elapsed / duration));
 }
 
-/** The ease of the last key, which closes the space. */
-function easingOf(keyframes: Keyframes): [EaseStyle, Ease] {
+/** The ease of the last key, which closes or opens the space. */
+export function easingOf(keyframes: Keyframes): [EaseStyle, Ease] {
   const [easeStyle, ease] = readKey(
     keyframes[1]!,
     readDefault(keyframes.default),

@@ -15,7 +15,7 @@ export interface Mover {
 const MIN_SHIFT = 0.5;
 
 /**
- * The elements whose place can change when `el` leaves: each ancestor and each sibling of the element and of its ancestors.
+ * The elements whose place can change when `el` enters or leaves: each ancestor and each sibling of the element and of its ancestors.
  * Sorted from the top down, so an ancestor is compensated before its children.
  */
 export function movingElements(el: HTMLElement): HTMLElement[] {
@@ -51,7 +51,7 @@ function boxOf(el: HTMLElement): Box | undefined {
 }
 
 /**
- * Moves each element that changed place back to its old place. Each one is read after the ones above it moved,
+ * Moves each element that changed place back to its `before` place. Each one is read after the ones above it moved,
  * so a child of a moved ancestor only gets the shift it still needs. Elements that did not move keep their transform.
  */
 export function compensate(elements: HTMLElement[], before: Array<Box | undefined>): Mover[] {

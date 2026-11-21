@@ -1,6 +1,6 @@
 import type { Controller } from "./play/controller.ts";
 import type { Keyframes } from "./options/keyframes.ts";
-import type { DetachMore } from "./options/detach-options.ts";
+import type { SpaceMore } from "./options/space-options.ts";
 import type { HoverMore } from "./options/hover-options.ts";
 import type { ScrollMore } from "./options/scroll-options.ts";
 import type { AnimateMidway } from "./options/midway-options.ts";
@@ -20,15 +20,20 @@ interface ItemBase {
   backAndForth?: boolean;
 }
 
-/** A trigger with no options: ATTACH (the default), MANUAL, or a variable. */
+/** ATTACH (the default) takes `animateSpace`. MANUAL and a variable take no `more`. */
+interface AttachItem extends ItemBase {
+  when?: typeof WHEN.ATTACH;
+  more?: SpaceMore;
+}
+
 interface PlainItem extends ItemBase {
-  when?: typeof WHEN.ATTACH | typeof WHEN.MANUAL | Source;
+  when?: typeof WHEN.MANUAL | Source;
   more?: never;
 }
 
 interface DetachItem extends ItemBase {
   when: typeof WHEN.DETACH;
-  more?: DetachMore;
+  more?: SpaceMore;
 }
 
 /** A layout trigger glides the element. Its style is optional: the glide runs without it. */
@@ -53,7 +58,14 @@ interface ScrollItem extends ItemBase {
   more?: ScrollMore;
 }
 
-export type AnimateItem = PlainItem | DetachItem | LayoutItem | ViewItem | HoverItem | ScrollItem;
+export type AnimateItem =
+  | PlainItem
+  | AttachItem
+  | DetachItem
+  | LayoutItem
+  | ViewItem
+  | HoverItem
+  | ScrollItem;
 
 export type Animate = Keyframes | AnimateItem | (Keyframes | AnimateItem)[];
 

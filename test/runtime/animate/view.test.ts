@@ -189,7 +189,7 @@ describe("more amount", () => {
 describe("more errors", () => {
   test("more on a non-VIEW item names the when", () => {
     expect(() => readItem({ style: fade, more: { margin: 10 } } as never)).toThrow(
-      "more is not used with WHEN.ATTACH",
+      'more has an unknown key "margin", use animateSpace',
     );
     expect(() =>
       readItem({ style: fade, when: WHEN.HOVER, more: { amount: 0.5 } } as AnimateItem),

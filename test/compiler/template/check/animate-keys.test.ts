@@ -37,9 +37,9 @@ describe("unknownKeysAt", () => {
     expect(check("", markup)).toEqual([{ key: "margn", code: "L2012" }]);
   });
 
-  test("keepSpace is allowed in more for DETACH", () => {
+  test("animateSpace is allowed in more for DETACH", () => {
     const markup =
-      "<li animate={{ style: fade, when: WHEN.DETACH, more: { keepSpace: true } }}>x</li>";
+      "<li animate={{ style: fade, when: WHEN.DETACH, more: { animateSpace: true } }}>x</li>";
     expect(check("", markup)).toEqual([]);
   });
 

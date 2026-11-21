@@ -12,20 +12,22 @@ import { watchScroll } from "../scroll/scroll.ts";
 import { watchView } from "../scroll/view.ts";
 import { bindHover } from "./hover.ts";
 import { watchLayout } from "../layout/layout.ts";
-import { bindDetach } from "../layout/shrink/shrink-space.ts";
+import type { SpaceSpec } from "../layout/space/space-closer.ts";
+import { bindAttach } from "../layout/space/space-attach.ts";
+import { bindDetach } from "../layout/space/space-detach.ts";
 import type { Slot } from "./slots.ts";
 
 /** Starts what the slot's trigger asks for. MANUAL slots only move through a controller. */
 export function bindTrigger(
   el: HTMLElement,
-  { when, once, more, glide, shrink, loops, group }: Slot,
+  { when, once, more, glide, space, loops, group }: Slot,
   cleanups: Cleanup[],
   leaves: Leave[],
 ): void {
   if (loops) cleanups.push(pauseOffScreen(el, group));
   if (isReactive(when)) bindSource(when, group, once, cleanups);
-  else if (when === WHEN.ATTACH) attachTrigger(group);
-  else if (when === WHEN.DETACH) bindDetach(el, group, shrink, leaves, cleanups);
+  else if (when === WHEN.ATTACH) attachTrigger(el, group, space, cleanups);
+  else if (when === WHEN.DETACH) bindDetach(el, group, space, leaves, cleanups);
   else if (when === WHEN.VIEW) bindView(el, more.view, group, once, cleanups);
   else if (when === WHEN.HOVER) bindHover(el, group, once, more.hover, cleanups);
   else if (when === WHEN.SCROLL) bindScroll(el, more.scroll, group, cleanups);
@@ -40,9 +42,18 @@ function pauseOffScreen(el: Element, group: Group): () => void {
 }
 
 /** A hot swap shows the end state at once, so the element does not play its entrance again. */
-function attachTrigger(group: Group): void {
-  if (isSwapping()) group.show(1);
-  else void group.forward();
+function attachTrigger(
+  el: HTMLElement,
+  group: Group,
+  space: SpaceSpec | undefined,
+  cleanups: Cleanup[],
+): void {
+  if (isSwapping()) {
+    group.show(1);
+    return;
+  }
+  if (space) bindAttach(el, space, cleanups);
+  void group.forward();
 }
 
 /** Scroll-linked: the group follows the element's place on screen. Reduced motion shows the end state. */

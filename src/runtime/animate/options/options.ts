@@ -7,7 +7,7 @@ import { animateDefault } from "./defaults.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
 import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "../modes/trigger.ts";
 import { readMore, type ReadMore } from "./trigger-options.ts";
-import type { ShrinkSpec } from "../layout/shrink/shrink-closer.ts";
+import type { SpaceSpec } from "../layout/space/space-closer.ts";
 import { runtimeError } from "../../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 import { readKeyframes } from "./item-style.ts";
@@ -27,8 +27,8 @@ export interface ItemOptions {
   once: boolean;
   control: Controller | undefined;
   more: ReadMore;
-  /** Set for a DETACH item that closes the space it holds. Undefined with `keepSpace`. */
-  shrink: ShrinkSpec | undefined;
+  /** Set for an ATTACH or DETACH item with `animateSpace`. It slides the siblings into the space. */
+  space: SpaceSpec | undefined;
 }
 
 export function readItem(item: AnimateItem): ItemOptions {
@@ -50,7 +50,7 @@ export function readItem(item: AnimateItem): ItemOptions {
   return {
     keyframes,
     timing,
-    shrink: readShrink(when, more, keyframes, timing),
+    space: readSpace(when, more, keyframes, timing),
     when,
     once: item.once ?? (when === WHEN.VIEW && !more.reverse),
     control: item.control,
@@ -58,14 +58,18 @@ export function readItem(item: AnimateItem): ItemOptions {
   };
 }
 
-function readShrink(
+function readSpace(
   when: When | Source,
   more: ReadMore,
   keyframes: Keyframes,
   timing: Timing,
-): ShrinkSpec | undefined {
-  if (when !== WHEN.DETACH || more.detach.keepSpace) return undefined;
+): SpaceSpec | undefined {
+  if (!isSpaceWhen(when) || !more.space.animateSpace) return undefined;
   return { duration: timing.duration, delay: timing.delay, keyframes };
+}
+
+function isSpaceWhen(when: When | Source): boolean {
+  return when === WHEN.ATTACH || when === WHEN.DETACH;
 }
 
 /** A removed member such as WHEN.IN is undefined, so a `when` key with no value means an old name. */
