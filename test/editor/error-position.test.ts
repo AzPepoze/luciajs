@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { LusiaError } from "../../../src/compiler/errors/error.ts";
-import { compile } from "../../../src/compiler/index.ts";
-import { errorPosition } from "../../../editors/shared/error-position.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
+import { compile } from "@compiler/index.ts";
+import { errorPosition } from "../../src/editor/error-position.ts";
 
 describe("error position", () => {
   test("reads the position of a LusiaError and drops the file prefix", () => {

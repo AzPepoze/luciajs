@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { completionsAt } from "../../../editors/shared/completions.ts";
-import type { SymbolLookup } from "../../../editors/shared/script/imported-symbols.ts";
-import type { ScriptSymbol } from "../../../editors/shared/script/symbols.ts";
+import { completionsAt } from "../../src/editor/completions.ts";
+import type { SymbolLookup } from "../../src/editor/script/imported-symbols.ts";
+import type { ScriptSymbol } from "../../src/editor/script/symbols.ts";
 
 const noProps = () => [];
 const BADGE_SCRIPT = `<script>\nimport Badge from "./badge.lusia";\n</script>\n`;

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { findApiById } from "../../../../editors/shared/api-lookup.ts";
-import { memberItems, namespaceMemberItems } from "../../../../editors/shared/completion/members.ts";
+import { findApiById } from "../../../src/editor/api-lookup.ts";
+import { memberItems, namespaceMemberItems } from "../../../src/editor/completion/members.ts";
 
 const variableType = findApiById("variable-type")?.bullets ?? [];
 const computedType = findApiById("computed-variable-type")?.bullets ?? [];
