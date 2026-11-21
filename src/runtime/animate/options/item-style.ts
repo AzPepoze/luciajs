@@ -20,9 +20,9 @@ export function readKeyframes(item: AnimateItem, when: When | Source): Keyframes
 /** An item with no style takes the config preset: `out` for DETACH, `in` for the other triggers. */
 function keyframesWithoutStyle(when: When | Source): Keyframes {
   if (isLayoutWhen(when)) return NO_STYLE;
-  const name = when === WHEN.DETACH ? animateConfig().out : animateConfig().in;
-  if (name === undefined) throw runtimeError("L2001");
-  return PRESET[name];
+  const preset = when === WHEN.DETACH ? animateConfig().out : animateConfig().in;
+  if (preset === undefined) throw runtimeError("L2001");
+  return typeof preset === "string" ? PRESET[preset] : preset;
 }
 
 function rejectGlideStyles(keyframes: Keyframes): void {

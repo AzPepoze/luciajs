@@ -55,6 +55,43 @@ function easingFromNames(names: unknown): unknown {
   return names.map(valueOf(EASE_PART_NAMES, "ease")) as DefaultEasing;
 }
 
+/** A preset is a PRESET name or a keyframes object whose easing functions are written as names. */
+function presetToNames(preset: unknown): unknown {
+  if (typeof preset !== "object" || preset === null) return preset;
+  return mapKeyframes(preset, easingToNames, nameOf(EASE_PART_NAMES, "ease"));
+}
+
+function presetFromNames(preset: unknown): unknown {
+  if (typeof preset !== "object" || preset === null) return preset;
+  return mapKeyframes(
+    preset,
+    easingFromNames,
+    valueOf(EASE_PART_NAMES, "ease"),
+  );
+}
+
+function mapKeyframes(
+  keyframes: object,
+  mapDefault: Convert,
+  mapPart: Convert,
+): unknown {
+  const mapped: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(keyframes)) {
+    mapped[key] =
+      key === "default" ? mapDefault(value) : mapKey(value, mapPart);
+  }
+  return mapped;
+}
+
+function mapKey(value: unknown, mapPart: Convert): unknown {
+  if (!Array.isArray(value)) return value;
+  return value.map((part) =>
+    typeof part === "function" || typeof part === "string"
+      ? mapPart(part)
+      : part,
+  );
+}
+
 const MIDWAY_TO_NAMES = new Map<string, Convert>([
   ["play", nameOf(MIDWAY_NAMES, "midway.play")],
   ["turn", nameOf(TURN_NAMES, "midway.turn")],
@@ -81,19 +118,27 @@ const SCROLL_FROM_NAMES = new Map<string, Convert>([
 
 const TOP_TO_NAMES = new Map<string, Convert>([
   ["ease", easingToNames],
+  ["in", presetToNames],
+  ["out", presetToNames],
   ["midway", (midway) => mapFields(midway, MIDWAY_TO_NAMES)],
   ["scroll", (scroll) => mapFields(scroll, SCROLL_TO_NAMES)],
 ]);
 
 const TOP_FROM_NAMES = new Map<string, Convert>([
   ["ease", easingFromNames],
+  ["in", presetFromNames],
+  ["out", presetFromNames],
   ["midway", (midway) => mapFields(midway, MIDWAY_FROM_NAMES)],
   ["scroll", (scroll) => mapFields(scroll, SCROLL_FROM_NAMES)],
 ]);
 
 /** Converts the fields that have a converter; the others, such as numbers and booleans, pass through. */
-function mapFields(fields: unknown, converters: ReadonlyMap<string, Convert>): unknown {
-  if (typeof fields !== "object" || fields === null || Array.isArray(fields)) return fields;
+function mapFields(
+  fields: unknown,
+  converters: ReadonlyMap<string, Convert>,
+): unknown {
+  if (typeof fields !== "object" || fields === null || Array.isArray(fields))
+    return fields;
   const mapped: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(fields)) {
     const convert = converters.get(key);
