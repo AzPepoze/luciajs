@@ -347,7 +347,7 @@ describe("item style and key forms", () => {
   });
 
   test("a bare preset plays as an animation", () => {
-    const { opacity } = run(PRESET.FADE);
+    const { opacity } = run(PRESET.FADE_IN);
     expect(opacity()).toBe(0);
     advance(400);
     expect(opacity()).toBe(1);

@@ -101,6 +101,6 @@ export const animateControlEntries: ApiEntry[] = [
 			"play() and reverse() return a Promise that resolves when the play ends.",
 			"stop() ends the play where it is. seek(progress) jumps to a progress from 0 to 1.",
 		],
-		example: `import { controller, WHEN } from "lusia";\n\nconst ctl = controller();\n// in markup: <div animate={{ style: pop, when: WHEN.MANUAL, control: ctl }}>\nawait ctl.play();`,
+		example: `import { controller, PRESET, WHEN } from "lusia";\n\nconst ctl = controller();\n// in markup: <div animate={{ style: PRESET.POP_IN, when: WHEN.MANUAL, control: ctl }}>\nawait ctl.play();`,
 	},
 ];
