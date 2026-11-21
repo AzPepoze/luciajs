@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { ELEMENT_MARKER, TEXT_MARKER } from "lusia/markers";
 import { compile } from "@compiler/index.ts";
 import { compileTemplate } from "@compiler/template/scan/scanner.ts";
-import { catchError } from "../catch-error.ts";
+import { catchError } from "../../catch-error.ts";
 
 const FILE = "Card.lusia";
 const TEXT = `<!--${TEXT_MARKER}-->`;
