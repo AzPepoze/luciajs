@@ -1,4 +1,4 @@
-import type { CompletionItemData } from "./completion-data.ts";
+import type { CompletionItemData } from "../completion-data.ts";
 import { receiverAt, variableKinds } from "./locals.ts";
 import { memberItems, namespaceMemberItems } from "./members.ts";
 

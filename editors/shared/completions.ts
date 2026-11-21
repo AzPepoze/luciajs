@@ -8,21 +8,21 @@ import {
   type CompletionItemData,
   type ScriptItem,
 } from "./completion-data.ts";
-import { animateFieldsAt } from "./animate-fields.ts";
+import { animateFieldsAt } from "./animate/animate-fields.ts";
 import {
   FLOW_TAG_ITEMS,
   flowAttributeItems,
   isFlowTag,
   markupAttributeItems,
-} from "./markup-items.ts";
-import { enumMembersAt } from "./enum-members.ts";
+} from "./completion/markup-items.ts";
+import { enumMembersAt } from "./completion/enum-members.ts";
 import { findComponentImport, scriptImports } from "@language/parse/imports.ts";
 import { inExpressionAt } from "@language/format/format-expressions.ts";
 import type { PropDef } from "@language/parse/props.ts";
 import type { TextRange } from "./range.ts";
 import { regionAt } from "@language/parse/regions.ts";
-import { withScriptNames } from "./script-names.ts";
-import { scriptMemberItems } from "./script-members.ts";
+import { withScriptNames } from "./completion/script-names.ts";
+import { scriptMemberItems } from "./completion/script-members.ts";
 import type { SymbolLookup } from "./script/imported-symbols.ts";
 import { scriptSection, scriptSource, type Section } from "@language/parse/sections.ts";
 import { isTagNameTyping, openTagAt } from "@language/parse/tag.ts";

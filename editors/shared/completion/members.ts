@@ -1,5 +1,5 @@
-import { apiKey, findApiById, importableApi } from "./api-lookup.ts";
-import type { CompletionItemData, CompletionKind } from "./completion-data.ts";
+import { apiKey, findApiById, importableApi } from "../api-lookup.ts";
+import type { CompletionItemData, CompletionKind } from "../completion-data.ts";
 
 export type VariableKind = "variable" | "computed" | "prop";
 

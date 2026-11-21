@@ -1,6 +1,6 @@
-import { FORM_TAGS } from "../../src/compiler/template/bind.ts";
-import { findApiById } from "./api-lookup.ts";
-import { MOTION_ATTRIBUTE_ITEMS, type CompletionItemData } from "./completion-data.ts";
+import { FORM_TAGS } from "../../../src/compiler/template/bind.ts";
+import { findApiById } from "../api-lookup.ts";
+import { MOTION_ATTRIBUTE_ITEMS, type CompletionItemData } from "../completion-data.ts";
 
 const FLOW_TAGS: Record<string, string> = {
   IF: "Show when true",

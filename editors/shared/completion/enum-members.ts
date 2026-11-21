@@ -1,6 +1,6 @@
-import type { ApiEntry, ApiMember } from "../../reference/api.ts";
-import { findEnum } from "./api-lookup.ts";
-import type { ScriptItem } from "./completion-data.ts";
+import type { ApiEntry, ApiMember } from "../../../reference/api.ts";
+import { findEnum } from "../api-lookup.ts";
+import type { ScriptItem } from "../completion-data.ts";
 
 /** A dotted path that ends in `.`, such as `EASE.STYLE.` or `EASE.`. The path is group 1. */
 const MEMBER_ACCESS = /([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\.[\w$]*$/;

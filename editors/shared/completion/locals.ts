@@ -1,4 +1,4 @@
-import type { CompletionItemData } from "./completion-data.ts";
+import type { CompletionItemData } from "../completion-data.ts";
 import { memberItems, type VariableKind } from "./members.ts";
 
 export interface LocalName {

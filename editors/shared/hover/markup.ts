@@ -1,5 +1,5 @@
 import { findApiById } from "../api-lookup.ts";
-import { cssKeyAt, isInAnimate } from "../animate-fields.ts";
+import { cssKeyAt, isInAnimate } from "../animate/animate-fields.ts";
 import type { PropLookup } from "../completions.ts";
 import { findComponentImport } from "@language/parse/imports.ts";
 import { attributeNameAt, wordAt } from "@language/parse/word.ts";

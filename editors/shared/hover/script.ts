@@ -1,5 +1,5 @@
 import { findEnum, findScriptApi } from "../api-lookup.ts";
-import { enumOwnerAt } from "../enum-members.ts";
+import { enumOwnerAt } from "../completion/enum-members.ts";
 import type { HoverResult } from "../hover.ts";
 import { importedSymbolAt, type SymbolLookup } from "../script/imported-symbols.ts";
 import { scriptSource } from "@language/parse/sections.ts";

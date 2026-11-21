@@ -1,7 +1,7 @@
-import type { CompletionItemData, CompletionKind } from "./completion-data.ts";
+import type { CompletionItemData, CompletionKind } from "../completion-data.ts";
 import { localItems } from "./locals.ts";
-import { importedSymbols, type SymbolLookup } from "./script/imported-symbols.ts";
-import type { SymbolKind } from "./script/signature.ts";
+import { importedSymbols, type SymbolLookup } from "../script/imported-symbols.ts";
+import type { SymbolKind } from "../script/signature.ts";
 
 const SYMBOL_KINDS: Record<SymbolKind, CompletionKind> = {
   function: "function",
