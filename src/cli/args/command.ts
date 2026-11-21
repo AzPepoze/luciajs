@@ -28,6 +28,7 @@ export type Command =
       check: boolean;
       quiet: boolean;
       cache: boolean;
+      indentScriptAndStyle: boolean;
     }
   | {
       name: "lint";

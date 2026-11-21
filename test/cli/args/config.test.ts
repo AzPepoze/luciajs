@@ -113,7 +113,7 @@ describe("config file errors", () => {
   test.each([
     [
       '{ "outdr": "x" }',
-      'unknown key "outdr", allowed: $schema, outdir, minify, routes, dev, lazy, lint, animate',
+      'unknown key "outdr", allowed: $schema, outdir, minify, routes, dev, lazy, lint, format, animate',
     ],
     ['{ "lazy": { "mode": "some" } }', '"lazy.mode" must be one of: smart, all, off'],
     ['{ "lazy": { "prefetch": "soon" } }', '"lazy.prefetch" must be one of: idle, view, none'],
@@ -170,6 +170,11 @@ describe("CLI merge", () => {
     expect(await parseCommand(["build", docs], {})).toMatchObject({
       outdir: join(docs, "dist"),
     });
+  });
+
+  test("format.indentScriptAndStyle comes from the file", async () => {
+    const dir = appWith(JSON.stringify({ format: { indentScriptAndStyle: false } }));
+    expect(await parseCommand(["format", dir], {})).toMatchObject({ indentScriptAndStyle: false });
   });
 
   test("the animate config comes from the file", async () => {

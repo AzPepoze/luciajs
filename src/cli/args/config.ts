@@ -19,13 +19,19 @@ import {
   optionalString,
   type JsonObject,
 } from "./config-values.ts";
-import { optionalDev, optionalLazy, optionalLint, optionalRoutes } from "./config-sections.ts";
+import {
+  optionalDev,
+  optionalFormat,
+  optionalLazy,
+  optionalLint,
+  optionalRoutes,
+} from "./config-sections.ts";
 
 export { JSON_CONFIG_FILE, TS_CONFIG_FILE };
 export type { LusiaConfig };
 export { isRoute } from "./config-values.ts";
 
-const ROOT_KEYS = ["$schema", "outdir", "minify", "routes", "dev", "lazy", "lint", "animate"];
+const ROOT_KEYS = ["$schema", "outdir", "minify", "routes", "dev", "lazy", "lint", "format", "animate"];
 const MISSING_DEFAULT_DETAIL = "export the config as default: export default defineConfig({ ... })";
 
 type AnimateReader = (root: JsonObject) => AnimateConfig | undefined;
@@ -73,6 +79,7 @@ function checkRoot(value: unknown, readAnimate: AnimateReader): LusiaConfig {
     dev: optionalDev(root),
     lazy: optionalLazy(root),
     lint: optionalLint(root),
+    format: optionalFormat(root),
     animate: readAnimate(root),
   };
 }

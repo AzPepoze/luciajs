@@ -1,10 +1,13 @@
 import { findSections, type Section } from "../parse/sections.ts";
+import { indentSection } from "./indent-section.ts";
 
 /** The formatter for one embedded language. The editor and CLI supply Prettier. */
 export interface FormatParts {
   script(code: string): Promise<string>;
   style(code: string, plainCss: boolean): Promise<string>;
   markup(markup: string): Promise<string>;
+  /** Put before each line inside `<script>` and `<style>`; empty turns indenting off. */
+  sectionIndent?: string;
 }
 
 /** Formats a .lusia file: script as TypeScript, styles as SCSS or CSS, markup as HTML. Sections keep their order. */
@@ -30,7 +33,8 @@ async function formatSectionBlock(
   parts: FormatParts,
 ): Promise<string> {
   const content = source.slice(section.contentStart, section.contentEnd);
-  const code = await formatSectionContent(section, content, parts);
+  const formatted = await formatSectionContent(section, content, parts);
+  const code = indentSection(formatted, parts.sectionIndent ?? "");
   const open = `<${section.kind}${section.attrs.trimEnd()}>`;
   const close = `</${section.kind}>`;
   return code === "" ? `${open}${close}` : `${open}\n${code}\n${close}`;

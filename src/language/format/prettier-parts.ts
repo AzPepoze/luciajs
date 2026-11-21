@@ -18,6 +18,7 @@ export interface PrettierParts {
 export function prettierParts(
   load: () => Promise<PrettierLike>,
   config: Record<string, unknown> = {},
+  indentScriptAndStyle = true,
 ): PrettierParts {
   async function formatPart(code: string, parser: Parser): Promise<string> {
     if (code.trim() === "") return "";
@@ -36,8 +37,15 @@ export function prettierParts(
         const html = await formatPart(protectedMarkup.text, "html");
         return restoreExpressions(restoreFlowTags(html, flow.tags), protectedMarkup.expressions);
       },
+      sectionIndent: indentScriptAndStyle ? indentUnit(config) : "",
     },
   };
+}
+
+function indentUnit(config: Record<string, unknown>): string {
+  if (config.useTabs === true) return "\t";
+  const width = typeof config.tabWidth === "number" ? config.tabWidth : 2;
+  return " ".repeat(width);
 }
 
 function pluginsOf(prettier: PrettierLike): { plugins?: readonly unknown[] } {
