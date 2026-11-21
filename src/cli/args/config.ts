@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import type { AnimateConfig } from "@runtime/animate/options/config.ts";
 import {
   CONFIG_FILES,
@@ -48,9 +47,17 @@ async function loadConfigFile(file: string): Promise<LusiaConfig> {
 }
 
 async function readTsConfig(file: string): Promise<LusiaConfig> {
-  const loaded = await import(pathToFileURL(resolve(file)).href);
+  const loaded = await import(freshImportPath(file));
   if (loaded.default === undefined) throw configError(MISSING_DEFAULT_DETAIL);
   return checkRoot(loaded.default, optionalAnimateValues);
+}
+
+// Bun ignores a query on a file: URL, but a plain path with a query is loaded again.
+let tsReadCount = 0;
+
+function freshImportPath(file: string): string {
+  tsReadCount++;
+  return `${resolve(file)}?read=${tsReadCount}`;
 }
 
 export function parseConfig(text: string): LusiaConfig {
