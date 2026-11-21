@@ -1,4 +1,4 @@
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 import type { Keyframes } from "./keyframes.ts";
 import type { MoreBase } from "./trigger-options.ts";
 

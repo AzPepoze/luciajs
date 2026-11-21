@@ -1,5 +1,5 @@
 import { EDGE, SCROLL_AT, type ScrollAtMode, type ScrollEdge } from "../modes/scroll-modes.ts";
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** The element's point `element` meets the window's point `window`. */
 export interface ScrollTouch {

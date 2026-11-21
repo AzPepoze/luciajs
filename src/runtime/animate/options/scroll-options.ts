@@ -1,6 +1,6 @@
-import { runtimeError } from "@runtime/errors.ts";
-import type { ComputedVariable } from "@runtime/variable/compute.ts";
-import { isReactive } from "@runtime/variable/reactive.ts";
+import { runtimeError } from "../../errors.ts";
+import type { ComputedVariable } from "../../variable/compute.ts";
+import { isReactive } from "../../variable/reactive.ts";
 import {
   DEFAULT_RANGE,
   readScrollAt,

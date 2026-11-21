@@ -1,8 +1,8 @@
-import type { Cleanup } from "@runtime/dom/bindings.ts";
-import { isSwapping } from "@runtime/dom/hot/session.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
-import { untrack, watch } from "@runtime/variable/graph.ts";
-import { isReactive, unwrap } from "@runtime/variable/reactive.ts";
+import type { Cleanup } from "../../dom/bindings.ts";
+import { isSwapping } from "../../dom/hot/session.ts";
+import type { Leave } from "../../dom/leave.ts";
+import { untrack, watch } from "../../variable/graph.ts";
+import { isReactive, unwrap } from "../../variable/reactive.ts";
 import type { Group } from "./group.ts";
 import type { ScrollRead } from "../options/scroll-options.ts";
 import { WHEN, type Source } from "../modes/trigger.ts";

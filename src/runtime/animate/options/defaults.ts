@@ -1,7 +1,7 @@
 import type { EaseStyle } from "../modes/easing.ts";
 import { readDefault, type DefaultEasing } from "./keyform.ts";
 import { EASE, type Ease } from "../modes/modes.ts";
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** The engine default: used for a part when neither the key nor the keyframes `default` sets it. */
 export interface AnimateDefault {

@@ -9,7 +9,7 @@ import {
   type TurnMode,
 } from "../modes/midway-modes.ts";
 import type { TurnFn } from "../play/turn.ts";
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** The `midway` field of an item. A MIDWAY member alone sets `play` and keeps the other defaults. */
 export interface MidwayItem {

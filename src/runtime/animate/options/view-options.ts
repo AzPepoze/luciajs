@@ -1,4 +1,4 @@
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** The `more` options of WHEN.VIEW. */
 export interface ViewMore {

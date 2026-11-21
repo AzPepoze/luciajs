@@ -1,7 +1,7 @@
 import type { EaseStyle } from "../modes/easing.ts";
 import type { Keyframe, KeyframeValue, Style } from "./keyframes.ts";
 import { isEase, type Ease } from "../modes/modes.ts";
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** One or both parts of an easing. Missing parts fall back to the next level. */
 export interface PartialEasing {

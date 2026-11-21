@@ -1,4 +1,4 @@
-import { listen, type Cleanup } from "@runtime/dom/bindings.ts";
+import { listen, type Cleanup } from "../../dom/bindings.ts";
 import { prepareTimeline } from "../options/keyframes.ts";
 import type { Group } from "./group.ts";
 import type { HoverRead } from "../options/hover-options.ts";

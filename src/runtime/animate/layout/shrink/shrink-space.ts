@@ -1,5 +1,5 @@
-import type { Cleanup } from "@runtime/dom/bindings.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Cleanup } from "../../../dom/bindings.ts";
+import type { Leave } from "../../../dom/leave.ts";
 import type { Group } from "../../play/group.ts";
 import { Closer, type ShrinkSpec } from "./shrink-closer.ts";
 import { readSpace, type Space } from "./shrink-box.ts";

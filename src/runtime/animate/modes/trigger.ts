@@ -1,5 +1,5 @@
-import type { ComputedVariable } from "@runtime/variable/compute.ts";
-import type { Variable } from "@runtime/variable/variable.ts";
+import type { ComputedVariable } from "../../variable/compute.ts";
+import type { Variable } from "../../variable/variable.ts";
 
 const ATTACH: unique symbol = Symbol("ATTACH");
 const DETACH: unique symbol = Symbol("DETACH");

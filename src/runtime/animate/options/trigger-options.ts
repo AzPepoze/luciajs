@@ -1,4 +1,4 @@
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 import { WHEN, isWhen, type When, type Source } from "../modes/trigger.ts";
 import { DEFAULT_DETACH, readDetach, type DetachMore, type DetachRead } from "./detach-options.ts";
 import { DEFAULT_HOVER, readHover, sameHover, type HoverMore, type HoverRead } from "./hover-options.ts";

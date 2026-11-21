@@ -1,5 +1,5 @@
 import { closestName } from "./closest.ts";
-import type { Values } from "@compiler/errors/create.ts";
+import type { Values } from "../../../compiler/errors/create.ts";
 
 /** The keys of an AnimateItem. */
 export const ITEM_KEYS: readonly string[] = [

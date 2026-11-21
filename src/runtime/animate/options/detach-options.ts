@@ -1,4 +1,4 @@
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 
 /** The `more` options of WHEN.DETACH. `keepSpace` keeps the space the element holds until it is removed. */
 export interface DetachMore {

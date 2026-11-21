@@ -1,4 +1,4 @@
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 import type { AnimateItem } from "../animation.ts";
 import { isLayoutWhen, type Source, type When } from "../modes/trigger.ts";
 import type { Keyframes } from "./keyframes.ts";

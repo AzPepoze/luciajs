@@ -1,4 +1,4 @@
-import { isReactive } from "@runtime/variable/reactive.ts";
+import { isReactive } from "../../variable/reactive.ts";
 import type { AnimateItem } from "../animation.ts";
 import type { Controller } from "../play/controller.ts";
 import type { Keyframes } from "./keyframes.ts";
@@ -8,7 +8,7 @@ import { readMidway, type MidwayOptions } from "./midway-options.ts";
 import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "../modes/trigger.ts";
 import { readMore, type ReadMore } from "./trigger-options.ts";
 import type { ShrinkSpec } from "../layout/shrink/shrink-closer.ts";
-import { runtimeError } from "@runtime/errors.ts";
+import { runtimeError } from "../../errors.ts";
 import { ITEM_KEYS, SPELLING_HINT, unknownKeyValues } from "./keys.ts";
 import { readKeyframes } from "./item-style.ts";
 
