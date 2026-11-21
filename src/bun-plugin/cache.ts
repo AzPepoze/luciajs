@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 export interface CachedModule {
   source: string;
   dev: boolean;
-  lazyKey: string;
+  key: string;
   deps: StyleDep[];
   code: string;
   css: string;
@@ -15,16 +15,21 @@ export interface CachedModule {
 // Module scope: Bun.build makes a new plugin per build, so a cache inside setup() would never hit.
 const modules = new Map<string, CachedModule>();
 
+/** One key for a compile. It changes when the lazy settings or the animate config change. */
+export function compileKey(lazyKey: string, animateKey: string): string {
+  return JSON.stringify([lazyKey, animateKey]);
+}
+
 export function toCachedModule(
   source: string,
   dev: boolean,
   result: CompileResult,
-  lazyKey: string,
+  key: string,
 ): CachedModule {
   return {
     source,
     dev,
-    lazyKey,
+    key,
     deps: result.deps,
     code: result.code,
     css: result.css,
@@ -37,14 +42,14 @@ export function cachedModule(
   path: string,
   source: string,
   dev: boolean,
-  lazyKey: string,
+  key: string,
 ): CachedModule | undefined {
   const entry = modules.get(path);
   if (
     entry &&
     entry.source === source &&
     entry.dev === dev &&
-    entry.lazyKey === lazyKey &&
+    entry.key === key &&
     depsCurrent(entry.deps)
   )
     return entry;

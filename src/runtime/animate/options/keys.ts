@@ -33,15 +33,16 @@ export const KEYFRAMES_HINT = "Use a number from 0 to 1, or 'default'.";
 export const SPELLING_HINT = "Check the spelling of the key.";
 
 export const VIEW_KEYS: readonly string[] = ["margin", "amount", "reverse"];
-export const HOVER_KEYS: readonly string[] = ["inDelay", "outDelay", "out", "outDuration"];
+export const HOVER_KEYS: readonly string[] = ["area", "inDelay", "outDelay", "out", "outDuration"];
 export const SCROLL_KEYS: readonly string[] = ["start", "end", "follow", "part"];
-export const DETACH_KEYS: readonly string[] = ["keepSpace"];
+export const SPACE_KEYS: readonly string[] = ["animateSpace"];
 
 export const MORE_KEYS_BY_WHEN: Readonly<Record<string, readonly string[]>> = {
   VIEW: VIEW_KEYS,
   HOVER: HOVER_KEYS,
   SCROLL: SCROLL_KEYS,
-  DETACH: DETACH_KEYS,
+  ATTACH: SPACE_KEYS,
+  DETACH: SPACE_KEYS,
 };
 
 export function isNumberKey(key: string): boolean {

@@ -17,6 +17,7 @@ import {
 	foldGutter,
 	foldKeymap,
 	indentOnInput,
+	indentUnit,
 } from "@codemirror/language";
 import { lintGutter, lintKeymap } from "@codemirror/lint";
 import {
@@ -49,6 +50,7 @@ import {
 import { lusiaCompletionSource } from "./completion-source.ts";
 import type { EditorFile } from "./files.ts";
 import { lusiaHover } from "./hover-source.ts";
+import { indentGuides } from "./indent-guides.ts";
 import { lusiaHighlighting } from "./lang/highlight.ts";
 import { lusiaLanguage, typescriptLanguage } from "./lang/language.ts";
 import { lusiaMarks } from "./lang/marks.ts";
@@ -63,6 +65,8 @@ export interface EditorStateOptions {
 	getFiles: () => readonly EditorFile[];
 	readOnly: Compartment;
 	readOnlyValue: boolean;
+	wrap: Compartment;
+	wrapValue: boolean;
 	onEdit: (code: string) => void;
 	format: () => void;
 }
@@ -80,6 +84,7 @@ export function editorExtensions(options: EditorStateOptions): Extension[] {
 		dropCursor(),
 		EditorState.allowMultipleSelections.of(true),
 		indentOnInput(),
+		indentUnit.of("\t"),
 		lusiaHighlighting,
 		bracketMatching(),
 		closeBrackets(),
@@ -94,7 +99,8 @@ export function editorExtensions(options: EditorStateOptions): Extension[] {
 		lusiaHover(fileName, getFiles),
 		languageFor(fileName),
 		editorTheme,
-		EditorView.lineWrapping,
+		indentGuides(),
+		options.wrap.of(wrapExtensions(options.wrapValue)),
 		// Popups sit on the page, so the demo card and the editor scroller cannot clip them.
 		tooltips({ parent: document.body, position: "fixed" }),
 		options.readOnly.of(readOnlyExtensions(options.readOnlyValue)),
@@ -125,6 +131,10 @@ export function readOnlyExtensions(readOnly: boolean): Extension[] {
 		EditorState.readOnly.of(readOnly),
 		EditorView.editable.of(!readOnly),
 	];
+}
+
+export function wrapExtensions(wrap: boolean): Extension[] {
+	return wrap ? [EditorView.lineWrapping] : [];
 }
 
 function completionSources(

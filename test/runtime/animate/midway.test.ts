@@ -9,6 +9,7 @@ import { EASE } from "@runtime/animate/modes/modes.ts";
 import { readItem } from "@runtime/animate/options/options.ts";
 import { Player } from "@runtime/animate/play/player.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { HOVER_AREA } from "@runtime/animate/modes/hover-modes.ts";
 import { variable } from "@runtime/variable/variable.ts";
 import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
@@ -129,7 +130,7 @@ function mountItem(item: Omit<AnimateItem, "style">) {
 
 describe("MIDWAY with the HOVER trigger", () => {
   test.each(MEMBERS)("%s", (name, midway) => {
-    const { el, opacity } = mountItem({ when: WHEN.HOVER, midway });
+    const { el, opacity } = mountItem({ when: WHEN.HOVER, midway, more: { area: HOVER_AREA.ELEMENT } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(50);
     el.dispatchEvent(new Event("pointerleave"));

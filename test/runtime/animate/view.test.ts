@@ -189,11 +189,11 @@ describe("more amount", () => {
 describe("more errors", () => {
   test("more on a non-VIEW item names the when", () => {
     expect(() => readItem({ style: fade, more: { margin: 10 } } as never)).toThrow(
-      "more is not used with WHEN.ATTACH",
+      'more has an unknown key "margin", use animateSpace',
     );
     expect(() =>
       readItem({ style: fade, when: WHEN.HOVER, more: { amount: 0.5 } } as AnimateItem),
-    ).toThrow('more has an unknown key "amount", use inDelay, outDelay, out or outDuration');
+    ).toThrow('more has an unknown key "amount", use area, inDelay, outDelay, out or outDuration');
   });
 
   test("more on a variable when names it as a variable", () => {

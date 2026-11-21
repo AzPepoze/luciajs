@@ -116,18 +116,43 @@ export const animateEnumEntries: ApiEntry[] = [
 		],
 	},
 	{
+		id: "hover-area",
+		name: "HOVER_AREA",
+		kind: "value",
+		group: "motion",
+		signature:
+			"const HOVER_AREA: { readonly FINAL: HoverArea; readonly ELEMENT: HoverArea }",
+		summary: "Where a hover is checked.",
+		bullets: [
+			"Use it as more: { area: HOVER_AREA.ELEMENT } in WHEN.HOVER. The default is FINAL.",
+			"FINAL reads the element's resting box. The pointer must be over that box to hover.",
+			"ELEMENT reads the box as it is drawn now, so a transform moves the hover area with it.",
+		],
+		example: `import { WHEN, HOVER_AREA, PRESET } from "lusia";\n\n<div animate={{ style: PRESET.ZOOM_IN, when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } }}>...</div>`,
+		members: [
+			{
+				name: "FINAL",
+				summary: "The resting box, the box with no transform. The default.",
+			},
+			{
+				name: "ELEMENT",
+				summary: "The box the element is drawn in right now.",
+			},
+		],
+	},
+	{
 		id: "animate-more",
 		name: "more",
 		kind: "type",
 		group: "motion",
 		signature:
-			"more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] } | { keepSpace?: boolean }",
+			"more?: { margin?: number | string; amount?: number; reverse?: boolean } | { area?: HoverArea; inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] } | { animateSpace?: boolean }",
 		summary: "Options for the trigger an item uses. Each trigger accepts its own keys.",
 		bullets: [
 			'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
-			"HOVER: inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
+			"HOVER: area (HOVER_AREA.FINAL, the default, checks the resting box; HOVER_AREA.ELEMENT checks the box as it is drawn now), inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
 			"SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE) on the item's own box. follow: a variable of the element whose box is measured. Alone it is pinned to the screen; with start and end it runs from those points. part: [from, to] plays only that slice, without start and end.",
-			"DETACH: keepSpace (default false). true keeps the space the element holds until it is removed; false closes that space with the leave.",
+			"DETACH and ATTACH: animateSpace (default true, on). true: the siblings slide into the freed space (DETACH) or apart (ATTACH). false: they jump at once.",
 			"Any other trigger that sets more is an error.",
 		],
 		example: `<div animate={{\n  style: fadeUp,\n  when: WHEN.VIEW,\n  more: { margin: "10%", amount: 0.5, reverse: true },\n}}>...</div>`,

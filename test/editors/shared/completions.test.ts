@@ -146,10 +146,10 @@ describe("motion completions", () => {
     ]);
   });
 
-  test("offers keepSpace after when: WHEN.DETACH", () => {
+  test("offers animateSpace after when: WHEN.DETACH", () => {
     const text = "<div animate={{ when: WHEN.DETACH, more: { ";
     expect(completionsAt(text, text.length, noProps).map((item) => item.label)).toEqual([
-      "keepSpace",
+      "animateSpace",
     ]);
   });
 
@@ -161,6 +161,7 @@ describe("motion completions", () => {
       "outDelay",
       "out",
       "outDuration",
+      "area",
     ]);
     expect(completionsAt(scroll, scroll.length, noProps).map((item) => item.label)).toEqual([
       "start",

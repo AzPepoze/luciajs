@@ -62,11 +62,11 @@ const LIST = `
     <div id="after" style="height:40px"></div>
   </div>`;
 
-suite("DETACH closes the space it holds", () => {
+suite("DETACH with animateSpace slides the siblings", () => {
   test("the sibling after a leaving row moves gradually, not in one jump", async () => {
     const page = await openPage(LIST);
     try {
-      const tops = await sampleLeave(page, "", "top");
+      const tops = await sampleLeave(page, '{"animateSpace":true}', "top");
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(80, 0);
@@ -77,10 +77,10 @@ suite("DETACH closes the space it holds", () => {
     }
   });
 
-  test("keepSpace: true keeps the space until the row is removed, then the sibling jumps", async () => {
+  test("with animateSpace false the sibling jumps once, when the row is removed", async () => {
     const page = await openPage(LIST);
     try {
-      const tops = await sampleLeave(page, '{"keepSpace":true}', "top");
+      const tops = await sampleLeave(page, '{"animateSpace":false}', "top");
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(80, 0);
@@ -98,7 +98,7 @@ suite("DETACH closes the space it holds", () => {
         <div id="after" style="width:50px;height:30px"></div>
       </div>`);
     try {
-      const lefts = await sampleLeave(page, "", "left");
+      const lefts = await sampleLeave(page, '{"animateSpace":true}', "left");
       const first = lefts[0]!;
       const last = lefts[lefts.length - 1]!;
       expect(first - last).toBeCloseTo(120, 0);
@@ -146,11 +146,36 @@ async function frameSamples(page: Page, edge: "top" | "left", extra = {}): Promi
   );
 }
 
-suite("DETACH places a placeholder and lifts the element out of flow", () => {
+/** Reads the `a` value from a computed `matrix(a, b, c, d, e, f)` transform. */
+function matrixScaleX(transform: string): number {
+  return Number(transform.replace(/^matrix\(/, "").split(",")[0]);
+}
+
+suite("DETACH lifts the element out of flow", () => {
   test("a sibling in a gapped flex column moves every frame with no final jump", async () => {
     const page = await openPage(GAP_LIST);
     try {
-      const tops = await frameSamples(page, "top");
+      const tops = await frameSamples(page, "top", { more: { animateSpace: true } });
+      const first = tops[0]!;
+      const last = tops[tops.length - 1]!;
+      expect(first - last).toBeCloseTo(96, 0);
+      for (let i = 1; i < tops.length; i++)
+        expect(tops[i]!).toBeLessThanOrEqual(tops[i - 1]! + 0.01);
+      expect(tops[tops.length - 2]! - last).toBeLessThan(2);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("a sibling in a gapped grid moves every frame with no final jump", async () => {
+    const page = await openPage(`
+      <div id="list" style="display:grid;gap:16px;width:200px">
+        <div id="before" style="height:40px"></div>
+        <div id="gone" style="width:100px;height:60px;margin:10px 0"></div>
+        <div id="after" style="height:40px"></div>
+      </div>`);
+    try {
+      const tops = await frameSamples(page, "top", { more: { animateSpace: true } });
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(96, 0);
@@ -193,7 +218,7 @@ suite("DETACH places a placeholder and lifts the element out of flow", () => {
       expect(mid.height).toBe(60);
       expect(mid.rotate).toBeGreaterThan(0);
       expect(mid.rotate).toBeLessThan(180);
-      expect(mid.placeholders).toBe(1);
+      expect(mid.placeholders).toBe(0);
     } finally {
       await page.close();
     }
@@ -264,6 +289,75 @@ suite("DETACH places a placeholder and lifts the element out of flow", () => {
       expect(result.inFlow).toBe(true);
       expect(result.placeholders).toBe(0);
       expect(result.width).toBe(100);
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("a sibling keeps its own inline transform after the leave", async () => {
+    const page = await openPage(`
+      <div id="list" style="display:flex;flex-direction:column;gap:16px;width:200px">
+        <div id="before" style="height:40px"></div>
+        <div id="gone" style="width:100px;height:60px;margin:10px 0"></div>
+        <div id="after" style="height:40px;transform:translateX(7px)"></div>
+      </div>`);
+    try {
+      const transform = await page.evaluate(async () => {
+        const gone = document.getElementById("gone")!;
+        const leaves: Array<() => Promise<void>> = [];
+        (window as any).lusiaAnimate(
+          gone,
+          () => ({
+            style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+            when: (window as any).lusiaWhen.DETACH,
+            duration: 400,
+          }),
+          [],
+          leaves,
+        );
+        await (window as any).lusiaLeaveThen(leaves, () => gone.remove());
+        return document.getElementById("after")!.style.transform;
+      });
+      expect(transform).toBe("translateX(7px)");
+    } finally {
+      await page.close();
+    }
+  });
+
+  test("a sibling keeps its stylesheet transform during the leave", async () => {
+    const page = await openPage(`
+      <style>.tilt{transform:rotate(10deg)}</style>
+      <div id="list" style="display:flex;flex-direction:column;gap:16px;width:200px">
+        <div id="before" style="height:40px"></div>
+        <div id="gone" style="width:100px;height:60px;margin:10px 0"></div>
+        <div id="after" class="tilt" style="height:40px"></div>
+      </div>`);
+    try {
+      const result = await page.evaluate(async () => {
+        const gone = document.getElementById("gone")!;
+        const after = document.getElementById("after")!;
+        const leaves: Array<() => Promise<void>> = [];
+        (window as any).lusiaAnimate(
+          gone,
+          () => ({
+            style: { 0: { opacity: 1 }, 1: { opacity: 0 } },
+            when: (window as any).lusiaWhen.DETACH,
+            duration: 400,
+          }),
+          [],
+          leaves,
+        );
+        const done = (window as any).lusiaLeaveThen(leaves, () => gone.remove());
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        const during = getComputedStyle(after).transform;
+        await done;
+        return { during, after: getComputedStyle(after).transform };
+      });
+      const cosTen = Math.cos((10 * Math.PI) / 180);
+      expect(result.during).not.toBe("none");
+      expect(Math.abs(matrixScaleX(result.during) - cosTen)).toBeLessThan(0.01);
+      expect(result.after).toMatch(/^matrix\(/);
+      expect(Math.abs(matrixScaleX(result.after) - cosTen)).toBeLessThan(0.01);
     } finally {
       await page.close();
     }

@@ -126,7 +126,7 @@ describe("hover for markup features", () => {
 
   test("shows the PRESET entry in the script", () => {
     const text =
-      '<script>\nimport { PRESET } from "lusia";\n</script>\n<div animate={PRESET.FADE}>x</div>';
+      '<script>\nimport { PRESET } from "lusia";\n</script>\n<div animate={PRESET.FADE_IN}>x</div>';
     expect(apiId(hoverAt(text, text.indexOf("PRESET") + 2, noProps))).toBe("preset");
   });
 

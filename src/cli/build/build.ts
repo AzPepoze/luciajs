@@ -1,4 +1,5 @@
 import type { LazySettings } from "@bun-plugin/children.ts";
+import type { AnimateConfig } from "@runtime/animate/options/config.ts";
 import { mkdir, rm } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { formatBuildFailure } from "./build-errors.ts";
@@ -18,6 +19,7 @@ export interface BuildOptions {
   routes?: string[];
   quiet?: boolean;
   lazy: LazySettings;
+  animate?: AnimateConfig;
 }
 
 export async function runBuild(options: BuildOptions): Promise<number> {
@@ -44,6 +46,7 @@ export async function runBuild(options: BuildOptions): Promise<number> {
     dev: false,
     steps,
     lazy: options.lazy,
+    animate: options.animate,
   });
   addBundleStep(steps, now() - bundleStart);
   if (!result.success) {

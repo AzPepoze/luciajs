@@ -1,6 +1,6 @@
-import { lusiaError } from "@compiler/errors/create.ts";
-import type { LusiaError } from "@compiler/errors/error.ts";
-import { CONFIG_FILE } from "./config-types.ts";
+import { closestName } from "@runtime/animate/options/closest.ts";
+import { LusiaError } from "@compiler/errors/error.ts";
+import { CONFIG_FILES } from "./config-types.ts";
 
 export type JsonObject = Record<string, unknown>;
 
@@ -42,10 +42,33 @@ export function checkKeys(object: JsonObject, allowed: readonly string[], parent
   for (const key of Object.keys(object)) {
     if (allowed.includes(key)) continue;
     const where = parent ? ` in "${parent}"` : "";
-    throw configError(`unknown key "${key}"${where}, allowed: ${allowed.join(", ")}`);
+    const list = allowed.join(", ");
+    throw configError(`unknown key "${key}"${where}, allowed: ${list}${suggestion(key, allowed)}`);
   }
 }
 
-export function configError(detail: string): LusiaError {
-  return lusiaError("L3004", { message: `${CONFIG_FILE}: ${detail}` });
+function suggestion(key: string, allowed: readonly string[]): string {
+  const near = closestName(key, allowed);
+  return near === undefined ? "" : `. Did you mean "${near}"?`;
+}
+
+/** A problem in the file's content. The file name is added where the file is read. */
+export function configError(detail: string): Error {
+  return new Error(detail);
+}
+
+export function configFileError(file: string, error: unknown): LusiaError {
+  const detail = error instanceof Error ? error.message : String(error);
+  return fileError(`${file}: ${detail}`, `Fix ${file}, then run the command again.`);
+}
+
+export function bothFilesError(): LusiaError {
+  return fileError(
+    `${CONFIG_FILES.join(" and ")} both exist, use one config file`,
+    "Remove one of the two files, then run the command again.",
+  );
+}
+
+function fileError(message: string, hint: string): LusiaError {
+  return new LusiaError(message, undefined, undefined, undefined, { code: "L3004", hint });
 }

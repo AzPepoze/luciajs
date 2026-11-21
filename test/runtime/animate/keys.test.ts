@@ -54,31 +54,39 @@ describe("unknown animate item keys", () => {
   });
 });
 
-describe("DETACH more keepSpace", () => {
+describe("DETACH more animateSpace", () => {
   const detach = (more: unknown) => ({ style: frames, when: WHEN.DETACH, more }) as never;
 
-  test("keepSpace must be true or false", () => {
-    const error = thrown(() => readItem(detach({ keepSpace: "yes" })));
+  test("animateSpace must be true or false", () => {
+    const error = thrown(() => readItem(detach({ animateSpace: "yes" })));
     expect(error.code).toBe("L2056");
-    expect(error.message).toBe("animate more keepSpace must be true or false, got yes");
+    expect(error.message).toBe("animate more animateSpace must be true or false, got yes");
   });
 
-  test("a misspelled keepSpace names the right key", () => {
-    expect(thrown(() => readItem(detach({ keepSpce: true }))).hint).toBe(
-      "did you mean 'keepSpace'?",
+  test("a misspelled animateSpace names the right key", () => {
+    expect(thrown(() => readItem(detach({ animateSpce: true }))).hint).toBe(
+      "did you mean 'animateSpace'?",
     );
   });
 
-  test("without keepSpace a DETACH item closes its space", () => {
-    expect(readItem(detach(undefined)).shrink).toEqual({
+  test("animateSpace defaults to true, so a DETACH item has a space spec", () => {
+    expect(readItem(detach(undefined)).space).toEqual({
       duration: 300,
       delay: 0,
       keyframes: frames,
     });
   });
 
-  test("keepSpace: true keeps the space, so there is nothing to close", () => {
-    expect(readItem(detach({ keepSpace: true })).shrink).toBeUndefined();
-    expect(readItem(detach({ keepSpace: true })).more.detach).toEqual({ keepSpace: true });
+  test("animateSpace: false gives a DETACH item no space spec", () => {
+    expect(readItem(detach({ animateSpace: false })).space).toBeUndefined();
+  });
+
+  test("animateSpace: true gives a DETACH item a space spec", () => {
+    expect(readItem(detach({ animateSpace: true })).space).toEqual({
+      duration: 300,
+      delay: 0,
+      keyframes: frames,
+    });
+    expect(readItem(detach({ animateSpace: true })).more.space).toEqual({ animateSpace: true });
   });
 });

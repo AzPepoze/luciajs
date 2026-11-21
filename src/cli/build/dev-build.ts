@@ -1,5 +1,6 @@
 import type { LazySettings } from "@bun-plugin/children.ts";
 import type { ModuleUpdate } from "@bun-plugin/update.ts";
+import type { AnimateConfig } from "@runtime/animate/options/config.ts";
 import { formatBuildFailure } from "./build-errors.ts";
 import { assetKey, bundleApp } from "./bundle.ts";
 import { colorEnabled } from "../log/color.ts";
@@ -18,7 +19,11 @@ export type DevBuild =
   | { ok: true; assets: Assets; changes: ModuleUpdate[]; steps: Steps }
   | { ok: false; messages: string[] };
 
-export async function buildDev(dir: string, lazy: LazySettings): Promise<DevBuild> {
+export async function buildDev(
+  dir: string,
+  lazy: LazySettings,
+  animate?: AnimateConfig,
+): Promise<DevBuild> {
   const steps: Steps = {};
   const changes: ModuleUpdate[] = [];
   const start = now();
@@ -28,6 +33,7 @@ export async function buildDev(dir: string, lazy: LazySettings): Promise<DevBuil
     dev: true,
     steps,
     lazy,
+    animate,
     onUpdate: (update) => changes.push(update),
   });
   addBundleStep(steps, now() - start);

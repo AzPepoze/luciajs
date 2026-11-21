@@ -1,6 +1,7 @@
 import { runtimeError } from "../../errors.ts";
 import type { ComputedVariable } from "../../variable/compute.ts";
 import { isReactive } from "../../variable/reactive.ts";
+import { SCROLL_AT } from "../modes/scroll-modes.ts";
 import {
   DEFAULT_RANGE,
   readScrollAt,
@@ -8,6 +9,7 @@ import {
   type ScrollAt,
   type ScrollRange,
 } from "../scroll/scroll-touch.ts";
+import { animateConfig } from "./config-store.ts";
 
 export interface ScrollMore {
   start?: ScrollAt;
@@ -26,12 +28,8 @@ export interface ScrollRead {
   pinned: boolean;
 }
 
-export const DEFAULT_SCROLL: ScrollRead = {
-  range: DEFAULT_RANGE,
-  part: [0, 1],
-  follow: undefined,
-  pinned: false,
-};
+/** A ranged follow item plays the whole section: `part` cannot combine with start and end. */
+const WHOLE_SECTION: Part = [0, 1];
 
 export function sameScroll(a: ScrollRead, b: ScrollRead): boolean {
   return (
@@ -52,14 +50,22 @@ export function readScroll({ start, end, follow, part }: ScrollMore): ScrollRead
   if (!isReactive(follow)) throw runtimeError("L2016");
   const ranged = start !== undefined || end !== undefined;
   if (ranged && part !== undefined) throw runtimeError("L2015");
-  const range = ranged ? readRange(start, end) : DEFAULT_RANGE;
-  return { range, part: readPart(part), follow, pinned: !ranged };
+  if (ranged) {
+    return { range: readRange(start, end), part: WHOLE_SECTION, follow, pinned: false };
+  }
+  return { range: DEFAULT_RANGE, part: readPart(part), follow, pinned: true };
+}
+
+/** The `more` of a scroll item with no start, end or part: the config values, then the library ones. */
+export function scrollDefault(): ScrollRead {
+  return readScroll({});
 }
 
 function readRange(start: unknown, end: unknown): ScrollRange {
+  const config = animateConfig().scroll ?? {};
   const range = {
-    start: start === undefined ? DEFAULT_RANGE.start : readScrollAt(start, "start"),
-    end: end === undefined ? DEFAULT_RANGE.end : readScrollAt(end, "end"),
+    start: readScrollAt(start ?? config.start ?? SCROLL_AT.ENTER, "start"),
+    end: readScrollAt(end ?? config.end ?? SCROLL_AT.LEAVE, "end"),
   };
   if (sameTouch(range.start, range.end)) throw runtimeError("L2018");
   return range;
@@ -67,10 +73,10 @@ function readRange(start: unknown, end: unknown): ScrollRange {
 
 /** The slice of the section's progress that this item plays. `[0, 1]` means the whole section. */
 function readPart(part: Part | undefined): Part {
-  if (part === undefined) return [0, 1];
-  if (!Array.isArray(part) || part.length !== 2) throw badPart(part);
-  const [from, to] = part;
-  if (!(from >= 0 && from < to && to <= 1)) throw badPart(part);
+  const value = part ?? animateConfig().scroll?.part ?? WHOLE_SECTION;
+  if (!Array.isArray(value) || value.length !== 2) throw badPart(value);
+  const [from, to] = value;
+  if (!(from >= 0 && from < to && to <= 1)) throw badPart(value);
   return [from, to];
 }
 

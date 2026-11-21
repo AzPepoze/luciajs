@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
-import { setAnimateDefault } from "@runtime/animate/options/defaults.ts";
-import type { DefaultEasing } from "@runtime/animate/options/keyform.ts";
+import { clearAnimateDefault, setAnimateDefault } from "@runtime/animate/options/defaults.ts";
 import { readItem } from "@runtime/animate/options/options.ts";
 import { EASE } from "@runtime/animate/modes/modes.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
@@ -10,13 +9,8 @@ import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();
 
-const LIBRARY_DEFAULT: { ease: DefaultEasing; duration: number } = {
-  ease: [EASE.STYLE.QUART, EASE.INOUT],
-  duration: 300,
-};
-
-/** Every test changes the engine default, so each one puts the library default back. */
-afterEach(() => setAnimateDefault(LIBRARY_DEFAULT));
+/** Every test changes the engine default, so each one clears the runtime layer back to the library default. */
+afterEach(() => clearAnimateDefault());
 
 const fade = { 0: { opacity: 0 }, 1: { opacity: 1 } };
 

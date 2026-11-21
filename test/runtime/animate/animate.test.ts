@@ -5,6 +5,7 @@ import { PRESET } from "@runtime/animate/options/presets.ts";
 import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
 import { EASE } from "@runtime/animate/modes/modes.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { HOVER_AREA } from "@runtime/animate/modes/hover-modes.ts";
 import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, pendingFrames, setReducedMotion, useFakeClock } from "./clock.ts";
 
@@ -158,7 +159,12 @@ describe("a list of animations", () => {
   test("items with different triggers play on their own triggers", () => {
     const { el } = run([
       timed(fade(0, 1)),
-      { style: width("0px", "10px"), when: WHEN.HOVER, duration: 100 },
+      {
+        style: width("0px", "10px"),
+        when: WHEN.HOVER,
+        duration: 100,
+        more: { area: HOVER_AREA.ELEMENT },
+      },
     ]);
     advance(100);
     expect(el.style.width).toBe("0px");
@@ -254,7 +260,12 @@ describe("keyframes are read at every play", () => {
     let current = fade(0, 1);
     const el = document.createElement("div");
     const cleanups: Array<() => void> = [];
-    animate(el, () => timed(current, { when: WHEN.HOVER }), cleanups, []);
+    animate(
+      el,
+      () => timed(current, { when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } }),
+      cleanups,
+      [],
+    );
     onReset(() => cleanups.forEach((cleanup) => cleanup()));
     current = fade(0, 0.25);
     el.dispatchEvent(new Event("pointerenter"));
@@ -347,7 +358,7 @@ describe("item style and key forms", () => {
   });
 
   test("a bare preset plays as an animation", () => {
-    const { opacity } = run(PRESET.FADE);
+    const { opacity } = run(PRESET.FADE_IN);
     expect(opacity()).toBe(0);
     advance(400);
     expect(opacity()).toBe(1);

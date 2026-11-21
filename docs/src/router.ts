@@ -58,7 +58,11 @@ function onClick(event: MouseEvent): void {
 	const path = normalizePath(link.pathname);
 	if (!pages.some((page) => page.path === path)) return;
 	event.preventDefault();
-	void show(path, link.hash, true);
+	navigateTo(path, link.hash);
+}
+
+export function navigateTo(path: string, hash: string): void {
+	void show(path, hash, true);
 }
 
 async function show(path: string, hash: string, push: boolean): Promise<void> {
@@ -68,6 +72,7 @@ async function show(path: string, hash: string, push: boolean): Promise<void> {
 	if (push && url !== location.pathname + location.hash)
 		history.pushState(null, "", url);
 	if (current?.spec === spec) {
+		window.dispatchEvent(new Event("locationchange"));
 		scrollTo(hash, current.controller.signal);
 		return;
 	}
@@ -83,6 +88,7 @@ async function show(path: string, hash: string, push: boolean): Promise<void> {
 	const instance = attach(component, outlet);
 	current = { spec, instance, controller };
 	spec.mount(outlet, controller.signal);
+	window.dispatchEvent(new Event("locationchange"));
 	document.title = spec.title;
 	document.documentElement.dataset.route = spec.route;
 	markActiveLink(spec.path);

@@ -40,7 +40,7 @@ const FIELD_ITEMS: CompletionItemData[] = [
     insertText: "more: { $1 }",
     snippet: true,
     detail:
-      "Trigger options: VIEW margin, amount, reverse; HOVER inDelay, outDelay, out, outDuration; SCROLL start, end, follow, part; DETACH keepSpace",
+      "Trigger options: VIEW margin, amount, reverse; HOVER inDelay, outDelay, out, outDuration, area; SCROLL start, end, follow, part; DETACH and ATTACH animateSpace",
   },
   {
     label: "midway",
@@ -86,6 +86,14 @@ const FIELD_ITEMS: CompletionItemData[] = [
     detail: "With loop: each repeat plays 0 to 1, then back to 0",
   },
 ];
+
+const ANIMATE_SPACE_FIELD: CompletionItemData = {
+  label: "animateSpace",
+  kind: "property",
+  insertText: "animateSpace: true",
+  snippet: false,
+  detail: "Slide the siblings into the freed space or apart. Default true. false: they jump",
+};
 
 /** The keys of `more` for each trigger. Each trigger takes only its own. */
 const MORE_FIELDS: Record<string, CompletionItemData[]> = {
@@ -141,17 +149,16 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
       snippet: true,
       detail: "Ms for the way out (default: the item duration). Needs out",
     },
-  ],
-  DETACH: [
     {
-      label: "keepSpace",
+      label: "area",
       kind: "property",
-      insertText: "keepSpace: true",
-      snippet: false,
-      detail:
-        "Keep the space the element holds until it is removed. Default false: the space closes with the leave",
+      insertText: "area: $1",
+      snippet: true,
+      detail: "Where the hover is checked: HOVER_AREA.FINAL (resting box, default) or HOVER_AREA.ELEMENT",
     },
   ],
+  DETACH: [ANIMATE_SPACE_FIELD],
+  ATTACH: [ANIMATE_SPACE_FIELD],
   SCROLL: [
     {
       label: "start",

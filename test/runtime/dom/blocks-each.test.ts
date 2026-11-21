@@ -166,4 +166,51 @@ describe("EACH runtime", () => {
     expect(seen).toEqual([undefined]);
     for (const cleanup of cleanups) cleanup();
   });
+
+  describe("a row with a pending leave", () => {
+    const pendingLeaveRow: RowRender = (item, _index, _cleanups, leaves) => {
+      const fragment = document.createDocumentFragment();
+      const li = document.createElement("li");
+      li.textContent = String(item);
+      fragment.append(li);
+      leaves.push(() => new Promise<void>(() => {}));
+      return fragment;
+    };
+
+    function listTexts(parent: ParentNode): string[] {
+      return [...parent.querySelectorAll("li")].map((li) => li.textContent ?? "");
+    }
+
+    test("the leaving row stays between the kept rows", () => {
+      const parent = document.createElement("ul");
+      const marker = document.createComment(TEXT_MARKER);
+      parent.append(marker);
+      const list = variable(["a", "b", "c"]);
+      const cleanups: Array<() => void> = [];
+      bindEach(marker, { read: () => list.value, render: pendingLeaveRow, indexed: false }, cleanups, []);
+      const [first, second, third] = parent.querySelectorAll("li");
+
+      list.value = ["a", "c"];
+      expect(listTexts(parent)).toEqual(["a", "b", "c"]);
+      const after = parent.querySelectorAll("li");
+      expect(after[0]).toBe(first!);
+      expect(after[1]).toBe(second!);
+      expect(after[2]).toBe(third!);
+      for (const cleanup of cleanups) cleanup();
+    });
+
+    test("a new row goes after the last kept row, past the leaving row", () => {
+      const parent = document.createElement("ul");
+      const marker = document.createComment(TEXT_MARKER);
+      parent.append(marker);
+      const list = variable(["a", "b", "c"]);
+      const cleanups: Array<() => void> = [];
+      bindEach(marker, { read: () => list.value, render: pendingLeaveRow, indexed: false }, cleanups, []);
+      list.value = ["a", "c"];
+
+      list.value = ["a", "c", "d"];
+      expect(listTexts(parent)).toEqual(["a", "b", "c", "d"]);
+      for (const cleanup of cleanups) cleanup();
+    });
+  });
 });

@@ -19,7 +19,7 @@ export const RUNTIME_ANIMATE_MORE_CODES = {
     hint: "Write { element: EDGE.TOP, window: EDGE.BOTTOM }.",
   },
   L2056: {
-    message: "animate more keepSpace must be true or false, got $value",
-    hint: "Use true to keep the space, or false to let it close.",
+    message: "animate more animateSpace must be true or false, got $value",
+    hint: "Use true to slide the siblings, or false (default) to let them jump.",
   },
 } as const satisfies Record<string, ErrorCode>;

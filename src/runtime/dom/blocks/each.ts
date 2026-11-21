@@ -98,7 +98,7 @@ class EachBlock {
 
   private keep(row: Row, index: number, anchor: Node): Row {
     if (row.index) row.index.value = index;
-    if (row.end.nextSibling !== anchor) moveBefore(row, anchor);
+    if (this.outlet.skipLeaving(row.end.nextSibling) !== anchor) moveBefore(row, anchor);
     return row;
   }
 

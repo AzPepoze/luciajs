@@ -5,6 +5,25 @@ import { ownTimelines } from "@runtime/animate/play/timeline.ts";
 
 const presets = Object.entries(PRESET) as [string, Keyframes][];
 
+const IN_OUT_PAIRS = [
+  ["FADE_IN", "FADE_OUT"],
+  ["POP_IN", "POP_OUT"],
+  ["ZOOM_IN", "ZOOM_OUT"],
+  ["FLIP_IN", "FLIP_OUT"],
+  ["BLUR_IN", "BLUR_OUT"],
+] as const;
+
+const NAMES_WITHOUT_OUT = [
+  "DROP_IN",
+  "BOUNCE_IN",
+  "SHAKE",
+  "PULSE",
+  "SPIN",
+  "WOBBLE",
+  "HEARTBEAT",
+  "TADA",
+];
+
 /** The key styles of a preset, without its `default`. */
 const keyStyles = (keyframes: Keyframes) =>
   Object.entries(keyframes)
@@ -44,10 +63,25 @@ describe("PRESET", () => {
     expect(PRESET[name][0]).toMatchObject({ translate: start });
   });
 
+  test.each(IN_OUT_PAIRS)("%s pairs with %s", (inName, outName) => {
+    expect(PRESET[inName]).toBeDefined();
+    expect(PRESET[outName]).toBeDefined();
+  });
+
+  test("every IN preset has a matching OUT preset", () => {
+    const names = Object.keys(PRESET);
+    const inNames = names.filter(
+      (name) => name.endsWith("_IN") && !NAMES_WITHOUT_OUT.includes(name),
+    );
+    for (const name of inNames) {
+      expect(names).toContain(name.replace("_IN", "_OUT"));
+    }
+  });
+
   test("presets that move different properties keep all of them", () => {
     const timelines = ownTimelines([
       { timeline: prepareTimeline(PRESET.SLIDE_UP), detach: false },
-      { timeline: prepareTimeline(PRESET.ZOOM), detach: false },
+      { timeline: prepareTimeline(PRESET.ZOOM_IN), detach: false },
     ]);
     expect(timelines.map((timeline) => timeline.props)).toEqual([
       ["translate", "opacity"],
@@ -58,7 +92,7 @@ describe("PRESET", () => {
   test("a DETACH item does not take the properties of an enter item", () => {
     const timelines = ownTimelines([
       { timeline: prepareTimeline(PRESET.SLIDE_UP), detach: false },
-      { timeline: prepareTimeline(PRESET.FADE), detach: true },
+      { timeline: prepareTimeline(PRESET.FADE_IN), detach: true },
     ]);
     expect(timelines.map((timeline) => timeline.props)).toEqual([
       ["translate", "opacity"],

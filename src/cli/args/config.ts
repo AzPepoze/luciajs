@@ -1,23 +1,56 @@
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { CONFIG_FILE, type LusiaConfig } from "./config-types.ts";
+import { basename, join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import type { AnimateConfig } from "@runtime/animate/options/config.ts";
+import {
+  CONFIG_FILES,
+  JSON_CONFIG_FILE,
+  TS_CONFIG_FILE,
+  type LusiaConfig,
+} from "./config-types.ts";
+import { optionalAnimateNames, optionalAnimateValues } from "./config-animate.ts";
 import {
   asObject,
+  bothFilesError,
   checkKeys,
   configError,
+  configFileError,
   optionalBoolean,
   optionalString,
+  type JsonObject,
 } from "./config-values.ts";
 import { optionalDev, optionalLazy, optionalLint, optionalRoutes } from "./config-sections.ts";
 
-export { CONFIG_FILE };
+export { JSON_CONFIG_FILE, TS_CONFIG_FILE };
 export type { LusiaConfig };
 export { isRoute } from "./config-values.ts";
 
-export function readConfig(dir: string): LusiaConfig {
-  const file = join(dir, CONFIG_FILE);
-  if (!existsSync(file)) return {};
+const ROOT_KEYS = ["$schema", "outdir", "minify", "routes", "dev", "lazy", "lint", "animate"];
+const MISSING_DEFAULT_DETAIL = "export the config as default: export default defineConfig({ ... })";
+
+type AnimateReader = (root: JsonObject) => AnimateConfig | undefined;
+
+export async function readConfig(dir: string): Promise<LusiaConfig> {
+  const files = CONFIG_FILES.map((name) => join(dir, name)).filter((file) => existsSync(file));
+  if (files.length > 1) throw bothFilesError();
+  const file = files[0];
+  if (file === undefined) return {};
+  try {
+    return await loadConfigFile(file);
+  } catch (error) {
+    throw configFileError(basename(file), error);
+  }
+}
+
+async function loadConfigFile(file: string): Promise<LusiaConfig> {
+  if (file.endsWith(".ts")) return readTsConfig(file);
   return parseConfig(readFileSync(file, "utf8"));
+}
+
+async function readTsConfig(file: string): Promise<LusiaConfig> {
+  const loaded = await import(pathToFileURL(resolve(file)).href);
+  if (loaded.default === undefined) throw configError(MISSING_DEFAULT_DETAIL);
+  return checkRoot(loaded.default, optionalAnimateValues);
 }
 
 export function parseConfig(text: string): LusiaConfig {
@@ -27,12 +60,12 @@ export function parseConfig(text: string): LusiaConfig {
   } catch (error) {
     throw configError(`not valid JSON: ${error instanceof Error ? error.message : String(error)}`);
   }
-  return checkRoot(value);
+  return checkRoot(value, optionalAnimateNames);
 }
 
-function checkRoot(value: unknown): LusiaConfig {
+function checkRoot(value: unknown, readAnimate: AnimateReader): LusiaConfig {
   const root = asObject(value, "the file must hold a JSON object");
-  checkKeys(root, ["$schema", "outdir", "minify", "routes", "dev", "lazy", "lint"]);
+  checkKeys(root, ROOT_KEYS);
   return {
     outdir: optionalString(root, "outdir"),
     minify: optionalBoolean(root, "minify"),
@@ -40,5 +73,6 @@ function checkRoot(value: unknown): LusiaConfig {
     dev: optionalDev(root),
     lazy: optionalLazy(root),
     lint: optionalLint(root),
+    animate: readAnimate(root),
   };
 }

@@ -4,6 +4,7 @@ import type { AnimateItem } from "@runtime/animate/animation.ts";
 import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
 import { EASE } from "@runtime/animate/modes/modes.ts";
 import { WHEN } from "@runtime/animate/modes/trigger.ts";
+import { HOVER_AREA } from "@runtime/animate/modes/hover-modes.ts";
 import { variable } from "@runtime/variable/variable.ts";
 import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
@@ -140,7 +141,7 @@ describe("WHEN.VIEW", () => {
 
 describe("WHEN.HOVER", () => {
   test("pointer enter plays forward and pointer leave reverses", () => {
-    const { el, opacity } = mount({ when: WHEN.HOVER });
+    const { el, opacity } = mount({ when: WHEN.HOVER, more: { area: HOVER_AREA.ELEMENT } });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     expect(opacity()).toBe(1);
@@ -150,7 +151,11 @@ describe("WHEN.HOVER", () => {
   });
 
   test("once ignores the pointer after the first forward play", () => {
-    const { el, opacity } = mount({ when: WHEN.HOVER, once: true });
+    const { el, opacity } = mount({
+      when: WHEN.HOVER,
+      once: true,
+      more: { area: HOVER_AREA.ELEMENT },
+    });
     el.dispatchEvent(new Event("pointerenter"));
     advance(100);
     el.dispatchEvent(new Event("pointerleave"));

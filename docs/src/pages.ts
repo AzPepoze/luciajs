@@ -3,7 +3,9 @@ import { initDrawer } from "./drawer.ts";
 import { initFeatures } from "./features.ts";
 import { initGroupToggles } from "./nav-group.ts";
 import { errorsPath, playgroundPath } from "./page-link.ts";
+import { initReferenceClick } from "./reference-click.ts";
 import { initReferenceFilter } from "./reference-filter.ts";
+import { initReferenceView } from "./reference-view.ts";
 import { renderNav } from "./render.ts";
 import type { PageSpec } from "./router.ts";
 import { initScrollSpy } from "./scroll-spy.ts";
@@ -24,13 +26,14 @@ function mountHome(root: HTMLElement, signal: AbortSignal): void {
 	initCopy(root, signal);
 }
 
-// The Reference shares the Guide's sidebar, drawer and scroll-spy. Its cards are the spy targets.
+// The Reference shares the Guide's sidebar and drawer. Its tiles filter, and its hash picks the grid or one entry.
 function mountReference(root: HTMLElement, signal: AbortSignal): void {
 	initSidebarFollow(signal);
-	initScrollSpy(signal, { sections: "[data-ref-entry]" });
 	initDrawer(signal);
 	initGroupToggles(signal);
 	initReferenceFilter(root, signal);
+	initReferenceView(root, signal);
+	initReferenceClick(root, signal);
 	initCopy(root, signal);
 }
 

@@ -6,6 +6,7 @@ import { headingFlash } from "../flash.ts";
 import { buildKeywordIndex, tokenize } from "../keywords.ts";
 import { guideGroups, orderedEntries } from "../render.ts";
 import CodeBlock from "./CodeBlock.lusia";
+import CodePanel from "./CodePanel.lusia";
 import DemoRow from "./DemoRow.lusia";
 import DocTable from "./DocTable.lusia";
 import RichText from "./RichText.lusia";
@@ -17,7 +18,7 @@ const keywordIndex = buildKeywordIndex(orderedEntries, demos);
 // Plays in when the section enters the screen, and back out when it leaves.
 // Only opacity: a transform would make this section the box for fixed demo lines.
 const sectionMotion = {
-	style: PRESET.FADE,
+	style: PRESET.FADE_IN,
 	when: WHEN.VIEW,
 	duration: 600,
 	more: { margin: 80, amount: 0.1, reverse: true },
@@ -35,6 +36,7 @@ function sectionOf(entry: ApiEntry) {
 		entry,
 		demos: catalog[entry.id]?.demos ?? [],
 		table: catalog[entry.id]?.table ?? null,
+		files: catalog[entry.id]?.files ?? [],
 		subtitle: tokenize(entry.summary, keywordIndex, entry.id),
 		bullets: entry.bullets.map((text) =>
 			tokenize(text, keywordIndex, entry.id),
@@ -99,6 +101,9 @@ function languageOf(entry: ApiEntry): string {
 						head={section.table.head}
 						rows={section.table.rows}
 					/>
+				</IF>
+				<IF {section.files.length > 0}>
+					<CodePanel sources={section.files} />
 				</IF>
 				<EACH {section.demos} as={demo}>
 					<DemoRow demo={demo} />

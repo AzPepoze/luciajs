@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { api } from "../../reference/api.ts";
+import { PRESET } from "@runtime/animate/options/presets.ts";
 
 const KINDS = new Set(["function", "type", "markup", "style", "value"]);
 const GROUPS = new Set([
@@ -11,6 +12,9 @@ const GROUPS = new Set([
   "styling",
   "motion",
 ]);
+
+const presetMemberNames = () =>
+  api.find((entry) => entry.id === "preset")?.members?.map((member) => member.name) ?? [];
 
 describe("reference api table", () => {
   test("ids are unique url-safe anchors", () => {
@@ -135,11 +139,14 @@ describe("reference api: flow, events and bind-value", () => {
   });
 
   test("PRESET lists its members in upper case with underscores", () => {
-    const members =
-      api.find((entry) => entry.name === "PRESET")?.members?.map((member) => member.name) ?? [];
-    expect(members).toContain("FADE");
+    const members = presetMemberNames();
+    expect(members).toContain("FADE_IN");
     expect(members).toContain("SLIDE_UP");
     for (const name of members) expect(name).toMatch(/^[A-Z_]+$/);
+  });
+
+  test("PRESET members match the PRESET export, in order", () => {
+    expect(presetMemberNames()).toEqual(Object.keys(PRESET));
   });
 
   test("batch and untrack are gone from the public API", () => {
