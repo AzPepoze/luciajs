@@ -12,7 +12,6 @@ const SYMBOL_KINDS: Record<SymbolKind, CompletionKind> = {
   const: "variable",
 };
 
-/** The `base` items, then the imported symbols and the local names in `script`, without duplicates. */
 export function withScriptNames(
   base: CompletionItemData[],
   script: string,

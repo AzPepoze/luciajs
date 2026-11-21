@@ -2,10 +2,7 @@ import type { CompletionItemData } from "../completion-data.ts";
 import { receiverAt, variableKinds } from "./locals.ts";
 import { memberItems, namespaceMemberItems } from "./members.ts";
 
-/**
- * The members of `variable.` or of a known variable name before a `.`, if the receiver is one.
- * `text` is where the receiver sits; `script` is where its declaration is.
- */
+/** `text` holds the receiver, `script` holds its declaration. */
 export function scriptMemberItems(
   script: string,
   offset: number,

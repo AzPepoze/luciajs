@@ -7,10 +7,6 @@ const MEMBER_ACCESS = /([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\.[\w$]*$/;
 const WORD_CHAR = /[\w$]/;
 const WINDOW = 64;
 
-/**
- * Completes the members of an enum after `NAME.`, or after a nested name such as `EASE.STYLE.`.
- * Each member carries the enum as its import, so picking one adds the import.
- */
 export function enumMembersAt(text: string, offset: number): ScriptItem[] | undefined {
   const head = text.slice(Math.max(0, offset - WINDOW), offset);
   const access = MEMBER_ACCESS.exec(head);
@@ -37,7 +33,6 @@ export function enumOwnerAt(text: string, offset: number): ApiEntry | undefined 
   return findEnum((access[1] ?? "").split(".")[0] ?? "");
 }
 
-/** The enum name itself, as a completion that imports it. */
 export function enumNameItem(name: string): ScriptItem[] {
   const entry = findEnum(name);
   return entry

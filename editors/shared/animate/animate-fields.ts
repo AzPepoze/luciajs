@@ -187,7 +187,6 @@ const MORE_FIELDS: Record<string, CompletionItemData[]> = {
   ],
 };
 
-/** The keys of a `midway: { ... }` object. */
 const MIDWAY_FIELDS: CompletionItemData[] = [
   {
     label: "play",
@@ -226,7 +225,6 @@ const MIDWAY_FIELDS: CompletionItemData[] = [
   },
 ];
 
-/** The style properties of a keyframe object, in camelCase, as the DOM names them. */
 const CSS_FIELDS: CompletionItemData[] = CSS_PROPERTIES.map((name) => ({
   label: name,
   kind: "property",
@@ -237,7 +235,6 @@ const CSS_FIELDS: CompletionItemData[] = CSS_PROPERTIES.map((name) => ({
 
 const CSS_NAMES: ReadonlySet<string> = new Set(CSS_PROPERTIES);
 
-/** The keys of a keyframes object. `default` sets the easing for keys that do not set their own. */
 const KEYFRAMES_FIELDS: CompletionItemData[] = [
   {
     label: "default",
@@ -249,11 +246,7 @@ const KEYFRAMES_FIELDS: CompletionItemData[] = [
   },
 ];
 
-/**
- * Completions inside `animate={...}`: the item keys of an AnimateItem, the
- * WHEN enum after `when:`, the MIDWAY and TURN enums, or the keys of
- * `more` and `midway` objects. Undefined when the cursor is elsewhere.
- */
+/** Undefined when the cursor is outside `animate={...}`. */
 export function animateFieldsAt(text: string, offset: number): ScriptItem[] | undefined {
   const open = animateExpressionOpen(text, offset);
   if (open === -1) return undefined;
@@ -268,12 +261,11 @@ export function animateFieldsAt(text: string, offset: number): ScriptItem[] | un
   return isItemKeyPosition(typed) ? FIELD_ITEMS : undefined;
 }
 
-/** True when the cursor is inside an animate expression, for hover. */
 export function isInAnimate(text: string, offset: number): boolean {
   return animateExpressionOpen(text, offset) !== -1;
 }
 
-/** The style property under the cursor when it is a key of a keyframe css object, such as `opacity` in `0: { opacity }`. */
+/** Only a key of a keyframe css object counts, such as `opacity` in `0: { opacity }`. */
 export function cssKeyAt(text: string, offset: number): string | undefined {
   let start = offset;
   while (start > 0 && WORD_CHAR.test(text.charAt(start - 1))) start--;
@@ -321,7 +313,6 @@ function moreFieldsFor(typed: string): CompletionItemData[] | undefined {
   return trigger === undefined ? undefined : MORE_FIELDS[trigger];
 }
 
-/** The index of the `{` that opens the expression, when the cursor is still inside it. */
 function animateExpressionOpen(text: string, offset: number): number {
   const start = text.lastIndexOf(ANIMATE_OPEN, offset);
   if (start === -1) return -1;
@@ -330,10 +321,7 @@ function animateExpressionOpen(text: string, offset: number): number {
   return end === -1 || end >= offset ? open : -1;
 }
 
-/**
- * True at a key of an item object: `{...}` directly, or inside `[...]`, with
- * the cursor after `{` or `,`. Keyframes objects (keys start with a number) are skipped.
- */
+/** Keyframes objects (keys start with a number) are skipped. */
 function isItemKeyPosition(typed: string): boolean {
   const stack = openersOf(typed);
   const inner = stack[stack.length - 1];

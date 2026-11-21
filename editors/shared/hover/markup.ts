@@ -24,7 +24,6 @@ export function markupHover(
   );
 }
 
-/** Hover on the `more` key inside an animate object. */
 function animateMoreHover(text: string, offset: number): HoverResult | undefined {
   if (wordAt(text, offset) !== "more" || !isInAnimate(text, offset)) return undefined;
   return apiResult("animate-more");
@@ -44,7 +43,6 @@ const FLOW_TAG_IDS: Record<string, string> = {
 
 const FLOW_TAG_NAME = /<\/?(IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NOLAZY)(?=[\s/>])/g;
 
-/** Hover on a flow tag's name, in its opening or closing tag. */
 function flowTagHover(text: string, offset: number): HoverResult | undefined {
   for (const match of text.matchAll(FLOW_TAG_NAME)) {
     const name = match[1] ?? "";
@@ -55,7 +53,6 @@ function flowTagHover(text: string, offset: number): HoverResult | undefined {
   return undefined;
 }
 
-/** Hover for `animate`, `on<event>`, `bind-value`, `bind-<prop>` and `bind-element` on a plain tag. */
 function plainAttributeHover(
   text: string,
   offset: number,
@@ -93,7 +90,6 @@ function styleTagHover(text: string, offset: number): HoverResult | undefined {
   return entry ? { kind: "api", entry } : undefined;
 }
 
-/** Hover on a style property written as a key of a keyframe. */
 function cssHover(text: string, offset: number): HoverResult | undefined {
   const name = cssKeyAt(text, offset);
   return name === undefined ? undefined : { kind: "css", name };

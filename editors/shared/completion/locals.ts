@@ -37,7 +37,7 @@ export function localNames(script: string): LocalName[] {
     .map(([name, kind]) => ({ name, kind }));
 }
 
-/** The completions for the names above. Names that an API item already has are left out. */
+/** Skips names that an API item already has. */
 export function localItems(script: string, taken: ReadonlySet<string>): CompletionItemData[] {
   return localNames(script)
     .filter((local) => !taken.has(local.name))
@@ -68,7 +68,6 @@ export function variableKinds(script: string): Map<string, VariableKind> {
   return kinds;
 }
 
-/** Names that hold a variable: from `variable()`, `variable.compute()` or destructured from `props()`. */
 export function variableNames(script: string): Set<string> {
   return new Set(variableKinds(script).keys());
 }

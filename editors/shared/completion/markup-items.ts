@@ -53,7 +53,6 @@ export const FLOW_TAG_ITEMS: CompletionItemData[] = Object.keys(FLOW_TAGS).map((
   entryId: name.toLowerCase(),
 }));
 
-/** The attributes a flow tag takes, for completion inside its start tag. */
 export function flowAttributeItems(tag: string): CompletionItemData[] {
   if (tag === "EACH") return attributeItems(EACH_ATTRIBUTES, "Each: ");
   if (tag === "FOR") return attributeItems(FOR_ATTRIBUTES, "For: ");
@@ -107,7 +106,6 @@ const FORM_BIND_ITEMS: CompletionItemData[] = [
   },
 ];
 
-/** Attributes for a plain HTML tag: animate, events, bind-element, and bind-value on form controls. */
 export function markupAttributeItems(tag: string): CompletionItemData[] {
   const common = [...MOTION_ATTRIBUTE_ITEMS, ...EVENT_ITEMS, BIND_ELEMENT_ITEM];
   return FORM_TAGS.has(tag) ? [...common, ...FORM_BIND_ITEMS] : common;
