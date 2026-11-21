@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import type { LazySettings } from "@bun-plugin/children.ts";
+import type { AnimateConfig } from "@runtime/animate/options/config.ts";
 import { colorEnabled, stripAnsi } from "../log/color.ts";
 import { entryPath } from "../build/bundle.ts";
 import { buildDev } from "../build/dev-build.ts";
@@ -16,6 +17,7 @@ export interface DevOptions {
   /** Hides the timing lines. Errors and file changes still show. */
   quiet?: boolean;
   lazy: LazySettings;
+  animate?: AnimateConfig;
 }
 
 export interface DevHandle {
@@ -23,7 +25,13 @@ export interface DevHandle {
   stop(): void;
 }
 
-export async function startDev({ dir, port, quiet = false, lazy }: DevOptions): Promise<DevHandle> {
+export async function startDev({
+  dir,
+  port,
+  quiet = false,
+  lazy,
+  animate,
+}: DevOptions): Promise<DevHandle> {
   const root = resolve(dir);
   const log = createLogger("dev");
   entryPath(root);
@@ -35,7 +43,7 @@ export async function startDev({ dir, port, quiet = false, lazy }: DevOptions): 
       if (!quiet) log.info(formatBrowserReady(ms, colorEnabled()));
     },
   });
-  const rebuild = createRebuild(root, server, log, quiet, lazy);
+  const rebuild = createRebuild({ root, server, log, quiet, lazy, animate });
   await rebuild.request({ files: [], waitMs: 0 });
 
   const watcher = watchFolder(root, (files, waitMs) => {
@@ -64,18 +72,21 @@ interface Rebuild {
 type HotPlan = { ok: true; modules: HotModule[] } | { ok: false; messages: string[] };
 
 /** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
-function createRebuild(
-  root: string,
-  server: DevServer,
-  log: Logger,
-  quiet: boolean,
-  lazy: LazySettings,
-): Rebuild {
+interface RebuildOptions {
+  root: string;
+  server: DevServer;
+  log: Logger;
+  quiet: boolean;
+  lazy: LazySettings;
+  animate?: AnimateConfig;
+}
+
+function createRebuild({ root, server, log, quiet, lazy, animate }: RebuildOptions): Rebuild {
   let busy = false;
   let pending: Change | null = null;
   // A failed build may leave code the page never got, so the next success reloads.
   let needsReload = false;
-  const hotBuilder: HotBuilder = createHotBuilder();
+  const hotBuilder: HotBuilder = createHotBuilder(animate);
 
   async function buildHotModules(paths: string[]): Promise<HotPlan> {
     const modules: HotModule[] = [];
@@ -95,7 +106,7 @@ function createRebuild(
 
   async function buildAndPublish(change: Change): Promise<void> {
     const started = now();
-    const build = await buildDev(root, lazy);
+    const build = await buildDev(root, lazy, animate);
     if (!build.ok) return report(build.messages);
     const planned: Update = needsReload ? RELOAD : chooseUpdate(change.files, build.changes);
     let update = planned;

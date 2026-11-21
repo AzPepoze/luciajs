@@ -7,6 +7,7 @@ import type { ModuleUpdate } from "@bun-plugin/update.ts";
 import { lusia } from "@bun-plugin/index.ts";
 import { compile, hash } from "@compiler/index.ts";
 import type { Steps } from "@cli/build/timings.ts";
+import type { AnimateConfig } from "@runtime/animate/options/config.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
 
@@ -43,12 +44,12 @@ afterEach(async () => {
   await rm(dir, { recursive: true, force: true });
 });
 
-async function build(): Promise<{ steps: Steps; changes: ModuleUpdate[] }> {
+async function build(animate?: AnimateConfig): Promise<{ steps: Steps; changes: ModuleUpdate[] }> {
   const steps: Steps = {};
   const changes: ModuleUpdate[] = [];
   const result = await Bun.build({
     entrypoints: [join(dir, "entry.ts")],
-    plugins: [lusia({ dev: true, steps, onUpdate: (update) => changes.push(update) })],
+    plugins: [lusia({ dev: true, steps, animate, onUpdate: (update) => changes.push(update) })],
     throw: false,
   });
   if (!result.success) throw new Error(result.logs.map((log) => log.message).join("\n"));
@@ -90,6 +91,12 @@ describe("lusia plugin cache", () => {
     expect(second.changes).toEqual([{ path: card, kind: "code" }]);
   });
 
+  test("an animate config change recompiles, and the same config is a cache hit", async () => {
+    await build({ duration: 500 });
+    expect((await build({ duration: 500 })).steps.compile).toBeUndefined();
+    expect((await build({ duration: 400 })).steps.compile).toBeDefined();
+  });
+
   test("a deleted file is pruned from the cache", async () => {
     const gone = join(dir, "Gone.lusia");
     const source = cardSource();
@@ -98,7 +105,7 @@ describe("lusia plugin cache", () => {
     const entry: CachedModule = {
       source,
       dev: true,
-      lazyKey: "",
+      key: "",
       deps: compiled.deps,
       code: compiled.code,
       css: compiled.css,
