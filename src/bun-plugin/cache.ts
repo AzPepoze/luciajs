@@ -4,7 +4,6 @@ import { existsSync } from "node:fs";
 export interface CachedModule {
   source: string;
   dev: boolean;
-  /** The lazy settings and the imported children that the compile depended on. */
   lazyKey: string;
   deps: StyleDep[];
   code: string;
@@ -34,7 +33,6 @@ export function toCachedModule(
   };
 }
 
-/** A hit needs the same source, the same lazy key, and the same text in every Sass file the styles imported. */
 export function cachedModule(
   path: string,
   source: string,
@@ -60,7 +58,6 @@ export function storeModule(path: string, entry: CachedModule): CachedModule | u
   return previous;
 }
 
-/** Drops the entries of deleted files, so the cache stays bounded. */
 export function pruneModules(): void {
   for (const path of modules.keys()) {
     if (existsSync(path)) continue;

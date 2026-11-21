@@ -13,7 +13,7 @@ export type LazySettings = Pick<LazyOptions, "mode" | "prefetch">;
 const NO_CHILD: ChildInfo = { nolazy: false, fallback: false };
 const infos = new Map<string, { source: string; info: ChildInfo }>();
 
-/** Reads a child .lusia file's <NOLAZY /> and <FALLBACK>. The result is kept while the file's text is unchanged. */
+/** Cached per path while the file's text is unchanged. */
 export function childInfo(path: string): ChildInfo {
   if (!existsSync(path)) return NO_CHILD;
   const source = readFileSync(path, "utf8");
@@ -44,7 +44,6 @@ export function lusiaImportsOf(source: string, path: string): LusiaImport[] {
   }
 }
 
-/** The compile options for one importer: its settings, and a reader for the children it imports. */
 export function lazyOptionsFor(path: string, settings: LazySettings): LazyOptions {
   return {
     ...settings,
