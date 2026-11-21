@@ -7,6 +7,7 @@ Lusia is a Bun-native UI framework built from single-file `.lusia` components, v
 | Task                                      | Command                                      |
 | ----------------------------------------- | -------------------------------------------- |
 | Install                                   | `bun install`                                |
+| Install the docs site's packages          | `bun run docs:install`                       |
 | Web example (port 3000)                   | `bun run dev`                                |
 | Stress example (port 3000)                | `bun run dev:stress`                         |
 | Build the docs site (writes `docs/dist/`) | `bun run build`                              |
