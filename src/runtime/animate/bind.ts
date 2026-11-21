@@ -1,12 +1,13 @@
-import type { Cleanup } from "../dom/bindings.ts";
-import type { Leave } from "../dom/leave.ts";
+import type { Cleanup } from "../dom/template/bindings.ts";
+import type { Leave } from "../dom/component/leave.ts";
 import { itemsOf, type Animate } from "./animation.ts";
-import { prepareTimeline } from "./keyframes.ts";
-import { readItem } from "./options.ts";
-import { Player } from "./player.ts";
-import { ownTimelines } from "./timeline.ts";
-import { WHEN } from "./trigger.ts";
-import { bindTrigger, groupSlots, type Slot } from "./triggers.ts";
+import { prepareTimeline } from "./options/keyframes.ts";
+import { readItem } from "./options/options.ts";
+import { Player } from "./play/player.ts";
+import { ownTimelines } from "./play/timeline.ts";
+import { WHEN } from "./modes/trigger.ts";
+import { bindTrigger } from "./play/triggers.ts";
+import { groupSlots, type Slot } from "./play/slots.ts";
 import { runtimeError, withWhere, type KeyWheres } from "../errors.ts";
 
 /** Compiled `animate={...}`. The value is read again at every play, so keyframes can come from variables. */

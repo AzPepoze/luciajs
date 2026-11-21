@@ -1,10 +1,9 @@
 import { watch } from "../../variable/graph.ts";
 import { isReactive } from "../../variable/reactive.ts";
 import type { Variable } from "../../variable/variable.ts";
-import { listen, type Cleanup } from "../bindings.ts";
+import { listen, type Cleanup } from "../template/bindings.ts";
 import { runtimeError, withWhere } from "../../errors.ts";
 
-/** How one DOM property maps to a variable: the value in each direction, and the events that report changes. */
 export interface Channel {
   prop: string;
   events: string[];

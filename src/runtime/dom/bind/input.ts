@@ -1,4 +1,4 @@
-import { toText, type Cleanup } from "../bindings.ts";
+import { toText, type Cleanup } from "../template/bindings.ts";
 import { bindChannel, type Channel } from "./channel.ts";
 import { withWhere } from "../../errors.ts";
 
@@ -45,7 +45,6 @@ function channelFor(el: HTMLElement): Channel {
   return TEXT;
 }
 
-/** `bind-value={sig}` on a form control: the right property and event for its type. */
 export function bindInput(
   el: HTMLElement,
   target: unknown,

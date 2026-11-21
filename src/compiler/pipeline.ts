@@ -3,9 +3,9 @@ import { importsWithSplits } from "./lazy/plan.ts";
 import type { LazyOptions } from "./lazy/options.ts";
 import { splitImports } from "./parse/imports.ts";
 import { parse, type Section } from "./parse/sections.ts";
-import { generate } from "./template/codegen.ts";
-import { scriptRange } from "./template/animate-keys.ts";
-import { compileTemplate } from "./template/scanner.ts";
+import { generate } from "./template/codegen/generate.ts";
+import { scriptRange } from "./template/check/script-range.ts";
+import { compileTemplate } from "./template/scan/scanner.ts";
 import type { StyleResult } from "./style/sass.ts";
 import { extractSourceMap } from "./sourcemap/extract.ts";
 
@@ -35,10 +35,8 @@ export type StyleCompiler = (style: Section, index: number, id: string) => Style
 
 export interface PipelineOptions {
   dev: boolean;
-  /** The file name written into the generated code. */
   displayFile: string;
   styles: StyleCompiler;
-  /** Splits imported .lusia files into their own chunks. Off when absent. */
   lazy?: LazyOptions;
 }
 

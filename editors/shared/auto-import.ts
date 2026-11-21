@@ -6,10 +6,7 @@ export interface TextEdit {
 
 const NAMED_LUSIA_IMPORT = /import\s*\{([^}]*)\}\s*from\s*["']lusia["'];?/;
 
-/**
- * An edit that adds `name` to the script's `import { ... } from "lusia"`.
- * Offsets are relative to the script text. Undefined when `name` is already imported.
- */
+/** Offsets are relative to the script text. Undefined when `name` is already imported. */
 export function planLusiaImport(script: string, name: string): TextEdit | undefined {
   const match = NAMED_LUSIA_IMPORT.exec(script);
   if (!match) return { start: 0, end: 0, text: `import { ${name} } from "lusia";\n` };

@@ -3,7 +3,7 @@ import type { CompletionItem } from "vscode-html-languageservice/lib/esm/htmlLan
 import type { TextDocument } from "vscode-languageserver-textdocument";
 import type { CompletionResult } from "../../../shared/completions.ts";
 import type { HoverResult } from "../../../shared/hover.ts";
-import { isTagNameTyping } from "@language/tag.ts";
+import { isTagNameTyping } from "@language/parse/tag.ts";
 import {
   URI,
   editable,
@@ -84,7 +84,6 @@ export function htmlTagClose(text: string, offset: number): RegionEdit | undefin
   }
 }
 
-/** Whether the cursor is in a tag, not in the text between tags. */
 function insideTag(text: string, offset: number): boolean {
   return text.lastIndexOf("<", offset) > text.lastIndexOf(">", offset);
 }

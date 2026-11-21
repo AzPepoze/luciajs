@@ -1,4 +1,4 @@
-import { parseLusiaImports } from "../../imports.ts";
+import { parseLusiaImports } from "../../parse/imports.ts";
 import { tagAttributes, type AttributeName } from "../attributes.ts";
 import type { LintContext, LintFinding } from "../types.ts";
 

@@ -1,9 +1,6 @@
 const CONTEXT_LINES = 2;
 
-/**
- * Plain text lines around a 1-based line: each source line with its number, and a caret line
- * under the error. Lines outside the source are left out.
- */
+/** Source lines around a 1-based line, with a caret under the error. Skips lines outside the source. */
 export function plainFrame(source: string, line: number, column = 1, length = 1): string {
   const lines = source.split("\n");
   const errorRow = line - 1;

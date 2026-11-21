@@ -2,7 +2,7 @@ import type { ApiEntry, ApiMember } from "../../reference/api.ts";
 import { findApiById } from "./api-lookup.ts";
 import type { CompletionItemData } from "./completion-data.ts";
 import type { HoverResult } from "./hover.ts";
-import type { PropDef } from "@language/props.ts";
+import type { PropDef } from "@language/parse/props.ts";
 import type { ScriptSymbol } from "./script/symbols.ts";
 
 export function hoverMarkdown(result: HoverResult): string {
@@ -13,7 +13,6 @@ export function hoverMarkdown(result: HoverResult): string {
   return componentMarkdown(result.name, result.props);
 }
 
-/** The docs panel for a completion item: its own documentation, or the API entry it points at. */
 export function completionMarkdown(item: CompletionItemData): string | undefined {
   if (item.documentation !== undefined) return item.documentation;
   if (item.entryId === undefined) return undefined;
@@ -66,7 +65,6 @@ function membersMarkdown(entry: ApiEntry): string[] {
   return ["Members:", "", ...memberLines(entry.name, entry.members), ""];
 }
 
-/** One line per member; a nested group (such as EASE.STYLE) lists its own members under it. */
 function memberLines(path: string, members: ApiMember[]): string[] {
   return members.flatMap((member) => {
     const memberPath = `${path}.${member.name}`;

@@ -1,4 +1,4 @@
-import { startDev } from "../../../src/cli/dev.ts";
+import { startDev } from "../../../src/cli/dev/dev.ts";
 
 const dev = await startDev({
   dir: Bun.argv[2]!,

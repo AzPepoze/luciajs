@@ -1,7 +1,7 @@
 import type { Variable } from "../../variable/variable.ts";
-import type { Cleanup } from "../bindings.ts";
-import type { Host, Render } from "../component.ts";
-import type { Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Host, Render } from "../component/component.ts";
+import type { Leave } from "../component/leave.ts";
 import { currentFrame, insertRendering, renderInstance, type Rendering } from "./render.ts";
 import { type Restore, takeRestore } from "./session.ts";
 import { untrackInstance, trackInstance } from "./registry.ts";
@@ -20,7 +20,6 @@ export interface HotInstance {
   readonly children: Set<HotInstance>;
   /** The leave list this instance joined: its parent's, or the list of a root attach. */
   readonly parentLeaves: Leave[];
-  /** This instance's entry in `parentLeaves`, when its render has leave animations. */
   leaveHook: Leave | null;
   start: Text;
   end: Text;
@@ -103,7 +102,6 @@ function forgetInstance(instance: HotInstance): void {
   untrackInstance(instance);
 }
 
-/** Adds one leave hook to the parent's list. The parent waits for it, as it does for a plain child. */
 function attachLeaves(instance: HotInstance, leaves: Leave[]): void {
   if (leaves.length === 0) return;
   const hook: Leave = async () => {

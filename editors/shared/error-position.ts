@@ -1,4 +1,4 @@
-import { LusiaError } from "../../src/compiler/errors.ts";
+import { LusiaError } from "../../src/compiler/errors/error.ts";
 
 export interface ErrorPosition {
   /** 1-based. */

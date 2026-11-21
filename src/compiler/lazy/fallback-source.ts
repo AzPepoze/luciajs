@@ -1,9 +1,6 @@
 import { parse } from "../parse/sections.ts";
 
-/**
- * The source of a component's fallback module: the file's <style> sections, then its FALLBACK markup.
- * It has no script, and its styles get the same scope as the component.
- */
+/** The fallback module's source: the component's styles, then its FALLBACK markup. No script. */
 export function fallbackSource(source: string, file: string): string {
   const parsed = parse(source, file);
   const styles = parsed.styles.map(

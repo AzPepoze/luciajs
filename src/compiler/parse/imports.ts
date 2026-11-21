@@ -1,6 +1,6 @@
 import { lusiaError, type Values } from "../errors/create.ts";
 import type { ErrorCodeName } from "../errors/codes.ts";
-import { RESERVED_TAGS } from "../utils/reserved.ts";
+import { RESERVED_TAGS } from "./reserved.ts";
 import { columnAt, lineAt } from "../utils/position.ts";
 import type { Section } from "./sections.ts";
 
@@ -36,7 +36,6 @@ function defaultLusiaImport(statement: string, specifier: string): string | unde
   return DEFAULT_IMPORT.exec(statement)?.[1];
 }
 
-/** An error at `offset` inside the script section, reported with the file position. */
 function scriptError(
   script: Section,
   offset: number,

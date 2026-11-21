@@ -1,6 +1,6 @@
-import type { Cleanup } from "../bindings.ts";
-import type { Component, Host, Instance, Props, Render } from "../component.ts";
-import { leaveThen, type Leave } from "../leave.ts";
+import type { Cleanup } from "../template/bindings.ts";
+import type { Component, Host, Instance, Props, Render } from "../component/component.ts";
+import { leaveThen, type Leave } from "../component/leave.ts";
 import {
   createInstance,
   mountInstance,
@@ -15,10 +15,7 @@ export interface HotComponent extends Component {
   readonly definition: Definition;
 }
 
-/**
- * The dev build's component. Instances look up the latest definition by file id, so a module that
- * was imported before a hot swap still renders the new code.
- */
+// Instances look up the latest definition by id, so hot swaps reach old imports.
 export function hotComponent(id: string, css: string, render: Render): HotComponent {
   const definition: Definition = { css, render };
   if (!definitionOf(id)) setDefinition(id, definition);

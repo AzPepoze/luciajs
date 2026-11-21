@@ -1,4 +1,4 @@
-import type { Cleanup } from "../bindings.ts";
+import type { Cleanup } from "../template/bindings.ts";
 import { bindChannel, type Channel } from "./channel.ts";
 import { withWhere } from "../../errors.ts";
 

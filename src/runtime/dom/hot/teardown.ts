@@ -1,4 +1,4 @@
-import type { Cleanup } from "../bindings.ts";
+import type { Cleanup } from "../template/bindings.ts";
 
 export function runCleanups(cleanups: Cleanup[]): void {
   for (const cleanup of cleanups) cleanup();

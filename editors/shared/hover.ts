@@ -1,12 +1,12 @@
 import type { ApiEntry } from "../../reference/api.ts";
 import type { PropLookup } from "./completions.ts";
-import { inExpressionAt } from "@language/format-expressions.ts";
+import { inExpressionAt } from "@language/format/format-expressions.ts";
 import { markupHover } from "./hover/markup.ts";
 import { scriptHover } from "./hover/script.ts";
 import { styleHover } from "./hover/style.ts";
-import type { PropDef } from "@language/props.ts";
+import type { PropDef } from "@language/parse/props.ts";
 import type { TextRange } from "./range.ts";
-import { regionAt } from "@language/regions.ts";
+import { regionAt } from "@language/parse/regions.ts";
 import type { ScriptSymbol } from "./script/symbols.ts";
 import type { SymbolLookup } from "./script/imported-symbols.ts";
 

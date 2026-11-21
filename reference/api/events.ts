@@ -1,0 +1,65 @@
+import type { ApiEntry } from "./types.ts";
+
+export const eventEntries: ApiEntry[] = [
+	{
+		id: "event",
+		name: "onclick={fn}",
+		kind: "markup",
+		group: "events",
+		signature: "on<event>={handler}",
+		summary: "Runs a function when the element fires an event.",
+		bullets: [
+			"Any on plus an event name works: onclick, oninput, onkeydown, onsubmit.",
+			"Pass a function by name, or an arrow function inline. It gets the DOM event.",
+			"The handler is read once, when the component is placed. It is not reactive.",
+			"The listener is removed when the component is detached.",
+			"On a child component, onclick is a normal prop. The child reads it with props().",
+		],
+		example: `<script>\nimport { variable } from "lusia";\n\nconst count = variable(0);\n\nfunction increment() {\n  count.value++;\n}\n</script>\n\n<button onclick={increment}>Clicked {count} times</button>`,
+	},
+	{
+		id: "bind-value",
+		name: "bind-value={variable}",
+		kind: "markup",
+		group: "events",
+		signature: "bind-value={variable}",
+		summary: "Links a form control and a variable in both directions.",
+		bullets: [
+			"Typing or picking updates the variable. Changing the variable updates the control.",
+			"Text, textarea and select use the value. A select updates on change.",
+			"Checkbox and radio use checked. Number and range use a number, or null when empty.",
+			"The variable must be writable, from variable(). A variable.compute() value is refused.",
+			"On input, textarea and select only. On a component tag, bind-value is the value prop.",
+		],
+		example: `<script>\nimport { variable } from "lusia";\n\nconst name = variable("");\n</script>\n\n<input bind-value={name} />\n<p>Hello {name}</p>`,
+	},
+	{
+		id: "bind-prop",
+		name: "bind-<prop>={variable}",
+		kind: "markup",
+		group: "events",
+		signature: "bind-<prop>={variable}",
+		summary: "Links any DOM property and a variable in both directions.",
+		bullets: [
+			"Write the DOM property in kebab-case: bind-value, bind-checked, bind-open.",
+			"It listens to input and change events. Properties that change on other events do not sync back.",
+			"The variable must be writable, from variable().",
+			"Use it when bind-value does not cover the property you need.",
+		],
+		example: `<script>\nimport { variable } from "lusia";\n\nconst name = variable("Ada");\n</script>\n\n<input type="text" bind-value={name} />`,
+	},
+	{
+		id: "bind-element",
+		name: "bind-element={variable}",
+		kind: "markup",
+		group: "events",
+		signature: "bind-element={variable}",
+		summary: "Variables the element itself, so code can use it without querySelector.",
+		bullets: [
+			"Sets the variable to the element when the component is placed, before setup() runs.",
+			"Sets the variable to null when the component is detached.",
+			"The variable must be writable, from variable(). Start it with null.",
+		],
+		example: `<script>\nimport { variable } from "lusia";\n\nconst field = variable<HTMLInputElement | null>(null);\n\nfunction focusField() {\n  field.value?.focus();\n}\n</script>\n\n<input bind-element={field} />\n<button onclick={focusField}>Focus</button>`,
+	},
+];

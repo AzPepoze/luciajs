@@ -1,7 +1,6 @@
 import { groupEnd, skipNonCode } from "./group.ts";
 
 interface Wrap {
-  /** Index of the `variable` word. */
   variableStart: number;
   /** Index just past the call's closing bracket. */
   end: number;

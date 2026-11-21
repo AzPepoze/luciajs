@@ -1,15 +1,11 @@
-import { replaceStyle } from "../styles.ts";
+import { replaceStyle } from "../component/styles.ts";
 import type { HotComponent } from "./define.ts";
 import { type Definition, type HotInstance, replaceRendering } from "./instance.ts";
 import { renderInstance } from "./render.ts";
 import { beginSwap, endSwap, type Snapshot, type Restore } from "./session.ts";
 import { definitionOf, liveInstances, setDefinition } from "./registry.ts";
 
-/**
- * Re-renders every mounted instance of a changed component in place. Each instance keeps its position,
- * its props and the values of its variables, by name. If a render throws, the old instance stays and the
- * error passes on; instances that were already swapped keep the new code.
- */
+// On a render error the old instance stays; instances already swapped keep the new code.
 export function swapComponent(component: HotComponent): void {
   const previous = definitionOf(component.id);
   setDefinition(component.id, component.definition);
@@ -42,7 +38,6 @@ function swapInstance(instance: HotInstance, definition: Definition): void {
   }
 }
 
-/** The values of an instance and of every instance below it, parents first. */
 function snapshotTree(instance: HotInstance, out: Snapshot[] = []): Snapshot[] {
   out.push({ id: instance.id, values: valuesOf(instance) });
   for (const child of instance.children) snapshotTree(child, out);

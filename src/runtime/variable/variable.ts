@@ -1,4 +1,4 @@
-import { currentComponentCleanups } from "../dom/component.ts";
+import { currentComponentCleanups } from "../dom/component/component.ts";
 import { compute } from "./compute.ts";
 import { batch, propagate, queueWatcher, track, untrack, type Source } from "./graph.ts";
 import { REACTIVE } from "./reactive.ts";
@@ -70,7 +70,6 @@ function createVariable<T>(initial: T): Variable<T> {
   };
 }
 
-/** `variable(value)` makes a variable. `variable.compute(fn)` derives a computed one. `variable.autoRun(fn)` runs fn now and on each update it reads. */
 export const variable = Object.assign(createVariable, {
   compute,
   autoRun,

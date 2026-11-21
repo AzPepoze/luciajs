@@ -1,12 +1,11 @@
-import { closingQuote } from "../object-literal.ts";
-import { expressionEnd } from "../format-expressions.ts";
+import { closingQuote } from "../format/object-literal.ts";
+import { expressionEnd } from "../format/format-expressions.ts";
 
 /** `none` for a bare name, `static` for `name="..."`, `expression` for `name={...}`. */
 export type AttributeValue = "none" | "static" | "expression";
 
 export interface AttributeName {
   name: string;
-  /** Offset in the same text the tag came from. */
   offset: number;
   value: AttributeValue;
 }
@@ -15,7 +14,6 @@ const ATTRIBUTE_NAME = /[A-Za-z_:][\w:.-]*/g;
 const UNQUOTED_VALUE = /[^\s"'{/>]+/y;
 const EQUALS_AND_NEXT = /^\s*=\s*(\S?)/;
 
-/** The attribute names of the start tag whose name ends at `nameEnd`. */
 export function tagAttributes(markup: string, nameEnd: number): AttributeName[] {
   const end = tagEnd(markup, nameEnd);
   const attrs = markup.slice(nameEnd, end);
@@ -33,7 +31,6 @@ function valueKindAfter(rest: string): AttributeValue {
   return next[1] === "{" ? "expression" : "static";
 }
 
-/** The index of the `>` that closes the tag, skipping quoted values and expressions. */
 function tagEnd(text: string, from: number): number {
   for (let i = from; i < text.length; i++) {
     const ch = text.charAt(i);

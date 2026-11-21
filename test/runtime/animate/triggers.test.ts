@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { animate } from "@runtime/animate/bind.ts";
 import type { AnimateItem } from "@runtime/animate/animation.ts";
-import type { Keyframes } from "@runtime/animate/keyframes.ts";
-import { EASE } from "@runtime/animate/modes.ts";
-import { WHEN } from "@runtime/animate/trigger.ts";
+import type { Keyframes } from "@runtime/animate/options/keyframes.ts";
+import { EASE } from "@runtime/animate/modes/modes.ts";
+import { WHEN } from "@runtime/animate/modes/trigger.ts";
 import { variable } from "@runtime/variable/variable.ts";
-import type { Leave } from "@runtime/dom/leave.ts";
+import type { Leave } from "@runtime/dom/component/leave.ts";
 import { advance, onReset, useFakeClock } from "./clock.ts";
 
 useFakeClock();

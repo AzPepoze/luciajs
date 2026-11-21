@@ -2,9 +2,8 @@
 import { lusiaError, type Values } from "../compiler/errors/create.ts";
 import type { ErrorCodeName } from "../compiler/errors/codes.ts";
 import { parseWhere } from "../compiler/errors/where.ts";
-import type { LusiaError } from "../compiler/errors.ts";
+import type { LusiaError } from "../compiler/errors/error.ts";
 
-/** The location of each key that a dev build found wrong, by key name. */
 export type KeyWheres = Record<string, string>;
 
 let where: string | undefined;
@@ -24,13 +23,11 @@ export function withWhere<T>(at: string | undefined, read: () => T, keys?: KeyWh
   }
 }
 
-/** The location for an error about `key`: the key's own spot when the dev build found it, else `where`. */
 function locationOf(key: string | undefined): string | undefined {
   if (key !== undefined && keyWheres && Object.hasOwn(keyWheres, key)) return keyWheres[key];
   return where;
 }
 
-/** In a dev build the location is also added to the message, so the browser console shows it. */
 export function runtimeError(code: ErrorCodeName, values?: Values, key?: string): LusiaError {
   const at = locationOf(key);
   if (at === undefined) return lusiaError(code, values);

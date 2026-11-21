@@ -2,7 +2,7 @@ import { toCachedModule, storeModule, cachedModule, pruneModules } from "./cache
 import { compileFile } from "./compile.ts";
 import { lazyKeyFor, lazyOptionsFor, type LazySettings } from "./children.ts";
 import { setupFallback } from "./fallback.ts";
-import { now, addStep, type Steps } from "@cli/timings.ts";
+import { now, addStep, type Steps } from "@cli/build/timings.ts";
 import type { BunPlugin } from "bun";
 import { moduleUpdate, type ModuleUpdate } from "./update.ts";
 import { setupRaw } from "./raw.ts";
