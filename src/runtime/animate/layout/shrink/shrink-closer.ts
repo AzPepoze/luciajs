@@ -4,8 +4,17 @@ import type { Keyframes } from "../../options/keyframes.ts";
 import { readDefault, readKey } from "../../options/keyform.ts";
 import { startPlaying, type Playable } from "../../play/loop.ts";
 import type { Ease } from "../../modes/modes.ts";
-import type { Space } from "./shrink-box.ts";
-import { closeLift, openSpace, removePlaceholder, type Lift } from "./shrink-lift.ts";
+import { liftOut, placeLift, restoreLift, type Lift } from "./shrink-lift.ts";
+import {
+  boxesOf,
+  compensate,
+  movingElements,
+  reopenMovers,
+  restoreShift,
+  writeShift,
+  type Box,
+  type Mover,
+} from "./shrink-movers.ts";
 
 export interface ShrinkSpec {
   duration: number;
@@ -13,29 +22,34 @@ export interface ShrinkSpec {
   keyframes: Keyframes;
 }
 
-interface Reopen {
-  from: number;
-  begin: number;
-  duration: number;
-}
-
-// Closes one leave's space. Its reads were taken when the leave started.
+/** Closes the space a leaving element holds. The elements around it slide into the new place with transforms. */
 export class Closer implements Playable {
   private finish: () => void = () => {};
-  private lift: Lift | undefined;
-  private closed = 0;
-  private reopen: Reopen | undefined;
   private finished = false;
   private begin = 0;
+  /** How far the space has closed, from 0 to 1. A cancel reopens it for the same share of the duration. */
+  private closed = 0;
+  private reopenBegin: number | undefined;
+  private reopenDuration = 0;
+  private readonly lift: Lift;
+  private readonly targets: HTMLElement[];
+  private readonly wanted: Box;
+  private movers: Mover[];
   private readonly easeStyle: EaseStyle;
   private readonly ease: Ease;
 
   constructor(
     private readonly el: HTMLElement,
-    private readonly space: Space,
     private readonly spec: ShrinkSpec,
   ) {
     [this.easeStyle, this.ease] = easingOf(spec.keyframes);
+    this.targets = movingElements(el);
+    const before = boxesOf(this.targets);
+    const rect = el.getBoundingClientRect();
+    this.wanted = { top: rect.top, left: rect.left };
+    this.lift = liftOut(el);
+    this.movers = compensate(this.targets, before);
+    placeLift(el, this.wanted);
   }
 
   start(): Promise<void> {
@@ -46,55 +60,36 @@ export class Closer implements Playable {
     });
   }
 
-  /** Reopens the space from where it is, so the siblings slide back without a jump. */
+  /** Puts the element back into flow and slides the other elements back from where they are. */
   cancel(): void {
-    if (this.finished || this.reopen) return;
-    if (this.lift === undefined) {
-      this.end();
-      return;
-    }
-    this.reopen = {
-      from: this.closed,
-      begin: performance.now(),
-      duration: this.spec.duration * this.closed,
-    };
+    if (this.finished || this.reopenBegin !== undefined) return;
+    this.reopenDuration = this.spec.duration * this.closed;
+    this.reopenBegin = performance.now();
+    this.movers = reopenMovers(this.targets, this.movers, () => restoreLift(this.el, this.lift));
   }
 
   step(now: number): boolean {
     if (this.finished) return true;
-    this.lift ??= openSpace(this.el, this.space);
-    if (this.reopen) return this.stepReopen(now, this.reopen);
-    const progress = clampedProgress(now - this.begin - this.spec.delay, this.spec.duration);
-    this.closed = this.ease(this.easeStyle, progress);
-    this.write();
+    const progress = this.progressAt(now);
+    const eased = this.ease(this.easeStyle, progress);
+    if (this.reopenBegin === undefined) this.closed = eased;
+    for (const mover of this.movers) writeShift(mover, 1 - eased);
+    if (this.reopenBegin === undefined) placeLift(this.el, this.wanted);
     if (progress < 1) return false;
-    removePlaceholder(this.lift);
     this.end();
     return true;
   }
 
-  private stepReopen(now: number, reopen: Reopen): boolean {
-    const progress = clampedProgress(now - reopen.begin, reopen.duration);
-    this.closed = reopen.from * (1 - this.ease(this.easeStyle, progress));
-    this.write();
-    if (progress < 1) return false;
-    this.closed = 0;
-    closeLift(this.el, this.lift!);
-    this.end();
-    return true;
-  }
-
-  private write(): void {
-    const { axis, along, margin, gap } = this.space;
-    const open = 1 - this.closed;
-    const style = this.lift!.placeholder.style;
-    style.setProperty(axis.size, `${along * open}px`);
-    style.setProperty(`margin-${axis.start}`, `${margin[axis.start] * open}px`);
-    style.setProperty(`margin-${axis.end}`, `${margin[axis.end] * open - gap * this.closed}px`);
+  private progressAt(now: number): number {
+    if (this.reopenBegin !== undefined) {
+      return clampedProgress(now - this.reopenBegin, this.reopenDuration);
+    }
+    return clampedProgress(now - this.begin - this.spec.delay, this.spec.duration);
   }
 
   private end(): void {
     this.finished = true;
+    for (const mover of this.movers) restoreShift(mover);
     this.finish();
   }
 }

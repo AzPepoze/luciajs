@@ -1,4 +1,4 @@
-import type { Space } from "./shrink-box.ts";
+import type { Box } from "./shrink-movers.ts";
 
 /** The inline styles a lift writes, so a cancel can put back the ones the element had. */
 const LIFT_PROPS = [
@@ -18,20 +18,18 @@ const LIFT_PROPS = [
 type Saved = [name: string, value: string, priority: string];
 
 export interface Lift {
-  placeholder: HTMLElement;
   saved: Saved[];
 }
 
-export function openSpace(el: HTMLElement, space: Space): Lift {
-  const placeholder = makePlaceholder(space);
+/** Takes the element out of flow. Its place is set by `placeLift`. */
+export function liftOut(el: HTMLElement): Lift {
   const saved = saveStyles(el);
-  el.before(placeholder);
   setStyles(el, {
     position: "absolute",
-    top: `${space.top}px`,
-    left: `${space.left}px`,
-    width: `${space.width}px`,
-    height: `${space.height}px`,
+    top: `${el.offsetTop}px`,
+    left: `${el.offsetLeft}px`,
+    width: `${el.offsetWidth}px`,
+    height: `${el.offsetHeight}px`,
     "box-sizing": "border-box",
     "margin-top": "0px",
     "margin-right": "0px",
@@ -39,41 +37,33 @@ export function openSpace(el: HTMLElement, space: Space): Lift {
     "margin-left": "0px",
     "z-index": "1",
   });
-  return { placeholder, saved };
+  return { saved };
 }
 
-export function removePlaceholder(lift: Lift): void {
-  lift.placeholder.remove();
+/** Puts the lifted element at the screen place `wanted`, whatever its containing block is. */
+export function placeLift(el: HTMLElement, wanted: Box): void {
+  const origin = containerOrigin(el);
+  el.style.top = `${wanted.top - origin.top}px`;
+  el.style.left = `${wanted.left - origin.left}px`;
 }
 
-export function closeLift(el: HTMLElement, lift: Lift): void {
-  removePlaceholder(lift);
+export function restoreLift(el: HTMLElement, lift: Lift): void {
   for (const [name, value, priority] of lift.saved) {
     if (value === "") el.style.removeProperty(name);
     else el.style.setProperty(name, value, priority);
   }
 }
 
-// Flex-basis is auto, so the closing size applies.
-function makePlaceholder(space: Space): HTMLElement {
-  const placeholder = document.createElement("div");
-  placeholder.setAttribute("aria-hidden", "true");
-  setStyles(placeholder, {
-    ...space.placement,
-    "box-sizing": "border-box",
-    padding: "0px",
-    border: "0px",
-    visibility: "hidden",
-    "pointer-events": "none",
-    width: `${space.width}px`,
-    height: `${space.height}px`,
-    "margin-top": `${space.margin.top}px`,
-    "margin-right": `${space.margin.right}px`,
-    "margin-bottom": `${space.margin.bottom}px`,
-    "margin-left": `${space.margin.left}px`,
-    "flex-basis": "auto",
-  });
-  return placeholder;
+/** The screen place of the containing block's padding edge. A transformed ancestor also counts as one. */
+function containerOrigin(el: HTMLElement): Box {
+  for (let node = el.parentElement; node; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    if (style.position !== "static" || style.transform !== "none") {
+      const rect = node.getBoundingClientRect();
+      return { top: rect.top + node.clientTop, left: rect.left + node.clientLeft };
+    }
+  }
+  return { top: -window.scrollY, left: -window.scrollX };
 }
 
 function saveStyles(el: HTMLElement): Saved[] {
