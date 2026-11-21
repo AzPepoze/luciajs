@@ -1,6 +1,6 @@
 import { existsSync, statSync } from "node:fs";
 import { isAbsolute, join, sep } from "node:path";
-import { UsageError } from "./args.ts";
+import { UsageError } from "./args/args.ts";
 
 const LUSIA = ".lusia";
 const GLOB_CHARS = /[*?[\]{}]/;

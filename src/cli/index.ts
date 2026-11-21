@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 import { LusiaError } from "@compiler/errors/error.ts";
-import { parseCommand, UsageError } from "./args.ts";
-import { runBuild } from "./build.ts";
-import { colorEnabled } from "./color.ts";
-import { startDev } from "./dev.ts";
-import { runFormat } from "./format.ts";
-import { formatError } from "./format-error.ts";
-import { runLint } from "./lint.ts";
-import { createLogger } from "./log.ts";
-import { USAGE } from "./usage.ts";
+import { parseCommand, UsageError } from "./args/args.ts";
+import { USAGE } from "./args/usage.ts";
+import { runBuild } from "./build/build.ts";
+import { startDev } from "./dev/dev.ts";
+import { runFormat } from "./format/format.ts";
+import { formatError } from "./format/format-error.ts";
+import { runLint } from "./lint/lint.ts";
+import { colorEnabled } from "./log/color.ts";
+import { createLogger } from "./log/log.ts";
 
 async function main(argv: string[]): Promise<number> {
   try {

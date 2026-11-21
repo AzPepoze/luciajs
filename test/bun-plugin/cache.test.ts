@@ -6,7 +6,7 @@ import { storeModule, pruneModules, type CachedModule } from "@bun-plugin/cache.
 import type { ModuleUpdate } from "@bun-plugin/update.ts";
 import { lusia } from "@bun-plugin/index.ts";
 import { compile, hash } from "@compiler/index.ts";
-import type { Steps } from "@cli/timings.ts";
+import type { Steps } from "@cli/build/timings.ts";
 
 const REPO = new URL("../../", import.meta.url).pathname;
 
