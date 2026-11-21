@@ -38,7 +38,7 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
     hint: "Check the spelling. Use a member name such as CUBIC, INOUT, TURN or ENTER.",
   },
   L2068: {
-    message: "animate $name must be a preset name, got $value",
+    message: "animate $name must be a preset name or a keyframes object, got $value",
     hint: "Use a PRESET name such as FADE_IN.",
   },
   L2069: {

@@ -4,6 +4,7 @@ import type { Ease } from "../modes/modes.ts";
 import type { MidwayMode, TurnMode } from "../modes/midway-modes.ts";
 import type { ScrollAt } from "../scroll/scroll-touch.ts";
 import type { Part } from "./scroll-options.ts";
+import type { Keyframes } from "./keyframes.ts";
 import { runtimeError } from "../../errors.ts";
 import { PRESET } from "./presets.ts";
 import { readMs } from "./read-ms.ts";
@@ -59,8 +60,8 @@ export interface AnimateConfig {
   scroll?: ScrollConfig;
   attach?: SpaceMore;
   detach?: SpaceMore;
-  in?: PresetName;
-  out?: PresetName;
+  in?: PresetName | Keyframes;
+  out?: PresetName | Keyframes;
 }
 
 const CONFIG_KEYS = [
@@ -118,7 +119,16 @@ function checkBoolean(name: string, value: unknown): void {
 }
 
 function checkPresetName(name: string, value: unknown): void {
-  if (typeof value !== "string" || !Object.hasOwn(PRESET, value)) {
-    throw runtimeError("L2068", { name, value: String(value) });
-  }
+  if (isKeyframes(value) || isPresetName(value)) return;
+  throw runtimeError("L2068", { name, value: String(value) });
+}
+
+function isPresetName(value: unknown): boolean {
+  return typeof value === "string" && Object.hasOwn(PRESET, value);
+}
+
+function isKeyframes(value: unknown): boolean {
+  return (
+    typeof value === "object" && value !== null && 0 in value && 1 in value
+  );
 }
