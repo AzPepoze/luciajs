@@ -8,7 +8,8 @@ async function leaveMount(mount: Mount): Promise<void> {
 // Removed mounts play their leaves first. Blocks without leaves stay synchronous.
 export class Outlet {
   private readonly live = new Set<Mount>();
-  private readonly leaving = new Set<Promise<void>>();
+  private readonly leavingByStart = new Map<Node, Mount>();
+  private readonly leavingDone = new Set<Promise<void>>();
   private hooked = false;
 
   constructor(private readonly parentLeaves: Leave[]) {}
@@ -24,9 +25,24 @@ export class Outlet {
       disposeMount(mount);
       return;
     }
+    this.leavingByStart.set(mount.start, mount);
     const done = leaveThen(mount.leaves, () => disposeMount(mount));
-    this.leaving.add(done);
-    void done.then(() => this.leaving.delete(done));
+    this.leavingDone.add(done);
+    void done.then(() => {
+      this.leavingByStart.delete(mount.start);
+      this.leavingDone.delete(done);
+    });
+  }
+
+  /** Steps over the leaving rows that start at `node`, so they keep their place in the list. */
+  skipLeaving(node: Node | null): Node | null {
+    let current = node;
+    while (current) {
+      const leaving = this.leavingByStart.get(current);
+      if (!leaving) return current;
+      current = leaving.end.nextSibling;
+    }
+    return null;
   }
 
   disposeAll(): void {
@@ -38,7 +54,7 @@ export class Outlet {
     this.hooked = true;
     this.parentLeaves.push(async () => {
       await Promise.all([...this.live].map(leaveMount));
-      await Promise.all(this.leaving);
+      await Promise.all(this.leavingDone);
     });
   }
 }
