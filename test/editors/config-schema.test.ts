@@ -18,9 +18,10 @@ describe("config.schema.json animate section", () => {
     expect(defs.ease.enum).toEqual(["IN", "OUT", "INOUT"]);
   });
 
-  test("the in and out keys take a preset name", () => {
+  test("the in and out keys take a preset name or a keyframes object", () => {
     const animate = schema.properties.animate.properties;
-    expect(animate.in.$ref).toBe("#/$defs/preset");
-    expect(animate.out.$ref).toBe("#/$defs/preset");
+    const accepted = [{ $ref: "#/$defs/preset" }, { type: "object" }];
+    expect(animate.in.anyOf).toEqual(accepted);
+    expect(animate.out.anyOf).toEqual(accepted);
   });
 });

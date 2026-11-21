@@ -73,6 +73,18 @@
         }
       }
     },
+    "format": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Settings for lusia format",
+      "properties": {
+        "indentScriptAndStyle": {
+          "type": "boolean",
+          "default": true,
+          "description": "Indent the code inside <script> and <style> by one level"
+        }
+      }
+    },
     "animate": {
       "type": "object",
       "additionalProperties": false,
@@ -211,11 +223,11 @@
           }
         },
         "in": {
-          "$ref": "#/$defs/preset",
+          "anyOf": [{ "$ref": "#/$defs/preset" }, { "type": "object" }],
           "description": "Preset used by items with no style, on attach and other triggers. Default: none"
         },
         "out": {
-          "$ref": "#/$defs/preset",
+          "anyOf": [{ "$ref": "#/$defs/preset" }, { "type": "object" }],
           "description": "Preset used by items with no style, on detach. Default: none"
         }
       }

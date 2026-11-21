@@ -796,8 +796,8 @@ export const catalog: Record<string, CatalogEntry> = {
 				["animate.scroll.end", "ENTER, CENTER, LEAVE, or { element, window }", "LEAVE", "Where the progress ends"],
 				["animate.scroll.part", "[from, to], 0 to 1", "[0, 1]", "The part of the progress to play"],
 				["animate.space.animateSpace", "true or false", "true", "Slide the siblings when an item attaches or detaches. false: they jump"],
-				["animate.in", "preset name, e.g. \"FADE_IN\"", "none", "Preset for items with no style, on attach and other triggers"],
-				["animate.out", "preset name, e.g. \"FADE_OUT\"", "none", "Preset for items with no style, on detach"],
+				["animate.in", "preset name, e.g. \"FADE_IN\", or your own keyframes", "none", "Preset for items with no style, on attach and other triggers"],
+				["animate.out", "preset name, e.g. \"FADE_OUT\", or your own keyframes", "none", "Preset for items with no style, on detach"],
 				["outdir", "text", "dist", "Output folder for lusia build"],
 				["minify", "true or false", "true", "Minify the build"],
 				["routes", "list of paths, e.g. [\"/guide\"]", "none", "Routes that get their own index.html"],
@@ -805,6 +805,7 @@ export const catalog: Record<string, CatalogEntry> = {
 				["lazy.mode", "smart, all, off", "smart", "Which imported components load later"],
 				["lazy.prefetch", "idle, view, none", "idle", "When split components start to download"],
 				["lint.rules", "rule name: off, warn, error", "each rule's own level", "Severity of each lint rule"],
+				["format.indentScriptAndStyle", "true or false", "true", "Indent the code inside <script> and <style> by one level in lusia format"],
 			],
 		},
 		files: [
