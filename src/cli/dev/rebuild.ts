@@ -8,6 +8,7 @@ import type { Logger } from "../log/log.ts";
 import { formatRebuild, now, type Steps } from "../build/timings.ts";
 import { chooseUpdate, describeUpdate, RELOAD, type Update } from "./update.ts";
 import { buildHotModules } from "./hot-plan.ts";
+import { type DevConfig, isConfigFile, readDevConfig } from "./config-reload.ts";
 
 interface Change {
   files: string[];
@@ -33,14 +34,22 @@ export function createRebuild({
   server,
   log,
   quiet,
-  lazy,
-  animate,
+  lazy: startLazy,
+  animate: startAnimate,
 }: RebuildOptions): Rebuild {
   let busy = false;
   let pending: Change | null = null;
   // A failed build may leave code the page never got, so the next success reloads.
   let needsReload = false;
-  const hotBuilder: HotBuilder = createHotBuilder(animate);
+  let lazy = startLazy;
+  let animate = startAnimate;
+  let hotBuilder: HotBuilder = createHotBuilder(animate);
+
+  function applyConfig(config: DevConfig): void {
+    lazy = config.lazy;
+    animate = config.animate;
+    hotBuilder = createHotBuilder(animate);
+  }
 
   function report(messages: string[]): void {
     for (const message of messages) process.stderr.write(`${message}\n`);
@@ -50,6 +59,11 @@ export function createRebuild({
 
   async function buildAndPublish(change: Change): Promise<void> {
     const started = now();
+    if (change.files.some(isConfigFile)) {
+      const config = await readDevConfig(root);
+      if (!config.ok) return report(config.messages);
+      applyConfig(config.config);
+    }
     const build = await buildDev(root, lazy, animate);
     if (!build.ok) return report(build.messages);
     const planned: Update = needsReload ? RELOAD : chooseUpdate(change.files, build.changes);
