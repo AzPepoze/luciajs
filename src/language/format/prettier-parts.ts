@@ -4,23 +4,17 @@ import { protectExpressions, restoreExpressions } from "./format-expressions.ts"
 
 type Parser = "typescript" | "css" | "scss" | "html";
 
-/** Prettier, as the Node package and the standalone browser build both export it. */
 export interface PrettierLike {
   format(code: string, options: Record<string, unknown>): Promise<string>;
   plugins?: readonly unknown[];
 }
 
 export interface PrettierParts {
-  /** Formats one embedded part with the given Prettier parser. */
   formatPart(code: string, parser: Parser): Promise<string>;
-  /** The same formatter, for `formatLusia`. */
   parts: FormatParts;
 }
 
-/**
- * The embedded-part formatters of every Lusia editor adapter: the option and plugin
- * handling lives here, so Node and browser only say how they load Prettier.
- */
+/** Shared by Node and the browser, which only differ in how they load Prettier. */
 export function prettierParts(
   load: () => Promise<PrettierLike>,
   config: Record<string, unknown> = {},

@@ -13,7 +13,6 @@ export function applyTextEdits(source: string, edits: readonly LintFix[]): strin
   return out;
 }
 
-/** Applies the safe fixes of the lint issues. */
 export function applyFixes(source: string, issues: readonly LintIssue[]): string {
   return applyTextEdits(
     source,

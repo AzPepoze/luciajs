@@ -11,7 +11,6 @@ const PLACEHOLDER = /^LUSIAEXPR(\d+)X/;
 const FLOW_OPEN = /<(?:IF|ELSEIF|ELSE|EACH|FOR|CONTENT|HTML|FALLBACK|NOLAZY)(?=[\s/>])/y;
 const FLOW_CLOSE = /<\/(?:IF|ELSEIF|ELSE|EACH|FOR|HTML|FALLBACK)\s*>/y;
 
-/** Swaps each `{expr}` and each flow tag for a placeholder that the HTML formatter leaves alone. */
 export function protectExpressions(markup: string): ProtectedMarkup {
   const expressions: string[] = [];
   let text = "";
@@ -63,7 +62,6 @@ export function restoreExpressions(html: string, expressions: string[]): string 
   return text;
 }
 
-/** The padding a long expression's placeholder carries, as `protectExpressions` wrote it. */
 function skipPadding(html: string, end: number, expression: string, tokenLength: number): number {
   const filler = expression.length - tokenLength - 1;
   if (filler < 1) return end;
@@ -97,7 +95,6 @@ function flowTagEnd(markup: string, start: number): number {
   return -1;
 }
 
-/** Whether `offset` sits inside a `{...}` markup expression. */
 export function inExpressionAt(text: string, offset: number): boolean {
   if (offset <= 0) return false;
   const open = text.lastIndexOf("{", offset - 1);
@@ -118,11 +115,7 @@ export function expressionEnd(text: string, open: number): number {
   return -1;
 }
 
-/**
- * The placeholder that stands in for the expression at `index`. A long expression gets a
- * padding suffix of the same length, so the formatter wraps long attributes like it would
- * wrap the real value.
- */
+/** A long expression gets padding, so the formatter wraps it like the real value. */
 function placeholder(index: number, length: number): string {
   const token = `LUSIAEXPR${index}X`;
   if (length < token.length + 2) return token;

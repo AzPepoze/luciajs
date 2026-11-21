@@ -10,7 +10,6 @@ export interface OpenTag {
 const TAG_START = /<([A-Za-z][\w.-]*)/y;
 const TAG_NAME_TYPING = /<[\w.-]*$/;
 
-/** The start tag that the cursor is inside, or undefined. */
 export function openTagAt(text: string, offset: number): OpenTag | undefined {
   if (offset <= 0) return undefined;
   const start = text.lastIndexOf("<", offset - 1);
@@ -22,7 +21,6 @@ export function openTagAt(text: string, offset: number): OpenTag | undefined {
   return { name, start, nameStart: start + 1, nameEnd: start + 1 + name.length };
 }
 
-/** The start tag whose name the cursor is on, in markup only. */
 export function tagNameAt(text: string, offset: number): OpenTag | undefined {
   if (regionAt(text, offset).kind !== "markup") return undefined;
   const tag = openTagAt(text, offset);
@@ -30,7 +28,6 @@ export function tagNameAt(text: string, offset: number): OpenTag | undefined {
   return tag;
 }
 
-/** True while the user is typing a tag name right after `<`. */
 export function isTagNameTyping(text: string, offset: number): boolean {
   return TAG_NAME_TYPING.test(text.slice(0, offset));
 }

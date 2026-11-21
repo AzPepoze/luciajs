@@ -20,7 +20,6 @@ function unusedFinding(name: string, offset: number): LintFinding {
   };
 }
 
-/** A component import is used as a tag or as a value in the script, such as `attach(Chip, el)`. */
 function isUsed(script: string, markup: string, item: LusiaImport): boolean {
   if (isUsedAsTag(markup, item.name)) return true;
   return isUsedInScript(script, item);
@@ -36,7 +35,6 @@ function isUsedInScript(script: string, item: LusiaImport): boolean {
   return false;
 }
 
-/** The `import ... from "./x.lusia"` text that starts at `index`. */
 function statementAt(script: string, index: number): string {
   STATEMENT.lastIndex = index;
   return STATEMENT.exec(script)?.[0] ?? "";

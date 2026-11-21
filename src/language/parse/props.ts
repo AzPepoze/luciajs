@@ -8,7 +8,6 @@ export interface PropDef {
 const PROPS_CALL = /\bprops\s*\(\s*\{/;
 const PROP_ENTRY = /^(?:([A-Za-z_$][\w$]*)|"([^"]+)"|'([^']+)')\s*(?::([\s\S]+))?$/;
 
-/** The keys of the `props({ ... })` call in a component's script, with their default text. */
 export function parsePropDefs(source: string): PropDef[] {
   const match = PROPS_CALL.exec(source);
   if (!match) return [];

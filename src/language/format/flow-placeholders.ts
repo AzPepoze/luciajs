@@ -7,7 +7,6 @@ const MARKER = /^<div\s+data-lusia-flow="(\d+)"\s*>$/;
 const DIV_CLOSE = /^<\/div\s*>$/;
 
 export interface FlowTag {
-  /** The source text of the opening tag. */
   open: string;
   type: string;
 }
@@ -17,10 +16,7 @@ export interface ProtectedFlow {
   tags: FlowTag[];
 }
 
-/**
- * Replaces the paired flow tags with block elements, so the HTML formatter sees a block and
- * indents their content. The opening tag is kept whole for `restoreFlowTags`.
- */
+/** Keeps each opening tag whole, for restoreFlowTags. */
 export function protectFlowTags(markup: string): ProtectedFlow {
   const tags: FlowTag[] = [];
   let text = "";
@@ -80,7 +76,6 @@ function paragraphDepth(tag: string, depth: number): number {
   return depth;
 }
 
-/** Puts the flow tags back, matching each closing `</div>` to the opening placeholder on the stack. */
 export function restoreFlowTags(html: string, tags: FlowTag[]): string {
   const stack: Array<number | undefined> = [];
   let text = "";
@@ -129,7 +124,7 @@ function typeOf(tags: FlowTag[], index: number): string {
   return tags[index]?.type ?? "div";
 }
 
-/** The index of the `>` that ends the tag at `start`, skipping quotes and `{...}` values. */
+// Quotes and {...} values may hold a `>`, so they are skipped.
 function tagEnd(text: string, start: number): number {
   let index = start + 1;
   while (index < text.length) {

@@ -6,7 +6,6 @@ import type { LintContext, LintFinding } from "../types.ts";
 
 const ANIMATE_EXPRESSION = /\banimate=\{/g;
 
-/** Marks keys the runtime would reject in an animate value, such as a typo of `default`. */
 export function animateKeys({ source, markup, script, scriptOffset }: LintContext): LintFinding[] {
   const range = { from: scriptOffset, to: scriptOffset + script.length };
   const findings: LintFinding[] = [];

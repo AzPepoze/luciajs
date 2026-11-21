@@ -4,13 +4,11 @@ const CODE = /[A-Za-z][\w-]*/g;
 export interface LintDirective {
   /** The codes the comment names, or undefined for every rule. */
   codes: Set<string> | undefined;
-  /** First line the directive covers, 1-based. */
   fromLine: number;
   /** Last line the directive covers. Undefined means the rest of the file. */
   toLine: number | undefined;
 }
 
-/** The `lusia-lint-disable` and `lusia-lint-disable-next-line` comments of a source. */
 export function parseLintDirectives(source: string): LintDirective[] {
   return [...source.matchAll(DISABLE_COMMENT)].map((match) => toDirective(source, match));
 }
@@ -32,7 +30,6 @@ function lineAt(source: string, offset: number): number {
   return source.slice(0, offset).split("\n").length;
 }
 
-/** Whether a finding on `line` for `code` is turned off by a comment. */
 export function isLintDisabled(directives: LintDirective[], line: number, code: string): boolean {
   return directives.some(
     (directive) =>

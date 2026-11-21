@@ -38,7 +38,7 @@ const RULES: LintRule[] = [
   bindTargets,
 ];
 
-/** Lint findings for a .lusia source. `childProps` gives the props of an imported component. */
+/** `childProps` gives the props of an imported component. */
 export function lintLusia(
   source: string,
   childProps: (name: string) => PropDef[] | undefined,

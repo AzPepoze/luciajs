@@ -2,7 +2,6 @@ const QUOTES = new Set(["'", '"', "`"]);
 const OPENERS = new Set(["(", "[", "{"]);
 const CLOSERS = new Set([")", "]", "}"]);
 
-/** The trimmed entries of the object literal whose `{` is at `open`. */
 export function objectEntries(source: string, open: number): string[] {
   const entries: string[] = [];
   let depth = 0;
@@ -26,7 +25,6 @@ export function objectEntries(source: string, open: number): string[] {
   return entries.map((entry) => entry.trim()).filter((entry) => entry.length > 0);
 }
 
-/** The index of the quote that closes the string opened at `start`. */
 export function closingQuote(source: string, start: number): number {
   const quote = source.charAt(start);
   for (let i = start + 1; i < source.length; i++) {

@@ -30,14 +30,13 @@ export interface LintOptions {
 
 export type Severity = "warning" | "error";
 
-/** A text edit on the source. Offsets are absolute. */
+/** Offsets are absolute, into the whole source. */
 export interface LintFix {
   start: number;
   end: number;
   text: string;
 }
 
-/** A rule's result. `offset` points into the source. */
 export interface LintFinding {
   offset: number;
   code: LintRuleCode;
@@ -58,7 +57,6 @@ export interface LintIssue {
 
 export interface LintContext {
   source: string;
-  /** Script text, and where it starts in the source. */
   script: string;
   scriptOffset: number;
   /** The source with script and style content blanked, so offsets still match. */
