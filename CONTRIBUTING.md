@@ -50,46 +50,13 @@ Run the `lusia` command from source with `bun src/cli/index.ts <command>`. Run `
 | `reference/api.ts` | The API table for the extension and the docs site |
 | `scripts/check.ts` | The steps behind `bun run check` |
 
-### Folders inside `src`
-
-| Folder | What it holds |
-| ------ | ------------- |
-| `src/runtime/variable` | Variables, compute values and updates |
-| `src/runtime/dom` | Bindings, blocks, components, lazy loading, hot reload and templates |
-| `src/runtime/animate` | The animate helpers |
-| `src/compiler/parse` | Splits script, style and markup |
-| `src/compiler/style` | Sass compile and selector scoping |
-| `src/compiler/template` | Scans markup, checks it and writes the module |
-| `src/compiler/errors` | Error codes and error output |
-| `src/compiler/sourcemap` | Source maps for compiled files |
-| `src/compiler/hot` | Hot reload support for compiled files |
-| `src/compiler/lazy` | Lazy component loading for compiled files |
-| `src/compiler/utils` | Small helpers for the compiler |
-| `src/language/parse` | Sections, imports, props and tags |
-| `src/language/format` | Formatting for `.lusia` files |
-| `src/language/lint` | Lint rules, one file per rule group |
-| `src/cli/args` | Command line and `lusia.config.json` options |
-| `src/cli/build` | The build command |
-| `src/cli/dev` | The dev server and file watching |
-| `src/cli/format` | The format command |
-| `src/cli/lint` | The lint command |
-| `src/cli/log` | Colored log output |
-
 ## Code rules
 
 - Framework logic lives in domain folders: `parse/`, `style/`, `template/`, `variable/` and `dom/`.
-- `utils/` holds only helpers that two or more domains use.
-- One job per file, around 150 lines.
-- Imports across areas use the `@runtime/`, `@compiler/`, `@bun-plugin/`, `@cli/` and `@language/` aliases. Imports inside one area stay relative.
-- `src/runtime` ships to apps as the `lusia` package, so it uses relative imports only.
-- Public names use plain words and "update", never "change". The DOM `change` event keeps its name.
-- Avoid allocations on hot paths. Render loops and audio callbacks must not allocate, lock or log.
-- Compiler and runtime share the marker names in `src/runtime/markers.ts`. Both walk the markup in document order, because bindings match nodes by index.
-- Variable writes only mark dependent `variable.compute` values dirty. `markDirty()` must never read variables.
+- `utils/` holds only helpers that two or more domains use. One job per file, around 150 lines.
+- Imports across areas use the `@runtime/`, `@compiler/`, `@bun-plugin/`, `@cli/` and `@language/` aliases. Imports inside one area stay relative. `src/runtime` ships as the `lusia` package, so it uses relative imports only.
 
-### Error codes
-
-Codes live in the `CODES` table in `src/compiler/errors/codes.ts`.
+## Error codes
 
 | Range | Meaning |
 | ----- | ------- |
@@ -97,9 +64,9 @@ Codes live in the `CODES` table in `src/compiler/errors/codes.ts`.
 | `L2xxx` | Runtime errors |
 | `L3xxx` | Bundler errors from `Bun.build` |
 
-To add a code, add one entry to `CODES`. Raise it with `lusiaError` (compiler) or `runtimeError` (runtime). The [Errors](https://azpepoze.github.io/lusia/errors) page reads the table, so it needs no edit.
+To add a code, add one entry to `CODES` in `src/compiler/errors/codes.ts`.
 
-### Syntax and API changes
+## Syntax and API changes
 
 A change to the API or to `.lusia` markup must update these in the same change:
 
@@ -109,25 +76,19 @@ A change to the API or to `.lusia` markup must update these in the same change:
 
 A `.lusia` syntax change also updates both highlighters: the VS Code grammar, the extension's completion, hover, lint and formatter, and the docs site's Prism `lusia` language. See the Guide's Editor section.
 
-### VS Code extension
+## VS Code extension
 
-The extension build bundles the compiler from `src/compiler`, so install the repo root first. To try a build in VS Code:
+The extension build bundles the compiler from `src/compiler`, so install the repo root first.
 
-```sh
-cd editors/vscode
-bun install
-bun run build
-ln -s "$PWD" ~/.vscode/extensions/lusia.lusia-vscode-0.2.0
-```
+1. In `editors/vscode`, run `bun install`.
+2. Run `bun run build`.
+3. Link the folder into VS Code: `ln -s "$PWD" ~/.vscode/extensions/lusia.lusia-vscode-0.2.0`
 
-Run **Developer: Reload Window** after each build. To check a colour token, run **Developer: Inspect Editor Tokens and Scopes**.
+Run **Developer: Reload Window** after each build.
 
 Check the extension with `bunx tsc --noEmit -p editors/vscode`.
 
 ## Workflow
 
 - Commit messages use [Conventional Commits](https://www.conventionalcommits.org): `type(scope): short imperative summary`. Keep the summary lowercase, with no trailing period, under about 72 characters.
-- Work on a branch from `dev`, in your own worktree: `git worktree add .worktrees/<name> -b <branch> dev`. `.worktrees/` and `.agent/` are gitignored.
 - Run `bun run check` before you report a change as done.
-- Update the docs that describe your change in the same change.
-- `main` only takes changes from `dev` when the maintainer says so.
