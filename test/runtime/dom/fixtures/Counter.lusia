@@ -1,9 +1,9 @@
 <script>
-import { setup, variable } from "lusia";
+import { onAttach, variable } from "lusia";
 
 const count = variable(0);
 
-setup((root: Element) => {
+onAttach((root: Element) => {
   const button = root.querySelector(".inc")!;
   const onClick = () => count.value++;
   button.addEventListener("click", onClick);

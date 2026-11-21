@@ -2,6 +2,7 @@ import type { Variable } from "../../variable/variable.ts";
 import type { Cleanup } from "../template/bindings.ts";
 import { leaveThen, type Leave } from "./leave.ts";
 import { injectStyle } from "./styles.ts";
+import { collectAttachHooks, runAttach, type AttachHook } from "./lifecycle.ts";
 import { runtimeError } from "../../errors.ts";
 
 export type Props = Record<string, () => unknown>;
@@ -17,14 +18,12 @@ export interface Host {
   content?: Slot;
 }
 
-export type SetupHook = (root: ParentNode) => unknown;
-
 export interface Rendered {
   fragment: DocumentFragment;
-  setup?: SetupHook;
+  attachHooks: AttachHook[];
 }
 
-export type Render = (cleanups: Cleanup[], leaves: Leave[], host: Host) => Rendered;
+export type Render = (cleanups: Cleanup[], leaves: Leave[], host: Host) => DocumentFragment;
 
 export interface Instance {
   root: Element;
@@ -56,6 +55,19 @@ export function renderWith(
   cleanups: Cleanup[],
   leaves: Leave[],
 ): Rendered {
+  const attachHooks: AttachHook[] = [];
+  const fragment = collectAttachHooks(attachHooks, () =>
+    renderScript(render, host, cleanups, leaves),
+  );
+  return { fragment, attachHooks };
+}
+
+function renderScript(
+  render: Render,
+  host: Host,
+  cleanups: Cleanup[],
+  leaves: Leave[],
+): DocumentFragment {
   const previousHost = currentHost;
   const previousCleanups = currentCleanups;
   currentHost = host;
@@ -66,11 +78,6 @@ export function renderWith(
     currentHost = previousHost;
     currentCleanups = previousCleanups;
   }
-}
-
-export function runSetup(setup: SetupHook | undefined, root: Node, cleanups: Cleanup[]): void {
-  const cleanup = setup?.(root as ParentNode);
-  if (typeof cleanup === "function") cleanups.push(cleanup as Cleanup);
 }
 
 export type Place = Component["place"];
@@ -89,10 +96,10 @@ export function defineComponent(id: string, css: string, render: Render): Compon
   return componentFrom((parent, anchor, host, leaves) => {
     injectStyle(id, css);
     const cleanups: Cleanup[] = [];
-    const { fragment, setup } = renderWith(render, host, cleanups, leaves);
+    const { fragment, attachHooks } = renderWith(render, host, cleanups, leaves);
     const nodes = [...fragment.childNodes];
     parent.insertBefore(fragment, anchor);
-    runSetup(setup, parent, cleanups);
+    runAttach(attachHooks, parent, cleanups);
     return () => {
       for (const cleanup of cleanups) cleanup();
       for (const node of nodes) node.remove();

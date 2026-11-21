@@ -1,0 +1,10 @@
+<script>
+import { onAttach } from "lusia";
+import { events } from "./log.ts";
+
+onAttach(() => events.push("first"));
+onAttach(() => events.push("second"));
+onAttach(() => events.push("third"));
+</script>
+
+<p>Ordered</p>
