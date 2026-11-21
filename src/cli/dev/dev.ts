@@ -10,6 +10,7 @@ import { createLogger, type Logger } from "../log/log.ts";
 import { formatBrowserReady, formatRebuild, now, type Steps } from "../build/timings.ts";
 import { chooseUpdate, describeUpdate, RELOAD, type Update } from "./update.ts";
 import { watchFolder } from "./watch.ts";
+import { buildHotModules } from "./hot-plan.ts";
 
 export interface DevOptions {
   dir: string;
@@ -69,9 +70,6 @@ interface Rebuild {
   request(change: Change): Promise<void>;
 }
 
-type HotPlan = { ok: true; modules: HotModule[] } | { ok: false; messages: string[] };
-
-/** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
 interface RebuildOptions {
   root: string;
   server: DevServer;
@@ -81,22 +79,13 @@ interface RebuildOptions {
   animate?: AnimateConfig;
 }
 
+/** Runs one build at a time. Changes that arrive mid-build are merged and built next. */
 function createRebuild({ root, server, log, quiet, lazy, animate }: RebuildOptions): Rebuild {
   let busy = false;
   let pending: Change | null = null;
   // A failed build may leave code the page never got, so the next success reloads.
   let needsReload = false;
   const hotBuilder: HotBuilder = createHotBuilder(animate);
-
-  async function buildHotModules(paths: string[]): Promise<HotPlan> {
-    const modules: HotModule[] = [];
-    for (const path of paths) {
-      const built = await hotBuilder.build(path);
-      if (!built.ok) return { ok: false, messages: built.messages };
-      modules.push(built.module);
-    }
-    return { ok: true, modules };
-  }
 
   function report(messages: string[]): void {
     for (const message of messages) process.stderr.write(`${message}\n`);
@@ -112,7 +101,7 @@ function createRebuild({ root, server, log, quiet, lazy, animate }: RebuildOptio
     let update = planned;
     let modules: HotModule[] = [];
     if (planned.kind === "hot") {
-      const plan = await buildHotModules(planned.paths);
+      const plan = await buildHotModules(hotBuilder, planned.paths);
       if (!plan.ok) return report(plan.messages);
       // A module that copies other files cannot share their state with the page, so it reloads.
       if (plan.modules.every((module) => module.onlyComponents)) modules = plan.modules;
