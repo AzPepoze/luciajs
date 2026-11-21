@@ -86,10 +86,10 @@ suite("ATTACH with animateSpace slides the siblings", () => {
     }
   });
 
-  test("without animateSpace the sibling jumps at once", async () => {
+  test("with animateSpace false the sibling jumps at once", async () => {
     const page = await openPage(ATTACH_LIST);
     try {
-      const tops = await attachSamples(page, "{}");
+      const tops = await attachSamples(page, '{"animateSpace":false}');
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(Math.abs(last - first - 76)).toBeLessThan(1.5);

@@ -1,10 +1,24 @@
 import { runtimeError } from "../../errors.ts";
 import { WHEN, isWhen, type When, type Source } from "../modes/trigger.ts";
-import { DEFAULT_SPACE, readSpace, type SpaceMore, type SpaceRead } from "./space-options.ts";
-import { DEFAULT_HOVER, readHover, sameHover, type HoverMore, type HoverRead } from "./hover-options.ts";
-import { HOVER_KEYS, keyList, SCROLL_KEYS, SPACE_KEYS, SPELLING_HINT, unknownKeyValues, VIEW_KEYS } from "./keys.ts";
-import { DEFAULT_VIEW, readViewMore, sameView, type ViewMore, type ViewSettings } from "./view-options.ts";
-import { DEFAULT_SCROLL, readScroll, sameScroll, type ScrollMore, type ScrollRead } from "./scroll-options.ts";
+import { readSpace, type SpaceMore, type SpaceRead } from "./space-options.ts";
+import {
+  hoverDefault,
+  readHover,
+  sameHover,
+  type HoverMore,
+  type HoverRead,
+} from "./hover-options.ts";
+import {
+  HOVER_KEYS,
+  keyList,
+  SCROLL_KEYS,
+  SPACE_KEYS,
+  SPELLING_HINT,
+  unknownKeyValues,
+  VIEW_KEYS,
+} from "./keys.ts";
+import { readViewMore, sameView, type ViewMore, type ViewSettings } from "./view-options.ts";
+import { readScroll, sameScroll, type ScrollMore, type ScrollRead } from "./scroll-options.ts";
 
 export type More = ViewMore | HoverMore | ScrollMore | SpaceMore;
 
@@ -22,24 +36,26 @@ export interface ReadMore {
   space: SpaceRead;
 }
 
-const DEFAULT_MORE: ReadMore = {
-  view: DEFAULT_VIEW,
-  reverse: false,
-  hover: DEFAULT_HOVER,
-  scroll: DEFAULT_SCROLL,
-  space: DEFAULT_SPACE,
-};
+/** The `more` of an item that sets none. Every field takes its config value, then its library default. */
+function defaultMore(): ReadMore {
+  return {
+    ...readViewMore({}),
+    hover: hoverDefault(),
+    scroll: readScroll({}),
+    space: readSpace({}),
+  };
+}
 
 export function readMore(when: When | Source, more: More | undefined, base: MoreBase): ReadMore {
-  if (more === undefined) return DEFAULT_MORE;
+  if (more === undefined) return defaultMore();
   if (when === WHEN.VIEW)
-    return { ...DEFAULT_MORE, ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
+    return { ...defaultMore(), ...readViewMore(checkKeys<ViewMore>(more, VIEW_KEYS)) };
   if (when === WHEN.HOVER)
-    return { ...DEFAULT_MORE, hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
+    return { ...defaultMore(), hover: readHover(checkKeys<HoverMore>(more, HOVER_KEYS), base) };
   if (when === WHEN.SCROLL)
-    return { ...DEFAULT_MORE, scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
+    return { ...defaultMore(), scroll: readScroll(checkKeys<ScrollMore>(more, SCROLL_KEYS)) };
   if (when === WHEN.ATTACH || when === WHEN.DETACH)
-    return { ...DEFAULT_MORE, space: readSpace(checkKeys<SpaceMore>(more, SPACE_KEYS)) };
+    return { ...defaultMore(), space: readSpace(checkKeys<SpaceMore>(more, SPACE_KEYS)) };
   throw runtimeError("L2010", { when: whenName(when) });
 }
 

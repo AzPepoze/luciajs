@@ -4,6 +4,8 @@ import type { Controller } from "../play/controller.ts";
 import type { Keyframes } from "./keyframes.ts";
 import type { LoopSpec } from "../play/passes.ts";
 import { animateDefault } from "./defaults.ts";
+import { animateConfig } from "./config-store.ts";
+import { readMs } from "./read-ms.ts";
 import { readMidway, type MidwayOptions } from "./midway-options.ts";
 import { WHEN, isLayoutWhen, isWhen, type When, type Source } from "../modes/trigger.ts";
 import { readMore, type ReadMore } from "./trigger-options.ts";
@@ -42,9 +44,9 @@ export function readItem(item: AnimateItem): ItemOptions {
   const keyframes = readKeyframes(item, when);
   const timing = {
     duration,
-    delay: readMs(item.delay, 0, "delay"),
+    delay: readMs(item.delay, animateConfig().delay ?? 0, "delay"),
     loop: readLoop(item.loop, item.backAndForth),
-    keep: item.keep !== false,
+    keep: readKeep(item.keep),
     midway: readMidway(item.midway),
   };
   return {
@@ -85,11 +87,10 @@ function isRenamedWhen(value: unknown): boolean {
   return value === "IN" || value === "OUT";
 }
 
-function readMs(value: number | undefined, fallback: number, name: string): number {
-  if (value === undefined) return fallback;
-  if (!Number.isFinite(value) || value < 0)
-    throw runtimeError("L2003", { name, value: String(value) });
-  return value;
+/** An item keeps its last frame unless `keep: false`. Without its own value it takes the config's. */
+function readKeep(keep: boolean | undefined): boolean {
+  if (keep === undefined) return animateConfig().keep ?? true;
+  return keep !== false;
 }
 
 function rejectOldNames(item: AnimateItem): void {

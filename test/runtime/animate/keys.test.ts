@@ -69,8 +69,16 @@ describe("DETACH more animateSpace", () => {
     );
   });
 
-  test("without animateSpace a DETACH item has no space spec", () => {
-    expect(readItem(detach(undefined)).space).toBeUndefined();
+  test("animateSpace defaults to true, so a DETACH item has a space spec", () => {
+    expect(readItem(detach(undefined)).space).toEqual({
+      duration: 300,
+      delay: 0,
+      keyframes: frames,
+    });
+  });
+
+  test("animateSpace: false gives a DETACH item no space spec", () => {
+    expect(readItem(detach({ animateSpace: false })).space).toBeUndefined();
   });
 
   test("animateSpace: true gives a DETACH item a space spec", () => {

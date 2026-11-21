@@ -77,10 +77,10 @@ suite("DETACH with animateSpace slides the siblings", () => {
     }
   });
 
-  test("without animateSpace the sibling jumps once, when the row is removed", async () => {
+  test("with animateSpace false the sibling jumps once, when the row is removed", async () => {
     const page = await openPage(LIST);
     try {
-      const tops = await sampleLeave(page, "", "top");
+      const tops = await sampleLeave(page, '{"animateSpace":false}', "top");
       const first = tops[0]!;
       const last = tops[tops.length - 1]!;
       expect(first - last).toBeCloseTo(80, 0);

@@ -27,3 +27,4 @@ export type { Animate, AnimateItem } from "./animate/animation.ts";
 export { interpolate } from "./animate/value/interpolate.ts";
 export { setAnimateDefault } from "./animate/options/defaults.ts";
 export type { AnimateDefaultUpdate } from "./animate/options/defaults.ts";
+export type { AnimateConfig } from "./animate/options/config.ts";

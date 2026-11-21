@@ -2,6 +2,7 @@ import type { EaseStyle } from "../modes/easing.ts";
 import { readDefault, type DefaultEasing } from "./keyform.ts";
 import { EASE, type Ease } from "../modes/modes.ts";
 import { runtimeError } from "../../errors.ts";
+import { animateConfig } from "./config-store.ts";
 
 /** The engine default: used for a part when neither the key nor the keyframes `default` sets it. */
 export interface AnimateDefault {
@@ -18,10 +19,23 @@ export interface AnimateDefaultUpdate {
 
 const UPDATE_KEYS = ["ease", "duration"];
 
-let current: AnimateDefault = { easeStyle: EASE.STYLE.QUART, ease: EASE.INOUT, duration: 300 };
+const LIBRARY_DEFAULT: AnimateDefault = {
+  easeStyle: EASE.STYLE.QUART,
+  ease: EASE.INOUT,
+  duration: 300,
+};
 
+/** The runtime layer: only the parts that `setAnimateDefault` has set. */
+let runtime: Partial<AnimateDefault> = {};
+
+/** The runtime layer over the config layer over the library default. */
 export function animateDefault(): AnimateDefault {
-  return current;
+  const configured = configuredDefault();
+  return {
+    easeStyle: runtime.easeStyle ?? configured.easeStyle,
+    ease: runtime.ease ?? configured.ease,
+    duration: runtime.duration ?? configured.duration,
+  };
 }
 
 /** Updates the engine default for the whole app. It is read at each play, so an update applies to every play after it. */
@@ -30,10 +44,26 @@ export function setAnimateDefault(update: AnimateDefaultUpdate): void {
     if (!UPDATE_KEYS.includes(key)) throw runtimeError("L2030", { key });
   }
   const ease = readDefault(update.ease);
-  current = {
-    easeStyle: ease.easeStyle ?? current.easeStyle,
-    ease: ease.ease ?? current.ease,
-    duration: update.duration === undefined ? current.duration : readDuration(update.duration),
+  runtime = {
+    easeStyle: ease.easeStyle ?? runtime.easeStyle,
+    ease: ease.ease ?? runtime.ease,
+    duration: update.duration === undefined ? runtime.duration : readDuration(update.duration),
+  };
+}
+
+/** Tests only: drops the runtime layer so the config and library values show again. */
+export function clearAnimateDefault(): void {
+  runtime = {};
+}
+
+/** The config layer over the library default. */
+function configuredDefault(): AnimateDefault {
+  const configured = animateConfig();
+  const ease = readDefault(configured.ease);
+  return {
+    easeStyle: ease.easeStyle ?? LIBRARY_DEFAULT.easeStyle,
+    ease: ease.ease ?? LIBRARY_DEFAULT.ease,
+    duration: configured.duration ?? LIBRARY_DEFAULT.duration,
   };
 }
 

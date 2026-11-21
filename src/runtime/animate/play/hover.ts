@@ -4,7 +4,7 @@ import type { Group } from "./group.ts";
 import { HOVER_AREA } from "../modes/hover-modes.ts";
 import type { HoverRead } from "../options/hover-options.ts";
 import type { Timing } from "../options/options.ts";
-import { DEFAULT_MIDWAY } from "../options/midway-options.ts";
+import { midwayDefault } from "../options/midway-options.ts";
 import { Player } from "./player.ts";
 
 interface HoverState {
@@ -187,7 +187,7 @@ function outPlayerFor(el: HTMLElement, out: NonNullable<HoverRead["out"]>): Play
     delay: 0,
     loop: undefined,
     keep: true,
-    midway: DEFAULT_MIDWAY,
+    midway: midwayDefault(),
   };
   const player = new Player(el.style);
   player.load(prepareTimeline(out.keyframes, el), timing);

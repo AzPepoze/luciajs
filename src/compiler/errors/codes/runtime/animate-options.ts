@@ -25,4 +25,24 @@ export const RUNTIME_ANIMATE_OPTIONS_CODES = {
     message: "$name is set by the glide and cannot be in style",
     hint: "Remove $name from style. Use transform for other moves.",
   },
+  L2065: {
+    message: "animate $name must be an object, got $value",
+    hint: "Write an object, such as { duration: 500 }.",
+  },
+  L2066: {
+    message: 'animate $name has an unknown key "$key", use $keys',
+    hint: "$tip",
+  },
+  L2067: {
+    message: "animate $name has an unknown name $value",
+    hint: "Check the spelling. Use a member name such as CUBIC, INOUT, TURN or ENTER.",
+  },
+  L2068: {
+    message: "animate $name must be a preset name, got $value",
+    hint: "Use a PRESET name such as FADE_IN.",
+  },
+  L2069: {
+    message: "animate $name must be true or false, got $value",
+    hint: "Use true or false.",
+  },
 } as const satisfies Record<string, ErrorCode>;
