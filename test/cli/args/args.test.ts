@@ -74,6 +74,7 @@ describe("parseCommand", () => {
       check: false,
       quiet: false,
       cache: true,
+      indentScriptAndStyle: true,
     });
     expect(
       await parseCommand(["format", "src", "app/**/*.lusia", "--check", "--quiet"], NO_ENV),
@@ -83,6 +84,7 @@ describe("parseCommand", () => {
       check: true,
       quiet: true,
       cache: true,
+      indentScriptAndStyle: true,
     });
   });
 
@@ -93,6 +95,7 @@ describe("parseCommand", () => {
       check: false,
       quiet: false,
       cache: false,
+      indentScriptAndStyle: true,
     });
   });
 

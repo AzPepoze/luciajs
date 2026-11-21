@@ -10,6 +10,7 @@ export interface FormatOptions {
   check: boolean;
   quiet: boolean;
   cache?: boolean;
+  indentScriptAndStyle?: boolean;
 }
 
 export async function runFormat(options: FormatOptions): Promise<number> {
@@ -37,14 +38,17 @@ async function formatOne(
   changed: string[],
 ): Promise<void> {
   const source = await Bun.file(file).text();
-  const config = await prettierConfigFor(file);
+  const indent = options.indentScriptAndStyle ?? true;
+  const prettierConfig = await prettierConfigFor(file);
+  // The indent setting is part of the cache key, so turning it off reformats every file.
+  const config = { ...prettierConfig, lusiaIndentScriptAndStyle: indent };
   const decision = cache?.decide(file, source, config) ?? "unknown";
   if (decision === "clean") return;
   if (decision === "changed" && options.check) {
     changed.push(display(file));
     return;
   }
-  const formatted = await formatLusia(source, partsFor(config));
+  const formatted = await formatLusia(source, partsFor(prettierConfig, indent));
   cache?.record(file, source, formatted, config);
   if (formatted === source) return;
   if (!options.check) await Bun.write(file, formatted);

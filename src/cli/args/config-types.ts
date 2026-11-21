@@ -13,5 +13,6 @@ export interface LusiaConfig {
   dev?: { port?: number };
   lazy?: { mode?: LazyMode; prefetch?: LazyPrefetch };
   lint?: { rules?: LintRuleSettings };
+  format?: { indentScriptAndStyle?: boolean };
   animate?: AnimateConfig;
 }

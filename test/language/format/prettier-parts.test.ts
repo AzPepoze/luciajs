@@ -68,3 +68,14 @@ describe("prettierParts", () => {
     expect(calls[0]?.code).not.toContain("<IF");
   });
 });
+
+describe("prettierParts section indent", () => {
+  test("uses tabs, the tab width, or nothing", async () => {
+    const { prettier } = fakePrettier();
+    const load = async () => prettier;
+    expect(prettierParts(load, { useTabs: true }).parts.sectionIndent).toBe("\t");
+    expect(prettierParts(load, { tabWidth: 4 }).parts.sectionIndent).toBe("    ");
+    expect(prettierParts(load, {}).parts.sectionIndent).toBe("  ");
+    expect(prettierParts(load, { useTabs: true }, false).parts.sectionIndent).toBe("");
+  });
+});

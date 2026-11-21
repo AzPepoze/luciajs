@@ -83,7 +83,7 @@ async function parseDev(args: string[], env: Record<string, string | undefined>)
   };
 }
 
-function parseFormat(args: string[]): Command {
+async function parseFormat(args: string[]): Promise<Command> {
   const { values, positionals } = withUsageErrors(() =>
     parseArgs({
       args,
@@ -95,12 +95,14 @@ function parseFormat(args: string[]): Command {
       },
     }),
   );
+  const config = await readConfig(configDir(positionals));
   return {
     name: "format",
     paths: pathsOf(positionals),
     check: values.check ?? false,
     quiet: values.quiet ?? false,
     cache: values["no-cache"] !== true,
+    indentScriptAndStyle: config.format?.indentScriptAndStyle ?? true,
   };
 }
 

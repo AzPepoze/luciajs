@@ -13,6 +13,7 @@ import {
   configError,
   isRoute,
   oneOf,
+  optionalBoolean,
   type JsonObject,
 } from "./config-values.ts";
 
@@ -46,6 +47,13 @@ export function optionalLint(root: JsonObject): LusiaConfig["lint"] {
   const lint = asObject(root.lint, '"lint" must be an object');
   checkKeys(lint, ["rules"], "lint");
   return { rules: optionalLintRules(lint) };
+}
+
+export function optionalFormat(root: JsonObject): LusiaConfig["format"] {
+  if (root.format === undefined) return undefined;
+  const format = asObject(root.format, '"format" must be an object');
+  checkKeys(format, ["indentScriptAndStyle"], "format");
+  return { indentScriptAndStyle: optionalBoolean(format, "indentScriptAndStyle") };
 }
 
 function optionalLintRules(lint: JsonObject): LintRuleSettings | undefined {
