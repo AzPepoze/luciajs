@@ -1,4 +1,4 @@
-import { replaceStyle } from "../template/styles.ts";
+import { replaceStyle } from "../component/styles.ts";
 import type { HotComponent } from "./define.ts";
 import { type Definition, type HotInstance, replaceRendering } from "./instance.ts";
 import { renderInstance } from "./render.ts";
