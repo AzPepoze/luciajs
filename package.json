@@ -4,7 +4,16 @@
   "description": "Write UI in one file. Update it with variables. Built for Bun.",
   "license": "MIT",
   "type": "module",
-  "keywords": ["ui", "framework", "bun", "typescript", "components", "reactive", "scss", "single-file"],
+  "keywords": [
+    "ui",
+    "framework",
+    "bun",
+    "typescript",
+    "components",
+    "reactive",
+    "scss",
+    "single-file"
+  ],
   "homepage": "https://azpepoze.github.io/lusia",
   "repository": {
     "type": "git",
