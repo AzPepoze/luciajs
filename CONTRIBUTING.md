@@ -23,7 +23,7 @@ Lusia is a Bun-native UI framework built from single-file `.lusia` components, v
 
 `cd docs && bun run dev` and `cd docs && bun run build` first run `docs/scripts/playground-runtime.ts`, which writes the playground preview runtime. Run `cd docs && bun scripts/playground-runtime.ts` yourself before using the CLI directly.
 
-`bun run check` covers the lusia package only: typecheck, tests and the VS Code extension build. `cd docs && bun run check` covers the docs site: typecheck, tests and site build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
+`bun run check` covers the lusia package only: it runs the typecheck, tests and the VS Code extension build in parallel and prints each step's time. `cd docs && bun run check` covers the docs site: typecheck, tests and site build. Set `LUSIA_CHROMIUM` to a Chromium path to include the browser tests; without it those tests are skipped.
 
 Tests check behaviour with small data, so they stay quick. The large sizes of the stress scenarios live in their `main.ts` and only run on the stress page (`bun run dev:stress`), not in `bun run check`.
 
