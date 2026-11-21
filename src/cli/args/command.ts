@@ -1,4 +1,5 @@
 import type { LazySettings } from "@bun-plugin/children.ts";
+import type { AnimateConfig } from "@runtime/animate/options/config.ts";
 import type { LintRuleSettings } from "@language/lint/lint.ts";
 
 export type Command =
@@ -11,6 +12,7 @@ export type Command =
       routes: string[];
       quiet: boolean;
       lazy: LazySettings;
+      animate: AnimateConfig;
     }
   | {
       name: "dev";
@@ -18,6 +20,7 @@ export type Command =
       port: number;
       quiet: boolean;
       lazy: LazySettings;
+      animate: AnimateConfig;
     }
   | {
       name: "format";

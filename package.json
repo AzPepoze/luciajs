@@ -10,7 +10,8 @@
     "./internal": "./src/runtime/internal.ts",
     "./markers": "./src/runtime/markers.ts",
     "./compiler": "./src/compiler/index.ts",
-    "./bun-plugin": "./src/bun-plugin/index.ts"
+    "./bun-plugin": "./src/bun-plugin/index.ts",
+    "./config": "./src/config/index.ts"
   },
   "scripts": {
     "dev:stress": "bun src/cli/index.ts dev examples/stress",

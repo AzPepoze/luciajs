@@ -9,7 +9,10 @@ import { parseMaxWarnings, parsePort } from "./values.ts";
 export { UsageError };
 export type { Command };
 
-export function parseCommand(argv: string[], env: Record<string, string | undefined>): Command {
+export async function parseCommand(
+  argv: string[],
+  env: Record<string, string | undefined>,
+): Promise<Command> {
   const [name, ...rest] = argv;
   if (!name || name === "help" || name === "--help" || name === "-h") return { name: "help" };
   if (name === "build") return parseBuild(rest);
@@ -19,7 +22,7 @@ export function parseCommand(argv: string[], env: Record<string, string | undefi
   throw new UsageError(`unknown command "${name}"`);
 }
 
-function parseBuild(args: string[]): Command {
+async function parseBuild(args: string[]): Promise<Command> {
   const { values, positionals } = withUsageErrors(() =>
     parseArgs({
       args,
@@ -33,7 +36,7 @@ function parseBuild(args: string[]): Command {
     }),
   );
   const dir = appDir(positionals);
-  const config = readConfig(dir);
+  const config = await readConfig(dir);
   return {
     name: "build",
     dir,
@@ -42,6 +45,7 @@ function parseBuild(args: string[]): Command {
     routes: values.routes === undefined ? (config.routes ?? []) : parseRoutes(values.routes),
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
+    animate: config.animate ?? {},
   };
 }
 
@@ -58,7 +62,7 @@ export function parseRoutes(value: string | undefined): string[] {
   return routes;
 }
 
-function parseDev(args: string[], env: Record<string, string | undefined>): Command {
+async function parseDev(args: string[], env: Record<string, string | undefined>): Promise<Command> {
   const { values, positionals } = withUsageErrors(() =>
     parseArgs({
       args,
@@ -67,7 +71,7 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
     }),
   );
   const dir = appDir(positionals);
-  const config = readConfig(dir);
+  const config = await readConfig(dir);
   const port = values.port ?? env.PORT;
   return {
     name: "dev",
@@ -75,6 +79,7 @@ function parseDev(args: string[], env: Record<string, string | undefined>): Comm
     port: port === undefined ? (config.dev?.port ?? DEFAULT_PORT) : parsePort(port),
     quiet: values.quiet ?? false,
     lazy: lazyOf(config),
+    animate: config.animate ?? {},
   };
 }
 
@@ -99,7 +104,7 @@ function parseFormat(args: string[]): Command {
   };
 }
 
-function parseLint(args: string[]): Command {
+async function parseLint(args: string[]): Promise<Command> {
   const { values, positionals } = withUsageErrors(() =>
     parseArgs({
       args,
@@ -111,7 +116,7 @@ function parseLint(args: string[]): Command {
       },
     }),
   );
-  const config = readConfig(configDir(positionals));
+  const config = await readConfig(configDir(positionals));
   return {
     name: "lint",
     paths: pathsOf(positionals),

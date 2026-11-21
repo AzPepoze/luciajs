@@ -12,7 +12,7 @@ import { createLogger } from "./log/log.ts";
 
 async function main(argv: string[]): Promise<number> {
   try {
-    const command = parseCommand(argv, process.env);
+    const command = await parseCommand(argv, process.env);
     if (command.name === "help") {
       process.stdout.write(USAGE);
       return 0;

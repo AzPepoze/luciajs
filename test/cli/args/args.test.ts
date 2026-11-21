@@ -5,8 +5,8 @@ import { parseCommand, UsageError } from "@cli/args/args.ts";
 const NO_ENV = {};
 
 describe("parseCommand", () => {
-  test("build uses the defaults", () => {
-    expect(parseCommand(["build"], NO_ENV)).toEqual({
+  test("build uses the defaults", async () => {
+    expect(await parseCommand(["build"], NO_ENV)).toEqual({
       name: "build",
       dir: ".",
       outdir: resolve("dist"),
@@ -14,11 +14,12 @@ describe("parseCommand", () => {
       routes: [],
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
+      animate: {},
     });
   });
 
-  test("build reads its options", () => {
-    expect(parseCommand(["build", "app", "--outdir", "out", "--no-minify"], NO_ENV)).toEqual({
+  test("build reads its options", async () => {
+    expect(await parseCommand(["build", "app", "--outdir", "out", "--no-minify"], NO_ENV)).toEqual({
       name: "build",
       dir: "app",
       outdir: resolve("out"),
@@ -26,63 +27,67 @@ describe("parseCommand", () => {
       routes: [],
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
+      animate: {},
     });
   });
 
-  test("--quiet hides the timing output for build and dev", () => {
-    expect(parseCommand(["build", "--quiet"], NO_ENV)).toMatchObject({
+  test("--quiet hides the timing output for build and dev", async () => {
+    expect(await parseCommand(["build", "--quiet"], NO_ENV)).toMatchObject({
       quiet: true,
     });
-    expect(parseCommand(["dev", "--quiet"], NO_ENV)).toMatchObject({
+    expect(await parseCommand(["dev", "--quiet"], NO_ENV)).toMatchObject({
       quiet: true,
     });
   });
 
-  test("dev defaults to port 3000, uses PORT, and --port wins", () => {
-    expect(parseCommand(["dev"], NO_ENV)).toEqual({
+  test("dev defaults to port 3000, uses PORT, and --port wins", async () => {
+    expect(await parseCommand(["dev"], NO_ENV)).toEqual({
       name: "dev",
       dir: ".",
       port: 3000,
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
+      animate: {},
     });
-    expect(parseCommand(["dev"], { PORT: "3100" })).toEqual({
+    expect(await parseCommand(["dev"], { PORT: "3100" })).toEqual({
       name: "dev",
       dir: ".",
       port: 3100,
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
+      animate: {},
     });
-    expect(parseCommand(["dev", "--port", "3196"], { PORT: "3100" })).toEqual({
+    expect(await parseCommand(["dev", "--port", "3196"], { PORT: "3100" })).toEqual({
       name: "dev",
       dir: ".",
       port: 3196,
       quiet: false,
       lazy: { mode: "smart", prefetch: "idle" },
+      animate: {},
     });
   });
 
-  test("format takes paths and its flags, defaulting to the current folder", () => {
-    expect(parseCommand(["format"], NO_ENV)).toEqual({
+  test("format takes paths and its flags, defaulting to the current folder", async () => {
+    expect(await parseCommand(["format"], NO_ENV)).toEqual({
       name: "format",
       paths: ["."],
       check: false,
       quiet: false,
       cache: true,
     });
-    expect(parseCommand(["format", "src", "app/**/*.lusia", "--check", "--quiet"], NO_ENV)).toEqual(
-      {
-        name: "format",
-        paths: ["src", "app/**/*.lusia"],
-        check: true,
-        quiet: true,
-        cache: true,
-      },
-    );
+    expect(
+      await parseCommand(["format", "src", "app/**/*.lusia", "--check", "--quiet"], NO_ENV),
+    ).toEqual({
+      name: "format",
+      paths: ["src", "app/**/*.lusia"],
+      check: true,
+      quiet: true,
+      cache: true,
+    });
   });
 
-  test("format can turn the content cache off", () => {
-    expect(parseCommand(["format", "--no-cache"], NO_ENV)).toEqual({
+  test("format can turn the content cache off", async () => {
+    expect(await parseCommand(["format", "--no-cache"], NO_ENV)).toEqual({
       name: "format",
       paths: ["."],
       check: false,
@@ -91,8 +96,8 @@ describe("parseCommand", () => {
     });
   });
 
-  test("lint takes paths and its flags, defaulting to the current folder", () => {
-    expect(parseCommand(["lint"], NO_ENV)).toEqual({
+  test("lint takes paths and its flags, defaulting to the current folder", async () => {
+    expect(await parseCommand(["lint"], NO_ENV)).toEqual({
       name: "lint",
       paths: ["."],
       fix: false,
@@ -101,7 +106,7 @@ describe("parseCommand", () => {
       rules: undefined,
     });
     expect(
-      parseCommand(["lint", "src", "--fix", "--max-warnings", "0", "--quiet"], NO_ENV),
+      await parseCommand(["lint", "src", "--fix", "--max-warnings", "0", "--quiet"], NO_ENV),
     ).toEqual({
       name: "lint",
       paths: ["src"],
@@ -112,19 +117,23 @@ describe("parseCommand", () => {
     });
   });
 
-  test("help and unknown commands", () => {
-    expect(parseCommand([], NO_ENV)).toEqual({ name: "help" });
-    expect(() => parseCommand(["serve"], NO_ENV)).toThrow(UsageError);
+  test("help and unknown commands", async () => {
+    expect(await parseCommand([], NO_ENV)).toEqual({ name: "help" });
+    await expect(parseCommand(["serve"], NO_ENV)).rejects.toThrow(UsageError);
   });
 
-  test("bad options raise a usage error", () => {
-    expect(() => parseCommand(["build", "--bogus"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["dev", "--port", "70000"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["build", "a", "b"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["format", "--bogus"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["lint", "--bogus"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["lint", "--max-warnings", "-1"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["lint", "--max-warnings", "1.5"], NO_ENV)).toThrow(UsageError);
-    expect(() => parseCommand(["lint", "--max-warnings"], NO_ENV)).toThrow(UsageError);
+  test("bad options raise a usage error", async () => {
+    await expect(parseCommand(["build", "--bogus"], NO_ENV)).rejects.toThrow(UsageError);
+    await expect(parseCommand(["dev", "--port", "70000"], NO_ENV)).rejects.toThrow(UsageError);
+    await expect(parseCommand(["build", "a", "b"], NO_ENV)).rejects.toThrow(UsageError);
+    await expect(parseCommand(["format", "--bogus"], NO_ENV)).rejects.toThrow(UsageError);
+    await expect(parseCommand(["lint", "--bogus"], NO_ENV)).rejects.toThrow(UsageError);
+    await expect(parseCommand(["lint", "--max-warnings", "-1"], NO_ENV)).rejects.toThrow(
+      UsageError,
+    );
+    await expect(parseCommand(["lint", "--max-warnings", "1.5"], NO_ENV)).rejects.toThrow(
+      UsageError,
+    );
+    await expect(parseCommand(["lint", "--max-warnings"], NO_ENV)).rejects.toThrow(UsageError);
   });
 });

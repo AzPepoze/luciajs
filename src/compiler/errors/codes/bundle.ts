@@ -15,6 +15,6 @@ export const BUNDLE_CODES = {
   },
   L3004: {
     message: "$message",
-    hint: "Fix lusia.config.json, then run the command again.",
+    hint: "Fix the lusia config file, then run the command again.",
   },
 } as const satisfies Record<string, ErrorCode>;

@@ -20,18 +20,18 @@ afterAll(async () => {
 });
 
 describe("--routes", () => {
-  test("splits the list and trims it", () => {
-    const command = parseCommand(["build", FIXTURE, "--routes", "/guide, /reference"], {});
+  test("splits the list and trims it", async () => {
+    const command = await parseCommand(["build", FIXTURE, "--routes", "/guide, /reference"], {});
     expect(command).toMatchObject({ name: "build", routes: ["/guide", "/reference"] });
   });
 
-  test("defaults to no routes", () => {
-    expect(parseCommand(["build", FIXTURE], {})).toMatchObject({ routes: [] });
+  test("defaults to no routes", async () => {
+    expect(await parseCommand(["build", FIXTURE], {})).toMatchObject({ routes: [] });
   });
 
-  test("rejects a route without a leading slash or with ..", () => {
-    expect(() => parseCommand(["build", "--routes", "guide"], {})).toThrow(UsageError);
-    expect(() => parseCommand(["build", "--routes", "/a/../b"], {})).toThrow(UsageError);
+  test("rejects a route without a leading slash or with ..", async () => {
+    await expect(parseCommand(["build", "--routes", "guide"], {})).rejects.toThrow(UsageError);
+    await expect(parseCommand(["build", "--routes", "/a/../b"], {})).rejects.toThrow(UsageError);
   });
 
   test("build writes a copy of index.html for each route", async () => {
