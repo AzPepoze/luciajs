@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseLusiaImports, scriptImports } from "@language/parse/imports.ts";
+import { parseLusiaImports, scriptImports } from "#language/parse/imports.ts";
 import { planLusiaImport } from "../../../src/editor/auto-import.ts";
 
 describe("lusia imports", () => {

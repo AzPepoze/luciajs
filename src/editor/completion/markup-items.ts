@@ -1,4 +1,4 @@
-import { FORM_TAGS } from "@compiler/template/bind.ts";
+import { FORM_TAGS } from "#compiler/template/bind.ts";
 import { findApiById } from "../api-lookup.ts";
 import { MOTION_ATTRIBUTE_ITEMS, type CompletionItemData } from "../completion-data.ts";
 

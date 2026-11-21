@@ -28,7 +28,6 @@
   "files": [
     "src",
     "reference",
-    "tsconfig.json",
     "lusia.d.ts",
     "config.schema.json",
     "README.md",
@@ -45,7 +44,15 @@
     "./language/*": "./src/language/*",
     "./editor/*": "./src/editor/*",
     "./errors/*": "./src/compiler/errors/*",
-    "./types": "./lusia.d.ts"
+    "./types": "./lusia.d.ts",
+    "./compiler/*": "./src/compiler/*"
+  },
+  "imports": {
+    "#runtime/*": "./src/runtime/*",
+    "#compiler/*": "./src/compiler/*",
+    "#bun-plugin/*": "./src/bun-plugin/*",
+    "#cli/*": "./src/cli/*",
+    "#language/*": "./src/language/*"
   },
   "scripts": {
     "dev:stress": "bun src/cli/index.ts dev examples/stress",

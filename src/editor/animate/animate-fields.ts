@@ -1,6 +1,6 @@
 import { CSS_PROPERTIES } from "../css/css-properties.ts";
 import { enumNameItem } from "../completion/enum-members.ts";
-import { expressionEnd } from "@language/format/format-expressions.ts";
+import { expressionEnd } from "#language/format/format-expressions.ts";
 import type { CompletionItemData, ScriptItem } from "../completion-data.ts";
 
 const ANIMATE_OPEN = "animate={";
