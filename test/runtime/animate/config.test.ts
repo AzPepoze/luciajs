@@ -83,9 +83,37 @@ describe("config sets the defaults", () => {
     expect(scroll.part).toEqual([0.2, 0.8]);
   });
 
-  test("space animateSpace", () => {
-    setAnimateConfig({ space: { animateSpace: false } });
+  test("attach default animateSpace is false", () => {
     expect(readItem({ style: fade, when: WHEN.ATTACH }).space).toBeUndefined();
+  });
+
+  test("detach default animateSpace is true", () => {
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+  });
+
+  test("attach animateSpace true turns attach space on", () => {
+    setAnimateConfig({ attach: { animateSpace: true } });
+    expect(readItem({ style: fade, when: WHEN.ATTACH }).space).toBeDefined();
+  });
+
+  test("detach animateSpace false turns detach space off", () => {
+    setAnimateConfig({ detach: { animateSpace: false } });
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeUndefined();
+  });
+
+  test("attach config does not change detach", () => {
+    setAnimateConfig({ attach: { animateSpace: true } });
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+    setAnimateConfig({ attach: { animateSpace: false } });
+    expect(readItem({ style: fade, when: WHEN.DETACH }).space).toBeDefined();
+  });
+
+  test("item more animateSpace overrides the attach config", () => {
+    setAnimateConfig({ attach: { animateSpace: false } });
+    const attach = (more: unknown) => ({ style: fade, when: WHEN.ATTACH, more }) as never;
+    expect(readItem(attach({ animateSpace: true })).space).toBeDefined();
+    setAnimateConfig({ attach: { animateSpace: true } });
+    expect(readItem(attach({ animateSpace: false })).space).toBeUndefined();
   });
 
   test("midway play and turn", () => {
@@ -127,7 +155,7 @@ describe("config validation", () => {
     const error = thrown(() => readAnimateConfig({ duraton: 500 }));
     expect(error.code).toBe("L2066");
     expect(error.message).toBe(
-      'animate config has an unknown key "duraton", use duration, delay, ease, keep, midway, view, hover, scroll, space, in or out',
+      'animate config has an unknown key "duraton", use duration, delay, ease, keep, midway, view, hover, scroll, attach, detach, in or out',
     );
     expect(error.hint).toBe("did you mean 'duration'?");
   });

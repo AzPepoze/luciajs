@@ -62,7 +62,8 @@ describe("reference api table", () => {
       "scoped",
       "global",
       "inline-global",
-      "setup",
+      "on-attach",
+      "on-detach",
       "component-tag",
     ]) {
       expect(ids).toContain(id);

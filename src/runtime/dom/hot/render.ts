@@ -1,6 +1,7 @@
 import type { Variable } from "../../variable/variable.ts";
 import type { Cleanup } from "../template/bindings.ts";
-import { renderWith, runSetup, type Rendered, type SetupHook } from "../component/component.ts";
+import { renderWith, type Rendered } from "../component/component.ts";
+import { runAttach, type AttachHook } from "../component/lifecycle.ts";
 import type { Leave } from "../component/leave.ts";
 import { injectStyle } from "../component/styles.ts";
 import type { Definition, HotInstance } from "./instance.ts";
@@ -9,7 +10,7 @@ import { removeRegion, runCleanups } from "./teardown.ts";
 /** A render that has run but is not in the page yet. */
 export interface Rendering {
   readonly fragment: DocumentFragment;
-  readonly setup?: SetupHook;
+  readonly attachHooks: AttachHook[];
   readonly start: Text;
   readonly end: Text;
   readonly cleanups: Cleanup[];
@@ -48,7 +49,7 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
     rendered.fragment.append(end);
     return {
       fragment: rendered.fragment,
-      setup: rendered.setup,
+      attachHooks: rendered.attachHooks,
       start,
       end,
       cleanups,
@@ -63,11 +64,11 @@ export function renderInstance(instance: HotInstance, definition: Definition): R
   }
 }
 
-// A throwing setup discards the rendering.
+// A throwing attach hook discards the rendering.
 export function insertRendering(rendering: Rendering, parent: Node, anchor: Node | null): void {
   parent.insertBefore(rendering.fragment, anchor);
   try {
-    runSetup(rendering.setup, parent, rendering.cleanups);
+    runAttach(rendering.attachHooks, parent, rendering.cleanups);
   } catch (error) {
     discardRendering(rendering);
     throw error;

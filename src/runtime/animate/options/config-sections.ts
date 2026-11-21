@@ -1,6 +1,7 @@
 import { runtimeError } from "../../errors.ts";
 import { readMidway, MIDWAY_KEYS, type AnimateMidway } from "./midway-options.ts";
 import { readMs } from "./read-ms.ts";
+import { WHEN } from "../modes/trigger.ts";
 import { readScroll, type ScrollMore } from "./scroll-options.ts";
 import { readSpace, type SpaceMore } from "./space-options.ts";
 import { SPACE_KEYS, SPELLING_HINT, unknownKeyValues, VIEW_KEYS } from "./keys.ts";
@@ -51,6 +52,10 @@ export function checkScroll(value: unknown): void {
   readScroll(readObject(value, "scroll", SCROLL_CONFIG_KEYS) as ScrollMore);
 }
 
-export function checkSpace(value: unknown): void {
-  readSpace(readObject(value, "space", SPACE_KEYS) as SpaceMore);
+export function checkAttach(value: unknown): void {
+  readSpace(readObject(value, "attach", SPACE_KEYS) as SpaceMore, WHEN.ATTACH);
+}
+
+export function checkDetach(value: unknown): void {
+  readSpace(readObject(value, "detach", SPACE_KEYS) as SpaceMore, WHEN.DETACH);
 }

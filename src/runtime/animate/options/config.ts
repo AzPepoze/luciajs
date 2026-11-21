@@ -10,13 +10,15 @@ import { PRESET } from "./presets.ts";
 import { readMs } from "./read-ms.ts";
 import { storeAnimateConfig } from "./config-store.ts";
 import {
+  checkAttach,
+  checkDetach,
   checkHover,
   checkMidway,
   checkScroll,
-  checkSpace,
   checkView,
   readObject,
 } from "./config-sections.ts";
+import type { SpaceMore } from "./space-options.ts";
 
 export type PresetName = keyof typeof PRESET;
 
@@ -46,10 +48,6 @@ export interface ScrollConfig {
   part?: Part;
 }
 
-export interface SpaceConfig {
-  animateSpace?: boolean;
-}
-
 /** The app-wide animate defaults from lusia.config. Every key is optional. */
 export interface AnimateConfig {
   duration?: number;
@@ -60,7 +58,8 @@ export interface AnimateConfig {
   view?: ViewConfig;
   hover?: HoverConfig;
   scroll?: ScrollConfig;
-  space?: SpaceConfig;
+  attach?: SpaceMore;
+  detach?: SpaceMore;
   in?: PresetName | Keyframes;
   out?: PresetName | Keyframes;
 }
@@ -74,7 +73,8 @@ const CONFIG_KEYS = [
   "view",
   "hover",
   "scroll",
-  "space",
+  "attach",
+  "detach",
   "in",
   "out",
 ];
@@ -90,7 +90,8 @@ const CONFIG_CHECKS: ReadonlyMap<string, Check> = new Map<string, Check>([
   ["view", checkView],
   ["hover", checkHover],
   ["scroll", checkScroll],
-  ["space", checkSpace],
+  ["attach", checkAttach],
+  ["detach", checkDetach],
   ["in", (value) => checkPresetName("in", value)],
   ["out", (value) => checkPresetName("out", value)],
 ]);

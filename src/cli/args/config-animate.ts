@@ -9,7 +9,8 @@ const ANIMATE_SECTIONS: Readonly<Record<string, readonly string[]>> = {
   view: ["margin", "amount", "reverse"],
   hover: ["inDelay", "outDelay", "outDuration"],
   scroll: ["start", "end", "part"],
-  space: ["animateSpace"],
+  attach: ["animateSpace"],
+  detach: ["animateSpace"],
 };
 
 /** The JSON form: names such as "QUART" become values, and the values are checked. */

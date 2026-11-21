@@ -211,14 +211,25 @@
             }
           }
         },
-        "space": {
+        "attach": {
           "type": "object",
           "additionalProperties": false,
-          "description": "Options for WHEN.DETACH and WHEN.ATTACH",
+          "description": "Options for WHEN.ATTACH",
           "properties": {
             "animateSpace": {
               "type": "boolean",
-              "description": "Slide the siblings into the freed space, or apart. false: they jump at once. Default: true"
+              "description": "Slide the siblings apart to open the space. false: they jump at once. Default: false"
+            }
+          }
+        },
+        "detach": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Options for WHEN.DETACH",
+          "properties": {
+            "animateSpace": {
+              "type": "boolean",
+              "description": "Slide the siblings into the freed space. false: they jump at once. Default: true"
             }
           }
         },

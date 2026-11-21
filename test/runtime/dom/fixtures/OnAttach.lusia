@@ -1,0 +1,11 @@
+<script>
+import { onAttach } from "lusia";
+import { events } from "./log.ts";
+
+onAttach((root: Element) => {
+  events.push(root.querySelector(".ready") ? "attach" : "missing");
+  return () => events.push("cleanup");
+});
+</script>
+
+<p class="ready">Ready</p>

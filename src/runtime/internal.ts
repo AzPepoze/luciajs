@@ -2,7 +2,7 @@
 export { attr, bindText, insert, listen, toText } from "./dom/template/bindings.ts";
 export type { Binder, Cleanup } from "./dom/template/bindings.ts";
 export { bindComponent, defineComponent } from "./dom/component/component.ts";
-export type { Host, Rendered } from "./dom/component/component.ts";
+export type { Host } from "./dom/component/component.ts";
 export { bindContent } from "./dom/component/content.ts";
 export { bindHtml } from "./dom/template/html.ts";
 export type { Leave } from "./dom/component/leave.ts";
