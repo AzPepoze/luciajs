@@ -121,13 +121,13 @@ export const animateEnumEntries: ApiEntry[] = [
 		kind: "type",
 		group: "motion",
 		signature:
-			"more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] } | { keepSpace?: boolean }",
+			"more?: { margin?: number | string; amount?: number; reverse?: boolean } | { inDelay?: number; outDelay?: number; out?: Keyframes; outDuration?: number } | { start?: ScrollAt; end?: ScrollAt; follow?: Variable<Element | null>; part?: [number, number] } | { animateSpace?: boolean }",
 		summary: "Options for the trigger an item uses. Each trigger accepts its own keys.",
 		bullets: [
 			'VIEW: margin (px or a CSS length such as "10%"), amount (0 to 1, default 0.15), reverse.',
 			"HOVER: inDelay and outDelay (ms to wait after enter or leave), out (keyframes for leaving) and outDuration (ms, default the item duration).",
 			"SCROLL: start and end (SCROLL_AT or { element, window }, default ENTER and LEAVE) on the item's own box. follow: a variable of the element whose box is measured. Alone it is pinned to the screen; with start and end it runs from those points. part: [from, to] plays only that slice, without start and end.",
-			"DETACH: keepSpace (default false). true keeps the space the element holds until it is removed; false closes that space with the leave.",
+			"DETACH and ATTACH: animateSpace (default false, off). false: the siblings jump at once. true: they slide into the freed space (DETACH) or apart (ATTACH).",
 			"Any other trigger that sets more is an error.",
 		],
 		example: `<div animate={{\n  style: fadeUp,\n  when: WHEN.VIEW,\n  more: { margin: "10%", amount: 0.5, reverse: true },\n}}>...</div>`,
