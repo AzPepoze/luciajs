@@ -2,7 +2,7 @@ import type { ApiEntry, ApiMember } from "../../reference/api.ts";
 import { findApiById } from "./api-lookup.ts";
 import type { CompletionItemData } from "./completion-data.ts";
 import type { HoverResult } from "./hover.ts";
-import type { PropDef } from "@language/props.ts";
+import type { PropDef } from "@language/parse/props.ts";
 import type { ScriptSymbol } from "./script/symbols.ts";
 
 export function hoverMarkdown(result: HoverResult): string {

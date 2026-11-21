@@ -1,10 +1,10 @@
 import { findApiById } from "../api-lookup.ts";
 import { cssKeyAt, isInAnimate } from "../animate-fields.ts";
 import type { PropLookup } from "../completions.ts";
-import { findComponentImport } from "@language/imports.ts";
-import { attributeNameAt, wordAt } from "@language/word.ts";
+import { findComponentImport } from "@language/parse/imports.ts";
+import { attributeNameAt, wordAt } from "@language/parse/word.ts";
 import type { HoverResult } from "../hover.ts";
-import { openTagAt, tagNameAt, type OpenTag } from "@language/tag.ts";
+import { openTagAt, tagNameAt, type OpenTag } from "@language/parse/tag.ts";
 
 const STYLE_TAG_IDS: Record<string, string> = { scoped: "style-scoped", global: "style-global" };
 

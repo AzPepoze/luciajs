@@ -7,7 +7,7 @@ import { UsageError } from "@cli/args.ts";
 import { collectFiles } from "@cli/files.ts";
 import { partsFor, prettierConfigFor } from "@cli/format-parts.ts";
 import { runFormat } from "@cli/format.ts";
-import { formatLusia } from "@language/format.ts";
+import { formatLusia } from "@language/format/format.ts";
 
 const UNFORMATTED = [
   "<script>",

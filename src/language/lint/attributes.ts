@@ -1,5 +1,5 @@
-import { closingQuote } from "../object-literal.ts";
-import { expressionEnd } from "../format-expressions.ts";
+import { closingQuote } from "../format/object-literal.ts";
+import { expressionEnd } from "../format/format-expressions.ts";
 
 /** `none` for a bare name, `static` for `name="..."`, `expression` for `name={...}`. */
 export type AttributeValue = "none" | "static" | "expression";

@@ -2,7 +2,7 @@ import { parseArgs } from "node:util";
 import { existsSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import type { LazySettings } from "@bun-plugin/children.ts";
-import type { LintRuleSettings } from "@language/lint.ts";
+import type { LintRuleSettings } from "@language/lint/lint.ts";
 import { isRoute, readConfig, type LusiaConfig } from "./config.ts";
 
 export class UsageError extends Error {}

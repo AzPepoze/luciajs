@@ -1,4 +1,4 @@
-import { findSections, type Section } from "./sections.ts";
+import { findSections, type Section } from "../parse/sections.ts";
 
 /** The formatter for one embedded language. The editor and CLI supply Prettier. */
 export interface FormatParts {

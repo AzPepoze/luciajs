@@ -16,16 +16,16 @@ import {
   markupAttributeItems,
 } from "./markup-items.ts";
 import { enumMembersAt } from "./enum-members.ts";
-import { findComponentImport, scriptImports } from "@language/imports.ts";
-import { inExpressionAt } from "@language/format-expressions.ts";
-import type { PropDef } from "@language/props.ts";
+import { findComponentImport, scriptImports } from "@language/parse/imports.ts";
+import { inExpressionAt } from "@language/format/format-expressions.ts";
+import type { PropDef } from "@language/parse/props.ts";
 import type { TextRange } from "./range.ts";
-import { regionAt } from "@language/regions.ts";
+import { regionAt } from "@language/parse/regions.ts";
 import { withScriptNames } from "./script-names.ts";
 import { scriptMemberItems } from "./script-members.ts";
 import type { SymbolLookup } from "./script/imported-symbols.ts";
-import { scriptSection, scriptSource, type Section } from "@language/sections.ts";
-import { isTagNameTyping, openTagAt } from "@language/tag.ts";
+import { scriptSection, scriptSource, type Section } from "@language/parse/sections.ts";
+import { isTagNameTyping, openTagAt } from "@language/parse/tag.ts";
 
 export { scriptMemberItems, withScriptNames };
 

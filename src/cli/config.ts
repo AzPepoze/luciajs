@@ -14,7 +14,7 @@ import {
   type LintLevel,
   type LintRuleCode,
   type LintRuleSettings,
-} from "@language/lint.ts";
+} from "@language/lint/lint.ts";
 
 export const CONFIG_FILE = "lusia.config.json";
 

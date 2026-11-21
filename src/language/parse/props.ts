@@ -1,4 +1,4 @@
-import { objectEntries } from "./object-literal.ts";
+import { objectEntries } from "../format/object-literal.ts";
 
 export interface PropDef {
   name: string;

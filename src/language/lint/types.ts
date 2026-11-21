@@ -1,4 +1,4 @@
-import type { PropDef } from "../props.ts";
+import type { PropDef } from "../parse/props.ts";
 
 export const LINT_RULE_CODES = [
   "unused-import",

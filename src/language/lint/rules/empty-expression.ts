@@ -1,4 +1,4 @@
-import { expressionEnd } from "../../format-expressions.ts";
+import { expressionEnd } from "../../format/format-expressions.ts";
 import type { LintFinding, LintRule } from "../types.ts";
 
 export const emptyExpression: LintRule = ({ markup }) => {

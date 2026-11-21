@@ -1,4 +1,4 @@
-import { parseLusiaImports, type LusiaImport } from "../../imports.ts";
+import { parseLusiaImports, type LusiaImport } from "../../parse/imports.ts";
 import type { LintFinding, LintFix, LintRule } from "../types.ts";
 
 const STATEMENT = /import\s+[\s\S]*?from\s*["'][^"'\n]+\.lusia["'];?/y;

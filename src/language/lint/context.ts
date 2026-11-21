@@ -1,5 +1,5 @@
-import type { PropDef } from "../props.ts";
-import { findSections } from "../sections.ts";
+import type { PropDef } from "../parse/props.ts";
+import { findSections } from "../parse/sections.ts";
 import type { LintContext } from "./types.ts";
 
 export function buildContext(

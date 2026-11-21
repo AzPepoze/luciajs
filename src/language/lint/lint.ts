@@ -1,20 +1,20 @@
-import type { PropDef } from "./props.ts";
-import { buildContext } from "./lint/context.ts";
-import { isLintDisabled, parseLintDirectives, type LintDirective } from "./lint/comments.ts";
-import { lintLevel, severityOf } from "./lint/options.ts";
-import { animateAttributes } from "./lint/rules/animate-attributes.ts";
-import { animateKeys } from "./lint/rules/animate-keys.ts";
-import { bindTargets } from "./lint/rules/bind-targets.ts";
-import { emptyExpression } from "./lint/rules/empty-expression.ts";
-import { flowChain } from "./lint/rules/flow-chain.ts";
-import { propsTwice } from "./lint/rules/props-twice.ts";
-import { scrollLines } from "./lint/rules/scroll-lines.ts";
-import { styleAttribute } from "./lint/rules/style-attribute.ts";
-import { unknownProp } from "./lint/rules/unknown-prop.ts";
-import { unusedImport } from "./lint/rules/unused-import.ts";
-import type { LintFinding, LintIssue, LintOptions, LintRule } from "./lint/types.ts";
+import type { PropDef } from "../parse/props.ts";
+import { buildContext } from "./context.ts";
+import { isLintDisabled, parseLintDirectives, type LintDirective } from "./comments.ts";
+import { lintLevel, severityOf } from "./options.ts";
+import { animateAttributes } from "./rules/animate-attributes.ts";
+import { animateKeys } from "./rules/animate-keys.ts";
+import { bindTargets } from "./rules/bind-targets.ts";
+import { emptyExpression } from "./rules/empty-expression.ts";
+import { flowChain } from "./rules/flow-chain.ts";
+import { propsTwice } from "./rules/props-twice.ts";
+import { scrollLines } from "./rules/scroll-lines.ts";
+import { styleAttribute } from "./rules/style-attribute.ts";
+import { unknownProp } from "./rules/unknown-prop.ts";
+import { unusedImport } from "./rules/unused-import.ts";
+import type { LintFinding, LintIssue, LintOptions, LintRule } from "./types.ts";
 
-export { LINT_LEVELS, LINT_RULE_CODES } from "./lint/types.ts";
+export { LINT_LEVELS, LINT_RULE_CODES } from "./types.ts";
 export type {
   LintFix,
   LintIssue,
@@ -23,7 +23,7 @@ export type {
   LintRuleCode,
   LintRuleSettings,
   Severity,
-} from "./lint/types.ts";
+} from "./types.ts";
 
 const RULES: LintRule[] = [
   unusedImport,
